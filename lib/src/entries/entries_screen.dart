@@ -63,42 +63,49 @@ class _EntriesViewState extends State<EntriesView> {
           child: CustomScrollView(
             slivers: [
               SliverToBoxAdapter(
-                child: DropdownButton<String>(
-                  value: sort,
-                  onChanged: (newSort) {
-                    if (newSort != null) {
-                      setState(() {
-                        sort = newSort;
-                        _pagingController.refresh();
-                      });
-                    }
-                  },
-                  items: const [
-                    DropdownMenuItem(
-                      value: 'hot',
-                      child: Text('Hot'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'top',
-                      child: Text('Top'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'newest',
-                      child: Text('Newest'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'active',
-                      child: Text('Active'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'commented',
-                      child: Text('Commented'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'oldest',
-                      child: Text('Oldest'),
-                    ),
-                  ],
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      DropdownButton<String>(
+                        value: sort,
+                        onChanged: (newSort) {
+                          if (newSort != null) {
+                            setState(() {
+                              sort = newSort;
+                              _pagingController.refresh();
+                            });
+                          }
+                        },
+                        items: const [
+                          DropdownMenuItem(
+                            value: 'hot',
+                            child: Text('Hot'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'top',
+                            child: Text('Top'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'newest',
+                            child: Text('Newest'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'active',
+                            child: Text('Active'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'commented',
+                            child: Text('Commented'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'oldest',
+                            child: Text('Oldest'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
               PagedSliverList<int, api_entries.EntryItem>(
