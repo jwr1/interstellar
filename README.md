@@ -1,30 +1,15 @@
 # Interstellar
 
-A new Flutter project.
+An app for Kbin; connecting you to the fediverse.
 
-## Getting Started
+## Installation
 
-This project is a starting point for a Flutter application that follows the
-[simple app state management
-tutorial](https://flutter.dev/docs/development/data-and-backend/state-mgmt/simple).
+At the moment, Interstellar can be tested on both Linux and Android (you could also build from source for other platforms). You'll find the latest build files [here](https://github.com/jwr1/interstellar/releases/latest).
 
-For help getting started with Flutter development, view the
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Discussion
 
-## Assets
+The Interstellar magazine is located on Kbin here: [kbin.social/m/interstellar](https://kbin.social/m/interstellar). You can ask questions, report bugs, or make suggestions either here on [GitHub](https://github.com/jwr1/interstellar/issues), or in the [magazine](https://kbin.social/m/interstellar).
 
-The `assets` directory houses images, fonts, and any other files you want to
-include with your application.
+## Contributing
 
-The `assets/images` directory contains [resolution-aware
-images](https://flutter.dev/docs/development/ui/assets-and-images#resolution-aware).
-
-## Localization
-
-This project generates localized messages based on arb files found in
-the `lib/src/localization` directory.
-
-To support additional languages, please visit the tutorial on
-[Internationalizing Flutter
-apps](https://flutter.dev/docs/development/accessibility-and-localization/internationalization)
+Interstellar uses [Flutter](https://flutter.dev) as its framework, so make sure you have the [Flutter SDK installed](https://docs.flutter.dev/get-started/install) before doing anything else. Then, run `flutter doctor -v` to see instructions for setting up different build platforms (e.g. android studio for APKs). Once that's done, you can use `flutter run` to develop, and `flutter build {platform}` for release files.
