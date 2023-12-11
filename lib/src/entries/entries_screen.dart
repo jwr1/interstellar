@@ -5,17 +5,17 @@ import 'package:interstellar/src/settings/settings_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
-class EntriesView extends StatefulWidget {
-  const EntriesView({
+class EntriesScreen extends StatefulWidget {
+  const EntriesScreen({
     super.key,
   });
 
   @override
-  State<EntriesView> createState() => _EntriesViewState();
+  State<EntriesScreen> createState() => _EntriesScreenState();
 }
 
-class _EntriesViewState extends State<EntriesView> {
-  String sort = 'hot';
+class _EntriesScreenState extends State<EntriesScreen> {
+  api_entries.EntriesSort sort = api_entries.EntriesSort.hot;
 
   late Future<api_entries.Entries> entries;
 
@@ -34,7 +34,9 @@ class _EntriesViewState extends State<EntriesView> {
   Future<void> _fetchPage(int pageKey) async {
     try {
       final newPage = await api_entries.fetchEntries(
-          context.read<SettingsController>().instanceHost, pageKey, sort);
+          context.read<SettingsController>().instanceHost,
+          page: pageKey,
+          sort: sort);
 
       final isLastPage =
           newPage.pagination.currentPage == newPage.pagination.maxPage;
@@ -67,7 +69,7 @@ class _EntriesViewState extends State<EntriesView> {
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     children: [
-                      DropdownButton<String>(
+                      DropdownButton<api_entries.EntriesSort>(
                         value: sort,
                         onChanged: (newSort) {
                           if (newSort != null) {
@@ -79,27 +81,27 @@ class _EntriesViewState extends State<EntriesView> {
                         },
                         items: const [
                           DropdownMenuItem(
-                            value: 'hot',
+                            value: api_entries.EntriesSort.hot,
                             child: Text('Hot'),
                           ),
                           DropdownMenuItem(
-                            value: 'top',
+                            value: api_entries.EntriesSort.top,
                             child: Text('Top'),
                           ),
                           DropdownMenuItem(
-                            value: 'newest',
+                            value: api_entries.EntriesSort.newest,
                             child: Text('Newest'),
                           ),
                           DropdownMenuItem(
-                            value: 'active',
+                            value: api_entries.EntriesSort.active,
                             child: Text('Active'),
                           ),
                           DropdownMenuItem(
-                            value: 'commented',
+                            value: api_entries.EntriesSort.commented,
                             child: Text('Commented'),
                           ),
                           DropdownMenuItem(
-                            value: 'oldest',
+                            value: api_entries.EntriesSort.oldest,
                             child: Text('Oldest'),
                           ),
                         ],

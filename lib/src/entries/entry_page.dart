@@ -65,7 +65,7 @@ class _EntryPageState extends State<EntryPage> {
                         widget.item.title,
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
-                Container(height: 10),
+                const SizedBox(height: 10),
                 Row(
                   children: [
                     Text(
@@ -87,10 +87,10 @@ class _EntryPageState extends State<EntryPage> {
                   ],
                 ),
                 if (widget.item.body != null && widget.item.body!.isNotEmpty)
-                  Container(height: 10),
+                  const SizedBox(height: 10),
                 if (widget.item.body != null && widget.item.body!.isNotEmpty)
                   MarkdownBody(data: widget.item.body!),
-                Container(height: 10),
+                const SizedBox(height: 10),
                 Row(
                   children: <Widget>[
                     IconButton(
@@ -98,7 +98,7 @@ class _EntryPageState extends State<EntryPage> {
                       onPressed: () {},
                     ),
                     Text(widget.item.numComments.toString()),
-                    Container(width: 8),
+                    const SizedBox(width: 8),
                     IconButton(
                       icon: const Icon(Icons.more_vert),
                       onPressed: () {},
@@ -109,7 +109,7 @@ class _EntryPageState extends State<EntryPage> {
                       onPressed: () {},
                     ),
                     Text(widget.item.uv.toString()),
-                    Container(width: 12),
+                    const SizedBox(width: 12),
                     IconButton(
                       icon: const Icon(Icons.arrow_upward),
                       onPressed: () {},

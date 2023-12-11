@@ -66,10 +66,10 @@ class _MyAppState extends State<MyApp> {
                 },
               ),
               body: [
-                const EntriesView(),
-                const MagsView(),
-                const ProfileView(),
-                SettingsView(controller: widget.settingsController)
+                const EntriesScreen(),
+                const MagsScreen(),
+                const ProfileScreen(),
+                SettingsScreen(controller: widget.settingsController)
               ][navIndex],
             ),
           ),

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'settings_controller.dart';
 
-class SettingsView extends StatelessWidget {
-  const SettingsView({super.key, required this.controller});
+class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key, required this.controller});
 
   final SettingsController controller;
 

@@ -61,7 +61,7 @@ class EntryCard extends StatelessWidget {
                             item.title,
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
-                    Container(height: 10),
+                    const SizedBox(height: 10),
                     Row(
                       children: [
                         Text(
@@ -87,7 +87,7 @@ class EntryCard extends StatelessWidget {
                       ],
                     ),
                     if (item.body != null && item.body!.isNotEmpty)
-                      Container(height: 10),
+                      const SizedBox(height: 10),
                     if (item.body != null && item.body!.isNotEmpty)
                       Text(
                         item.body ?? '',
@@ -99,7 +99,7 @@ class EntryCard extends StatelessWidget {
                         maxLines: 4,
                         overflow: TextOverflow.ellipsis,
                       ),
-                    Container(height: 10),
+                    const SizedBox(height: 10),
                     Row(
                       children: <Widget>[
                         IconButton(
@@ -108,7 +108,7 @@ class EntryCard extends StatelessWidget {
                           onPressed: () {},
                         ),
                         Text(item.numComments.toString()),
-                        Container(width: 8),
+                        const SizedBox(width: 8),
                         IconButton(
                           icon: const Icon(Icons.more_vert),
                           color: Theme.of(context).colorScheme.onSurface,
@@ -121,7 +121,7 @@ class EntryCard extends StatelessWidget {
                           onPressed: () {},
                         ),
                         Text(item.uv.toString()),
-                        Container(width: 12),
+                        const SizedBox(width: 12),
                         IconButton(
                           icon: const Icon(Icons.arrow_upward),
                           color: Theme.of(context).colorScheme.onSurface,
@@ -138,7 +138,7 @@ class EntryCard extends StatelessWidget {
                   ],
                 ),
               ),
-              Container(height: 5),
+              const SizedBox(height: 5),
             ],
           ),
         ),
