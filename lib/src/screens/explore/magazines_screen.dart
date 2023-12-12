@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/magazines.dart' as api_magazines;
+import 'package:interstellar/src/screens/entries/entries_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
@@ -114,7 +116,16 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<api_magazines.Magazine>(
               itemBuilder: (context, item, index) => InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => EntriesScreen(
+                        title: item.name,
+                        magazineID: item.magazineId,
+                      ),
+                    ),
+                  );
+                },
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Row(children: [
@@ -134,20 +145,20 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                     Container(
                       width: 4,
                     ),
-                    Text(item.entryCount.toString()),
+                    Text(intFormat(item.entryCount)),
                     const SizedBox(width: 12),
                     const Icon(Icons.comment),
                     Container(
                       width: 4,
                     ),
-                    Text(item.entryCommentCount.toString()),
+                    Text(intFormat(item.entryCommentCount)),
                     const SizedBox(width: 12),
                     OutlinedButton(
                         onPressed: () {},
                         child: Row(
                           children: [
                             const Icon(Icons.group),
-                            Text(' ${item.subscriptionsCount}'),
+                            Text(' ${intFormat(item.subscriptionsCount)}'),
                           ],
                         ))
                   ]),

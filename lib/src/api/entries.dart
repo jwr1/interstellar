@@ -133,9 +133,11 @@ class EntryDomain {
 enum EntriesSort { active, hot, newest, oldest, top, commented }
 
 Future<Entries> fetchEntries(String instanceHost,
-    {int? page, EntriesSort? sort}) async {
-  final response = await http.get(Uri.https(instanceHost, '/api/entries',
-      {'p': page?.toString(), 'sort': sort?.name}));
+    {int? page, EntriesSort? sort, int? magazineID}) async {
+  String path =
+      '/api${magazineID != null ? '/magazine/$magazineID' : ''}/entries';
+  final response = await http.get(Uri.https(
+      instanceHost, path, {'p': page?.toString(), 'sort': sort?.name}));
 
   if (response.statusCode == 200) {
     return Entries.fromJson(jsonDecode(response.body) as Map<String, dynamic>);

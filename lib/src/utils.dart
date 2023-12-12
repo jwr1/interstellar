@@ -1,3 +1,10 @@
+import 'package:intl/intl.dart';
+
+var intF = NumberFormat.compact();
+String intFormat(int input) {
+  return intF.format(input);
+}
+
 String timeDiffFormat(DateTime input) {
   final difference = DateTime.now().difference(input);
 

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:interstellar/src/screens/explore/explore_screen.dart';
-import 'package:interstellar/src/screens/explore/magazines_screen.dart';
 import 'package:interstellar/src/screens/profile/profile_screen.dart';
 import 'package:provider/provider.dart';
 

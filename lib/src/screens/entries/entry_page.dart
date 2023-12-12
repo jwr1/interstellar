@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/entries.dart' as api_entries;
 import 'package:interstellar/src/api/comments.dart' as api_comments;
+import 'package:interstellar/src/screens/entries/entries_screen.dart';
 import 'package:interstellar/src/screens/entries/entry_comment.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils.dart';
@@ -69,7 +70,19 @@ class _EntryPageState extends State<EntryPage> {
                 const SizedBox(height: 10),
                 Row(
                   children: [
-                    DisplayName(widget.item.magazine.name),
+                    DisplayName(
+                      widget.item.magazine.name,
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => EntriesScreen(
+                              title: widget.item.magazine.name,
+                              magazineID: widget.item.magazine.magazineId,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       child: Text(
@@ -89,7 +102,7 @@ class _EntryPageState extends State<EntryPage> {
                   children: <Widget>[
                     const Icon(Icons.comment),
                     const SizedBox(width: 4),
-                    Text(widget.item.numComments.toString()),
+                    Text(intFormat(widget.item.numComments)),
                     const Spacer(),
                     IconButton(
                       icon: const Icon(Icons.more_vert),
@@ -100,13 +113,13 @@ class _EntryPageState extends State<EntryPage> {
                       icon: const Icon(Icons.rocket_launch),
                       onPressed: () {},
                     ),
-                    Text(widget.item.uv.toString()),
+                    Text(intFormat(widget.item.uv)),
                     const SizedBox(width: 12),
                     IconButton(
                       icon: const Icon(Icons.arrow_upward),
                       onPressed: () {},
                     ),
-                    Text((widget.item.favourites - widget.item.dv).toString()),
+                    Text(intFormat(widget.item.favourites - widget.item.dv)),
                     IconButton(
                       icon: const Icon(Icons.arrow_downward),
                       onPressed: () {},

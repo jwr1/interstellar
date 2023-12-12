@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/entries.dart' as api_entries;
+import 'package:interstellar/src/screens/entries/entries_screen.dart';
 import 'package:interstellar/src/screens/entries/entry_page.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
-import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EntryCard extends StatelessWidget {
@@ -69,7 +68,16 @@ class EntryCard extends StatelessWidget {
                       children: [
                         DisplayName(
                           item.magazine.name,
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => EntriesScreen(
+                                  title: item.magazine.name,
+                                  magazineID: item.magazine.magazineId,
+                                ),
+                              ),
+                            );
+                          },
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -104,7 +112,7 @@ class EntryCard extends StatelessWidget {
                       children: <Widget>[
                         const Icon(Icons.comment),
                         const SizedBox(width: 4),
-                        Text(item.numComments.toString()),
+                        Text(intFormat(item.numComments)),
                         const Spacer(),
                         IconButton(
                           icon: const Icon(Icons.more_vert),
@@ -116,14 +124,14 @@ class EntryCard extends StatelessWidget {
                           color: Theme.of(context).colorScheme.onSurface,
                           onPressed: () {},
                         ),
-                        Text(item.uv.toString()),
+                        Text(intFormat(item.uv)),
                         const SizedBox(width: 12),
                         IconButton(
                           icon: const Icon(Icons.arrow_upward),
                           color: Theme.of(context).colorScheme.onSurface,
                           onPressed: () {},
                         ),
-                        Text((item.favourites - item.dv).toString()),
+                        Text(intFormat(item.favourites - item.dv)),
                         IconButton(
                           icon: const Icon(Icons.arrow_downward),
                           color: Theme.of(context).colorScheme.onSurface,

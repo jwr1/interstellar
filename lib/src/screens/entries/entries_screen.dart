@@ -6,9 +6,10 @@ import 'package:provider/provider.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class EntriesScreen extends StatefulWidget {
-  const EntriesScreen({
-    super.key,
-  });
+  const EntriesScreen({super.key, this.title, this.magazineID});
+
+  final String? title;
+  final int? magazineID;
 
   @override
   State<EntriesScreen> createState() => _EntriesScreenState();
@@ -36,7 +37,8 @@ class _EntriesScreenState extends State<EntriesScreen> {
       final newPage = await api_entries.fetchEntries(
           context.read<SettingsController>().instanceHost,
           page: pageKey,
-          sort: sort);
+          sort: sort,
+          magazineID: widget.magazineID);
 
       final isLastPage =
           newPage.pagination.currentPage == newPage.pagination.maxPage;
@@ -56,7 +58,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Browse'),
+          title: Text(widget.title ?? 'Feed'),
         ),
         body: RefreshIndicator(
           onRefresh: () => Future.sync(
