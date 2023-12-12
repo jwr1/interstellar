@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:interstellar/src/api/comments.dart' as api_comments;
 import 'package:interstellar/src/utils.dart';
+import 'package:interstellar/src/widgets/display_name.dart';
 
 class EntryComment extends StatelessWidget {
   const EntryComment({super.key, required this.comment});
@@ -18,11 +19,13 @@ class EntryComment extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text(extractUser(comment.user.username),
-                    style: const TextStyle(fontWeight: FontWeight.w500)),
-                Text(
-                  '  ${timeDiffFormat(comment.createdAt)}  ',
-                  style: const TextStyle(fontWeight: FontWeight.w300),
+                DisplayName(comment.user.username),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Text(
+                    timeDiffFormat(comment.createdAt),
+                    style: const TextStyle(fontWeight: FontWeight.w300),
+                  ),
                 )
               ],
             ),

@@ -14,7 +14,7 @@ class SettingsController with ChangeNotifier {
     _themeMode = prefs.getString('themeMode') != null
         ? ThemeMode.values.byName(prefs.getString("themeMode")!)
         : ThemeMode.system;
-    _instanceHost = prefs.getString('instanceHost') ?? 'karab.in';
+    _instanceHost = prefs.getString('instanceHost') ?? 'kbin.run';
 
     notifyListeners();
   }

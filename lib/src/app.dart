@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:interstellar/src/mags/mags_screen.dart';
-import 'package:interstellar/src/profile/profile_screen.dart';
+import 'package:interstellar/src/screens/explore/explore_screen.dart';
+import 'package:interstellar/src/screens/explore/magazines_screen.dart';
+import 'package:interstellar/src/screens/profile/profile_screen.dart';
 import 'package:provider/provider.dart';
 
-import 'entries/entries_screen.dart';
-import 'settings/settings_controller.dart';
-import 'settings/settings_screen.dart';
+import 'screens/entries/entries_screen.dart';
+import 'screens/settings/settings_controller.dart';
+import 'screens/settings/settings_screen.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({
@@ -52,7 +53,7 @@ class _MyAppState extends State<MyApp> {
                 destinations: const [
                   NavigationDestination(icon: Icon(Icons.feed), label: 'Feed'),
                   NavigationDestination(
-                      icon: Icon(Icons.explore), label: 'Mags'),
+                      icon: Icon(Icons.explore), label: 'Explore'),
                   NavigationDestination(
                       icon: Icon(Icons.person), label: 'Profile'),
                   NavigationDestination(
@@ -67,7 +68,7 @@ class _MyAppState extends State<MyApp> {
               ),
               body: [
                 const EntriesScreen(),
-                const MagsScreen(),
+                const ExploreScreen(),
                 const ProfileScreen(),
                 SettingsScreen(controller: widget.settingsController)
               ][navIndex],

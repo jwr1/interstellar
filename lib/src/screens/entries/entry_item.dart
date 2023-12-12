@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/entries.dart' as api_entries;
-import 'package:interstellar/src/entries/entry_page.dart';
+import 'package:interstellar/src/screens/entries/entry_page.dart';
+import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils.dart';
+import 'package:interstellar/src/widgets/display_name.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EntryCard extends StatelessWidget {
@@ -44,7 +47,7 @@ class EntryCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    item.url != null
+                    item.type == 'link' && item.url != null
                         ? InkWell(
                             child: Text(
                               item.title,
@@ -64,25 +67,22 @@ class EntryCard extends StatelessWidget {
                     const SizedBox(height: 10),
                     Row(
                       children: [
-                        Text(
-                          extractMag(item.magazine.name),
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: Theme.of(context).colorScheme.onSurface,
+                        DisplayName(
+                          item.magazine.name,
+                          onTap: () {},
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Text(
+                            timeDiffFormat(item.createdAt),
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.onSurface,
+                                fontWeight: FontWeight.w300),
                           ),
                         ),
-                        Text(
-                          '  ${timeDiffFormat(item.createdAt)}  ',
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface,
-                              fontWeight: FontWeight.w300),
-                        ),
-                        Text(
-                          extractUser(item.user.username),
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
+                        DisplayName(
+                          item.user.username,
+                          onTap: () {},
                         ),
                       ],
                     ),
@@ -102,19 +102,15 @@ class EntryCard extends StatelessWidget {
                     const SizedBox(height: 10),
                     Row(
                       children: <Widget>[
-                        IconButton(
-                          icon: const Icon(Icons.comment),
-                          color: Theme.of(context).colorScheme.onSurface,
-                          onPressed: () {},
-                        ),
+                        const Icon(Icons.comment),
+                        const SizedBox(width: 4),
                         Text(item.numComments.toString()),
-                        const SizedBox(width: 8),
+                        const Spacer(),
                         IconButton(
                           icon: const Icon(Icons.more_vert),
-                          color: Theme.of(context).colorScheme.onSurface,
                           onPressed: () {},
                         ),
-                        const Spacer(),
+                        const SizedBox(width: 12),
                         IconButton(
                           icon: const Icon(Icons.rocket_launch),
                           color: Theme.of(context).colorScheme.onSurface,

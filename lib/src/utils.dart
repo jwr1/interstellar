@@ -1,8 +1,3 @@
-String extractMag(String user) => user.split('@').first;
-
-String extractUser(String user) =>
-    (user.startsWith('@') ? user.substring(1) : user).split('@').first;
-
 String timeDiffFormat(DateTime input) {
   final difference = DateTime.now().difference(input);
 

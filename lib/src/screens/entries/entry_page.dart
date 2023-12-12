@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/entries.dart' as api_entries;
 import 'package:interstellar/src/api/comments.dart' as api_comments;
-import 'package:interstellar/src/entries/entry_comment.dart';
-import 'package:interstellar/src/settings/settings_controller.dart';
+import 'package:interstellar/src/screens/entries/entry_comment.dart';
+import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils.dart';
+import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -48,7 +49,7 @@ class _EntryPageState extends State<EntryPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                widget.item.url != null
+                widget.item.type == 'link' && widget.item.url != null
                     ? InkWell(
                         child: Text(
                           widget.item.title,
@@ -68,22 +69,15 @@ class _EntryPageState extends State<EntryPage> {
                 const SizedBox(height: 10),
                 Row(
                   children: [
-                    Text(
-                      extractMag(widget.item.magazine.name),
-                      style: const TextStyle(
-                        fontSize: 15,
+                    DisplayName(widget.item.magazine.name),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Text(
+                        timeDiffFormat(widget.item.createdAt),
+                        style: const TextStyle(fontWeight: FontWeight.w300),
                       ),
                     ),
-                    Text(
-                      '  ${timeDiffFormat(widget.item.createdAt)}  ',
-                      style: const TextStyle(fontWeight: FontWeight.w300),
-                    ),
-                    Text(
-                      extractUser(widget.item.user.username),
-                      style: const TextStyle(
-                        fontSize: 15,
-                      ),
-                    ),
+                    DisplayName(widget.item.user.username),
                   ],
                 ),
                 if (widget.item.body != null && widget.item.body!.isNotEmpty)
@@ -93,17 +87,15 @@ class _EntryPageState extends State<EntryPage> {
                 const SizedBox(height: 10),
                 Row(
                   children: <Widget>[
-                    IconButton(
-                      icon: const Icon(Icons.comment),
-                      onPressed: () {},
-                    ),
+                    const Icon(Icons.comment),
+                    const SizedBox(width: 4),
                     Text(widget.item.numComments.toString()),
-                    const SizedBox(width: 8),
+                    const Spacer(),
                     IconButton(
                       icon: const Icon(Icons.more_vert),
                       onPressed: () {},
                     ),
-                    const Spacer(),
+                    const SizedBox(width: 12),
                     IconButton(
                       icon: const Icon(Icons.rocket_launch),
                       onPressed: () {},
@@ -125,11 +117,14 @@ class _EntryPageState extends State<EntryPage> {
                     future: comments,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                        return Column(
-                          children: snapshot.data!.items
-                              .map((subComment) =>
-                                  EntryComment(comment: subComment))
-                              .toList(),
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: Column(
+                            children: snapshot.data!.items
+                                .map((subComment) =>
+                                    EntryComment(comment: subComment))
+                                .toList(),
+                          ),
                         );
                       }
 
