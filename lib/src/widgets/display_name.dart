@@ -30,7 +30,7 @@ class DisplayName extends StatelessWidget {
             message: hostName,
             triggerMode: TooltipTriggerMode.tap,
             child: const Padding(
-              padding: EdgeInsets.all(3.0),
+              padding: EdgeInsets.fromLTRB(2, 3, 3, 3),
               child: Text('@'),
             ),
           ),

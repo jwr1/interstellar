@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/api/content_sources.dart';
 import 'package:interstellar/src/api/users.dart' as api_users;
 import 'package:interstellar/src/screens/entries/entries_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
@@ -66,7 +67,7 @@ class _UsersScreenState extends State<UsersScreen> {
                     MaterialPageRoute(
                       builder: (context) => EntriesScreen(
                         title: item.username,
-                        userId: item.userId,
+                        contentSource: ContentUser(item.userId),
                       ),
                     ),
                   );

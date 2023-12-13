@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:interstellar/src/api/content_sources.dart';
 import 'package:interstellar/src/api/entries.dart' as api_entries;
 import 'package:interstellar/src/screens/entries/entries_screen.dart';
 import 'package:interstellar/src/utils.dart';
@@ -19,7 +20,7 @@ class EntryItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         if (item.image?.storageUrl != null)
           isPreview
@@ -68,14 +69,15 @@ class EntryItem extends StatelessWidget {
                         MaterialPageRoute(
                           builder: (context) => EntriesScreen(
                             title: item.magazine.name,
-                            magazineId: item.magazine.magazineId,
+                            contentSource:
+                                ContentMagazine(item.magazine.magazineId),
                           ),
                         ),
                       );
                     },
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Text(
                       timeDiffFormat(item.createdAt),
                       style: const TextStyle(fontWeight: FontWeight.w300),
@@ -88,14 +90,14 @@ class EntryItem extends StatelessWidget {
                         MaterialPageRoute(
                           builder: (context) => EntriesScreen(
                             title: item.user.username,
-                            userId: item.user.userId,
+                            contentSource: ContentUser(item.user.userId),
                           ),
                         ),
                       );
                     },
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: IconButton(
                       tooltip: item.domain.name,
                       onPressed: () {
@@ -103,7 +105,8 @@ class EntryItem extends StatelessWidget {
                           MaterialPageRoute(
                             builder: (context) => EntriesScreen(
                               title: item.domain.name,
-                              domainId: item.domain.domainId,
+                              contentSource:
+                                  ContentDomain(item.domain.domainId),
                             ),
                           ),
                         );

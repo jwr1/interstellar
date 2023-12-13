@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/api/content_sources.dart';
 import 'package:interstellar/src/api/entries.dart' as api_entries;
 import 'package:interstellar/src/screens/entries/entry_item.dart';
 import 'package:interstellar/src/screens/entries/entry_page.dart';
@@ -8,12 +9,10 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class EntriesScreen extends StatefulWidget {
   const EntriesScreen(
-      {super.key, this.title, this.magazineId, this.userId, this.domainId});
+      {super.key, this.contentSource = const ContentAll(), this.title});
 
+  final ContentSource contentSource;
   final String? title;
-  final int? magazineId;
-  final int? userId;
-  final int? domainId;
 
   @override
   State<EntriesScreen> createState() => _EntriesScreenState();
@@ -37,12 +36,11 @@ class _EntriesScreenState extends State<EntriesScreen> {
   Future<void> _fetchPage(int pageKey) async {
     try {
       final newPage = await api_entries.fetchEntries(
-          context.read<SettingsController>().instanceHost,
-          page: pageKey,
-          sort: sort,
-          magazineId: widget.magazineId,
-          userId: widget.userId,
-          domainId: widget.domainId);
+        context.read<SettingsController>().instanceHost,
+        widget.contentSource,
+        page: pageKey,
+        sort: sort,
+      );
 
       final isLastPage =
           newPage.pagination.currentPage == newPage.pagination.maxPage;

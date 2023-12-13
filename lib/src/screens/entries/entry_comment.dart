@@ -21,7 +21,7 @@ class EntryComment extends StatelessWidget {
               children: [
                 DisplayName(comment.user.username),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Text(
                     timeDiffFormat(comment.createdAt),
                     style: const TextStyle(fontWeight: FontWeight.w300),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:interstellar/src/api/content_sources.dart';
 
 import 'shared.dart';
 
@@ -106,24 +107,14 @@ class EntryItem {
 
 enum EntriesSort { active, hot, newest, oldest, top, commented }
 
-Future<Entries> fetchEntries(String instanceHost,
-    {int? page,
-    EntriesSort? sort,
-    int? magazineId,
-    int? userId,
-    int? domainId}) async {
-  String path = '/api/entries';
-
-  if (magazineId != null) {
-    path = '/api/magazine/$magazineId/entries';
-  } else if (userId != null) {
-    path = '/api/users/$userId/entries';
-  } else if (domainId != null) {
-    path = '/api/domain/$domainId/entries';
-  }
-
-  final response = await http.get(Uri.https(
-      instanceHost, path, {'p': page?.toString(), 'sort': sort?.name}));
+Future<Entries> fetchEntries(
+  String instanceHost,
+  ContentSource source, {
+  int? page,
+  EntriesSort? sort,
+}) async {
+  final response = await http.get(Uri.https(instanceHost, source.getPath(),
+      {'p': page?.toString(), 'sort': sort?.name}));
 
   if (response.statusCode == 200) {
     return Entries.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
