@@ -65,6 +65,32 @@ class Magazine {
   }
 }
 
+class Domain {
+  late String name;
+  late int entryCount;
+  late int subscriptionsCount;
+  bool? isUserSubscribed;
+  bool? isBlockedByUser;
+  late int domainId;
+
+  Domain(
+      {required this.name,
+      required this.entryCount,
+      required this.subscriptionsCount,
+      this.isUserSubscribed,
+      this.isBlockedByUser,
+      required this.domainId});
+
+  Domain.fromJson(Map<String, dynamic> json) {
+    name = json['name'];
+    entryCount = json['entryCount'];
+    subscriptionsCount = json['subscriptionsCount'];
+    isUserSubscribed = json['isUserSubscribed'];
+    isBlockedByUser = json['isBlockedByUser'];
+    domainId = json['domainId'];
+  }
+}
+
 class Image {
   late String filePath;
   String? sourceUrl;

@@ -24,7 +24,7 @@ class EntryItem {
   late int entryId;
   late Magazine magazine;
   late User user;
-  late EntryDomain domain;
+  late Domain domain;
   late String title;
   String? url;
   Image? image;
@@ -78,7 +78,7 @@ class EntryItem {
     entryId = json['entryId'];
     magazine = Magazine.fromJson(json['magazine']);
     user = User.fromJson(json['user']);
-    domain = EntryDomain.fromJson(json['domain']);
+    domain = Domain.fromJson(json['domain']);
     title = json['title'];
     url = json['url'];
     image = json['image'] != null ? Image.fromJson(json['image']) : null;
@@ -104,38 +104,24 @@ class EntryItem {
   }
 }
 
-class EntryDomain {
-  late String name;
-  late int entryCount;
-  late int subscriptionsCount;
-  bool? isUserSubscribed;
-  bool? isBlockedByUser;
-  late int domainId;
-
-  EntryDomain(
-      {required this.name,
-      required this.entryCount,
-      required this.subscriptionsCount,
-      this.isUserSubscribed,
-      this.isBlockedByUser,
-      required this.domainId});
-
-  EntryDomain.fromJson(Map<String, dynamic> json) {
-    name = json['name'];
-    entryCount = json['entryCount'];
-    subscriptionsCount = json['subscriptionsCount'];
-    isUserSubscribed = json['isUserSubscribed'];
-    isBlockedByUser = json['isBlockedByUser'];
-    domainId = json['domainId'];
-  }
-}
-
 enum EntriesSort { active, hot, newest, oldest, top, commented }
 
 Future<Entries> fetchEntries(String instanceHost,
-    {int? page, EntriesSort? sort, int? magazineID}) async {
-  String path =
-      '/api${magazineID != null ? '/magazine/$magazineID' : ''}/entries';
+    {int? page,
+    EntriesSort? sort,
+    int? magazineId,
+    int? userId,
+    int? domainId}) async {
+  String path = '/api/entries';
+
+  if (magazineId != null) {
+    path = '/api/magazine/$magazineId/entries';
+  } else if (userId != null) {
+    path = '/api/users/$userId/entries';
+  } else if (domainId != null) {
+    path = '/api/domain/$domainId/entries';
+  }
+
   final response = await http.get(Uri.https(
       instanceHost, path, {'p': page?.toString(), 'sort': sort?.name}));
 

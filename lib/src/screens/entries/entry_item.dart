@@ -1,152 +1,165 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:interstellar/src/api/entries.dart' as api_entries;
 import 'package:interstellar/src/screens/entries/entries_screen.dart';
-import 'package:interstellar/src/screens/entries/entry_page.dart';
 import 'package:interstellar/src/utils.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class EntryCard extends StatelessWidget {
-  const EntryCard({
+class EntryItem extends StatelessWidget {
+  const EntryItem(
+    this.item, {
     super.key,
-    required this.item,
+    this.isPreview = false,
   });
 
   final api_entries.EntryItem item;
+  final bool isPreview;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Card(
-        color: Theme.of(context).colorScheme.surface,
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-        child: InkWell(
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => EntryPage(
-                  item: item,
-                ),
-              ),
-            );
-          },
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              if (item.image?.storageUrl != null)
-                Image.network(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        if (item.image?.storageUrl != null)
+          isPreview
+              ? Image.network(
                   item.image!.storageUrl,
                   height: 160,
                   width: double.infinity,
                   fit: BoxFit.cover,
-                ),
-              Container(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    item.type == 'link' && item.url != null
-                        ? InkWell(
-                            child: Text(
-                              item.title,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge!
-                                  .apply(decoration: TextDecoration.underline),
-                            ),
-                            onTap: () {
-                              launchUrl(Uri.parse(item.url!));
-                            },
-                          )
-                        : Text(
-                            item.title,
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        DisplayName(
-                          item.magazine.name,
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => EntriesScreen(
-                                  title: item.magazine.name,
-                                  magazineID: item.magazine.magazineId,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          child: Text(
-                            timeDiffFormat(item.createdAt),
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.onSurface,
-                                fontWeight: FontWeight.w300),
-                          ),
-                        ),
-                        DisplayName(
-                          item.user.username,
-                          onTap: () {},
-                        ),
-                      ],
+                )
+              : Container(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height / 2,
+                  ),
+                  child: Image.network(
+                    item.image!.storageUrl,
+                  )),
+        Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              item.type == 'link' && item.url != null
+                  ? InkWell(
+                      child: Text(
+                        item.title,
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge!
+                            .apply(decoration: TextDecoration.underline),
+                      ),
+                      onTap: () {
+                        launchUrl(Uri.parse(item.url!));
+                      },
+                    )
+                  : Text(
+                      item.title,
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
-                    if (item.body != null && item.body!.isNotEmpty)
-                      const SizedBox(height: 10),
-                    if (item.body != null && item.body!.isNotEmpty)
-                      Text(
-                        item.body ?? '',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w300,
-                          color: Theme.of(context).colorScheme.onSurface,
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  DisplayName(
+                    item.magazine.name,
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => EntriesScreen(
+                            title: item.magazine.name,
+                            magazineId: item.magazine.magazineId,
+                          ),
                         ),
+                      );
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Text(
+                      timeDiffFormat(item.createdAt),
+                      style: const TextStyle(fontWeight: FontWeight.w300),
+                    ),
+                  ),
+                  DisplayName(
+                    item.user.username,
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => EntriesScreen(
+                            title: item.user.username,
+                            userId: item.user.userId,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: IconButton(
+                      tooltip: item.domain.name,
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => EntriesScreen(
+                              title: item.domain.name,
+                              domainId: item.domain.domainId,
+                            ),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.public),
+                      iconSize: 16,
+                      style: const ButtonStyle(
+                          minimumSize:
+                              MaterialStatePropertyAll(Size.fromRadius(16))),
+                    ),
+                  ),
+                ],
+              ),
+              if (item.body != null && item.body!.isNotEmpty)
+                const SizedBox(height: 10),
+              if (item.body != null && item.body!.isNotEmpty)
+                isPreview
+                    ? Text(
+                        item.body!,
                         maxLines: 4,
                         overflow: TextOverflow.ellipsis,
-                      ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: <Widget>[
-                        const Icon(Icons.comment),
-                        const SizedBox(width: 4),
-                        Text(intFormat(item.numComments)),
-                        const Spacer(),
-                        IconButton(
-                          icon: const Icon(Icons.more_vert),
-                          onPressed: () {},
-                        ),
-                        const SizedBox(width: 12),
-                        IconButton(
-                          icon: const Icon(Icons.rocket_launch),
-                          color: Theme.of(context).colorScheme.onSurface,
-                          onPressed: () {},
-                        ),
-                        Text(intFormat(item.uv)),
-                        const SizedBox(width: 12),
-                        IconButton(
-                          icon: const Icon(Icons.arrow_upward),
-                          color: Theme.of(context).colorScheme.onSurface,
-                          onPressed: () {},
-                        ),
-                        Text(intFormat(item.favourites - item.dv)),
-                        IconButton(
-                          icon: const Icon(Icons.arrow_downward),
-                          color: Theme.of(context).colorScheme.onSurface,
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                      )
+                    : MarkdownBody(data: item.body!),
+              const SizedBox(height: 10),
+              Row(
+                children: <Widget>[
+                  const Icon(Icons.comment),
+                  const SizedBox(width: 4),
+                  Text(intFormat(item.numComments)),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.more_vert),
+                    onPressed: () {},
+                  ),
+                  const SizedBox(width: 12),
+                  IconButton(
+                    icon: const Icon(Icons.rocket_launch),
+                    onPressed: () {},
+                  ),
+                  Text(intFormat(item.uv)),
+                  const SizedBox(width: 12),
+                  IconButton(
+                    icon: const Icon(Icons.arrow_upward),
+                    onPressed: () {},
+                  ),
+                  Text(intFormat(item.favourites - item.dv)),
+                  IconButton(
+                    icon: const Icon(Icons.arrow_downward),
+                    onPressed: () {},
+                  ),
+                ],
               ),
-              const SizedBox(height: 5),
             ],
           ),
         ),
-      ),
+      ],
     );
   }
 }

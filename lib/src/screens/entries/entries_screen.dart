@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/entries.dart' as api_entries;
 import 'package:interstellar/src/screens/entries/entry_item.dart';
+import 'package:interstellar/src/screens/entries/entry_page.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class EntriesScreen extends StatefulWidget {
-  const EntriesScreen({super.key, this.title, this.magazineID});
+  const EntriesScreen(
+      {super.key, this.title, this.magazineId, this.userId, this.domainId});
 
   final String? title;
-  final int? magazineID;
+  final int? magazineId;
+  final int? userId;
+  final int? domainId;
 
   @override
   State<EntriesScreen> createState() => _EntriesScreenState();
@@ -17,8 +21,6 @@ class EntriesScreen extends StatefulWidget {
 
 class _EntriesScreenState extends State<EntriesScreen> {
   api_entries.EntriesSort sort = api_entries.EntriesSort.hot;
-
-  late Future<api_entries.Entries> entries;
 
   final PagingController<int, api_entries.EntryItem> _pagingController =
       PagingController(firstPageKey: 1);
@@ -38,7 +40,9 @@ class _EntriesScreenState extends State<EntriesScreen> {
           context.read<SettingsController>().instanceHost,
           page: pageKey,
           sort: sort,
-          magazineID: widget.magazineID);
+          magazineId: widget.magazineId,
+          userId: widget.userId,
+          domainId: widget.domainId);
 
       final isLastPage =
           newPage.pagination.currentPage == newPage.pagination.maxPage;
@@ -116,8 +120,26 @@ class _EntriesScreenState extends State<EntriesScreen> {
                 pagingController: _pagingController,
                 builderDelegate:
                     PagedChildBuilderDelegate<api_entries.EntryItem>(
-                  itemBuilder: (context, item, index) => EntryCard(
-                    item: item,
+                  itemBuilder: (context, item, index) => Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Card(
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => EntryPage(
+                                item: item,
+                              ),
+                            ),
+                          );
+                        },
+                        child: EntryItem(
+                          item,
+                          isPreview: true,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               )

@@ -5,22 +5,22 @@ import 'package:http/http.dart' as http;
 import './shared.dart';
 
 class Magazines {
-  late List<Magazine> items;
+  late List<DetailedMagazine> items;
   late Pagination pagination;
 
   Magazines({required this.items, required this.pagination});
 
   Magazines.fromJson(Map<String, dynamic> json) {
-    items = <Magazine>[];
+    items = <DetailedMagazine>[];
     json['items'].forEach((v) {
-      items.add(Magazine.fromJson(v));
+      items.add(DetailedMagazine.fromJson(v));
     });
 
     pagination = Pagination.fromJson(json['pagination']);
   }
 }
 
-class Magazine {
+class DetailedMagazine {
   late Moderator owner;
   Image? icon;
   late String name;
@@ -41,7 +41,7 @@ class Magazine {
   String? apProfileId;
   late int magazineId;
 
-  Magazine(
+  DetailedMagazine(
       {required this.owner,
       this.icon,
       required this.name,
@@ -62,7 +62,7 @@ class Magazine {
       this.apProfileId,
       required this.magazineId});
 
-  Magazine.fromJson(Map<String, dynamic> json) {
+  DetailedMagazine.fromJson(Map<String, dynamic> json) {
     owner = Moderator.fromJson(json['owner']);
     icon = json['icon'] != null ? Image.fromJson(json['icon']) : null;
     name = json['name'];

@@ -18,7 +18,7 @@ class DisplayName extends StatelessWidget {
         InkWell(
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.all(2.0),
+            padding: const EdgeInsets.all(3.0),
             child: Text(
               localName,
               style: Theme.of(context).textTheme.labelLarge,
@@ -30,7 +30,7 @@ class DisplayName extends StatelessWidget {
             message: hostName,
             triggerMode: TooltipTriggerMode.tap,
             child: const Padding(
-              padding: EdgeInsets.all(2.0),
+              padding: EdgeInsets.all(3.0),
               child: Text('@'),
             ),
           ),

@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/api/magazines.dart' as api_magazines;
+import 'package:interstellar/src/api/domains.dart' as api_domains;
+import 'package:interstellar/src/api/shared.dart' as api_shared;
 import 'package:interstellar/src/screens/entries/entries_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
-class MagazinesScreen extends StatefulWidget {
-  const MagazinesScreen({
+class DomainsScreen extends StatefulWidget {
+  const DomainsScreen({
     super.key,
   });
 
   @override
-  State<MagazinesScreen> createState() => _MagazinesScreenState();
+  State<DomainsScreen> createState() => _DomainsScreenState();
 }
 
-class _MagazinesScreenState extends State<MagazinesScreen> {
-  api_magazines.MagazinesSort sort = api_magazines.MagazinesSort.hot;
+class _DomainsScreenState extends State<DomainsScreen> {
   String search = "";
 
-  final PagingController<int, api_magazines.DetailedMagazine>
-      _pagingController = PagingController(firstPageKey: 1);
+  final PagingController<int, api_shared.Domain> _pagingController =
+      PagingController(firstPageKey: 1);
 
   @override
   void initState() {
@@ -33,10 +33,9 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newPage = await api_magazines.fetchMagazines(
+      final newPage = await api_domains.fetchDomains(
           context.read<SettingsController>().instanceHost,
           page: pageKey,
-          sort: sort,
           search: search.isEmpty ? null : search);
 
       final isLastPage =
@@ -66,32 +65,6 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
               padding: const EdgeInsets.all(12.0),
               child: Row(
                 children: [
-                  DropdownButton<api_magazines.MagazinesSort>(
-                    value: sort,
-                    onChanged: (newSort) {
-                      if (newSort != null) {
-                        setState(() {
-                          sort = newSort;
-                          _pagingController.refresh();
-                        });
-                      }
-                    },
-                    items: const [
-                      DropdownMenuItem(
-                        value: api_magazines.MagazinesSort.hot,
-                        child: Text('Hot'),
-                      ),
-                      DropdownMenuItem(
-                        value: api_magazines.MagazinesSort.active,
-                        child: Text('Active'),
-                      ),
-                      DropdownMenuItem(
-                        value: api_magazines.MagazinesSort.newest,
-                        child: Text('Newest'),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(width: 12),
                   SizedBox(
                     width: 128,
                     child: TextFormField(
@@ -110,17 +83,16 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
               ),
             ),
           ),
-          PagedSliverList<int, api_magazines.DetailedMagazine>(
+          PagedSliverList<int, api_shared.Domain>(
             pagingController: _pagingController,
-            builderDelegate:
-                PagedChildBuilderDelegate<api_magazines.DetailedMagazine>(
+            builderDelegate: PagedChildBuilderDelegate<api_shared.Domain>(
               itemBuilder: (context, item, index) => InkWell(
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => EntriesScreen(
                         title: item.name,
-                        magazineId: item.magazineId,
+                        domainId: item.domainId,
                       ),
                     ),
                   );
@@ -128,15 +100,6 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Row(children: [
-                    if (item.icon?.storageUrl != null)
-                      Image.network(
-                        item.icon!.storageUrl,
-                        width: 32,
-                        height: 32,
-                        fit: BoxFit.contain,
-                      ),
-                    Container(
-                        width: 8 + (item.icon?.storageUrl != null ? 0 : 32)),
                     Expanded(
                         child:
                             Text(item.name, overflow: TextOverflow.ellipsis)),
@@ -145,12 +108,6 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                       width: 4,
                     ),
                     Text(intFormat(item.entryCount)),
-                    const SizedBox(width: 12),
-                    const Icon(Icons.comment),
-                    Container(
-                      width: 4,
-                    ),
-                    Text(intFormat(item.entryCommentCount)),
                     const SizedBox(width: 12),
                     OutlinedButton(
                         onPressed: () {},
