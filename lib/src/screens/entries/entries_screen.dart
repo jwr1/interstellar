@@ -9,10 +9,14 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class EntriesScreen extends StatefulWidget {
   const EntriesScreen(
-      {super.key, this.contentSource = const ContentAll(), this.title});
+      {super.key,
+      this.contentSource = const ContentAll(),
+      this.title = 'Feed',
+      this.details});
 
   final ContentSource contentSource;
-  final String? title;
+  final String title;
+  final Widget? details;
 
   @override
   State<EntriesScreen> createState() => _EntriesScreenState();
@@ -60,7 +64,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget.title ?? 'Feed'),
+          title: Text(widget.title),
         ),
         body: RefreshIndicator(
           onRefresh: () => Future.sync(
