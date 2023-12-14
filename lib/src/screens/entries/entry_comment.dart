@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:interstellar/src/api/comments.dart' as api_comments;
+import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/utils.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 
@@ -19,7 +20,18 @@ class EntryComment extends StatelessWidget {
           children: [
             Row(
               children: [
-                DisplayName(comment.user.username),
+                DisplayName(
+                  comment.user.username,
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => UserScreen(
+                          comment.user.userId,
+                        ),
+                      ),
+                    );
+                  },
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Text(
