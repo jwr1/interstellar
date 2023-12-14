@@ -29,7 +29,7 @@ class Comment {
   Image? image;
   late String body;
   late String lang;
-  late List<String> mentions;
+  List<String>? mentions;
   late int uv;
   late int dv;
   late int favourites;
@@ -54,7 +54,7 @@ class Comment {
       this.image,
       required this.body,
       required this.lang,
-      required this.mentions,
+      this.mentions,
       required this.uv,
       required this.dv,
       required this.favourites,
@@ -77,12 +77,12 @@ class Comment {
     parentId = json['parentId'];
     rootId = json['rootId'];
     image = json['image'] != null ? Image.fromJson(json['image']) : null;
-    body = json['body'];
+    body = json['body'] ?? '';
     lang = json['lang'];
-    mentions = json['mentions'].cast<String>();
-    uv = json['uv'];
-    dv = json['dv'];
-    favourites = json['favourites'];
+    mentions = json['mentions']?.cast<String>();
+    uv = json['uv'] ?? 0;
+    dv = json['dv'] ?? 0;
+    favourites = json['favourites'] ?? 0;
     isFavourited = json['isFavourited'];
     userVote = json['userVote'];
     isAdult = json['isAdult'];
@@ -102,9 +102,18 @@ class Comment {
   }
 }
 
-Future<Comments> fetchComments(String instanceHost, int entryId) async {
-  final response =
-      await http.get(Uri.https(instanceHost, '/api/entry/$entryId/comments'));
+enum CommentsSort { newest, top, hot, active, oldest }
+
+Future<Comments> fetchComments(
+  String instanceHost,
+  int entryId, {
+  int? page,
+  CommentsSort? sort,
+}) async {
+  final response = await http.get(Uri.https(
+      instanceHost,
+      '/api/entry/$entryId/comments',
+      {'p': page?.toString(), 'sortBy': sort?.name}));
 
   if (response.statusCode == 200) {
     return Comments.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
