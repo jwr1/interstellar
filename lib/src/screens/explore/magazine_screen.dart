@@ -60,11 +60,13 @@ class _MagazineScreenState extends State<MagazineScreen> {
                               height: 64,
                             ),
                           ),
-                        Text(
-                          _data!.title,
-                          style: Theme.of(context).textTheme.titleLarge,
+                        Expanded(
+                          child: Text(
+                            _data!.title,
+                            style: Theme.of(context).textTheme.titleLarge,
+                            softWrap: true,
+                          ),
                         ),
-                        const Spacer(),
                         OutlinedButton(
                             onPressed: () {},
                             child: Row(

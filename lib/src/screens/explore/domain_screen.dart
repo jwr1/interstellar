@@ -51,11 +51,13 @@ class _DomainScreenState extends State<DomainScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          _data!.name,
-                          style: Theme.of(context).textTheme.titleLarge,
+                        Expanded(
+                          child: Text(
+                            _data!.name,
+                            style: Theme.of(context).textTheme.titleLarge,
+                            softWrap: true,
+                          ),
                         ),
-                        const Spacer(),
                         OutlinedButton(
                             onPressed: () {},
                             child: Row(

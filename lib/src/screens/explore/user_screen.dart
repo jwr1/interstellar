@@ -61,11 +61,13 @@ class _UserScreenState extends State<UserScreen> {
                               height: 64,
                             ),
                           ),
-                        Text(
-                          _data!.username,
-                          style: Theme.of(context).textTheme.titleLarge,
+                        Expanded(
+                          child: Text(
+                            _data!.username,
+                            style: Theme.of(context).textTheme.titleLarge,
+                            softWrap: true,
+                          ),
                         ),
-                        const Spacer(),
                         OutlinedButton(
                             onPressed: () {},
                             child: Row(
