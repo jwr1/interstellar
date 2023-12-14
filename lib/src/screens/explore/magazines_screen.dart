@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/api/content_sources.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/magazines.dart' as api_magazines;
-import 'package:interstellar/src/screens/entries/entries_screen.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils.dart';
 import 'package:provider/provider.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class MagazinesScreen extends StatefulWidget {
   const MagazinesScreen({

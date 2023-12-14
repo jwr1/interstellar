@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:interstellar/src/api/comments.dart' as api_comments;
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/utils.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
+import 'package:interstellar/src/widgets/markdown.dart';
 
 class EntryComment extends StatelessWidget {
   const EntryComment({super.key, required this.comment});
@@ -43,9 +43,7 @@ class EntryComment extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),
-              child: MarkdownBody(
-                data: comment.body,
-              ),
+              child: Markdown(comment.body),
             ),
             if (comment.childCount > 0)
               Column(

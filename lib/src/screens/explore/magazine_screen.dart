@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:interstellar/src/api/content_sources.dart';
 import 'package:interstellar/src/api/magazines.dart' as api_magazines;
 import 'package:interstellar/src/screens/entries/entries_list.dart';
-import 'package:interstellar/src/screens/entries/entries_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils.dart';
+import 'package:interstellar/src/widgets/markdown.dart';
 import 'package:provider/provider.dart';
 
 class MagazineScreen extends StatefulWidget {
@@ -81,7 +80,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                     if (_data!.description != null)
                       Padding(
                         padding: const EdgeInsets.only(top: 12),
-                        child: MarkdownBody(data: _data!.description!),
+                        child: Markdown(_data!.description!),
                       )
                   ],
                 ),

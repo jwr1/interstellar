@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/content_sources.dart';
 import 'package:interstellar/src/api/entries.dart' as api_entries;
 import 'package:interstellar/src/screens/entries/entry_item.dart';
 import 'package:interstellar/src/screens/entries/entry_page.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:provider/provider.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class EntriesScreen extends StatefulWidget {
   const EntriesScreen(

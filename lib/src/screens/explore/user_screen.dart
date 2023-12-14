@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:interstellar/src/api/content_sources.dart';
 import 'package:interstellar/src/api/users.dart' as api_users;
-import 'package:interstellar/src/api/shared.dart' as api_shared;
 import 'package:interstellar/src/screens/entries/entries_list.dart';
-import 'package:interstellar/src/screens/entries/entries_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils.dart';
+import 'package:interstellar/src/widgets/markdown.dart';
 import 'package:provider/provider.dart';
 
 class UserScreen extends StatefulWidget {
@@ -81,7 +79,7 @@ class _UserScreenState extends State<UserScreen> {
                     if (_data!.about != null)
                       Padding(
                         padding: const EdgeInsets.only(top: 12),
-                        child: MarkdownBody(data: _data!.about!),
+                        child: Markdown(_data!.about!),
                       )
                   ],
                 ),

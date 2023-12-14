@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:interstellar/src/api/entries.dart' as api_entries;
 import 'package:interstellar/src/api/comments.dart' as api_comments;
+import 'package:interstellar/src/api/entries.dart' as api_entries;
 import 'package:interstellar/src/screens/entries/entry_comment.dart';
 import 'package:interstellar/src/screens/entries/entry_item.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';

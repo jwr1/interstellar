@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:interstellar/src/api/content_sources.dart';
 import 'package:interstellar/src/api/domains.dart' as api_domains;
 import 'package:interstellar/src/api/shared.dart' as api_shared;
