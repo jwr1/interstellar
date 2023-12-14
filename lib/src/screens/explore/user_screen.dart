@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:interstellar/src/api/content_sources.dart';
-import 'package:interstellar/src/api/magazines.dart' as api_magazines;
+import 'package:interstellar/src/api/users.dart' as api_users;
+import 'package:interstellar/src/api/shared.dart' as api_shared;
 import 'package:interstellar/src/screens/entries/entries_list.dart';
 import 'package:interstellar/src/screens/entries/entries_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils.dart';
 import 'package:provider/provider.dart';
 
-class MagazineScreen extends StatefulWidget {
-  final int magazineId;
-  final api_magazines.DetailedMagazine? data;
+class UserScreen extends StatefulWidget {
+  final int userId;
+  final api_users.DetailedUser? data;
 
-  const MagazineScreen(this.magazineId, {super.key, this.data});
+  const UserScreen(this.userId, {super.key, this.data});
 
   @override
-  State<MagazineScreen> createState() => _MagazineScreenState();
+  State<UserScreen> createState() => _UserScreenState();
 }
 
-class _MagazineScreenState extends State<MagazineScreen> {
-  api_magazines.DetailedMagazine? _data;
+class _UserScreenState extends State<UserScreen> {
+  api_users.DetailedUser? _data;
 
   @override
   void initState() {
@@ -28,9 +29,9 @@ class _MagazineScreenState extends State<MagazineScreen> {
     _data = widget.data;
 
     if (_data == null) {
-      api_magazines
-          .fetchMagazine(context.read<SettingsController>().instanceHost,
-              widget.magazineId)
+      api_users
+          .fetchUser(
+              context.read<SettingsController>().instanceHost, widget.userId)
           .then((value) => setState(() {
                 _data = value;
               }));
@@ -40,28 +41,28 @@ class _MagazineScreenState extends State<MagazineScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(_data?.name ?? '')),
+      appBar: AppBar(title: Text(_data?.username ?? '')),
       body: EntriesListView(
-        contentSource: ContentMagazine(widget.magazineId),
+        contentSource: ContentUser(widget.userId),
         details: _data != null
             ? Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(12),
                 child: Column(
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        if (_data!.icon?.storageUrl != null)
+                        if (_data!.avatar?.storageUrl != null)
                           Padding(
                             padding: const EdgeInsets.only(right: 12),
                             child: Image.network(
-                              _data!.icon!.storageUrl,
+                              _data!.avatar!.storageUrl,
                               width: 64,
                               height: 64,
                             ),
                           ),
                         Text(
-                          _data!.title,
+                          _data!.username,
                           style: Theme.of(context).textTheme.titleLarge,
                         ),
                         const Spacer(),
@@ -70,16 +71,15 @@ class _MagazineScreenState extends State<MagazineScreen> {
                             child: Row(
                               children: [
                                 const Icon(Icons.group),
-                                Text(
-                                    ' ${intFormat(_data!.subscriptionsCount)}'),
+                                Text(' ${intFormat(_data!.followersCount)}'),
                               ],
                             ))
                       ],
                     ),
-                    if (_data!.description != null)
+                    if (_data!.about != null)
                       Padding(
                         padding: const EdgeInsets.only(top: 12),
-                        child: MarkdownBody(data: _data!.description!),
+                        child: MarkdownBody(data: _data!.about!),
                       )
                   ],
                 ),

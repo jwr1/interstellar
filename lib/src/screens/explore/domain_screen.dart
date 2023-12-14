@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:interstellar/src/api/content_sources.dart';
-import 'package:interstellar/src/api/magazines.dart' as api_magazines;
+import 'package:interstellar/src/api/domains.dart' as api_domains;
+import 'package:interstellar/src/api/shared.dart' as api_shared;
 import 'package:interstellar/src/screens/entries/entries_list.dart';
-import 'package:interstellar/src/screens/entries/entries_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils.dart';
 import 'package:provider/provider.dart';
 
-class MagazineScreen extends StatefulWidget {
-  final int magazineId;
-  final api_magazines.DetailedMagazine? data;
+class DomainScreen extends StatefulWidget {
+  final int domainId;
+  final api_shared.Domain? data;
 
-  const MagazineScreen(this.magazineId, {super.key, this.data});
+  const DomainScreen(this.domainId, {super.key, this.data});
 
   @override
-  State<MagazineScreen> createState() => _MagazineScreenState();
+  State<DomainScreen> createState() => _DomainScreenState();
 }
 
-class _MagazineScreenState extends State<MagazineScreen> {
-  api_magazines.DetailedMagazine? _data;
+class _DomainScreenState extends State<DomainScreen> {
+  api_shared.Domain? _data;
 
   @override
   void initState() {
@@ -28,9 +28,9 @@ class _MagazineScreenState extends State<MagazineScreen> {
     _data = widget.data;
 
     if (_data == null) {
-      api_magazines
-          .fetchMagazine(context.read<SettingsController>().instanceHost,
-              widget.magazineId)
+      api_domains
+          .fetchDomain(
+              context.read<SettingsController>().instanceHost, widget.domainId)
           .then((value) => setState(() {
                 _data = value;
               }));
@@ -42,26 +42,17 @@ class _MagazineScreenState extends State<MagazineScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(_data?.name ?? '')),
       body: EntriesListView(
-        contentSource: ContentMagazine(widget.magazineId),
+        contentSource: ContentDomain(widget.domainId),
         details: _data != null
             ? Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(12),
                 child: Column(
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        if (_data!.icon?.storageUrl != null)
-                          Padding(
-                            padding: const EdgeInsets.only(right: 12),
-                            child: Image.network(
-                              _data!.icon!.storageUrl,
-                              width: 64,
-                              height: 64,
-                            ),
-                          ),
                         Text(
-                          _data!.title,
+                          _data!.name,
                           style: Theme.of(context).textTheme.titleLarge,
                         ),
                         const Spacer(),
@@ -76,11 +67,6 @@ class _MagazineScreenState extends State<MagazineScreen> {
                             ))
                       ],
                     ),
-                    if (_data!.description != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 12),
-                        child: MarkdownBody(data: _data!.description!),
-                      )
                   ],
                 ),
               )

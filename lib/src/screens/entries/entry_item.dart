@@ -3,7 +3,9 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:interstellar/src/api/content_sources.dart';
 import 'package:interstellar/src/api/entries.dart' as api_entries;
 import 'package:interstellar/src/screens/entries/entries_screen.dart';
+import 'package:interstellar/src/screens/explore/domain_screen.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
+import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/utils.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -87,10 +89,7 @@ class EntryItem extends StatelessWidget {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => EntriesScreen(
-                            title: item.user.username,
-                            contentSource: ContentUser(item.user.userId),
-                          ),
+                          builder: (context) => UserScreen(item.user.userId),
                         ),
                       );
                     },
@@ -102,10 +101,9 @@ class EntryItem extends StatelessWidget {
                       onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => EntriesScreen(
-                              title: item.domain.name,
-                              contentSource:
-                                  ContentDomain(item.domain.domainId),
+                            builder: (context) => DomainScreen(
+                              item.domain.domainId,
+                              data: item.domain,
                             ),
                           ),
                         );

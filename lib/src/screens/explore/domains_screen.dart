@@ -3,6 +3,7 @@ import 'package:interstellar/src/api/content_sources.dart';
 import 'package:interstellar/src/api/domains.dart' as api_domains;
 import 'package:interstellar/src/api/shared.dart' as api_shared;
 import 'package:interstellar/src/screens/entries/entries_screen.dart';
+import 'package:interstellar/src/screens/explore/domain_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils.dart';
 import 'package:provider/provider.dart';
@@ -91,9 +92,9 @@ class _DomainsScreenState extends State<DomainsScreen> {
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => EntriesScreen(
-                        title: item.name,
-                        contentSource: ContentDomain(item.domainId),
+                      builder: (context) => DomainScreen(
+                        item.domainId,
+                        data: item,
                       ),
                     ),
                   );

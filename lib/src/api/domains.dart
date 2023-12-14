@@ -31,3 +31,14 @@ Future<Domains> fetchDomains(String instanceHost,
     throw Exception('Failed to load domains');
   }
 }
+
+Future<Domain> fetchDomain(String instanceHost, int domainId) async {
+  final response =
+      await http.get(Uri.https(instanceHost, '/api/domain/$domainId'));
+
+  if (response.statusCode == 200) {
+    return Domain.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  } else {
+    throw Exception('Failed to load domain');
+  }
+}

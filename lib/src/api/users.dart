@@ -25,7 +25,7 @@ class DetailedUser {
   Image? cover;
   late String username;
   late int followersCount;
-  late String about;
+  String? about;
   late DateTime createdAt;
   String? apProfileId;
   String? apId;
@@ -40,7 +40,7 @@ class DetailedUser {
       this.cover,
       required this.username,
       required this.followersCount,
-      required this.about,
+      this.about,
       required this.createdAt,
       this.apProfileId,
       this.apId,
@@ -75,5 +75,17 @@ Future<Users> fetchUsers(String instanceHost, {int? page}) async {
     return Users.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
   } else {
     throw Exception('Failed to load magazines');
+  }
+}
+
+Future<DetailedUser> fetchUser(String instanceHost, int userId) async {
+  final response =
+      await http.get(Uri.https(instanceHost, '/api/users/$userId'));
+  print(Uri.https(instanceHost, '/api/users/$userId'));
+  if (response.statusCode == 200) {
+    return DetailedUser.fromJson(
+        jsonDecode(response.body) as Map<String, dynamic>);
+  } else {
+    throw Exception('Failed to load user');
   }
 }
