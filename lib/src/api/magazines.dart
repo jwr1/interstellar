@@ -127,3 +127,16 @@ Future<Magazines> fetchMagazines(String instanceHost,
     throw Exception('Failed to load magazines');
   }
 }
+
+Future<DetailedMagazine> fetchMagazine(
+    String instanceHost, int magazineId) async {
+  final response =
+      await http.get(Uri.https(instanceHost, '/api/magazine/$magazineId'));
+
+  if (response.statusCode == 200) {
+    return DetailedMagazine.fromJson(
+        jsonDecode(response.body) as Map<String, dynamic>);
+  } else {
+    throw Exception('Failed to load magazine');
+  }
+}

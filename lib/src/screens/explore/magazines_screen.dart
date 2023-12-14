@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/content_sources.dart';
 import 'package:interstellar/src/api/magazines.dart' as api_magazines;
 import 'package:interstellar/src/screens/entries/entries_screen.dart';
+import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils.dart';
 import 'package:provider/provider.dart';
@@ -119,10 +120,8 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => EntriesScreen(
-                        title: item.name,
-                        contentSource: ContentMagazine(item.magazineId),
-                      ),
+                      builder: (context) =>
+                          MagazineScreen(item.magazineId, data: item),
                     ),
                   );
                 },

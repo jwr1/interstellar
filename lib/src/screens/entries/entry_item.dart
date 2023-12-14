@@ -3,6 +3,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:interstellar/src/api/content_sources.dart';
 import 'package:interstellar/src/api/entries.dart' as api_entries;
 import 'package:interstellar/src/screens/entries/entries_screen.dart';
+import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/utils.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -67,10 +68,8 @@ class EntryItem extends StatelessWidget {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => EntriesScreen(
-                            title: item.magazine.name,
-                            contentSource:
-                                ContentMagazine(item.magazine.magazineId),
+                          builder: (context) => MagazineScreen(
+                            item.magazine.magazineId,
                           ),
                         ),
                       );
