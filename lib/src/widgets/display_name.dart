@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/widgets/avatar.dart';
 
 class DisplayName extends StatelessWidget {
-  const DisplayName(this.name, {super.key, this.onTap});
+  const DisplayName(this.name, {super.key, this.icon, this.onTap});
 
   final String name;
+  final String? icon;
   final void Function()? onTap;
 
   @override
@@ -15,6 +17,10 @@ class DisplayName extends StatelessWidget {
 
     return Row(
       children: [
+        if (icon != null)
+          Padding(
+              padding: const EdgeInsets.only(right: 3),
+              child: Avatar(icon!, radius: 14)),
         InkWell(
           onTap: onTap,
           child: Padding(

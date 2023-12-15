@@ -46,9 +46,9 @@ class _DomainScreenState extends State<DomainScreen> {
             ? Padding(
                 padding: const EdgeInsets.all(12),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(
                           child: Text(

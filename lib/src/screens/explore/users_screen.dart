@@ -4,6 +4,7 @@ import 'package:interstellar/src/api/users.dart' as api_users;
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils.dart';
+import 'package:interstellar/src/widgets/avatar.dart';
 import 'package:provider/provider.dart';
 
 class UsersScreen extends StatefulWidget {
@@ -75,11 +76,9 @@ class _UsersScreenState extends State<UsersScreen> {
                   padding: const EdgeInsets.all(12.0),
                   child: Row(children: [
                     if (item.avatar?.storageUrl != null)
-                      Image.network(
+                      Avatar(
                         item.avatar!.storageUrl,
-                        width: 32,
-                        height: 32,
-                        fit: BoxFit.contain,
+                        radius: 16,
                       ),
                     Container(
                         width: 8 + (item.avatar?.storageUrl != null ? 0 : 32)),

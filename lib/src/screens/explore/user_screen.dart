@@ -4,6 +4,7 @@ import 'package:interstellar/src/api/users.dart' as api_users;
 import 'package:interstellar/src/screens/entries/entries_list.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils.dart';
+import 'package:interstellar/src/widgets/avatar.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
 import 'package:provider/provider.dart';
 
@@ -46,19 +47,15 @@ class _UserScreenState extends State<UserScreen> {
             ? Padding(
                 padding: const EdgeInsets.all(12),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         if (_data!.avatar?.storageUrl != null)
                           Padding(
-                            padding: const EdgeInsets.only(right: 12),
-                            child: Image.network(
-                              _data!.avatar!.storageUrl,
-                              width: 64,
-                              height: 64,
-                            ),
-                          ),
+                              padding: const EdgeInsets.only(right: 12),
+                              child: Avatar(_data!.avatar!.storageUrl,
+                                  radius: 32)),
                         Expanded(
                           child: Text(
                             _data!.username,

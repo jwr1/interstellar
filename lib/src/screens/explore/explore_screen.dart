@@ -9,7 +9,7 @@ class ExploreScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Explore'),
@@ -18,10 +18,10 @@ class ExploreScreen extends StatelessWidget {
               text: 'Magazines',
               icon: Icon(Icons.article),
             ),
-            Tab(
-              text: 'Collections',
-              icon: Icon(Icons.newspaper),
-            ),
+            // Tab(
+            //   text: 'Collections',
+            //   icon: Icon(Icons.newspaper),
+            // ),
             Tab(
               text: 'People',
               icon: Icon(Icons.account_circle),
@@ -34,7 +34,7 @@ class ExploreScreen extends StatelessWidget {
         ),
         body: const TabBarView(children: [
           MagazinesScreen(),
-          Placeholder(),
+          // Placeholder(),
           UsersScreen(),
           DomainsScreen()
         ]),

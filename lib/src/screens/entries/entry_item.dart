@@ -65,6 +65,7 @@ class EntryItem extends StatelessWidget {
                 children: [
                   DisplayName(
                     item.magazine.name,
+                    icon: item.magazine.icon?.storageUrl,
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(

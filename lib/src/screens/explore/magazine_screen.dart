@@ -4,6 +4,7 @@ import 'package:interstellar/src/api/magazines.dart' as api_magazines;
 import 'package:interstellar/src/screens/entries/entries_list.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils.dart';
+import 'package:interstellar/src/widgets/avatar.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
 import 'package:provider/provider.dart';
 
@@ -44,21 +45,17 @@ class _MagazineScreenState extends State<MagazineScreen> {
         contentSource: ContentMagazine(widget.magazineId),
         details: _data != null
             ? Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(12),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         if (_data!.icon?.storageUrl != null)
                           Padding(
-                            padding: const EdgeInsets.only(right: 12),
-                            child: Image.network(
-                              _data!.icon!.storageUrl,
-                              width: 64,
-                              height: 64,
-                            ),
-                          ),
+                              padding: const EdgeInsets.only(right: 12),
+                              child:
+                                  Avatar(_data!.icon!.storageUrl, radius: 32)),
                         Expanded(
                           child: Text(
                             _data!.title,

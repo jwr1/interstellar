@@ -4,6 +4,7 @@ import 'package:interstellar/src/api/magazines.dart' as api_magazines;
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils.dart';
+import 'package:interstellar/src/widgets/avatar.dart';
 import 'package:provider/provider.dart';
 
 class MagazinesScreen extends StatefulWidget {
@@ -127,12 +128,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                   padding: const EdgeInsets.all(12.0),
                   child: Row(children: [
                     if (item.icon?.storageUrl != null)
-                      Image.network(
-                        item.icon!.storageUrl,
-                        width: 32,
-                        height: 32,
-                        fit: BoxFit.contain,
-                      ),
+                      Avatar(item.icon!.storageUrl, radius: 16),
                     Container(
                         width: 8 + (item.icon?.storageUrl != null ? 0 : 32)),
                     Expanded(
