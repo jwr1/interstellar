@@ -14,7 +14,7 @@ class EntryComment extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(8, 8, 0, 0),
+        padding: const EdgeInsets.fromLTRB(8, 8, 0, 1),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -61,12 +61,12 @@ class EntryComment extends StatelessWidget {
                   onPressed: () {},
                 ),
                 const SizedBox(
-                  width: 4,
+                  width: 6,
                 )
               ],
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.only(top: 6, bottom: 12),
               child: Markdown(comment.body),
             ),
             if (comment.childCount > 0)
