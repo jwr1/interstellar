@@ -47,7 +47,6 @@ class _EntryPageState extends State<EntryPage> {
         _pagingController.appendPage(newPage.items, nextPageKey);
       }
     } catch (error) {
-      print(error);
       _pagingController.error = error;
     }
   }

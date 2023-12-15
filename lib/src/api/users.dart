@@ -81,7 +81,7 @@ Future<Users> fetchUsers(String instanceHost, {int? page}) async {
 Future<DetailedUser> fetchUser(String instanceHost, int userId) async {
   final response =
       await http.get(Uri.https(instanceHost, '/api/users/$userId'));
-  print(Uri.https(instanceHost, '/api/users/$userId'));
+
   if (response.statusCode == 200) {
     return DetailedUser.fromJson(
         jsonDecode(response.body) as Map<String, dynamic>);
