@@ -9,6 +9,27 @@ class ContentAll implements ContentSource {
   String getPath() => '/api/entries';
 }
 
+class ContentSub implements ContentSource {
+  const ContentSub();
+
+  @override
+  String getPath() => '/api/entries/subscribed';
+}
+
+class ContentMod implements ContentSource {
+  const ContentMod();
+
+  @override
+  String getPath() => '/api/entries/moderated';
+}
+
+class ContentFav implements ContentSource {
+  const ContentFav();
+
+  @override
+  String getPath() => '/api/entries/favourited';
+}
+
 class ContentMagazine implements ContentSource {
   final int id;
 

@@ -63,5 +63,5 @@ void httpErrorHandler(http.Response response, {String? message}) {
   }
 }
 
-T? whenLoggedIn<T>(BuildContext context, T value) =>
-    context.read<SettingsController>().isLoggedIn ? value : null;
+T? whenLoggedIn<T>(BuildContext context, T value, {T? otherwise}) =>
+    context.read<SettingsController>().isLoggedIn ? value : otherwise;
