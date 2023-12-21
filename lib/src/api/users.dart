@@ -89,3 +89,14 @@ Future<DetailedUser> fetchUser(String instanceHost, int userId) async {
     throw Exception('Failed to load user');
   }
 }
+
+Future<DetailedUser> fetchMe(http.Client client, String instanceHost) async {
+  final response = await client.get(Uri.https(instanceHost, '/api/users/me'));
+
+  if (response.statusCode == 200) {
+    return DetailedUser.fromJson(
+        jsonDecode(response.body) as Map<String, dynamic>);
+  } else {
+    throw Exception('Failed to load user');
+  }
+}

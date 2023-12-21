@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 var intF = NumberFormat.compact();
@@ -40,4 +43,19 @@ String timeDiffFormat(DateTime input) {
 
   var seconds = difference.inSeconds;
   return "${seconds}s";
+}
+
+void httpErrorHandler(http.Response response, {String? message}) {
+  if (response.statusCode >= 400) {
+    String? errorDetails;
+
+    try {
+      errorDetails = jsonDecode(response.body)['detail'];
+    } catch (e) {
+      // No error details provided
+    }
+
+    throw Exception(
+        '${message != null ? '$message: ' : ''}${response.statusCode}${errorDetails != null ? ' $errorDetails' : ''}');
+  }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/comments.dart' as api_comments;
 import 'package:interstellar/src/screens/explore/user_screen.dart';
-import 'package:interstellar/src/utils.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
 

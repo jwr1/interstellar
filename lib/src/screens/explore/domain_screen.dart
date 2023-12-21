@@ -4,7 +4,7 @@ import 'package:interstellar/src/api/domains.dart' as api_domains;
 import 'package:interstellar/src/api/shared.dart' as api_shared;
 import 'package:interstellar/src/screens/entries/entries_list.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
-import 'package:interstellar/src/utils.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class DomainScreen extends StatefulWidget {
