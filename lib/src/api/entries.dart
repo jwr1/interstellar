@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:interstellar/src/api/content_sources.dart';
+import 'package:interstellar/src/utils/utils.dart';
 
 import 'shared.dart';
 
@@ -108,17 +109,47 @@ class EntryItem {
 enum EntriesSort { active, hot, newest, oldest, top, commented }
 
 Future<Entries> fetchEntries(
+  http.Client client,
   String instanceHost,
   ContentSource source, {
   int? page,
   EntriesSort? sort,
 }) async {
-  final response = await http.get(Uri.https(instanceHost, source.getPath(),
+  final response = await client.get(Uri.https(instanceHost, source.getPath(),
       {'p': page?.toString(), 'sort': sort?.name}));
 
-  if (response.statusCode == 200) {
-    return Entries.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
-  } else {
-    throw Exception('Failed to load entries');
-  }
+  httpErrorHandler(response, message: 'Failed to load entries');
+
+  return Entries.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+}
+
+Future<EntryItem> putVote(
+  http.Client client,
+  String instanceHost,
+  int entryId,
+  int choice,
+) async {
+  final response = await client.put(Uri.https(
+    instanceHost,
+    '/api/entry/$entryId/vote/$choice',
+  ));
+
+  httpErrorHandler(response, message: 'Failed to send vote');
+
+  return EntryItem.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+}
+
+Future<EntryItem> putFavorite(
+  http.Client client,
+  String instanceHost,
+  int entryId,
+) async {
+  final response = await client.put(Uri.https(
+    instanceHost,
+    '/api/entry/$entryId/favourite',
+  ));
+
+  httpErrorHandler(response, message: 'Failed to send vote');
+
+  return EntryItem.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
 }

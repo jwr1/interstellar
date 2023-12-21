@@ -19,6 +19,7 @@ class SettingsController with ChangeNotifier {
   Map<String, oauth2.Credentials?> get oauthCredentials => _oauthCredentials;
   String get selectedAccount => _selectedAccount;
   String get instanceHost => _selectedAccount.split('@').last;
+  bool get isLoggedIn => _selectedAccount.split('@').first.isNotEmpty;
   http.Client get httpClient => _httpClient;
 
   Future<void> loadSettings() async {

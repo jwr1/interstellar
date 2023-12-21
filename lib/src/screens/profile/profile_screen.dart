@@ -12,21 +12,13 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  bool? _loggedIn;
   api_users.DetailedUser? _meUser;
 
   @override
   void initState() {
     super.initState();
 
-    _loggedIn = context
-        .read<SettingsController>()
-        .selectedAccount
-        .split('@')
-        .first
-        .isNotEmpty;
-
-    if (_loggedIn!) {
+    if (context.read<SettingsController>().isLoggedIn) {
       api_users
           .fetchMe(context.read<SettingsController>().httpClient,
               context.read<SettingsController>().instanceHost)
@@ -38,9 +30,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return _loggedIn == null || (_loggedIn == true && _meUser == null)
+    return (context.read<SettingsController>().isLoggedIn && _meUser == null)
         ? const Center(child: CircularProgressIndicator())
-        : (_loggedIn!
+        : (context.read<SettingsController>().isLoggedIn
             ? UserScreen(
                 _meUser!.userId,
                 data: _meUser,

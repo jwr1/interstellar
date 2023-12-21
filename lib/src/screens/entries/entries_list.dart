@@ -39,6 +39,7 @@ class _EntriesListViewState extends State<EntriesListView> {
   Future<void> _fetchPage(int pageKey) async {
     try {
       final newPage = await api_entries.fetchEntries(
+        context.read<SettingsController>().httpClient,
         context.read<SettingsController>().instanceHost,
         widget.contentSource,
         page: pageKey,
@@ -128,14 +129,25 @@ class _EntriesListViewState extends State<EntriesListView> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => EntryPage(
-                            item: item,
-                          ),
+                          builder: (context) => EntryPage(item, (newValue) {
+                            var newList = _pagingController.itemList;
+                            newList![index] = newValue;
+                            setState(() {
+                              _pagingController.itemList = newList;
+                            });
+                          }),
                         ),
                       );
                     },
                     child: EntryItem(
                       item,
+                      (newValue) {
+                        var newList = _pagingController.itemList;
+                        newList![index] = newValue;
+                        setState(() {
+                          _pagingController.itemList = newList;
+                        });
+                      },
                       isPreview: true,
                     ),
                   ),

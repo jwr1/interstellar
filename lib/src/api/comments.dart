@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:interstellar/src/utils/utils.dart';
 
 import 'shared.dart';
 
@@ -106,12 +107,13 @@ class Comment {
 enum CommentsSort { newest, top, hot, active, oldest }
 
 Future<Comments> fetchComments(
+  http.Client client,
   String instanceHost,
   int entryId, {
   int? page,
   CommentsSort? sort,
 }) async {
-  final response = await http.get(Uri.https(
+  final response = await client.get(Uri.https(
       instanceHost,
       '/api/entry/$entryId/comments',
       {'p': page?.toString(), 'sortBy': sort?.name}));
@@ -121,4 +123,35 @@ Future<Comments> fetchComments(
   } else {
     throw Exception('Failed to load comments');
   }
+}
+
+Future<Comment> putVote(
+  http.Client client,
+  String instanceHost,
+  int commentId,
+  int choice,
+) async {
+  final response = await client.put(Uri.https(
+    instanceHost,
+    '/api/comments/$commentId/vote/$choice',
+  ));
+
+  httpErrorHandler(response, message: 'Failed to send vote');
+
+  return Comment.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+}
+
+Future<Comment> putFavorite(
+  http.Client client,
+  String instanceHost,
+  int commentId,
+) async {
+  final response = await client.put(Uri.https(
+    instanceHost,
+    '/api/comments/$commentId/favourite',
+  ));
+
+  httpErrorHandler(response, message: 'Failed to send vote');
+
+  return Comment.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
 }

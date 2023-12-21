@@ -1,7 +1,10 @@
 import 'dart:convert';
 
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 var intF = NumberFormat.compact();
 String intFormat(int input) {
@@ -59,3 +62,6 @@ void httpErrorHandler(http.Response response, {String? message}) {
         '${message != null ? '$message: ' : ''}${response.statusCode}${errorDetails != null ? ' $errorDetails' : ''}');
   }
 }
+
+T? whenLoggedIn<T>(BuildContext context, T value) =>
+    context.read<SettingsController>().isLoggedIn ? value : null;

@@ -8,9 +8,14 @@ import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:provider/provider.dart';
 
 class EntryPage extends StatefulWidget {
-  const EntryPage({super.key, required this.item});
+  const EntryPage(
+    this.item,
+    this.onUpdate, {
+    super.key,
+  });
 
   final api_entries.EntryItem item;
+  final void Function(api_entries.EntryItem) onUpdate;
 
   @override
   State<EntryPage> createState() => _EntryPageState();
@@ -34,8 +39,12 @@ class _EntryPageState extends State<EntryPage> {
   Future<void> _fetchPage(int pageKey) async {
     try {
       final newPage = await api_comments.fetchComments(
-          context.read<SettingsController>().instanceHost, widget.item.entryId,
-          page: pageKey, sort: commentsSort);
+        context.read<SettingsController>().httpClient,
+        context.read<SettingsController>().instanceHost,
+        widget.item.entryId,
+        page: pageKey,
+        sort: commentsSort,
+      );
 
       final isLastPage =
           newPage.pagination.currentPage == newPage.pagination.maxPage;
@@ -64,7 +73,7 @@ class _EntryPageState extends State<EntryPage> {
         child: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
-              child: EntryItem(widget.item),
+              child: EntryItem(widget.item, widget.onUpdate),
             ),
             SliverToBoxAdapter(
               child: Padding(
@@ -113,7 +122,13 @@ class _EntryPageState extends State<EntryPage> {
               builderDelegate: PagedChildBuilderDelegate<api_comments.Comment>(
                 itemBuilder: (context, item, index) => Padding(
                   padding: const EdgeInsets.all(8),
-                  child: EntryComment(comment: item),
+                  child: EntryComment(item, (newValue) {
+                    var newList = _pagingController.itemList;
+                    newList![index] = newValue;
+                    setState(() {
+                      _pagingController.itemList = newList;
+                    });
+                  }),
                 ),
               ),
             )

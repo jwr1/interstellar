@@ -3,19 +3,23 @@ import 'package:interstellar/src/api/entries.dart' as api_entries;
 import 'package:interstellar/src/screens/explore/domain_screen.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
+import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EntryItem extends StatelessWidget {
   const EntryItem(
-    this.item, {
+    this.item,
+    this.onUpdate, {
     super.key,
     this.isPreview = false,
   });
 
   final api_entries.EntryItem item;
+  final void Function(api_entries.EntryItem) onUpdate;
   final bool isPreview;
 
   @override
@@ -140,18 +144,43 @@ class EntryItem extends StatelessWidget {
                   const SizedBox(width: 12),
                   IconButton(
                     icon: const Icon(Icons.rocket_launch),
-                    onPressed: () {},
+                    color: item.userVote == 1 ? Colors.purple.shade400 : null,
+                    onPressed: whenLoggedIn(context, () async {
+                      onUpdate(await api_entries.putVote(
+                        context.read<SettingsController>().httpClient,
+                        context.read<SettingsController>().instanceHost,
+                        item.entryId,
+                        1,
+                      ));
+                    }),
                   ),
                   Text(intFormat(item.uv)),
                   const SizedBox(width: 12),
                   IconButton(
                     icon: const Icon(Icons.arrow_upward),
-                    onPressed: () {},
+                    color: item.isFavourited == true
+                        ? Colors.green.shade400
+                        : null,
+                    onPressed: whenLoggedIn(context, () async {
+                      onUpdate(await api_entries.putFavorite(
+                        context.read<SettingsController>().httpClient,
+                        context.read<SettingsController>().instanceHost,
+                        item.entryId,
+                      ));
+                    }),
                   ),
                   Text(intFormat(item.favourites - item.dv)),
                   IconButton(
                     icon: const Icon(Icons.arrow_downward),
-                    onPressed: () {},
+                    color: item.userVote == -1 ? Colors.red.shade400 : null,
+                    onPressed: whenLoggedIn(context, () async {
+                      onUpdate(await api_entries.putVote(
+                        context.read<SettingsController>().httpClient,
+                        context.read<SettingsController>().instanceHost,
+                        item.entryId,
+                        -1,
+                      ));
+                    }),
                   ),
                 ],
               ),
