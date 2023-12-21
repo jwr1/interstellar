@@ -11,8 +11,9 @@ import 'package:provider/provider.dart';
 class MagazineScreen extends StatefulWidget {
   final int magazineId;
   final api_magazines.DetailedMagazine? data;
+  final void Function(api_magazines.DetailedMagazine)? onUpdate;
 
-  const MagazineScreen(this.magazineId, {super.key, this.data});
+  const MagazineScreen(this.magazineId, {super.key, this.data, this.onUpdate});
 
   @override
   State<MagazineScreen> createState() => _MagazineScreenState();
@@ -29,8 +30,11 @@ class _MagazineScreenState extends State<MagazineScreen> {
 
     if (_data == null) {
       api_magazines
-          .fetchMagazine(context.read<SettingsController>().instanceHost,
-              widget.magazineId)
+          .fetchMagazine(
+            context.read<SettingsController>().httpClient,
+            context.read<SettingsController>().instanceHost,
+            widget.magazineId,
+          )
           .then((value) => setState(() {
                 _data = value;
               }));
@@ -64,14 +68,32 @@ class _MagazineScreenState extends State<MagazineScreen> {
                           ),
                         ),
                         OutlinedButton(
-                            onPressed: () {},
-                            child: Row(
-                              children: [
-                                const Icon(Icons.group),
-                                Text(
-                                    ' ${intFormat(_data!.subscriptionsCount)}'),
-                              ],
-                            ))
+                          style: ButtonStyle(
+                              foregroundColor: _data!.isUserSubscribed == true
+                                  ? MaterialStatePropertyAll(
+                                      Colors.purple.shade400)
+                                  : null),
+                          onPressed: whenLoggedIn(context, () async {
+                            var newValue = await api_magazines.putSubscribe(
+                                context.read<SettingsController>().httpClient,
+                                context.read<SettingsController>().instanceHost,
+                                _data!.magazineId,
+                                !_data!.isUserSubscribed!);
+
+                            if (widget.onUpdate != null) {
+                              widget.onUpdate!(newValue);
+                            }
+                            setState(() {
+                              _data = newValue;
+                            });
+                          }),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.group),
+                              Text(' ${intFormat(_data!.subscriptionsCount)}'),
+                            ],
+                          ),
+                        )
                       ],
                     ),
                     if (_data!.description != null)

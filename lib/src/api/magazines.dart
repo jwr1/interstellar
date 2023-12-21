@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:interstellar/src/utils/utils.dart';
 
 import './shared.dart';
 
@@ -115,28 +116,48 @@ class Moderator {
 
 enum MagazinesSort { active, hot, newest }
 
-Future<Magazines> fetchMagazines(String instanceHost,
-    {int? page, MagazinesSort? sort, String? search}) async {
-  final response = await http.get(Uri.https(instanceHost, '/api/magazines',
+Future<Magazines> fetchMagazines(
+  http.Client client,
+  String instanceHost, {
+  int? page,
+  MagazinesSort? sort,
+  String? search,
+}) async {
+  final response = await client.get(Uri.https(instanceHost, '/api/magazines',
       {'p': page?.toString(), 'sort': sort?.name, 'q': search}));
 
-  if (response.statusCode == 200) {
-    return Magazines.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
-  } else {
-    throw Exception('Failed to load magazines');
-  }
+  httpErrorHandler(response, message: 'Failed to load magazines');
+
+  return Magazines.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
 }
 
 Future<DetailedMagazine> fetchMagazine(
-    String instanceHost, int magazineId) async {
+  http.Client client,
+  String instanceHost,
+  int magazineId,
+) async {
   final response =
-      await http.get(Uri.https(instanceHost, '/api/magazine/$magazineId'));
+      await client.get(Uri.https(instanceHost, '/api/magazine/$magazineId'));
 
-  if (response.statusCode == 200) {
-    return DetailedMagazine.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
-  } else {
-    throw Exception('Failed to load magazine');
-  }
+  httpErrorHandler(response, message: 'Failed to load magazine');
+
+  return DetailedMagazine.fromJson(
+      jsonDecode(response.body) as Map<String, dynamic>);
+}
+
+Future<DetailedMagazine> putSubscribe(
+  http.Client client,
+  String instanceHost,
+  int magazineId,
+  bool state,
+) async {
+  final response = await client.put(Uri.https(
+    instanceHost,
+    '/api/magazine/$magazineId/${state ? 'subscribe' : 'unsubscribe'}',
+  ));
+
+  httpErrorHandler(response, message: 'Failed to send subscribe');
+
+  return DetailedMagazine.fromJson(
+      jsonDecode(response.body) as Map<String, dynamic>);
 }

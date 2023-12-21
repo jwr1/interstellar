@@ -10,8 +10,9 @@ import 'package:provider/provider.dart';
 class DomainScreen extends StatefulWidget {
   final int domainId;
   final api_shared.Domain? data;
+  final void Function(api_shared.Domain)? onUpdate;
 
-  const DomainScreen(this.domainId, {super.key, this.data});
+  const DomainScreen(this.domainId, {super.key, this.data, this.onUpdate});
 
   @override
   State<DomainScreen> createState() => _DomainScreenState();
@@ -29,7 +30,10 @@ class _DomainScreenState extends State<DomainScreen> {
     if (_data == null) {
       api_domains
           .fetchDomain(
-              context.read<SettingsController>().instanceHost, widget.domainId)
+            context.read<SettingsController>().httpClient,
+            context.read<SettingsController>().instanceHost,
+            widget.domainId,
+          )
           .then((value) => setState(() {
                 _data = value;
               }));
@@ -57,15 +61,33 @@ class _DomainScreenState extends State<DomainScreen> {
                             softWrap: true,
                           ),
                         ),
-                        OutlinedButton(
-                            onPressed: () {},
-                            child: Row(
-                              children: [
-                                const Icon(Icons.group),
-                                Text(
-                                    ' ${intFormat(_data!.subscriptionsCount)}'),
-                              ],
-                            ))
+                       OutlinedButton(
+                          style: ButtonStyle(
+                              foregroundColor: _data!.isUserSubscribed == true
+                                  ? MaterialStatePropertyAll(
+                                      Colors.purple.shade400)
+                                  : null),
+                          onPressed: whenLoggedIn(context, () async {
+                            var newValue = await api_domains.putSubscribe(
+                                context.read<SettingsController>().httpClient,
+                                context.read<SettingsController>().instanceHost,
+                                _data!.domainId,
+                                !_data!.isUserSubscribed!);
+
+                            if (widget.onUpdate != null) {
+                              widget.onUpdate!(newValue);
+                            }
+                            setState(() {
+                              _data = newValue;
+                            });
+                          }),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.group),
+                              Text(' ${intFormat(_data!.subscriptionsCount)}'),
+                            ],
+                          ),
+                        )
                       ],
                     ),
                   ],

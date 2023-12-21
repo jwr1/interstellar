@@ -35,6 +35,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
   Future<void> _fetchPage(int pageKey) async {
     try {
       final newPage = await api_magazines.fetchMagazines(
+          context.read<SettingsController>().httpClient,
           context.read<SettingsController>().instanceHost,
           page: pageKey,
           sort: sort,
@@ -119,8 +120,17 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) =>
-                          MagazineScreen(item.magazineId, data: item),
+                      builder: (context) => MagazineScreen(
+                        item.magazineId,
+                        data: item,
+                        onUpdate: (newValue) {
+                          var newList = _pagingController.itemList;
+                          newList![index] = newValue;
+                          setState(() {
+                            _pagingController.itemList = newList;
+                          });
+                        },
+                      ),
                     ),
                   );
                 },
@@ -147,13 +157,29 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                     Text(intFormat(item.entryCommentCount)),
                     const SizedBox(width: 12),
                     OutlinedButton(
-                        onPressed: () {},
-                        child: Row(
-                          children: [
-                            const Icon(Icons.group),
-                            Text(' ${intFormat(item.subscriptionsCount)}'),
-                          ],
-                        ))
+                      style: ButtonStyle(
+                          foregroundColor: item.isUserSubscribed == true
+                              ? MaterialStatePropertyAll(Colors.purple.shade400)
+                              : null),
+                      onPressed: whenLoggedIn(context, () async {
+                        var newValue = await api_magazines.putSubscribe(
+                            context.read<SettingsController>().httpClient,
+                            context.read<SettingsController>().instanceHost,
+                            item.magazineId,
+                            !item.isUserSubscribed!);
+                        var newList = _pagingController.itemList;
+                        newList![index] = newValue;
+                        setState(() {
+                          _pagingController.itemList = newList;
+                        });
+                      }),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.group),
+                          Text(' ${intFormat(item.subscriptionsCount)}'),
+                        ],
+                      ),
+                    )
                   ]),
                 ),
               ),

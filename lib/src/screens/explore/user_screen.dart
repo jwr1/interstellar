@@ -11,8 +11,9 @@ import 'package:provider/provider.dart';
 class UserScreen extends StatefulWidget {
   final int userId;
   final api_users.DetailedUser? data;
+  final void Function(api_users.DetailedUser)? onUpdate;
 
-  const UserScreen(this.userId, {super.key, this.data});
+  const UserScreen(this.userId, {super.key, this.data, this.onUpdate});
 
   @override
   State<UserScreen> createState() => _UserScreenState();
@@ -30,7 +31,10 @@ class _UserScreenState extends State<UserScreen> {
     if (_data == null) {
       api_users
           .fetchUser(
-              context.read<SettingsController>().instanceHost, widget.userId)
+            context.read<SettingsController>().httpClient,
+            context.read<SettingsController>().instanceHost,
+            widget.userId,
+          )
           .then((value) => setState(() {
                 _data = value;
               }));
@@ -64,13 +68,32 @@ class _UserScreenState extends State<UserScreen> {
                           ),
                         ),
                         OutlinedButton(
-                            onPressed: () {},
-                            child: Row(
-                              children: [
-                                const Icon(Icons.group),
-                                Text(' ${intFormat(_data!.followersCount)}'),
-                              ],
-                            ))
+                          style: ButtonStyle(
+                              foregroundColor: _data!.isFollowedByUser == true
+                                  ? MaterialStatePropertyAll(
+                                      Colors.purple.shade400)
+                                  : null),
+                          onPressed: whenLoggedIn(context, () async {
+                            var newValue = await api_users.putFollow(
+                                context.read<SettingsController>().httpClient,
+                                context.read<SettingsController>().instanceHost,
+                                _data!.userId,
+                                !_data!.isFollowedByUser!);
+
+                            if (widget.onUpdate != null) {
+                              widget.onUpdate!(newValue);
+                            }
+                            setState(() {
+                              _data = newValue;
+                            });
+                          }),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.group),
+                              Text(' ${intFormat(_data!.followersCount)}'),
+                            ],
+                          ),
+                        )
                       ],
                     ),
                     if (_data!.about != null)

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:interstellar/src/utils/utils.dart';
 
 import './shared.dart';
 
@@ -67,36 +68,59 @@ class DetailedUser {
   }
 }
 
-Future<Users> fetchUsers(String instanceHost, {int? page}) async {
-  final response = await http
-      .get(Uri.https(instanceHost, '/api/users', {'p': page?.toString()}));
+Future<Users> fetchUsers(
+  http.Client client,
+  String instanceHost, {
+  int? page,
+}) async {
+  final response = await client.get(Uri.https(instanceHost, '/api/users', {
+    'p': page?.toString(),
+  }));
 
-  if (response.statusCode == 200) {
-    return Users.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
-  } else {
-    throw Exception('Failed to load magazines');
-  }
+  httpErrorHandler(response, message: 'Failed to load users');
+
+  return Users.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
 }
 
-Future<DetailedUser> fetchUser(String instanceHost, int userId) async {
+Future<DetailedUser> fetchUser(
+  http.Client client,
+  String instanceHost,
+  int userId,
+) async {
   final response =
-      await http.get(Uri.https(instanceHost, '/api/users/$userId'));
+      await client.get(Uri.https(instanceHost, '/api/users/$userId'));
 
-  if (response.statusCode == 200) {
-    return DetailedUser.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
-  } else {
-    throw Exception('Failed to load user');
-  }
+  httpErrorHandler(response, message: 'Failed to load user');
+
+  return DetailedUser.fromJson(
+      jsonDecode(response.body) as Map<String, dynamic>);
 }
 
-Future<DetailedUser> fetchMe(http.Client client, String instanceHost) async {
+Future<DetailedUser> fetchMe(
+  http.Client client,
+  String instanceHost,
+) async {
   final response = await client.get(Uri.https(instanceHost, '/api/users/me'));
 
-  if (response.statusCode == 200) {
-    return DetailedUser.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
-  } else {
-    throw Exception('Failed to load user');
-  }
+  httpErrorHandler(response, message: 'Failed to load user');
+
+  return DetailedUser.fromJson(
+      jsonDecode(response.body) as Map<String, dynamic>);
+}
+
+Future<DetailedUser> putFollow(
+  http.Client client,
+  String instanceHost,
+  int userId,
+  bool state,
+) async {
+  final response = await client.put(Uri.https(
+    instanceHost,
+    '/api/users/$userId/${state ? 'follow' : 'unfollow'}',
+  ));
+
+  httpErrorHandler(response, message: 'Failed to send follow');
+
+  return DetailedUser.fromJson(
+      jsonDecode(response.body) as Map<String, dynamic>);
 }

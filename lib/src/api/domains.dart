@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:interstellar/src/utils/utils.dart';
 
 import './shared.dart';
 
@@ -20,25 +21,45 @@ class Domains {
   }
 }
 
-Future<Domains> fetchDomains(String instanceHost,
-    {int? page, String? search}) async {
-  final response = await http.get(Uri.https(
+Future<Domains> fetchDomains(
+  http.Client client,
+  String instanceHost, {
+  int? page,
+  String? search,
+}) async {
+  final response = await client.get(Uri.https(
       instanceHost, '/api/domains', {'p': page?.toString(), 'q': search}));
 
-  if (response.statusCode == 200) {
-    return Domains.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
-  } else {
-    throw Exception('Failed to load domains');
-  }
+  httpErrorHandler(response, message: 'Failed to load domains');
+
+  return Domains.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
 }
 
-Future<Domain> fetchDomain(String instanceHost, int domainId) async {
+Future<Domain> fetchDomain(
+  http.Client client,
+  String instanceHost,
+  int domainId,
+) async {
   final response =
-      await http.get(Uri.https(instanceHost, '/api/domain/$domainId'));
+      await client.get(Uri.https(instanceHost, '/api/domain/$domainId'));
 
-  if (response.statusCode == 200) {
-    return Domain.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
-  } else {
-    throw Exception('Failed to load domain');
-  }
+  httpErrorHandler(response, message: 'Failed to load domain');
+
+  return Domain.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+}
+
+Future<Domain> putSubscribe(
+  http.Client client,
+  String instanceHost,
+  int domainId,
+  bool state,
+) async {
+  final response = await client.put(Uri.https(
+    instanceHost,
+    '/api/domain/$domainId/${state ? 'subscribe' : 'unsubscribe'}',
+  ));
+
+  httpErrorHandler(response, message: 'Failed to send subscribe');
+
+  return Domain.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
 }

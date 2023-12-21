@@ -34,6 +34,7 @@ class _DomainsScreenState extends State<DomainsScreen> {
   Future<void> _fetchPage(int pageKey) async {
     try {
       final newPage = await api_domains.fetchDomains(
+          context.read<SettingsController>().httpClient,
           context.read<SettingsController>().instanceHost,
           page: pageKey,
           search: search.isEmpty ? null : search);
@@ -93,6 +94,13 @@ class _DomainsScreenState extends State<DomainsScreen> {
                       builder: (context) => DomainScreen(
                         item.domainId,
                         data: item,
+                        onUpdate: (newValue) {
+                          var newList = _pagingController.itemList;
+                          newList![index] = newValue;
+                          setState(() {
+                            _pagingController.itemList = newList;
+                          });
+                        },
                       ),
                     ),
                   );
@@ -110,13 +118,29 @@ class _DomainsScreenState extends State<DomainsScreen> {
                     Text(intFormat(item.entryCount)),
                     const SizedBox(width: 12),
                     OutlinedButton(
-                        onPressed: () {},
-                        child: Row(
-                          children: [
-                            const Icon(Icons.group),
-                            Text(' ${intFormat(item.subscriptionsCount)}'),
-                          ],
-                        ))
+                      style: ButtonStyle(
+                          foregroundColor: item.isUserSubscribed == true
+                              ? MaterialStatePropertyAll(Colors.purple.shade400)
+                              : null),
+                      onPressed: whenLoggedIn(context, () async {
+                        var newValue = await api_domains.putSubscribe(
+                            context.read<SettingsController>().httpClient,
+                            context.read<SettingsController>().instanceHost,
+                            item.domainId,
+                            !item.isUserSubscribed!);
+                        var newList = _pagingController.itemList;
+                        newList![index] = newValue;
+                        setState(() {
+                          _pagingController.itemList = newList;
+                        });
+                      }),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.group),
+                          Text(' ${intFormat(item.subscriptionsCount)}'),
+                        ],
+                      ),
+                    )
                   ]),
                 ),
               ),

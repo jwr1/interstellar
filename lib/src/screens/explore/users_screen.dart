@@ -32,6 +32,7 @@ class _UsersScreenState extends State<UsersScreen> {
   Future<void> _fetchPage(int pageKey) async {
     try {
       final newPage = await api_users.fetchUsers(
+        context.read<SettingsController>().httpClient,
         context.read<SettingsController>().instanceHost,
         page: pageKey,
       );
@@ -68,6 +69,13 @@ class _UsersScreenState extends State<UsersScreen> {
                       builder: (context) => UserScreen(
                         item.userId,
                         data: item,
+                        onUpdate: (newValue) {
+                          var newList = _pagingController.itemList;
+                          newList![index] = newValue;
+                          setState(() {
+                            _pagingController.itemList = newList;
+                          });
+                        },
                       ),
                     ),
                   );
@@ -87,13 +95,29 @@ class _UsersScreenState extends State<UsersScreen> {
                             overflow: TextOverflow.ellipsis)),
                     const SizedBox(width: 12),
                     OutlinedButton(
-                        onPressed: () {},
-                        child: Row(
-                          children: [
-                            const Icon(Icons.group),
-                            Text(' ${intFormat(item.followersCount)}'),
-                          ],
-                        ))
+                      style: ButtonStyle(
+                          foregroundColor: item.isFollowedByUser == true
+                              ? MaterialStatePropertyAll(Colors.purple.shade400)
+                              : null),
+                      onPressed: whenLoggedIn(context, () async {
+                        var newValue = await api_users.putFollow(
+                            context.read<SettingsController>().httpClient,
+                            context.read<SettingsController>().instanceHost,
+                            item.userId,
+                            !item.isFollowedByUser!);
+                        var newList = _pagingController.itemList;
+                        newList![index] = newValue;
+                        setState(() {
+                          _pagingController.itemList = newList;
+                        });
+                      }),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.group),
+                          Text(' ${intFormat(item.followersCount)}'),
+                        ],
+                      ),
+                    )
                   ]),
                 ),
               ),
