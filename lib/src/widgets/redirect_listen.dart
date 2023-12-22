@@ -54,6 +54,7 @@ class _RedirectListenerState extends State<RedirectListener> {
           NavigationDelegate(
             onNavigationRequest: (NavigationRequest request) {
               if (request.url.startsWith(_redirectUri)) {
+                WebViewCookieManager().clearCookies();
                 Navigator.pop(context, Uri.parse(request.url).queryParameters);
                 return NavigationDecision.prevent;
               }
