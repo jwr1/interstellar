@@ -103,7 +103,20 @@ class _EntryCommentState extends State<EntryComment> {
                           _isCollapsed = !_isCollapsed;
                         })
                     : null,
-                onReply: (value) async {},
+                onReply: (body) async {
+                  var newSubComment = await api_comments.postComment(
+                    context.read<SettingsController>().httpClient,
+                    context.read<SettingsController>().instanceHost,
+                    body,
+                    widget.comment.entryId,
+                    parentCommentId: widget.comment.commentId,
+                  );
+
+                  var newComment = widget.comment;
+                  newComment.childCount += 1;
+                  newComment.children!.insert(0, newSubComment);
+                  widget.onUpdate(newComment);
+                },
               ),
             ),
             const SizedBox(height: 4),
