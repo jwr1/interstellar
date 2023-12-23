@@ -73,7 +73,23 @@ class _EntryPageState extends State<EntryPage> {
         child: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
-              child: EntryItem(widget.item, widget.onUpdate),
+              child: EntryItem(
+                widget.item,
+                widget.onUpdate,
+                onReply: (body) async {
+                  var newComment = await api_comments.postComment(
+                    context.read<SettingsController>().httpClient,
+                    context.read<SettingsController>().instanceHost,
+                    body,
+                    widget.item.entryId,
+                  );
+                  var newList = _pagingController.itemList;
+                  newList?.insert(0, newComment);
+                  setState(() {
+                    _pagingController.itemList = newList;
+                  });
+                },
+              ),
             ),
             SliverToBoxAdapter(
               child: Padding(

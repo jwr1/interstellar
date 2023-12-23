@@ -155,3 +155,23 @@ Future<Comment> putFavorite(
 
   return Comment.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
 }
+
+Future<Comment> postComment(
+  http.Client client,
+  String instanceHost,
+  String body,
+  int entryId, {
+  int? parentCommentId,
+}) async {
+  final response = await client.post(
+    Uri.https(
+      instanceHost,
+      '/api/entry/$entryId/comments${parentCommentId != null ? '/$parentCommentId/reply' : ''}',
+    ),
+    body: jsonEncode({'body': body}),
+  );
+
+  httpErrorHandler(response, message: 'Failed to post comment');
+
+  return Comment.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+}

@@ -5,6 +5,7 @@ import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/action_bar.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
 import 'package:provider/provider.dart';
@@ -16,10 +17,12 @@ class EntryItem extends StatelessWidget {
     this.onUpdate, {
     super.key,
     this.isPreview = false,
+    this.onReply,
   });
 
   final api_entries.EntryItem item;
   final void Function(api_entries.EntryItem) onUpdate;
+  final Future<void> Function(String)? onReply;
   final bool isPreview;
 
   @override
@@ -131,57 +134,42 @@ class EntryItem extends StatelessWidget {
                       )
                     : Markdown(item.body!),
               const SizedBox(height: 10),
-              Row(
-                children: <Widget>[
+              ActionBar(
+                boosts: item.uv,
+                upVotes: item.favourites,
+                downVotes: item.dv,
+                isBoosted: item.userVote == 1,
+                isUpVoted: item.isFavourited == true,
+                isDownVoted: item.userVote == -1,
+                onBoost: whenLoggedIn(context, () async {
+                  onUpdate(await api_entries.putVote(
+                    context.read<SettingsController>().httpClient,
+                    context.read<SettingsController>().instanceHost,
+                    item.entryId,
+                    1,
+                  ));
+                }),
+                onUpVote: whenLoggedIn(context, () async {
+                  onUpdate(await api_entries.putFavorite(
+                    context.read<SettingsController>().httpClient,
+                    context.read<SettingsController>().instanceHost,
+                    item.entryId,
+                  ));
+                }),
+                onDownVote: whenLoggedIn(context, () async {
+                  onUpdate(await api_entries.putVote(
+                    context.read<SettingsController>().httpClient,
+                    context.read<SettingsController>().instanceHost,
+                    item.entryId,
+                    -1,
+                  ));
+                }),
+                onReply: onReply,
+                leadingWidgets: [
                   const Icon(Icons.comment),
                   const SizedBox(width: 4),
                   Text(intFormat(item.numComments)),
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(Icons.more_vert),
-                    onPressed: () {},
-                  ),
-                  const SizedBox(width: 12),
-                  IconButton(
-                    icon: const Icon(Icons.rocket_launch),
-                    color: item.userVote == 1 ? Colors.purple.shade400 : null,
-                    onPressed: whenLoggedIn(context, () async {
-                      onUpdate(await api_entries.putVote(
-                        context.read<SettingsController>().httpClient,
-                        context.read<SettingsController>().instanceHost,
-                        item.entryId,
-                        1,
-                      ));
-                    }),
-                  ),
-                  Text(intFormat(item.uv)),
-                  const SizedBox(width: 12),
-                  IconButton(
-                    icon: const Icon(Icons.arrow_upward),
-                    color: item.isFavourited == true
-                        ? Colors.green.shade400
-                        : null,
-                    onPressed: whenLoggedIn(context, () async {
-                      onUpdate(await api_entries.putFavorite(
-                        context.read<SettingsController>().httpClient,
-                        context.read<SettingsController>().instanceHost,
-                        item.entryId,
-                      ));
-                    }),
-                  ),
-                  Text(intFormat(item.favourites - item.dv)),
-                  IconButton(
-                    icon: const Icon(Icons.arrow_downward),
-                    color: item.userVote == -1 ? Colors.red.shade400 : null,
-                    onPressed: whenLoggedIn(context, () async {
-                      onUpdate(await api_entries.putVote(
-                        context.read<SettingsController>().httpClient,
-                        context.read<SettingsController>().instanceHost,
-                        item.entryId,
-                        -1,
-                      ));
-                    }),
-                  ),
+                  const SizedBox(width: 8),
                 ],
               ),
             ],

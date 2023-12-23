@@ -3,6 +3,7 @@ import 'package:interstellar/src/api/comments.dart' as api_comments;
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/action_bar.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
 import 'package:provider/provider.dart';
@@ -48,87 +49,64 @@ class _EntryCommentState extends State<EntryComment> {
                     timeDiffFormat(widget.comment.createdAt),
                     style: const TextStyle(fontWeight: FontWeight.w300),
                   ),
-                ),
-                const Spacer(),
-                if (widget.comment.childCount > 0)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 12),
-                    child: IconButton(
-                        tooltip: _isCollapsed ? 'Expand' : 'Collapse',
-                        onPressed: () => setState(() {
-                              _isCollapsed = !_isCollapsed;
-                            }),
-                        icon: _isCollapsed
-                            ? const Icon(Icons.expand_more)
-                            : const Icon(Icons.expand_less)),
-                  ),
-                IconButton(
-                  icon: const Icon(Icons.more_vert),
-                  onPressed: () {},
-                ),
-                const SizedBox(width: 12),
-                IconButton(
-                  icon: const Icon(Icons.rocket_launch),
-                  color: widget.comment.userVote == 1
-                      ? Colors.purple.shade400
-                      : null,
-                  onPressed: whenLoggedIn(context, () async {
-                    var newValue = await api_comments.putVote(
-                      context.read<SettingsController>().httpClient,
-                      context.read<SettingsController>().instanceHost,
-                      widget.comment.commentId,
-                      1,
-                    );
-                    newValue.childCount = widget.comment.childCount;
-                    newValue.children = widget.comment.children;
-                    widget.onUpdate(newValue);
-                  }),
-                ),
-                Text(intFormat(widget.comment.uv)),
-                const SizedBox(width: 12),
-                IconButton(
-                  icon: const Icon(Icons.arrow_upward),
-                  color: widget.comment.isFavourited == true
-                      ? Colors.green.shade400
-                      : null,
-                  onPressed: whenLoggedIn(context, () async {
-                    var newValue = await api_comments.putFavorite(
-                      context.read<SettingsController>().httpClient,
-                      context.read<SettingsController>().instanceHost,
-                      widget.comment.commentId,
-                    );
-                    newValue.childCount = widget.comment.childCount;
-                    newValue.children = widget.comment.children;
-                    widget.onUpdate(newValue);
-                  }),
-                ),
-                Text(intFormat(widget.comment.favourites - widget.comment.dv)),
-                IconButton(
-                  icon: const Icon(Icons.arrow_downward),
-                  color: widget.comment.userVote == -1
-                      ? Colors.red.shade400
-                      : null,
-                  onPressed: whenLoggedIn(context, () async {
-                    var newValue = await api_comments.putVote(
-                      context.read<SettingsController>().httpClient,
-                      context.read<SettingsController>().instanceHost,
-                      widget.comment.commentId,
-                      -1,
-                    );
-                    newValue.childCount = widget.comment.childCount;
-                    newValue.children = widget.comment.children;
-                    widget.onUpdate(newValue);
-                  }),
-                ),
-                const SizedBox(
-                  width: 6,
                 )
               ],
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 6, bottom: 12),
+              padding: const EdgeInsets.symmetric(vertical: 6),
               child: Markdown(widget.comment.body),
             ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ActionBar(
+                boosts: widget.comment.uv,
+                upVotes: widget.comment.favourites,
+                downVotes: widget.comment.dv,
+                isBoosted: widget.comment.userVote == 1,
+                isUpVoted: widget.comment.isFavourited == true,
+                isDownVoted: widget.comment.userVote == -1,
+                isCollapsed: _isCollapsed,
+                onBoost: whenLoggedIn(context, () async {
+                  var newValue = await api_comments.putVote(
+                    context.read<SettingsController>().httpClient,
+                    context.read<SettingsController>().instanceHost,
+                    widget.comment.commentId,
+                    1,
+                  );
+                  newValue.childCount = widget.comment.childCount;
+                  newValue.children = widget.comment.children;
+                  widget.onUpdate(newValue);
+                }),
+                onUpVote: whenLoggedIn(context, () async {
+                  var newValue = await api_comments.putFavorite(
+                    context.read<SettingsController>().httpClient,
+                    context.read<SettingsController>().instanceHost,
+                    widget.comment.commentId,
+                  );
+                  newValue.childCount = widget.comment.childCount;
+                  newValue.children = widget.comment.children;
+                  widget.onUpdate(newValue);
+                }),
+                onDownVote: whenLoggedIn(context, () async {
+                  var newValue = await api_comments.putVote(
+                    context.read<SettingsController>().httpClient,
+                    context.read<SettingsController>().instanceHost,
+                    widget.comment.commentId,
+                    -1,
+                  );
+                  newValue.childCount = widget.comment.childCount;
+                  newValue.children = widget.comment.children;
+                  widget.onUpdate(newValue);
+                }),
+                onCollapse: widget.comment.childCount > 0
+                    ? () => setState(() {
+                          _isCollapsed = !_isCollapsed;
+                        })
+                    : null,
+                onReply: (value) async {},
+              ),
+            ),
+            const SizedBox(height: 4),
             if (!_isCollapsed && widget.comment.childCount > 0)
               Column(
                 children: widget.comment.children!
