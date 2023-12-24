@@ -50,7 +50,7 @@ packages:
     source: hosted
     version: "1.18.0"
   crypto:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: crypto
       sha256: ff625774173754681d66daaf4a448684fb04b78f902da9cb3d308c19cc5e8bab
@@ -129,10 +129,10 @@ packages:
     dependency: "direct main"
     description:
       name: http
-      sha256: "759d1a329847dd0f39226c688d3e06a6b8679668e350e2891a6474f8b4bb8525"
+      sha256: d4872660c46d929f6b8a9ef4e7a7eff7e49bbf0c4ec3f385ee32df5119175139
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.0"
+    version: "1.1.2"
   http_parser:
     dependency: transitive
     description:
@@ -398,10 +398,10 @@ packages:
     dependency: "direct main"
     description:
       name: url_launcher
-      sha256: b1c9e98774adf8820c96fbc7ae3601231d324a7d5ebd8babe27b6dfac91357ba
+      sha256: e9aa5ea75c84cf46b3db4eea212523591211c3cf2e13099ee4ec147f54201c86
       url: "https://pub.dev"
     source: hosted
-    version: "6.2.1"
+    version: "6.2.2"
   url_launcher_android:
     dependency: transitive
     description:
@@ -523,5 +523,5 @@ packages:
     source: hosted
     version: "1.0.3"
 sdks:
-  dart: ">=3.2.0-194.0.dev <4.0.0"
+  dart: ">=3.2.0 <4.0.0"
   flutter: ">=3.13.0"
