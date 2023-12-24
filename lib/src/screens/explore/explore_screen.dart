@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:interstellar/src/screens/explore/domains_screen.dart';
 import 'package:interstellar/src/screens/explore/magazines_screen.dart';
 import 'package:interstellar/src/screens/explore/users_screen.dart';
+import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:provider/provider.dart';
 
 class ExploreScreen extends StatelessWidget {
   const ExploreScreen({super.key});
@@ -12,7 +14,8 @@ class ExploreScreen extends StatelessWidget {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Explore'),
+          title: Text(
+              'Explore ${context.watch<SettingsController>().instanceHost}'),
           bottom: const TabBar(tabs: [
             Tab(
               text: 'Magazines',

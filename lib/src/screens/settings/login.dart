@@ -6,6 +6,12 @@ import 'package:interstellar/src/widgets/redirect_listen.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:provider/provider.dart';
 
+final List<String> _recommendedInstances = [
+  'kbin.earth',
+  'kbin.run',
+  'kbin.melroy.org',
+];
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -14,7 +20,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  String _instanceHost = 'kbin.earth';
+  final TextEditingController _instanceHostController =
+      TextEditingController(text: _recommendedInstances.first);
 
   @override
   Widget build(BuildContext context) {
@@ -22,16 +29,12 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
         title: const Text('Add Account'),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      body: ListView(
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
-            child: TextFormField(
-              initialValue: _instanceHost,
-              onChanged: (newValue) => setState(() {
-                _instanceHost = newValue;
-              }),
+            child: TextField(
+              controller: _instanceHostController,
               decoration: const InputDecoration(
                   border: OutlineInputBorder(), label: Text('Instance Host')),
             ),
@@ -41,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               FilledButton(
                   onPressed: () async {
-                    final instanceHost = _instanceHost;
+                    final instanceHost = _instanceHostController.text;
 
                     final authorizationEndpoint =
                         Uri.https(instanceHost, '/authorize');
@@ -114,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(width: 12),
               OutlinedButton(
                   onPressed: () {
-                    final instanceHost = _instanceHost;
+                    final instanceHost = _instanceHostController.text;
 
                     String account = '@$instanceHost';
                     context
@@ -125,7 +128,20 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   child: const Text('Anonymous')),
             ],
-          )
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+            child: Column(children: [
+              Text('Recommended Instances',
+                  style: Theme.of(context).textTheme.headlineSmall),
+              ..._recommendedInstances.map((v) => ListTile(
+                    title: Text(v),
+                    onTap: () => setState(() {
+                      _instanceHostController.text = v;
+                    }),
+                  ))
+            ]),
+          ),
         ],
       ),
     );
