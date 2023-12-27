@@ -25,6 +25,32 @@ class EntryItem extends StatelessWidget {
   final Future<void> Function(String)? onReply;
   final bool isPreview;
 
+  _onImageClick(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+          extendBodyBehindAppBar: true,
+          appBar: AppBar(
+            title: Text(item.title),
+            backgroundColor: const Color(0x66000000),
+          ),
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: InteractiveViewer(
+                  child: Image.network(
+                    item.image!.storageUrl,
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -32,18 +58,24 @@ class EntryItem extends StatelessWidget {
       children: <Widget>[
         if (item.image?.storageUrl != null)
           isPreview
-              ? Image.network(
-                  item.image!.storageUrl,
-                  height: 160,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
+              ? InkWell(
+                  onTap: () => _onImageClick(context),
+                  child: Image.network(
+                    item.image!.storageUrl,
+                    height: 160,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
                 )
               : Container(
                   constraints: BoxConstraints(
                     maxHeight: MediaQuery.of(context).size.height / 2,
                   ),
-                  child: Image.network(
-                    item.image!.storageUrl,
+                  child: InkWell(
+                    onTap: () => _onImageClick(context),
+                    child: Image.network(
+                      item.image!.storageUrl,
+                    ),
                   )),
         Container(
           padding: const EdgeInsets.all(16),
