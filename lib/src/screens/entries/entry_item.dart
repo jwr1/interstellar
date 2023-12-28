@@ -9,6 +9,7 @@ import 'package:interstellar/src/widgets/action_bar.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
 import 'package:interstellar/src/widgets/open_webpage.dart';
+import 'package:interstellar/src/widgets/video.dart';
 import 'package:provider/provider.dart';
 
 class EntryItem extends StatelessWidget {
@@ -53,20 +54,30 @@ class EntryItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isVideo = item.url != null && isSupportedVideo(item.url!);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        if (item.image?.storageUrl != null)
+        if (!isPreview && isVideo) VideoPlayer(Uri.parse(item.url!)),
+        if (item.image?.storageUrl != null && !(!isPreview && isVideo))
           isPreview
-              ? InkWell(
-                  onTap: () => _onImageClick(context),
-                  child: Image.network(
-                    item.image!.storageUrl,
-                    height: 160,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
-                )
+              ? (isVideo
+                  ? Image.network(
+                      item.image!.storageUrl,
+                      height: 160,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    )
+                  : InkWell(
+                      onTap: () => _onImageClick(context),
+                      child: Image.network(
+                        item.image!.storageUrl,
+                        height: 160,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                    ))
               : Container(
                   constraints: BoxConstraints(
                     maxHeight: MediaQuery.of(context).size.height / 2,
@@ -82,7 +93,7 @@ class EntryItem extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              item.type == 'link' && item.url != null
+              item.url != null
                   ? InkWell(
                       child: Text(
                         item.title,

@@ -3,7 +3,7 @@ name: interstellar
 # Prevent accidental publishing to pub.dev.
 publish_to: 'none'
 
-version: 0.2.1
+version: 0.2.2
 
 environment:
   sdk: '>=3.1.0 <4.0.0'
@@ -17,11 +17,15 @@ dependencies:
   http: ^1.1.2
   infinite_scroll_pagination: ^4.0.0
   intl: ^0.18.1
+  media_kit: ^1.1.10
+  media_kit_video: ^1.2.4
+  media_kit_libs_video: ^1.0.4
   oauth2: ^2.0.2
   provider: ^6.1.1
   shared_preferences: ^2.2.2
   url_launcher: ^6.2.2
   webview_flutter: ^4.4.2
+  youtube_explode_dart: ^2.0.4
 
 dev_dependencies:
   flutter_test:
