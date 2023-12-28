@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart' as flutter_markdown;
-import 'package:url_launcher/url_launcher.dart';
+import 'package:interstellar/src/widgets/open_webpage.dart';
 
 class Markdown extends StatelessWidget {
   final String data;
@@ -18,28 +18,7 @@ class Markdown extends StatelessWidget {
       )),
       onTapLink: (text, href, title) {
         if (href != null) {
-          Uri uri = Uri.parse(href);
-
-          showDialog<String>(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-              title: const Text('Open link in browser'),
-              content: Text(uri.toString()),
-              actions: <Widget>[
-                OutlinedButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel'),
-                ),
-                FilledButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    launchUrl(Uri.parse(href));
-                  },
-                  child: const Text('Continue'),
-                ),
-              ],
-            ),
-          );
+          openWebpage(context, Uri.parse(href));
         }
       },
     );

@@ -8,8 +8,8 @@ import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/action_bar.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
+import 'package:interstellar/src/widgets/open_webpage.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class EntryItem extends StatelessWidget {
   const EntryItem(
@@ -92,7 +92,7 @@ class EntryItem extends StatelessWidget {
                             .apply(decoration: TextDecoration.underline),
                       ),
                       onTap: () {
-                        launchUrl(Uri.parse(item.url!));
+                        openWebpage(context, Uri.parse(item.url!));
                       },
                     )
                   : Text(
