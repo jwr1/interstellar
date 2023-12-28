@@ -38,7 +38,7 @@ flutter_launcher_icons:
   adaptive_icon_background: "#423862"
   windows:
     generate: true
-    image_path: "assets/icons/logo-transparent.png"
+    image_path: "assets/icons/logo-transparent-512.png"
   macos:
     generate: true
 
@@ -49,5 +49,5 @@ flutter:
   generate: true
 
   assets:
-    # Add assets from the images directory to the application.
-    - assets/images/
+    # Add assets from the icons directory to the application.
+    - assets/icons/
