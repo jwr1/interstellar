@@ -6,8 +6,6 @@ import 'package:interstellar/src/screens/profile/profile_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'screens/feed_screen.dart';
-import 'screens/entries/entries_screen.dart';
-import 'screens/posts/posts_screen.dart';
 import 'screens/settings/settings_controller.dart';
 import 'screens/settings/settings_screen.dart';
 
