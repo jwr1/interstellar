@@ -1,14 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/utils/variables.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 const _redirectHost = 'localhost';
 const _redirectPort = 46837;
 const _redirectUri = 'http://$_redirectHost:$_redirectPort';
-
-final _useWebView = Platform.isAndroid || Platform.isIOS;
 
 class RedirectListener extends StatefulWidget {
   final Uri initUri;
@@ -37,7 +36,7 @@ class _RedirectListenerState extends State<RedirectListener> {
 
   @override
   void initState() {
-    if (!_useWebView) {
+    if (!isWebViewSupported) {
       _listenForAuth()
           .then((value) => Navigator.pop(context, value.queryParameters));
     }
@@ -47,7 +46,7 @@ class _RedirectListenerState extends State<RedirectListener> {
 
   @override
   Widget build(BuildContext context) {
-    if (_useWebView) {
+    if (isWebViewSupported) {
       var controller = WebViewController()
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
         ..setNavigationDelegate(

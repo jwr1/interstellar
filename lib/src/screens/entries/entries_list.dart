@@ -124,7 +124,7 @@ class _EntriesListViewState extends State<EntriesListView> {
               itemBuilder: (context, item, index) => Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Card(
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  clipBehavior: Clip.antiAlias,
                   child: InkWell(
                     onTap: () {
                       Navigator.of(context).push(

@@ -8,8 +8,8 @@ import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/action_bar.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
+import 'package:interstellar/src/widgets/open_webpage.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class EntryItem extends StatelessWidget {
   const EntryItem(
@@ -25,6 +25,32 @@ class EntryItem extends StatelessWidget {
   final Future<void> Function(String)? onReply;
   final bool isPreview;
 
+  _onImageClick(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+          extendBodyBehindAppBar: true,
+          appBar: AppBar(
+            title: Text(item.title),
+            backgroundColor: const Color(0x66000000),
+          ),
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: InteractiveViewer(
+                  child: Image.network(
+                    item.image!.storageUrl,
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -32,18 +58,24 @@ class EntryItem extends StatelessWidget {
       children: <Widget>[
         if (item.image?.storageUrl != null)
           isPreview
-              ? Image.network(
-                  item.image!.storageUrl,
-                  height: 160,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
+              ? InkWell(
+                  onTap: () => _onImageClick(context),
+                  child: Image.network(
+                    item.image!.storageUrl,
+                    height: 160,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
                 )
               : Container(
                   constraints: BoxConstraints(
                     maxHeight: MediaQuery.of(context).size.height / 2,
                   ),
-                  child: Image.network(
-                    item.image!.storageUrl,
+                  child: InkWell(
+                    onTap: () => _onImageClick(context),
+                    child: Image.network(
+                      item.image!.storageUrl,
+                    ),
                   )),
         Container(
           padding: const EdgeInsets.all(16),
@@ -60,7 +92,7 @@ class EntryItem extends StatelessWidget {
                             .apply(decoration: TextDecoration.underline),
                       ),
                       onTap: () {
-                        launchUrl(Uri.parse(item.url!));
+                        openWebpage(context, Uri.parse(item.url!));
                       },
                     )
                   : Text(
