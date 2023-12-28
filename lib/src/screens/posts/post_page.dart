@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:interstellar/src/api/comments.dart' as api_comments;
+import 'package:interstellar/src/api/post_comments.dart' as api_comments;
 import 'package:interstellar/src/api/posts.dart' as api_posts;
-import 'package:interstellar/src/screens/posts/posts_comment.dart';
-import 'package:interstellar/src/screens/posts/posts_item.dart';
+import 'package:interstellar/src/screens/posts/post_comment.dart';
+import 'package:interstellar/src/screens/posts/post_item.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:provider/provider.dart';
 
@@ -18,10 +18,10 @@ class PostPage extends StatefulWidget {
   final void Function(api_posts.PostItem) onUpdate;
 
   @override
-  State<PostPage> createState() => _EntryPageState();
+  State<PostPage> createState() => _PostPageState();
 }
 
-class _EntryPageState extends State<PostPage> {
+class _PostPageState extends State<PostPage> {
   api_comments.CommentsSort commentsSort = api_comments.CommentsSort.hot;
 
   final PagingController<int, api_comments.Comment> _pagingController =
@@ -38,7 +38,7 @@ class _EntryPageState extends State<PostPage> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newPage = await api_comments.fetchPostComments(
+      final newPage = await api_comments.fetchComments(
         context.read<SettingsController>().httpClient,
         context.read<SettingsController>().instanceHost,
         widget.item.postId,
@@ -82,7 +82,6 @@ class _EntryPageState extends State<PostPage> {
                     context.read<SettingsController>().instanceHost,
                     body,
                     widget.item.postId,
-                    api_comments.CommentType.post
                   );
                   var newList = _pagingController.itemList;
                   newList?.insert(0, newComment);

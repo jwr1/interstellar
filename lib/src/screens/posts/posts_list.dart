@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/content_sources.dart';
 import 'package:interstellar/src/api/posts.dart' as api_posts;
-import 'package:interstellar/src/screens/posts/posts_item.dart';
-import 'package:interstellar/src/screens/posts/posts_page.dart';
+import 'package:interstellar/src/screens/posts/post_item.dart';
+import 'package:interstellar/src/screens/posts/post_page.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:provider/provider.dart';
 

@@ -72,7 +72,6 @@ class _EntryCommentState extends State<EntryComment> {
                     context.read<SettingsController>().instanceHost,
                     widget.comment.commentId,
                     1,
-                    api_comments.CommentType.post
                   );
                   newValue.childCount = widget.comment.childCount;
                   newValue.children = widget.comment.children;
@@ -83,7 +82,6 @@ class _EntryCommentState extends State<EntryComment> {
                     context.read<SettingsController>().httpClient,
                     context.read<SettingsController>().instanceHost,
                     widget.comment.commentId,
-                    api_comments.CommentType.post
                   );
                   newValue.childCount = widget.comment.childCount;
                   newValue.children = widget.comment.children;
@@ -95,7 +93,6 @@ class _EntryCommentState extends State<EntryComment> {
                     context.read<SettingsController>().instanceHost,
                     widget.comment.commentId,
                     -1,
-                    api_comments.CommentType.post
                   );
                   newValue.childCount = widget.comment.childCount;
                   newValue.children = widget.comment.children;
@@ -111,8 +108,7 @@ class _EntryCommentState extends State<EntryComment> {
                     context.read<SettingsController>().httpClient,
                     context.read<SettingsController>().instanceHost,
                     body,
-                    widget.comment.entryPostId,
-                    api_comments.CommentType.post,
+                    widget.comment.entryId,
                     parentCommentId: widget.comment.commentId,
                   );
 

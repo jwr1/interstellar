@@ -38,7 +38,7 @@ class _EntryPageState extends State<EntryPage> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newPage = await api_comments.fetchEntryComments(
+      final newPage = await api_comments.fetchComments(
         context.read<SettingsController>().httpClient,
         context.read<SettingsController>().instanceHost,
         widget.item.entryId,
@@ -82,7 +82,6 @@ class _EntryPageState extends State<EntryPage> {
                     context.read<SettingsController>().instanceHost,
                     body,
                     widget.item.entryId,
-                    api_comments.CommentType.post
                   );
                   var newList = _pagingController.itemList;
                   newList?.insert(0, newComment);
