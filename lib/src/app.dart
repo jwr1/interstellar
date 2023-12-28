@@ -6,6 +6,7 @@ import 'package:interstellar/src/screens/profile/profile_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'screens/entries/entries_screen.dart';
+import 'screens/posts/posts_screen.dart';
 import 'screens/settings/settings_controller.dart';
 import 'screens/settings/settings_screen.dart';
 
@@ -64,6 +65,10 @@ class _MyAppState extends State<MyApp> {
                                 icon: Icon(Icons.feed_outlined),
                                 selectedIcon: Icon(Icons.feed)),
                             NavigationDestination(
+                                label: 'Posts',
+                                icon: Icon(Icons.feed_outlined),
+                                selectedIcon: Icon(Icons.feed)),
+                            NavigationDestination(
                                 label: 'Explore',
                                 icon: Icon(Icons.explore_outlined),
                                 selectedIcon: Icon(Icons.explore)),
@@ -92,6 +97,10 @@ class _MyAppState extends State<MyApp> {
                               icon: Icon(Icons.feed_outlined),
                               selectedIcon: Icon(Icons.feed)),
                           NavigationRailDestination(
+                              label: Text('Posts'),
+                              icon: Icon(Icons.feed_outlined),
+                              selectedIcon: Icon(Icons.feed)),
+                          NavigationRailDestination(
                               label: Text('Explore'),
                               icon: Icon(Icons.explore_outlined),
                               selectedIcon: Icon(Icons.explore)),
@@ -113,6 +122,7 @@ class _MyAppState extends State<MyApp> {
                     Expanded(
                         child: [
                       const EntriesScreen(),
+                      const PostsScreen(),
                       const ExploreScreen(),
                       const ProfileScreen(),
                       SettingsScreen(controller: widget.settingsController)

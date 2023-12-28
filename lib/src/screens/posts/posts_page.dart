@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/comments.dart' as api_comments;
-import 'package:interstellar/src/api/entries.dart' as api_entries;
-import 'package:interstellar/src/screens/entries/entry_comment.dart';
-import 'package:interstellar/src/screens/entries/entry_item.dart';
+import 'package:interstellar/src/api/posts.dart' as api_posts;
+import 'package:interstellar/src/screens/posts/posts_comment.dart';
+import 'package:interstellar/src/screens/posts/posts_item.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:provider/provider.dart';
 
-class EntryPage extends StatefulWidget {
-  const EntryPage(
+class PostPage extends StatefulWidget {
+  const PostPage(
     this.item,
     this.onUpdate, {
     super.key,
   });
 
-  final api_entries.EntryItem item;
-  final void Function(api_entries.EntryItem) onUpdate;
+  final api_posts.PostItem item;
+  final void Function(api_posts.PostItem) onUpdate;
 
   @override
-  State<EntryPage> createState() => _EntryPageState();
+  State<PostPage> createState() => _EntryPageState();
 }
 
-class _EntryPageState extends State<EntryPage> {
+class _EntryPageState extends State<PostPage> {
   api_comments.CommentsSort commentsSort = api_comments.CommentsSort.hot;
 
   final PagingController<int, api_comments.Comment> _pagingController =
@@ -38,10 +38,10 @@ class _EntryPageState extends State<EntryPage> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newPage = await api_comments.fetchEntryComments(
+      final newPage = await api_comments.fetchPostComments(
         context.read<SettingsController>().httpClient,
         context.read<SettingsController>().instanceHost,
-        widget.item.entryId,
+        widget.item.postId,
         page: pageKey,
         sort: commentsSort,
       );
@@ -64,7 +64,7 @@ class _EntryPageState extends State<EntryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.item.title),
+        title: Text(widget.item.user.username),
       ),
       body: RefreshIndicator(
         onRefresh: () => Future.sync(
@@ -73,7 +73,7 @@ class _EntryPageState extends State<EntryPage> {
         child: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
-              child: EntryItem(
+              child: PostItem(
                 widget.item,
                 widget.onUpdate,
                 onReply: (body) async {
@@ -81,7 +81,7 @@ class _EntryPageState extends State<EntryPage> {
                     context.read<SettingsController>().httpClient,
                     context.read<SettingsController>().instanceHost,
                     body,
-                    widget.item.entryId,
+                    widget.item.postId,
                     api_comments.CommentType.post
                   );
                   var newList = _pagingController.itemList;
@@ -139,7 +139,7 @@ class _EntryPageState extends State<EntryPage> {
               builderDelegate: PagedChildBuilderDelegate<api_comments.Comment>(
                 itemBuilder: (context, item, index) => Padding(
                   padding: const EdgeInsets.all(8),
-                  child: EntryComment(item, (newValue) {
+                  child: PostComment(item, (newValue) {
                     var newList = _pagingController.itemList;
                     newList![index] = newValue;
                     setState(() {

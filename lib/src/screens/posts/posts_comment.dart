@@ -8,17 +8,17 @@ import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
 import 'package:provider/provider.dart';
 
-class EntryComment extends StatefulWidget {
-  const EntryComment(this.comment, this.onUpdate, {super.key});
+class PostComment extends StatefulWidget {
+  const PostComment(this.comment, this.onUpdate, {super.key});
 
   final api_comments.Comment comment;
   final void Function(api_comments.Comment) onUpdate;
 
   @override
-  State<EntryComment> createState() => _EntryCommentState();
+  State<PostComment> createState() => _EntryCommentState();
 }
 
-class _EntryCommentState extends State<EntryComment> {
+class _EntryCommentState extends State<PostComment> {
   bool _isCollapsed = false;
 
   @override
@@ -129,7 +129,7 @@ class _EntryCommentState extends State<EntryComment> {
                 children: widget.comment.children!
                     .asMap()
                     .entries
-                    .map((item) => EntryComment(item.value, (newValue) {
+                    .map((item) => PostComment(item.value, (newValue) {
                           var newComment = widget.comment;
                           newComment.children![item.key] = newValue;
                           widget.onUpdate(newComment);

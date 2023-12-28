@@ -5,16 +5,18 @@ import 'package:interstellar/src/utils/utils.dart';
 
 import 'shared.dart';
 
+enum CommentType { entry, post }
+
 class Comments {
   late List<Comment> items;
   late Pagination pagination;
 
   Comments({required this.items, required this.pagination});
 
-  Comments.fromJson(Map<String, dynamic> json) {
+  Comments.fromJson(Map<String, dynamic> json, CommentType type) {
     items = <Comment>[];
     json['items'].forEach((v) {
-      items.add(Comment.fromJson(v));
+      items.add(Comment.fromJson(v, type));
     });
 
     pagination = Pagination.fromJson(json['pagination']);
@@ -25,7 +27,7 @@ class Comment {
   late int commentId;
   late User user;
   late Magazine magazine;
-  late int entryId;
+  late int entryPostId;
   int? parentId;
   int? rootId;
   Image? image;
@@ -50,7 +52,7 @@ class Comment {
       {required this.commentId,
       required this.user,
       required this.magazine,
-      required this.entryId,
+      required this.entryPostId,
       this.parentId,
       this.rootId,
       this.image,
@@ -71,11 +73,15 @@ class Comment {
       required this.childCount,
       required this.visibility});
 
-  Comment.fromJson(Map<String, dynamic> json) {
+  Comment.fromJson(Map<String, dynamic> json, CommentType type) {
     commentId = json['commentId'];
     user = User.fromJson(json['user']);
     magazine = Magazine.fromJson(json['magazine']);
-    entryId = json['entryId'];
+    if (type == CommentType.entry) {
+      entryPostId = json['entryId'];
+    } else {
+      entryPostId = json['postId'];
+    }
     parentId = json['parentId'];
     rootId = json['rootId'];
     image = json['image'] != null ? Image.fromJson(json['image']) : null;
@@ -96,7 +102,7 @@ class Comment {
     if (json['children'] != null) {
       children = <Comment>[];
       json['children'].forEach((v) {
-        children!.add(Comment.fromJson(v));
+        children!.add(Comment.fromJson(v, type));
       });
     }
     childCount = json['childCount'];
@@ -106,7 +112,7 @@ class Comment {
 
 enum CommentsSort { newest, top, hot, active, oldest }
 
-Future<Comments> fetchComments(
+Future<Comments> fetchEntryComments(
   http.Client client,
   String instanceHost,
   int entryId, {
@@ -119,7 +125,26 @@ Future<Comments> fetchComments(
       {'p': page?.toString(), 'sortBy': sort?.name}));
 
   if (response.statusCode == 200) {
-    return Comments.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+    return Comments.fromJson(jsonDecode(response.body) as Map<String, dynamic>, CommentType.entry);
+  } else {
+    throw Exception('Failed to load comments');
+  }
+}
+
+Future<Comments> fetchPostComments(
+    http.Client client,
+    String instanceHost,
+    int postId, {
+      int? page,
+      CommentsSort? sort,
+    }) async {
+  final response = await client.get(Uri.https(
+      instanceHost,
+      '/api/posts/$postId/comments',
+      {'p': page?.toString(), 'sortBy': sort?.name}));
+
+  if (response.statusCode == 200) {
+    return Comments.fromJson(jsonDecode(response.body) as Map<String, dynamic>, CommentType.post);
   } else {
     throw Exception('Failed to load comments');
   }
@@ -130,6 +155,7 @@ Future<Comment> putVote(
   String instanceHost,
   int commentId,
   int choice,
+  CommentType type
 ) async {
   final response = await client.put(Uri.https(
     instanceHost,
@@ -138,13 +164,14 @@ Future<Comment> putVote(
 
   httpErrorHandler(response, message: 'Failed to send vote');
 
-  return Comment.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  return Comment.fromJson(jsonDecode(response.body) as Map<String, dynamic>, type);
 }
 
 Future<Comment> putFavorite(
   http.Client client,
   String instanceHost,
   int commentId,
+  CommentType type
 ) async {
   final response = await client.put(Uri.https(
     instanceHost,
@@ -153,14 +180,15 @@ Future<Comment> putFavorite(
 
   httpErrorHandler(response, message: 'Failed to send vote');
 
-  return Comment.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  return Comment.fromJson(jsonDecode(response.body) as Map<String, dynamic>, type);
 }
 
 Future<Comment> postComment(
   http.Client client,
   String instanceHost,
   String body,
-  int entryId, {
+  int entryId,
+  CommentType type, {
   int? parentCommentId,
 }) async {
   final response = await client.post(
@@ -173,5 +201,5 @@ Future<Comment> postComment(
 
   httpErrorHandler(response, message: 'Failed to post comment');
 
-  return Comment.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  return Comment.fromJson(jsonDecode(response.body) as Map<String, dynamic>, type);
 }
