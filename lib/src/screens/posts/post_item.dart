@@ -88,14 +88,12 @@ class PostItem extends StatelessWidget {
               Row(
                 children: [
                   DisplayName(
-                    item.magazine.name,
-                    icon: item.magazine.icon?.storageUrl,
+                    item.user.username,
+                    icon: item.user.avatar?.storageUrl,
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => MagazineScreen(
-                            item.magazine.magazineId,
-                          ),
+                          builder: (context) => UserScreen(item.user.userId),
                         ),
                       );
                     },
@@ -108,11 +106,14 @@ class PostItem extends StatelessWidget {
                     ),
                   ),
                   DisplayName(
-                    item.user.username,
+                    item.magazine.name,
+                    icon: item.magazine.icon?.storageUrl,
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => UserScreen(item.user.userId),
+                          builder: (context) => MagazineScreen(
+                            item.magazine.magazineId,
+                          ),
                         ),
                       );
                     },
