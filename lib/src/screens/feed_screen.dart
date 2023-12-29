@@ -34,12 +34,12 @@ class _FeedScreenState extends State<FeedScreen> {
             SegmentedButton(
               segments: const [
                 ButtonSegment(
-                    value: FeedMode.entries,
-                    label: Text("Threads")
+                  value: FeedMode.entries,
+                  label: Text("Threads"),
                 ),
                 ButtonSegment(
-                    value: FeedMode.posts,
-                    label: Text("Posts")
+                  value: FeedMode.posts,
+                  label: Text("Posts"),
                 ),
               ],
               style: const ButtonStyle(
@@ -81,42 +81,42 @@ class _FeedScreenState extends State<FeedScreen> {
           TabBarView(
             children: switch (_feedMode) {
               FeedMode.entries => ([
-                const EntriesListView(
-                  contentSource: ContentSub(),
-                ),
-                const EntriesListView(
-                  contentSource: ContentMod(),
-                ),
-                const EntriesListView(
-                  contentSource: ContentFav(),
-                ),
-                const EntriesListView(
-                  contentSource: ContentAll(),
-                ),
-              ]),
+                  const EntriesListView(
+                    contentSource: ContentSub(),
+                  ),
+                  const EntriesListView(
+                    contentSource: ContentMod(),
+                  ),
+                  const EntriesListView(
+                    contentSource: ContentFav(),
+                  ),
+                  const EntriesListView(
+                    contentSource: ContentAll(),
+                  ),
+                ]),
               FeedMode.posts => ([
-                const PostsListView(
-                  contentSource: ContentPostsSub(),
-                ),
-                const PostsListView(
-                  contentSource: ContentPostsMod(),
-                ),
-                const PostsListView(
-                  contentSource: ContentPostsFav(),
-                ),
-                const PostsListView(
-                  contentSource: ContentPostsAll(),
-                ),
-              ])
+                  const PostsListView(
+                    contentSource: ContentSub(),
+                  ),
+                  const PostsListView(
+                    contentSource: ContentMod(),
+                  ),
+                  const PostsListView(
+                    contentSource: ContentFav(),
+                  ),
+                  const PostsListView(
+                    contentSource: ContentAll(),
+                  ),
+                ])
             },
           ),
           otherwise: switch (_feedMode) {
             FeedMode.entries => const EntriesListView(
-              contentSource: ContentAll(),
-            ),
+                contentSource: ContentAll(),
+              ),
             FeedMode.posts => const PostsListView(
-              contentSource: ContentPostsAll(),
-            ),
+                contentSource: ContentAll(),
+              ),
           },
         ),
       ),

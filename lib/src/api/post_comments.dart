@@ -107,16 +107,16 @@ class Comment {
 enum CommentsSort { newest, top, hot, active, oldest }
 
 Future<Comments> fetchComments(
-    http.Client client,
-    String instanceHost,
-    int postId, {
-      int? page,
-      CommentsSort? sort,
-    }) async {
+  http.Client client,
+  String instanceHost,
+  int postId, {
+  int? page,
+  CommentsSort? sort,
+}) async {
   final response = await client.get(Uri.https(
       instanceHost,
       '/api/posts/$postId/comments',
-      {'p': page?.toString(), 'sortBy': sort?.name}));
+      removeNulls({'p': page?.toString(), 'sortBy': sort?.name})));
 
   if (response.statusCode == 200) {
     return Comments.fromJson(jsonDecode(response.body) as Map<String, dynamic>);

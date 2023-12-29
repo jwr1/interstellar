@@ -106,17 +106,18 @@ class EntryItem {
   }
 }
 
-enum EntriesSort { active, hot, newest, oldest, top, commented }
-
 Future<Entries> fetchEntries(
   http.Client client,
   String instanceHost,
   ContentSource source, {
   int? page,
-  EntriesSort? sort,
+  ContentSort? sort,
 }) async {
-  final response = await client.get(Uri.https(instanceHost, source.getPath(),
-      {'p': page?.toString(), 'sort': sort?.name}));
+  final response = await client.get(Uri.https(
+    instanceHost,
+    source.getEntriesPath(),
+    removeNulls({'p': page?.toString(), 'sort': sort?.name}),
+  ));
 
   httpErrorHandler(response, message: 'Failed to load entries');
 

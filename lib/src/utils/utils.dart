@@ -65,3 +65,12 @@ void httpErrorHandler(http.Response response, {String? message}) {
 
 T? whenLoggedIn<T>(BuildContext context, T value, {T? otherwise}) =>
     context.read<SettingsController>().isLoggedIn ? value : otherwise;
+
+Map<String, dynamic> removeNulls(Map<String, dynamic> map) {
+  map.forEach((key, value) {
+    if (value == null) {
+      map.remove(key);
+    }
+  });
+  return map;
+}

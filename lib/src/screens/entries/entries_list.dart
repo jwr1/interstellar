@@ -22,7 +22,7 @@ class EntriesListView extends StatefulWidget {
 }
 
 class _EntriesListViewState extends State<EntriesListView> {
-  api_entries.EntriesSort sort = api_entries.EntriesSort.hot;
+  ContentSort sort = ContentSort.hot;
 
   final PagingController<int, api_entries.EntryItem> _pagingController =
       PagingController(firstPageKey: 1);
@@ -77,7 +77,7 @@ class _EntriesListViewState extends State<EntriesListView> {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  DropdownButton<api_entries.EntriesSort>(
+                  DropdownButton<ContentSort>(
                     value: sort,
                     onChanged: (newSort) {
                       if (newSort != null) {
@@ -89,27 +89,27 @@ class _EntriesListViewState extends State<EntriesListView> {
                     },
                     items: const [
                       DropdownMenuItem(
-                        value: api_entries.EntriesSort.hot,
+                        value: ContentSort.hot,
                         child: Text('Hot'),
                       ),
                       DropdownMenuItem(
-                        value: api_entries.EntriesSort.top,
+                        value: ContentSort.top,
                         child: Text('Top'),
                       ),
                       DropdownMenuItem(
-                        value: api_entries.EntriesSort.newest,
+                        value: ContentSort.newest,
                         child: Text('Newest'),
                       ),
                       DropdownMenuItem(
-                        value: api_entries.EntriesSort.active,
+                        value: ContentSort.active,
                         child: Text('Active'),
                       ),
                       DropdownMenuItem(
-                        value: api_entries.EntriesSort.commented,
+                        value: ContentSort.commented,
                         child: Text('Commented'),
                       ),
                       DropdownMenuItem(
-                        value: api_entries.EntriesSort.oldest,
+                        value: ContentSort.oldest,
                         child: Text('Oldest'),
                       ),
                     ],

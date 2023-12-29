@@ -116,7 +116,7 @@ Future<Comments> fetchComments(
   final response = await client.get(Uri.https(
       instanceHost,
       '/api/entry/$entryId/comments',
-      {'p': page?.toString(), 'sortBy': sort?.name}));
+      removeNulls({'p': page?.toString(), 'sortBy': sort?.name})));
 
   if (response.statusCode == 200) {
     return Comments.fromJson(jsonDecode(response.body) as Map<String, dynamic>);

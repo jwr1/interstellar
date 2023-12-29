@@ -1,34 +1,44 @@
+enum ContentSort { active, hot, newest, oldest, top, commented }
+
 abstract class ContentSource {
-  String getPath();
+  String getEntriesPath();
+  String? getPostsPath();
 }
 
-// entries sources
 class ContentAll implements ContentSource {
   const ContentAll();
 
   @override
-  String getPath() => '/api/entries';
+  String getEntriesPath() => '/api/entries';
+  @override
+  String getPostsPath() => '/api/posts';
 }
 
 class ContentSub implements ContentSource {
   const ContentSub();
 
   @override
-  String getPath() => '/api/entries/subscribed';
+  String getEntriesPath() => '/api/entries/subscribed';
+  @override
+  String getPostsPath() => '/api/posts/subscribed';
 }
 
 class ContentMod implements ContentSource {
   const ContentMod();
 
   @override
-  String getPath() => '/api/entries/moderated';
+  String getEntriesPath() => '/api/entries/moderated';
+  @override
+  String getPostsPath() => '/api/posts/moderated';
 }
 
 class ContentFav implements ContentSource {
   const ContentFav();
 
   @override
-  String getPath() => '/api/entries/favourited';
+  String getEntriesPath() => '/api/entries/favourited';
+  @override
+  String getPostsPath() => '/api/posts/favourited';
 }
 
 class ContentMagazine implements ContentSource {
@@ -37,7 +47,9 @@ class ContentMagazine implements ContentSource {
   const ContentMagazine(this.id);
 
   @override
-  String getPath() => '/api/magazine/$id/entries';
+  String getEntriesPath() => '/api/magazine/$id/entries';
+  @override
+  String getPostsPath() => '/api/magazine/$id/posts';
 }
 
 class ContentUser implements ContentSource {
@@ -46,7 +58,9 @@ class ContentUser implements ContentSource {
   const ContentUser(this.id);
 
   @override
-  String getPath() => '/api/users/$id/entries';
+  String getEntriesPath() => '/api/users/$id/entries';
+  @override
+  String getPostsPath() => '/api/users/$id/posts';
 }
 
 class ContentDomain implements ContentSource {
@@ -55,61 +69,7 @@ class ContentDomain implements ContentSource {
   const ContentDomain(this.id);
 
   @override
-  String getPath() => '/api/domain/$id/entries';
-}
-
-// posts sources
-class ContentPostsAll implements ContentSource {
-  const ContentPostsAll();
-
+  String getEntriesPath() => '/api/domain/$id/entries';
   @override
-  String getPath() => '/api/posts';
-}
-
-class ContentPostsSub implements ContentSource {
-  const ContentPostsSub();
-
-  @override
-  String getPath() => '/api/posts/subscribed';
-}
-
-class ContentPostsMod implements ContentSource {
-  const ContentPostsMod();
-
-  @override
-  String getPath() => '/api/posts/moderated';
-}
-
-class ContentPostsFav implements ContentSource {
-  const ContentPostsFav();
-
-  @override
-  String getPath() => '/api/posts/favourited';
-}
-
-class ContentPostsMagazine implements ContentSource {
-  final int id;
-
-  const ContentPostsMagazine(this.id);
-
-  @override
-  String getPath() => '/api/magazine/$id/posts';
-}
-
-class ContentPostsUser implements ContentSource {
-  final int id;
-
-  const ContentPostsUser(this.id);
-
-  @override
-  String getPath() => '/api/users/$id/posts';
-}
-
-class ContentPostsDomain implements ContentSource {
-  final int id;
-
-  const ContentPostsDomain(this.id);
-
-  @override
-  String getPath() => '/api/domain/$id/posts';
+  String? getPostsPath() => null;
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/posts.dart' as api_posts;
-import 'package:interstellar/src/screens/explore/domain_screen.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
@@ -8,8 +7,6 @@ import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/action_bar.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
-import 'package:interstellar/src/widgets/open_webpage.dart';
-import 'package:interstellar/src/widgets/video.dart';
 import 'package:provider/provider.dart';
 
 class PostItem extends StatelessWidget {

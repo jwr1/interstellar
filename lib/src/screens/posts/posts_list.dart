@@ -22,7 +22,7 @@ class PostsListView extends StatefulWidget {
 }
 
 class _PostsListViewState extends State<PostsListView> {
-  api_posts.PostsSort sort = api_posts.PostsSort.hot;
+  ContentSort sort = ContentSort.hot;
 
   final PagingController<int, api_posts.PostItem> _pagingController =
       PagingController(firstPageKey: 1);
@@ -77,7 +77,7 @@ class _PostsListViewState extends State<PostsListView> {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  DropdownButton<api_posts.PostsSort>(
+                  DropdownButton<ContentSort>(
                     value: sort,
                     onChanged: (newSort) {
                       if (newSort != null) {
@@ -89,27 +89,27 @@ class _PostsListViewState extends State<PostsListView> {
                     },
                     items: const [
                       DropdownMenuItem(
-                        value: api_posts.PostsSort.hot,
+                        value: ContentSort.hot,
                         child: Text('Hot'),
                       ),
                       DropdownMenuItem(
-                        value: api_posts.PostsSort.top,
+                        value: ContentSort.top,
                         child: Text('Top'),
                       ),
                       DropdownMenuItem(
-                        value: api_posts.PostsSort.newest,
+                        value: ContentSort.newest,
                         child: Text('Newest'),
                       ),
                       DropdownMenuItem(
-                        value: api_posts.PostsSort.active,
+                        value: ContentSort.active,
                         child: Text('Active'),
                       ),
                       DropdownMenuItem(
-                        value: api_posts.PostsSort.commented,
+                        value: ContentSort.commented,
                         child: Text('Commented'),
                       ),
                       DropdownMenuItem(
-                        value: api_posts.PostsSort.oldest,
+                        value: ContentSort.oldest,
                         child: Text('Oldest'),
                       ),
                     ],

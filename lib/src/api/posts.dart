@@ -48,25 +48,25 @@ class PostItem {
 
   PostItem(
       {required this.postId,
-        required this.magazine,
-        required this.user,
-        this.image,
-        this.body,
-        required this.lang,
-        required this.numComments,
-        required this.uv,
-        required this.dv,
-        required this.favourites,
-        this.isFavourited,
-        this.userVote,
-        required this.isAdult,
-        required this.isPinned,
-        required this.createdAt,
-        this.editedAt,
-        required this.lastActive,
-        required this.slug,
-        this.apId,
-        required this.visibility});
+      required this.magazine,
+      required this.user,
+      this.image,
+      this.body,
+      required this.lang,
+      required this.numComments,
+      required this.uv,
+      required this.dv,
+      required this.favourites,
+      this.isFavourited,
+      this.userVote,
+      required this.isAdult,
+      required this.isPinned,
+      required this.createdAt,
+      this.editedAt,
+      required this.lastActive,
+      required this.slug,
+      this.apId,
+      required this.visibility});
 
   PostItem.fromJson(Map<String, dynamic> json) {
     postId = json['postId'];
@@ -85,7 +85,7 @@ class PostItem {
     isPinned = json['isPinned'];
     createdAt = DateTime.parse(json['createdAt']);
     editedAt =
-    json['editedAt'] == null ? null : DateTime.parse(json['editedAt']);
+        json['editedAt'] == null ? null : DateTime.parse(json['editedAt']);
     lastActive = DateTime.parse(json['lastActive']);
     slug = json['slug'];
     apId = json['apId'];
@@ -93,29 +93,33 @@ class PostItem {
   }
 }
 
-enum PostsSort { active, hot, newest, oldest, top, commented }
-
 Future<Posts> fetchPosts(
-    http.Client client,
-    String instanceHost,
-    ContentSource source, {
-      int? page,
-      PostsSort? sort,
-    }) async {
-  final response = await client.get(Uri.https(instanceHost, source.getPath(),
-      {'p': page?.toString(), 'sort': sort?.name}));
+  http.Client client,
+  String instanceHost,
+  ContentSource source, {
+  int? page,
+  ContentSort? sort,
+}) async {
+  if (source.getPostsPath() == null) {
+    throw Exception('Failed to load posts');
+  }
 
-  httpErrorHandler(response, message: 'Failed to load entries');
+  final response = await client.get(Uri.https(
+      instanceHost,
+      source.getPostsPath()!,
+      removeNulls({'p': page?.toString(), 'sort': sort?.name})));
+
+  httpErrorHandler(response, message: 'Failed to load posts');
 
   return Posts.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
 }
 
 Future<PostItem> putVote(
-    http.Client client,
-    String instanceHost,
-    int postID,
-    int choice,
-    ) async {
+  http.Client client,
+  String instanceHost,
+  int postID,
+  int choice,
+) async {
   final response = await client.put(Uri.https(
     instanceHost,
     '/api/post/$postID/vote/$choice',
@@ -127,10 +131,10 @@ Future<PostItem> putVote(
 }
 
 Future<PostItem> putFavorite(
-    http.Client client,
-    String instanceHost,
-    int postID,
-    ) async {
+  http.Client client,
+  String instanceHost,
+  int postID,
+) async {
   final response = await client.put(Uri.https(
     instanceHost,
     '/api/post/$postID/favourite',
