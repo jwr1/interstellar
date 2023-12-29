@@ -42,6 +42,10 @@ class _FeedScreenState extends State<FeedScreen> {
                     label: Text("Posts")
                 ),
               ],
+              style: const ButtonStyle(
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                visualDensity: VisualDensity(horizontal: -3, vertical: -3),
+              ),
               selected: <FeedMode>{_feedMode},
               onSelectionChanged: (Set<FeedMode> newSelection) {
                 setState(() {
