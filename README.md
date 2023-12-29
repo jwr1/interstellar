@@ -8,7 +8,7 @@ At the moment, Interstellar can be tested on both Linux and Android (you could a
 
 ## Discussion
 
-The Interstellar magazine is located on Kbin here: [kbin.social/m/interstellar](https://kbin.social/m/interstellar). You can ask questions, report bugs, or make suggestions either here on [GitHub](https://github.com/jwr1/interstellar/issues), or in the [magazine](https://kbin.social/m/interstellar).
+You can ask questions, report bugs, or make suggestions either here on [GitHub](https://github.com/jwr1/interstellar/issues), or in the [interstellar magazine](https://kbin.earth/m/interstellar). You can also join the [matrix room](https://matrix.to/#/#kbin-interstellar:matrix.org) for real time discussion.
 
 ## Contributing
 
