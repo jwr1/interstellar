@@ -5,7 +5,7 @@ import 'package:interstellar/src/screens/explore/explore_screen.dart';
 import 'package:interstellar/src/screens/profile/profile_screen.dart';
 import 'package:provider/provider.dart';
 
-import 'screens/entries/entries_screen.dart';
+import 'screens/feed_screen.dart';
 import 'screens/settings/settings_controller.dart';
 import 'screens/settings/settings_screen.dart';
 
@@ -112,7 +112,7 @@ class _MyAppState extends State<MyApp> {
                       ),
                     Expanded(
                         child: [
-                      const EntriesScreen(),
+                      const FeedScreen(),
                       const ExploreScreen(),
                       const ProfileScreen(),
                       SettingsScreen(controller: widget.settingsController)
