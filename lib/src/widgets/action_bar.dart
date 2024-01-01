@@ -17,6 +17,7 @@ class ActionBar extends StatefulWidget {
   final void Function()? onDownVote;
   final void Function()? onCollapse;
   final Future<void> Function(String)? onReply;
+  final Future<void> Function(String)? onEdit;
 
   final List<Widget>? leadingWidgets;
 
@@ -34,6 +35,7 @@ class ActionBar extends StatefulWidget {
     this.onDownVote,
     this.onReply,
     this.onCollapse,
+    this.onEdit,
     this.leadingWidgets,
   });
 
@@ -43,6 +45,8 @@ class ActionBar extends StatefulWidget {
 
 class _ActionBarState extends State<ActionBar> {
   TextEditingController? _replyTextController;
+  TextEditingController? _editTextController;
+  final MenuController _menuController = MenuController();
 
   @override
   Widget build(BuildContext context) {
@@ -71,9 +75,31 @@ class _ActionBarState extends State<ActionBar> {
             const Spacer(),
             Padding(
               padding: const EdgeInsets.only(left: 12),
-              child: IconButton(
-                icon: const Icon(Icons.more_vert),
-                onPressed: () {},
+              child: MenuAnchor(
+                builder: (BuildContext context, MenuController controller, Widget? child) {
+                  return IconButton(
+                    icon: const Icon(Icons.more_vert),
+                    onPressed: () {
+                      if (_menuController.isOpen) {
+                        _menuController.close();
+                      } else {
+                        _menuController.open();
+                      }
+                    },
+                  );
+                },
+                controller: _menuController,
+                menuChildren: [
+                  MenuItemButton(
+                    child: const Padding(
+                      padding: EdgeInsets.all(12),
+                      child: Text("Edit")
+                    ),
+                    onPressed: () => setState(() {
+                      _editTextController = TextEditingController();
+                    }),
+                  ),
+                ]
               ),
             ),
             if (widget.boosts != null)
@@ -139,6 +165,39 @@ class _ActionBarState extends State<ActionBar> {
                           setState(() {
                             _replyTextController!.dispose();
                             _replyTextController = null;
+                          });
+                        },
+                        child: const Text('Submit'))
+                  ],
+                )
+              ],
+            ),
+          ),
+        if (widget.onEdit != null && _editTextController != null)
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                MarkdownEditor(_editTextController!),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    OutlinedButton(
+                        onPressed: () => setState(() {
+                          _editTextController!.dispose();
+                          _editTextController = null;
+                        }),
+                        child: const Text('Cancel')),
+                    const SizedBox(width: 8),
+                    FilledButton(
+                        onPressed: () async {
+                          // Wait in case of errors before closing
+                          await widget.onEdit!(_editTextController!.text);
+
+                          setState(() {
+                            _editTextController!.dispose();
+                            _editTextController = null;
                           });
                         },
                         child: const Text('Submit'))

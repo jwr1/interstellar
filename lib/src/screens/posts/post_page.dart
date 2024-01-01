@@ -89,6 +89,19 @@ class _PostPageState extends State<PostPage> {
                     _pagingController.itemList = newList;
                   });
                 },
+                onEdit: (body) async {
+                  final newPost = await api_posts.editPost(
+                      context.read<SettingsController>().httpClient,
+                      context.read<SettingsController>().instanceHost,
+                      widget.item.postId,
+                      body,
+                      widget.item.lang,
+                      widget.item.isAdult
+                  );
+                  setState(() {
+                    widget.item.body = newPost.body;
+                  });
+                },
               ),
             ),
             SliverToBoxAdapter(
