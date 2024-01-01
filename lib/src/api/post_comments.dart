@@ -175,3 +175,26 @@ Future<Comment> postComment(
 
   return Comment.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
 }
+
+Future<Comment> editComment(
+  http.Client client,
+  String instanceHost,
+  int commentId,
+  String body,
+  String lang,
+  bool? isAdult
+) async {
+  final response = await client.put(Uri.https(
+      instanceHost,
+      '/api/post-comments/$commentId'
+  ),
+      body: jsonEncode({
+        'body': body,
+        'lang': lang,
+        'isAdult': isAdult ?? false
+      }));
+
+  httpErrorHandler(response, message: "Failed to edit comment");
+
+  return Comment.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+}
