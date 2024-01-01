@@ -198,3 +198,16 @@ Future<Comment> editComment(
 
   return Comment.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
 }
+
+Future<void> deleteComment(
+    http.Client client,
+    String instanceHost,
+    int commentId,
+    ) async {
+  final response = await client.delete(Uri.https(
+      instanceHost,
+      '/api/post-comments/$commentId'
+  ));
+
+  httpErrorHandler(response, message: "Failed to delete comment");
+}

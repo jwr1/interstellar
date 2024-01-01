@@ -5,6 +5,7 @@ import 'package:interstellar/src/api/posts.dart' as api_posts;
 import 'package:interstellar/src/screens/posts/post_comment.dart';
 import 'package:interstellar/src/screens/posts/post_item.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class PostPage extends StatefulWidget {
@@ -89,7 +90,7 @@ class _PostPageState extends State<PostPage> {
                     _pagingController.itemList = newList;
                   });
                 },
-                onEdit: (body) async {
+                onEdit: whenLoggedIn(context, (body) async {
                   final newPost = await api_posts.editPost(
                       context.read<SettingsController>().httpClient,
                       context.read<SettingsController>().instanceHost,
@@ -101,7 +102,17 @@ class _PostPageState extends State<PostPage> {
                   setState(() {
                     widget.item.body = newPost.body;
                   });
-                },
+                }),
+                onDelete: whenLoggedIn(context, () async {
+                  await api_posts.deletePost(
+                    context.read<SettingsController>().httpClient,
+                    context.read<SettingsController>().instanceHost,
+                    widget.item.postId,
+                  );
+                  setState(() {
+                    widget.item.body = "deleted";
+                  });
+                }),
               ),
             ),
             SliverToBoxAdapter(

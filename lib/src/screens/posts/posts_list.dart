@@ -5,6 +5,7 @@ import 'package:interstellar/src/api/posts.dart' as api_posts;
 import 'package:interstellar/src/screens/posts/post_item.dart';
 import 'package:interstellar/src/screens/posts/post_page.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class PostsListView extends StatefulWidget {
@@ -149,6 +150,18 @@ class _PostsListViewState extends State<PostsListView> {
                         });
                       },
                       isPreview: true,
+                      onDelete: whenLoggedIn(context, () async {
+                        await api_posts.deletePost(
+                          context.read<SettingsController>().httpClient,
+                          context.read<SettingsController>().instanceHost,
+                          item.postId,
+                        );
+                        var newList = _pagingController.itemList;
+                        newList![index].body = "deleted";
+                        setState(() {
+                          _pagingController.itemList = newList;
+                        });
+                      }),
                     ),
                   ),
                 ),

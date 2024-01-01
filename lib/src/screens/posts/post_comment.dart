@@ -130,6 +130,16 @@ class _EntryCommentState extends State<PostComment> {
                     widget.comment.body = newComment.body;
                   });
                 },
+                onDelete: () async {
+                  await api_comments.deleteComment(
+                    context.read<SettingsController>().httpClient,
+                    context.read<SettingsController>().instanceHost,
+                    widget.comment.commentId,
+                  );
+                  setState(() {
+                    widget.comment.body = "deleted";
+                  });
+                },
               ),
             ),
             const SizedBox(height: 4),

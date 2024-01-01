@@ -167,3 +167,16 @@ Future<PostItem> editPost(
 
   return PostItem.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
 }
+
+Future<void> deletePost(
+  http.Client client,
+  String instanceHost,
+  int postID,
+) async {
+  final response = await client.delete(Uri.https(
+      instanceHost,
+      '/api/post/$postID'
+  ));
+
+  httpErrorHandler(response, message: "Failed to edit post");
+}
