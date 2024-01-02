@@ -25,7 +25,7 @@ class Comment {
   late int commentId;
   late User user;
   late Magazine magazine;
-  late int entryId;
+  late int postId;
   int? parentId;
   int? rootId;
   Image? image;
@@ -50,7 +50,7 @@ class Comment {
       {required this.commentId,
       required this.user,
       required this.magazine,
-      required this.entryId,
+      required this.postId,
       this.parentId,
       this.rootId,
       this.image,
@@ -75,7 +75,7 @@ class Comment {
     commentId = json['commentId'];
     user = User.fromJson(json['user']);
     magazine = Magazine.fromJson(json['magazine']);
-    entryId = json['entryId'];
+    postId = json['postId'];
     parentId = json['parentId'];
     rootId = json['rootId'];
     image = json['image'] != null ? Image.fromJson(json['image']) : null;
@@ -109,13 +109,13 @@ enum CommentsSort { newest, top, hot, active, oldest }
 Future<Comments> fetchComments(
   http.Client client,
   String instanceHost,
-  int entryId, {
+  int postId, {
   int? page,
   CommentsSort? sort,
 }) async {
   final response = await client.get(Uri.https(
       instanceHost,
-      '/api/entry/$entryId/comments',
+      '/api/posts/$postId/comments',
       removeNulls({'p': page?.toString(), 'sortBy': sort?.name})));
 
   if (response.statusCode == 200) {
@@ -133,7 +133,7 @@ Future<Comment> putVote(
 ) async {
   final response = await client.put(Uri.https(
     instanceHost,
-    '/api/comments/$commentId/vote/$choice',
+    '/api/post-comments/$commentId/vote/$choice',
   ));
 
   httpErrorHandler(response, message: 'Failed to send vote');
@@ -148,7 +148,7 @@ Future<Comment> putFavorite(
 ) async {
   final response = await client.put(Uri.https(
     instanceHost,
-    '/api/comments/$commentId/favourite',
+    '/api/post-comments/$commentId/favourite',
   ));
 
   httpErrorHandler(response, message: 'Failed to send vote');
@@ -160,13 +160,13 @@ Future<Comment> postComment(
   http.Client client,
   String instanceHost,
   String body,
-  int entryId, {
+  int postId, {
   int? parentCommentId,
 }) async {
   final response = await client.post(
     Uri.https(
       instanceHost,
-      '/api/entry/$entryId/comments${parentCommentId != null ? '/$parentCommentId/reply' : ''}',
+      '/api/posts/$postId/comments${parentCommentId != null ? '/$parentCommentId/reply' : ''}',
     ),
     body: jsonEncode({'body': body}),
   );

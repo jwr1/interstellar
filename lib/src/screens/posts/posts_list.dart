@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/content_sources.dart';
-import 'package:interstellar/src/api/entries.dart' as api_entries;
-import 'package:interstellar/src/screens/entries/entry_item.dart';
-import 'package:interstellar/src/screens/entries/entry_page.dart';
+import 'package:interstellar/src/api/posts.dart' as api_posts;
+import 'package:interstellar/src/screens/posts/post_item.dart';
+import 'package:interstellar/src/screens/posts/post_page.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:provider/provider.dart';
 
-class EntriesListView extends StatefulWidget {
-  const EntriesListView({
+class PostsListView extends StatefulWidget {
+  const PostsListView({
     super.key,
     this.contentSource = const ContentAll(),
     this.details,
@@ -18,13 +18,13 @@ class EntriesListView extends StatefulWidget {
   final Widget? details;
 
   @override
-  State<EntriesListView> createState() => _EntriesListViewState();
+  State<PostsListView> createState() => _PostsListViewState();
 }
 
-class _EntriesListViewState extends State<EntriesListView> {
+class _PostsListViewState extends State<PostsListView> {
   ContentSort sort = ContentSort.hot;
 
-  final PagingController<int, api_entries.EntryItem> _pagingController =
+  final PagingController<int, api_posts.PostItem> _pagingController =
       PagingController(firstPageKey: 1);
 
   @override
@@ -38,7 +38,7 @@ class _EntriesListViewState extends State<EntriesListView> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newPage = await api_entries.fetchEntries(
+      final newPage = await api_posts.fetchPosts(
         context.read<SettingsController>().httpClient,
         context.read<SettingsController>().instanceHost,
         widget.contentSource,
@@ -118,9 +118,9 @@ class _EntriesListViewState extends State<EntriesListView> {
               ),
             ),
           ),
-          PagedSliverList<int, api_entries.EntryItem>(
+          PagedSliverList<int, api_posts.PostItem>(
             pagingController: _pagingController,
-            builderDelegate: PagedChildBuilderDelegate<api_entries.EntryItem>(
+            builderDelegate: PagedChildBuilderDelegate<api_posts.PostItem>(
               itemBuilder: (context, item, index) => Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Card(
@@ -129,7 +129,7 @@ class _EntriesListViewState extends State<EntriesListView> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => EntryPage(item, (newValue) {
+                          builder: (context) => PostPage(item, (newValue) {
                             var newList = _pagingController.itemList;
                             newList![index] = newValue;
                             setState(() {
@@ -139,7 +139,7 @@ class _EntriesListViewState extends State<EntriesListView> {
                         ),
                       );
                     },
-                    child: EntryItem(
+                    child: PostItem(
                       item,
                       (newValue) {
                         var newList = _pagingController.itemList;

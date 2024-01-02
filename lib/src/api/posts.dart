@@ -6,29 +6,26 @@ import 'package:interstellar/src/utils/utils.dart';
 
 import 'shared.dart';
 
-class Entries {
-  late List<EntryItem> items;
+class Posts {
+  late List<PostItem> items;
   late Pagination pagination;
 
-  Entries({required this.items, required this.pagination});
+  Posts({required this.items, required this.pagination});
 
-  Entries.fromJson(Map<String, dynamic> json) {
-    items = <EntryItem>[];
+  Posts.fromJson(Map<String, dynamic> json) {
+    items = <PostItem>[];
     json['items'].forEach((v) {
-      items.add(EntryItem.fromJson(v));
+      items.add(PostItem.fromJson(v));
     });
 
     pagination = Pagination.fromJson(json['pagination']);
   }
 }
 
-class EntryItem {
-  late int entryId;
+class PostItem {
+  late int postId;
   late Magazine magazine;
   late User user;
-  late Domain domain;
-  late String title;
-  String? url;
   Image? image;
   String? body;
   late String lang;
@@ -38,24 +35,21 @@ class EntryItem {
   late int favourites;
   bool? isFavourited;
   int? userVote;
-  late bool isOc;
   late bool isAdult;
   late bool isPinned;
   late DateTime createdAt;
   DateTime? editedAt;
   late DateTime lastActive;
-  late String type;
   late String slug;
   String? apId;
+  //TODO: tags
+  //TODO: mentions
   late String visibility;
 
-  EntryItem(
-      {required this.entryId,
+  PostItem(
+      {required this.postId,
       required this.magazine,
       required this.user,
-      required this.domain,
-      required this.title,
-      this.url,
       this.image,
       this.body,
       required this.lang,
@@ -65,92 +59,88 @@ class EntryItem {
       required this.favourites,
       this.isFavourited,
       this.userVote,
-      required this.isOc,
       required this.isAdult,
       required this.isPinned,
       required this.createdAt,
       this.editedAt,
       required this.lastActive,
-      required this.type,
       required this.slug,
       this.apId,
       required this.visibility});
 
-  EntryItem.fromJson(Map<String, dynamic> json) {
-    entryId = json['entryId'];
+  PostItem.fromJson(Map<String, dynamic> json) {
+    postId = json['postId'];
     magazine = Magazine.fromJson(json['magazine']);
     user = User.fromJson(json['user']);
-    domain = Domain.fromJson(json['domain']);
-    title = json['title'];
-    url = json['url'];
     image = json['image'] != null ? Image.fromJson(json['image']) : null;
     body = json['body'];
     lang = json['lang'];
-    numComments = json['numComments'];
+    numComments = json['comments'];
     uv = json['uv'];
     dv = json['dv'];
     favourites = json['favourites'];
     isFavourited = json['isFavourited'];
     userVote = json['userVote'];
-    isOc = json['isOc'];
     isAdult = json['isAdult'];
     isPinned = json['isPinned'];
     createdAt = DateTime.parse(json['createdAt']);
     editedAt =
         json['editedAt'] == null ? null : DateTime.parse(json['editedAt']);
     lastActive = DateTime.parse(json['lastActive']);
-    type = json['type'];
     slug = json['slug'];
     apId = json['apId'];
     visibility = json['visibility'];
   }
 }
 
-Future<Entries> fetchEntries(
+Future<Posts> fetchPosts(
   http.Client client,
   String instanceHost,
   ContentSource source, {
   int? page,
   ContentSort? sort,
 }) async {
+  if (source.getPostsPath() == null) {
+    throw Exception('Failed to load posts');
+  }
+
   final response = await client.get(Uri.https(
-    instanceHost,
-    source.getEntriesPath(),
-    removeNulls({'p': page?.toString(), 'sort': sort?.name}),
-  ));
+      instanceHost,
+      source.getPostsPath()!,
+      removeNulls({'p': page?.toString(), 'sort': sort?.name})));
 
-  httpErrorHandler(response, message: 'Failed to load entries');
+  httpErrorHandler(response, message: 'Failed to load posts');
 
-  return Entries.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  return Posts.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
 }
 
-Future<EntryItem> putVote(
+Future<PostItem> putVote(
   http.Client client,
   String instanceHost,
-  int entryId,
+  int postID,
   int choice,
 ) async {
   final response = await client.put(Uri.https(
     instanceHost,
-    '/api/entry/$entryId/vote/$choice',
+    '/api/post/$postID/vote/$choice',
   ));
 
   httpErrorHandler(response, message: 'Failed to send vote');
 
-  return EntryItem.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  return PostItem.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
 }
 
-Future<EntryItem> putFavorite(
+Future<PostItem> putFavorite(
   http.Client client,
   String instanceHost,
-  int entryId,
+  int postID,
 ) async {
   final response = await client.put(Uri.https(
     instanceHost,
-    '/api/entry/$entryId/favourite',
+    '/api/post/$postID/favourite',
   ));
 
   httpErrorHandler(response, message: 'Failed to send vote');
 
-  return EntryItem.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  return PostItem.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
 }
