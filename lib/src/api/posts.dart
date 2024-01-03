@@ -144,3 +144,39 @@ Future<PostItem> putFavorite(
 
   return PostItem.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
 }
+
+Future<PostItem> editPost(
+  http.Client client,
+  String instanceHost,
+  int postID,
+  String body,
+  String lang,
+  bool isAdult
+) async {
+  final response = await client.put(Uri.https(
+    instanceHost,
+    '/api/post/$postID'
+  ),
+  body: jsonEncode({
+    'body': body,
+    'lang': lang,
+    'isAdult': isAdult
+  }));
+
+  httpErrorHandler(response, message: "Failed to edit post");
+
+  return PostItem.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+}
+
+Future<void> deletePost(
+  http.Client client,
+  String instanceHost,
+  int postID,
+) async {
+  final response = await client.delete(Uri.https(
+      instanceHost,
+      '/api/post/$postID'
+  ));
+
+  httpErrorHandler(response, message: "Failed to delete post");
+}
