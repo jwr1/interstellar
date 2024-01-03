@@ -150,18 +150,6 @@ class _PostsListViewState extends State<PostsListView> {
                         });
                       },
                       isPreview: true,
-                      onDelete: whenLoggedIn(context, () async {
-                        await api_posts.deletePost(
-                          context.read<SettingsController>().httpClient,
-                          context.read<SettingsController>().instanceHost,
-                          item.postId,
-                        );
-                        var newList = _pagingController.itemList;
-                        newList![index].body = "deleted";
-                        setState(() {
-                          _pagingController.itemList = newList;
-                        });
-                      }),
                     ),
                   ),
                 ),

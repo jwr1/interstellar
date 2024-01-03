@@ -165,6 +165,9 @@ class PostItem extends StatelessWidget {
                 onReply: onReply,
                 onEdit: onEdit,
                 onDelete: onDelete,
+                initEdit: () {
+                  return item.body;
+                },
                 leadingWidgets: [
                   const Icon(Icons.comment),
                   const SizedBox(width: 4),

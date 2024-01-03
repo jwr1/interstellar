@@ -19,6 +19,7 @@ class ActionBar extends StatefulWidget {
   final Future<void> Function(String)? onReply;
   final Future<void> Function(String)? onEdit;
   final void Function()? onDelete;
+  final String? Function()? initEdit;
 
   final List<Widget>? leadingWidgets;
 
@@ -38,6 +39,7 @@ class ActionBar extends StatefulWidget {
     this.onCollapse,
     this.onEdit,
     this.onDelete,
+    this.initEdit,
     this.leadingWidgets,
   });
 
@@ -93,9 +95,9 @@ class _ActionBarState extends State<ActionBar> {
                 controller: _menuController,
                 menuChildren: [
                   MenuItemButton(
-                    onPressed: () => setState(() {
+                    onPressed: widget.onEdit != null ? () => setState(() {
                       _editTextController = TextEditingController();
-                    }),
+                    }) : null,
                     child: const Padding(
                       padding: EdgeInsets.all(12),
                       child: Text("Edit")
@@ -187,7 +189,7 @@ class _ActionBarState extends State<ActionBar> {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                MarkdownEditor(_editTextController!),
+                MarkdownEditor(_editTextController!..text = (widget.initEdit != null ? widget.initEdit!() : "")!),
                 const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
