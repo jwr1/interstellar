@@ -117,7 +117,7 @@ class _EntryCommentState extends State<PostComment> {
                   newComment.children!.insert(0, newSubComment);
                   widget.onUpdate(newComment);
                 },
-                onEdit: (body) async {
+                onEdit: whenLoggedIn(context, (body) async {
                   var newComment = await api_comments.editComment(
                       context.read<SettingsController>().httpClient,
                       context.read<SettingsController>().instanceHost,
@@ -129,8 +129,8 @@ class _EntryCommentState extends State<PostComment> {
                   setState(() {
                     widget.comment.body = newComment.body;
                   });
-                },
-                onDelete: () async {
+                }),
+                onDelete: whenLoggedIn(context, () async {
                   await api_comments.deleteComment(
                     context.read<SettingsController>().httpClient,
                     context.read<SettingsController>().instanceHost,
@@ -139,7 +139,7 @@ class _EntryCommentState extends State<PostComment> {
                   setState(() {
                     widget.comment.body = "deleted";
                   });
-                },
+                }),
               ),
             ),
             const SizedBox(height: 4),

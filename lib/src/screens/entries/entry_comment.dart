@@ -117,6 +117,29 @@ class _EntryCommentState extends State<EntryComment> {
                   newComment.children!.insert(0, newSubComment);
                   widget.onUpdate(newComment);
                 },
+                onEdit: whenLoggedIn(context, (body) async {
+                  var newComment = await api_comments.editComment(
+                      context.read<SettingsController>().httpClient,
+                      context.read<SettingsController>().instanceHost,
+                      widget.comment.commentId,
+                      body,
+                      widget.comment.lang,
+                      widget.comment.isAdult
+                  );
+                  setState(() {
+                    widget.comment.body = newComment.body;
+                  });
+                }),
+                onDelete: whenLoggedIn(context, () async {
+                  await api_comments.deleteComment(
+                    context.read<SettingsController>().httpClient,
+                    context.read<SettingsController>().instanceHost,
+                    widget.comment.commentId,
+                  );
+                  setState(() {
+                    widget.comment.body = "deleted";
+                  });
+                }),
               ),
             ),
             const SizedBox(height: 4),

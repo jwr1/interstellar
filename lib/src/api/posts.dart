@@ -178,5 +178,5 @@ Future<void> deletePost(
       '/api/post/$postID'
   ));
 
-  httpErrorHandler(response, message: "Failed to edit post");
+  httpErrorHandler(response, message: "Failed to delete post");
 }

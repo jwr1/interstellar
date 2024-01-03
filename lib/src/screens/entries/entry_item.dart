@@ -19,11 +19,15 @@ class EntryItem extends StatelessWidget {
     super.key,
     this.isPreview = false,
     this.onReply,
+    this.onEdit,
+    this.onDelete,
   });
 
   final api_entries.EntryItem item;
   final void Function(api_entries.EntryItem) onUpdate;
   final Future<void> Function(String)? onReply;
+  final Future<void> Function(String)? onEdit;
+  final Future<void> Function()? onDelete;
   final bool isPreview;
 
   _onImageClick(BuildContext context) {
@@ -208,6 +212,8 @@ class EntryItem extends StatelessWidget {
                   ));
                 }),
                 onReply: onReply,
+                onEdit: onEdit,
+                onDelete: onDelete,
                 leadingWidgets: [
                   const Icon(Icons.comment),
                   const SizedBox(width: 4),
