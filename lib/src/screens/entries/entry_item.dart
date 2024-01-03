@@ -212,8 +212,8 @@ class EntryItem extends StatelessWidget {
                   ));
                 }),
                 onReply: onReply,
-                onEdit: onEdit,
-                onDelete: onDelete,
+                onEdit: isLoggedInUser(context, item.user.username, onEdit),
+                onDelete: isLoggedInUser(context, item.user.username, onDelete),
                 initEdit: () {
                   return item.body;
                 },
