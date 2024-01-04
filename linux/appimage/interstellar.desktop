@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Terminal=false
+Name=Interstellar
+Exec=interstellar %U
+Icon=interstellar
+Categories=Network;

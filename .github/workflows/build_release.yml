@@ -1,0 +1,106 @@
+name: Build Release
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to create (e.g. 1.2.3)'
+        required: true
+        default: 'X.X.X'
+        type: string
+
+jobs:
+  draft-release:
+    name: Draft release v${{ inputs.version }}
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.draft_release.outputs.upload_url }}
+    steps:
+      - name: Draft release
+        id: draft_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ inputs.version }}
+          draft: true
+
+  create-build:
+    name: Create ${{ matrix.target }} build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        target: [android, linux, windows]
+        include:
+          - os: ubuntu-latest
+            target: android
+            build_target: apk
+            build_path: build/app/outputs/flutter-apk
+            asset_extension: .apk
+          - os: ubuntu-latest
+            target: linux
+            build_target: linux
+            build_path: build/linux/x64/release/bundle
+            asset_extension: .AppImage
+          - os: windows-latest
+            target: windows
+            build_target: windows
+            build_path: build\windows\x64\runner\Release
+            asset_extension: .zip
+      fail-fast: false
+    needs: draft-release
+    steps:
+      - name: Install Android dependencies
+        if: matrix.target == 'android'
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17.x'
+          distribution: temurin
+
+      - name: Install Linux dependencies
+        if: matrix.target == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libx11-dev pkg-config cmake ninja-build libblkid-dev libfuse2
+          wget -O appimagetool "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage"
+          chmod +x appimagetool
+          mv appimagetool /usr/local/bin/
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+
+      - name: Install cider
+        run: dart pub global activate cider
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set version
+        run: cider version ${{ github.event.inputs.version }}
+
+      - name: Build Flutter app
+        run: flutter build -v ${{ matrix.build_target }}
+
+      - name: Rename build for Android
+        if: matrix.target == 'android'
+        run: mv app-release.apk $GITHUB_WORKSPACE/interstellar-${{ matrix.target }}.apk
+        working-directory: ${{ matrix.build_path }}
+
+      - name: Build AppImage for Linux
+        if: matrix.target == 'linux'
+        run: |
+          mv ${{ matrix.build_path }}/* linux/appimage/
+          cp assets/icons/logo.png linux/appimage/interstellar.png
+          appimagetool linux/appimage interstellar-${{ matrix.target }}.AppImage
+
+      - name: Compress build for Windows
+        if: matrix.target == 'windows'
+        run: compress-archive -Path * -DestinationPath ${env:GITHUB_WORKSPACE}\interstellar-${{ matrix.target }}.zip
+        working-directory: ${{ matrix.build_path }}
+
+      - name: Upload build to release draft
+        uses: shogo82148/actions-upload-release-asset@v1
+        with:
+          upload_url: ${{ needs.draft-release.outputs.upload_url }}
+          asset_path: ./interstellar-${{ matrix.target }}${{ matrix.asset_extension }}
+          asset_name: interstellar-${{ matrix.target }}${{ matrix.asset_extension }}
