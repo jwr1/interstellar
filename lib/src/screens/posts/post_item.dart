@@ -16,11 +16,15 @@ class PostItem extends StatelessWidget {
     super.key,
     this.isPreview = false,
     this.onReply,
+    this.onEdit,
+    this.onDelete,
   });
 
   final api_posts.PostItem item;
   final void Function(api_posts.PostItem) onUpdate;
   final Future<void> Function(String)? onReply;
+  final Future<void> Function(String)? onEdit;
+  final Future<void> Function()? onDelete;
   final bool isPreview;
 
   _onImageClick(BuildContext context) {
@@ -159,6 +163,11 @@ class PostItem extends StatelessWidget {
                   ));
                 }),
                 onReply: onReply,
+                onEdit: isLoggedInUser(context, item.user.username, onEdit),
+                onDelete: isLoggedInUser(context, item.user.username, onDelete),
+                initEdit: () {
+                  return item.body;
+                },
                 leadingWidgets: [
                   const Icon(Icons.comment),
                   const SizedBox(width: 4),

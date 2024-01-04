@@ -5,6 +5,7 @@ import 'package:interstellar/src/api/entries.dart' as api_entries;
 import 'package:interstellar/src/screens/entries/entry_comment.dart';
 import 'package:interstellar/src/screens/entries/entry_item.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class EntryPage extends StatefulWidget {
@@ -89,6 +90,31 @@ class _EntryPageState extends State<EntryPage> {
                     _pagingController.itemList = newList;
                   });
                 },
+                onEdit: whenLoggedIn(context, (body) async {
+                  final newEntry = await api_entries.editEntry(
+                      context.read<SettingsController>().httpClient,
+                      context.read<SettingsController>().instanceHost,
+                      widget.item.entryId,
+                      widget.item.title,
+                      widget.item.isOc,
+                      body,
+                      widget.item.lang,
+                      widget.item.isAdult
+                  );
+                  setState(() {
+                    widget.item.body = newEntry.body;
+                  });
+                }),
+                onDelete: whenLoggedIn(context, () async {
+                  await api_entries.deletePost(
+                    context.read<SettingsController>().httpClient,
+                    context.read<SettingsController>().instanceHost,
+                    widget.item.entryId,
+                  );
+                  setState(() {
+                    widget.item.body = "deleted";
+                  });
+                }),
               ),
             ),
             SliverToBoxAdapter(

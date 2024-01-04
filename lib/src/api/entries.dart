@@ -154,3 +154,44 @@ Future<EntryItem> putFavorite(
 
   return EntryItem.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
 }
+
+Future<EntryItem> editEntry(
+    http.Client client,
+    String instanceHost,
+    int entryID,
+    String title,
+    bool isOc,
+    String body,
+    String lang,
+    bool isAdult
+    ) async {
+  final response = await client.put(Uri.https(
+      instanceHost,
+      '/api/entry/$entryID'
+  ),
+      body: jsonEncode({
+        'title': title,
+        'tags': [],
+        'isOc': isOc,
+        'body': body,
+        'lang': lang,
+        'isAdult': isAdult
+      }));
+
+  httpErrorHandler(response, message: "Failed to edit entry");
+
+  return EntryItem.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+}
+
+Future<void> deletePost(
+    http.Client client,
+    String instanceHost,
+    int postID,
+    ) async {
+  final response = await client.delete(Uri.https(
+      instanceHost,
+      '/api/entry/$postID'
+  ));
+
+  httpErrorHandler(response, message: "Failed to delete entry");
+}
