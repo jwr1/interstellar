@@ -70,13 +70,13 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
 
-      - name: Install cider
-        run: dart pub global activate cider
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set version
-        run: cider version ${{ github.event.inputs.version }}
+        run: |
+          dart pub global activate cider
+          cider version ${{ github.event.inputs.version }}
 
       - name: Build Flutter app
         run: flutter build -v ${{ matrix.build_target }}

@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
-import 'package:interstellar/src/api/users.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -64,9 +63,6 @@ void httpErrorHandler(http.Response response, {String? message}) {
   }
 }
 
-T? whenLoggedIn<T>(BuildContext context, T value, {T? otherwise}) =>
-    context.read<SettingsController>().isLoggedIn ? value : otherwise;
-
 Map<String, dynamic> removeNulls(Map<String, dynamic> map) {
   map.forEach((key, value) {
     if (value == null) {
@@ -76,5 +72,19 @@ Map<String, dynamic> removeNulls(Map<String, dynamic> map) {
   return map;
 }
 
-T? isLoggedInUser<T>(BuildContext context, String username, T? value, {T? otherwise}) =>
-  context.read<SettingsController>().selectedAccount.split("@").first == username ? value : otherwise;
+T? whenLoggedIn<T>(
+  BuildContext context,
+  T? value, {
+  String? matchesUsername,
+  T? otherwise,
+}) =>
+    context.read<SettingsController>().isLoggedIn &&
+            (matchesUsername == null ||
+                context
+                        .read<SettingsController>()
+                        .selectedAccount
+                        .split("@")
+                        .first ==
+                    matchesUsername)
+        ? value
+        : otherwise;

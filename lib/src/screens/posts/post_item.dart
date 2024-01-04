@@ -55,21 +55,20 @@ class PostItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         if (item.image?.storageUrl != null)
           isPreview
               ? (InkWell(
-                    onTap: () => _onImageClick(context),
-                    child: Image.network(
-                      item.image!.storageUrl,
-                      height: 160,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-                  ))
+                  onTap: () => _onImageClick(context),
+                  child: Image.network(
+                    item.image!.storageUrl,
+                    height: 160,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ))
               : Container(
                   constraints: BoxConstraints(
                     maxHeight: MediaQuery.of(context).size.height / 2,
@@ -163,8 +162,16 @@ class PostItem extends StatelessWidget {
                   ));
                 }),
                 onReply: onReply,
-                onEdit: isLoggedInUser(context, item.user.username, onEdit),
-                onDelete: isLoggedInUser(context, item.user.username, onDelete),
+                onEdit: whenLoggedIn(
+                  context,
+                  onEdit,
+                  matchesUsername: item.user.username,
+                ),
+                onDelete: whenLoggedIn(
+                  context,
+                  onDelete,
+                  matchesUsername: item.user.username,
+                ),
                 initEdit: () {
                   return item.body;
                 },

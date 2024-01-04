@@ -5,7 +5,6 @@ import 'package:interstellar/src/api/posts.dart' as api_posts;
 import 'package:interstellar/src/screens/posts/post_item.dart';
 import 'package:interstellar/src/screens/posts/post_page.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
-import 'package:interstellar/src/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class PostsListView extends StatefulWidget {
