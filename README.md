@@ -20,10 +20,10 @@ Interstellar uses [Flutter](https://flutter.dev) as its framework, so make sure 
 
 The app icon is under the `assets/icons` folder, where the `logo.png` file is just the transparent one overlayed on the current background color `#423862`. This is generated with the [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons) package, and all relevant configuration is in the `pubspec.yaml` file.
 
-Universe icons created by [Freepik - Flaticon](https://www.flaticon.com/free-icons/universe)
+Icons created by [Benjamin Mathis](https://github.com/BenjMathis1)
 
 To generate a new icon, simply run from the project root:
 ```
-flutter pub get
-flutter pub run flutter_launcher_icons
+dart flutter pub get
+dart pub run flutter_launcher_icons
 ```

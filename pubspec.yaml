@@ -32,14 +32,20 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^3.0.1
-  flutter_launcher_icons: ^0.13.1
+
+  flutter_launcher_icons: # This is until the next release > ^0.13.1
+    git:
+      url: 'https://github.com/fluttercommunity/flutter_launcher_icons.git'
+      ref: '006cb1ed53f969bf11816cde5b16dd520e1ee40e'
 
 flutter_launcher_icons:
-  android: true
-  ios: true
   image_path: "assets/icons/logo.png"
+  android: true
   adaptive_icon_foreground: "assets/icons/logo-transparent.png"
-  adaptive_icon_background: "#423862"
+  adaptive_icon_background: "#294062"
+  adaptive_icon_monochrome: "assets/icons/logo-monochrome.png"
+  ios: true
+  remove_alpha_ios: true
   windows:
     generate: true
     image_path: "assets/icons/logo-transparent-512.png"
