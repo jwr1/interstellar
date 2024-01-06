@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/post_comments.dart' as api_comments;
 import 'package:interstellar/src/api/posts.dart' as api_posts;
+import 'package:interstellar/src/models/post.dart';
+import 'package:interstellar/src/models/post_comment.dart';
 import 'package:interstellar/src/screens/posts/post_comment.dart';
 import 'package:interstellar/src/screens/posts/post_item.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
@@ -15,8 +17,8 @@ class PostPage extends StatefulWidget {
     super.key,
   });
 
-  final api_posts.PostItem item;
-  final void Function(api_posts.PostItem) onUpdate;
+  final PostModel item;
+  final void Function(PostModel) onUpdate;
 
   @override
   State<PostPage> createState() => _PostPageState();
@@ -25,7 +27,7 @@ class PostPage extends StatefulWidget {
 class _PostPageState extends State<PostPage> {
   api_comments.CommentsSort commentsSort = api_comments.CommentsSort.hot;
 
-  final PagingController<int, api_comments.Comment> _pagingController =
+  final PagingController<int, PostCommentModel> _pagingController =
       PagingController(firstPageKey: 1);
 
   @override
@@ -90,29 +92,42 @@ class _PostPageState extends State<PostPage> {
                     _pagingController.itemList = newList;
                   });
                 },
-                onEdit: whenLoggedIn(context, (body) async {
-                  final newPost = await api_posts.editPost(
-                      context.read<SettingsController>().httpClient,
-                      context.read<SettingsController>().instanceHost,
-                      widget.item.postId,
-                      body,
-                      widget.item.lang,
-                      widget.item.isAdult
-                  );
-                  setState(() {
-                    widget.item.body = newPost.body;
-                  });
-                }),
-                onDelete: whenLoggedIn(context, () async {
-                  await api_posts.deletePost(
-                    context.read<SettingsController>().httpClient,
-                    context.read<SettingsController>().instanceHost,
-                    widget.item.postId,
-                  );
-                  setState(() {
-                    widget.item.body = "deleted";
-                  });
-                }),
+                onEdit: widget.item.visibility != 'soft_deleted'
+                    ? whenLoggedIn(
+                        context,
+                        (body) async {
+                          final newPost = await api_posts.editPost(
+                              context.read<SettingsController>().httpClient,
+                              context.read<SettingsController>().instanceHost,
+                              widget.item.postId,
+                              body,
+                              widget.item.lang,
+                              widget.item.isAdult);
+                          widget.onUpdate(newPost);
+                        },
+                        matchesUsername: widget.item.user.username,
+                      )
+                    : null,
+                onDelete: widget.item.visibility != 'soft_deleted'
+                    ? whenLoggedIn(
+                        context,
+                        () async {
+                          await api_posts.deletePost(
+                            context.read<SettingsController>().httpClient,
+                            context.read<SettingsController>().instanceHost,
+                            widget.item.postId,
+                          );
+                          widget.onUpdate(widget.item.copyWith(
+                            body: '_post deleted_',
+                            uv: null,
+                            dv: null,
+                            favourites: null,
+                            visibility: 'soft_deleted',
+                          ));
+                        },
+                        matchesUsername: widget.item.user.username,
+                      )
+                    : null,
               ),
             ),
             SliverToBoxAdapter(
@@ -157,9 +172,9 @@ class _PostPageState extends State<PostPage> {
                 ),
               ),
             ),
-            PagedSliverList<int, api_comments.Comment>(
+            PagedSliverList<int, PostCommentModel>(
               pagingController: _pagingController,
-              builderDelegate: PagedChildBuilderDelegate<api_comments.Comment>(
+              builderDelegate: PagedChildBuilderDelegate<PostCommentModel>(
                 itemBuilder: (context, item, index) => Padding(
                   padding: const EdgeInsets.all(8),
                   child: PostComment(item, (newValue) {

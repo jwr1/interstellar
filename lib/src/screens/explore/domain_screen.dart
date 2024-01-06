@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/content_sources.dart';
 import 'package:interstellar/src/api/domains.dart' as api_domains;
-import 'package:interstellar/src/api/shared.dart' as api_shared;
+import 'package:interstellar/src/models/domain.dart';
 import 'package:interstellar/src/screens/entries/entries_list.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
@@ -9,8 +9,8 @@ import 'package:provider/provider.dart';
 
 class DomainScreen extends StatefulWidget {
   final int domainId;
-  final api_shared.Domain? data;
-  final void Function(api_shared.Domain)? onUpdate;
+  final DomainModel? data;
+  final void Function(DomainModel)? onUpdate;
 
   const DomainScreen(this.domainId, {super.key, this.data, this.onUpdate});
 
@@ -19,7 +19,7 @@ class DomainScreen extends StatefulWidget {
 }
 
 class _DomainScreenState extends State<DomainScreen> {
-  api_shared.Domain? _data;
+  DomainModel? _data;
 
   @override
   void initState() {
@@ -61,7 +61,7 @@ class _DomainScreenState extends State<DomainScreen> {
                             softWrap: true,
                           ),
                         ),
-                       OutlinedButton(
+                        OutlinedButton(
                           style: ButtonStyle(
                               foregroundColor: _data!.isUserSubscribed == true
                                   ? MaterialStatePropertyAll(

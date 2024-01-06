@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/domains.dart' as api_domains;
-import 'package:interstellar/src/api/shared.dart' as api_shared;
+import 'package:interstellar/src/models/domain.dart';
 import 'package:interstellar/src/screens/explore/domain_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
@@ -19,7 +19,7 @@ class DomainsScreen extends StatefulWidget {
 class _DomainsScreenState extends State<DomainsScreen> {
   String search = "";
 
-  final PagingController<int, api_shared.Domain> _pagingController =
+  final PagingController<int, DomainModel> _pagingController =
       PagingController(firstPageKey: 1);
 
   @override
@@ -84,9 +84,9 @@ class _DomainsScreenState extends State<DomainsScreen> {
               ),
             ),
           ),
-          PagedSliverList<int, api_shared.Domain>(
+          PagedSliverList<int, DomainModel>(
             pagingController: _pagingController,
-            builderDelegate: PagedChildBuilderDelegate<api_shared.Domain>(
+            builderDelegate: PagedChildBuilderDelegate<DomainModel>(
               itemBuilder: (context, item, index) => InkWell(
                 onTap: () {
                   Navigator.of(context).push(

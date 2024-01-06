@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/content_sources.dart';
 import 'package:interstellar/src/api/posts.dart' as api_posts;
+import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/screens/posts/post_item.dart';
 import 'package:interstellar/src/screens/posts/post_page.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
@@ -24,7 +25,7 @@ class PostsListView extends StatefulWidget {
 class _PostsListViewState extends State<PostsListView> {
   ContentSort sort = ContentSort.hot;
 
-  final PagingController<int, api_posts.PostItem> _pagingController =
+  final PagingController<int, PostModel> _pagingController =
       PagingController(firstPageKey: 1);
 
   @override
@@ -118,9 +119,9 @@ class _PostsListViewState extends State<PostsListView> {
               ),
             ),
           ),
-          PagedSliverList<int, api_posts.PostItem>(
+          PagedSliverList<int, PostModel>(
             pagingController: _pagingController,
-            builderDelegate: PagedChildBuilderDelegate<api_posts.PostItem>(
+            builderDelegate: PagedChildBuilderDelegate<PostModel>(
               itemBuilder: (context, item, index) => Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Card(

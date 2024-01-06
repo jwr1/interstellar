@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/users.dart' as api_users;
+import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
@@ -17,7 +18,7 @@ class UsersScreen extends StatefulWidget {
 }
 
 class _UsersScreenState extends State<UsersScreen> {
-  final PagingController<int, api_users.DetailedUser> _pagingController =
+  final PagingController<int, DetailedUserModel> _pagingController =
       PagingController(firstPageKey: 1);
 
   @override
@@ -59,9 +60,9 @@ class _UsersScreenState extends State<UsersScreen> {
       ),
       child: CustomScrollView(
         slivers: [
-          PagedSliverList<int, api_users.DetailedUser>(
+          PagedSliverList<int, DetailedUserModel>(
             pagingController: _pagingController,
-            builderDelegate: PagedChildBuilderDelegate<api_users.DetailedUser>(
+            builderDelegate: PagedChildBuilderDelegate<DetailedUserModel>(
               itemBuilder: (context, item, index) => InkWell(
                 onTap: () {
                   Navigator.of(context).push(

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/comments.dart' as api_comments;
 import 'package:interstellar/src/api/entries.dart' as api_entries;
+import 'package:interstellar/src/models/entry.dart';
+import 'package:interstellar/src/models/entry_comment.dart';
 import 'package:interstellar/src/screens/entries/entry_comment.dart';
 import 'package:interstellar/src/screens/entries/entry_item.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
@@ -15,8 +17,8 @@ class EntryPage extends StatefulWidget {
     super.key,
   });
 
-  final api_entries.EntryItem item;
-  final void Function(api_entries.EntryItem) onUpdate;
+  final EntryModel item;
+  final void Function(EntryModel) onUpdate;
 
   @override
   State<EntryPage> createState() => _EntryPageState();
@@ -25,7 +27,7 @@ class EntryPage extends StatefulWidget {
 class _EntryPageState extends State<EntryPage> {
   api_comments.CommentsSort commentsSort = api_comments.CommentsSort.hot;
 
-  final PagingController<int, api_comments.Comment> _pagingController =
+  final PagingController<int, EntryCommentModel> _pagingController =
       PagingController(firstPageKey: 1);
 
   @override
@@ -90,31 +92,44 @@ class _EntryPageState extends State<EntryPage> {
                     _pagingController.itemList = newList;
                   });
                 },
-                onEdit: whenLoggedIn(context, (body) async {
-                  final newEntry = await api_entries.editEntry(
-                      context.read<SettingsController>().httpClient,
-                      context.read<SettingsController>().instanceHost,
-                      widget.item.entryId,
-                      widget.item.title,
-                      widget.item.isOc,
-                      body,
-                      widget.item.lang,
-                      widget.item.isAdult
-                  );
-                  setState(() {
-                    widget.item.body = newEntry.body;
-                  });
-                }),
-                onDelete: whenLoggedIn(context, () async {
-                  await api_entries.deletePost(
-                    context.read<SettingsController>().httpClient,
-                    context.read<SettingsController>().instanceHost,
-                    widget.item.entryId,
-                  );
-                  setState(() {
-                    widget.item.body = "deleted";
-                  });
-                }),
+                onEdit: widget.item.visibility != 'soft_deleted'
+                    ? whenLoggedIn(
+                        context,
+                        (body) async {
+                          final newEntry = await api_entries.editEntry(
+                              context.read<SettingsController>().httpClient,
+                              context.read<SettingsController>().instanceHost,
+                              widget.item.entryId,
+                              widget.item.title,
+                              widget.item.isOc,
+                              body,
+                              widget.item.lang,
+                              widget.item.isAdult);
+                          widget.onUpdate(newEntry);
+                        },
+                        matchesUsername: widget.item.user.username,
+                      )
+                    : null,
+                onDelete: widget.item.visibility != 'soft_deleted'
+                    ? whenLoggedIn(
+                        context,
+                        () async {
+                          await api_entries.deletePost(
+                            context.read<SettingsController>().httpClient,
+                            context.read<SettingsController>().instanceHost,
+                            widget.item.entryId,
+                          );
+                          widget.onUpdate(widget.item.copyWith(
+                            body: '_thread deleted_',
+                            uv: null,
+                            dv: null,
+                            favourites: null,
+                            visibility: 'soft_deleted',
+                          ));
+                        },
+                        matchesUsername: widget.item.user.username,
+                      )
+                    : null,
               ),
             ),
             SliverToBoxAdapter(
@@ -159,9 +174,9 @@ class _EntryPageState extends State<EntryPage> {
                 ),
               ),
             ),
-            PagedSliverList<int, api_comments.Comment>(
+            PagedSliverList<int, EntryCommentModel>(
               pagingController: _pagingController,
-              builderDelegate: PagedChildBuilderDelegate<api_comments.Comment>(
+              builderDelegate: PagedChildBuilderDelegate<EntryCommentModel>(
                 itemBuilder: (context, item, index) => Padding(
                   padding: const EdgeInsets.all(8),
                   child: EntryComment(item, (newValue) {

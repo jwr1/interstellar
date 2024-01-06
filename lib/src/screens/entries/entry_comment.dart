@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/comments.dart' as api_comments;
+import 'package:interstellar/src/models/entry_comment.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/content_item.dart';
@@ -8,8 +9,8 @@ import 'package:provider/provider.dart';
 class EntryComment extends StatefulWidget {
   const EntryComment(this.comment, this.onUpdate, {super.key});
 
-  final api_comments.Comment comment;
-  final void Function(api_comments.Comment) onUpdate;
+  final EntryCommentModel comment;
+  final void Function(EntryCommentModel) onUpdate;
 
   @override
   State<EntryComment> createState() => _EntryCommentState();
@@ -20,7 +21,7 @@ class _EntryCommentState extends State<EntryComment> {
   Widget build(BuildContext context) {
     return Card(
       child: ContentItem(
-        body: widget.comment.body,
+        body: widget.comment.body ?? '_comment deleted_',
         createdAt: widget.comment.createdAt,
         user: widget.comment.user.username,
         userIcon: widget.comment.user.avatar?.storageUrl,
@@ -34,9 +35,10 @@ class _EntryCommentState extends State<EntryComment> {
             widget.comment.commentId,
             1,
           );
-          newValue.childCount = widget.comment.childCount;
-          newValue.children = widget.comment.children;
-          widget.onUpdate(newValue);
+          widget.onUpdate(newValue.copyWith(
+            childCount: widget.comment.childCount,
+            children: widget.comment.children,
+          ));
         }),
         upVotes: widget.comment.favourites,
         isUpVoted: widget.comment.isFavourited == true,
@@ -46,9 +48,10 @@ class _EntryCommentState extends State<EntryComment> {
             context.read<SettingsController>().instanceHost,
             widget.comment.commentId,
           );
-          newValue.childCount = widget.comment.childCount;
-          newValue.children = widget.comment.children;
-          widget.onUpdate(newValue);
+          widget.onUpdate(newValue.copyWith(
+            childCount: widget.comment.childCount,
+            children: widget.comment.children,
+          ));
         }),
         downVotes: widget.comment.dv,
         isDownVoted: widget.comment.userVote == -1,
@@ -59,9 +62,10 @@ class _EntryCommentState extends State<EntryComment> {
             widget.comment.commentId,
             -1,
           );
-          newValue.childCount = widget.comment.childCount;
-          newValue.children = widget.comment.children;
-          widget.onUpdate(newValue);
+          widget.onUpdate(newValue.copyWith(
+            childCount: widget.comment.childCount,
+            children: widget.comment.children,
+          ));
         }),
         showCollapse: true,
         onReply: (body) async {
@@ -73,42 +77,52 @@ class _EntryCommentState extends State<EntryComment> {
             parentCommentId: widget.comment.commentId,
           );
 
-          var newComment = widget.comment;
-          newComment.childCount += 1;
-          newComment.children!.insert(0, newSubComment);
-          widget.onUpdate(newComment);
+          widget.onUpdate(widget.comment.copyWith(
+            childCount: widget.comment.childCount + 1,
+            children: [newSubComment, ...widget.comment.children!],
+          ));
         },
-        onEdit: whenLoggedIn(context, (body) async {
-          var newComment = await api_comments.editComment(
-              context.read<SettingsController>().httpClient,
-              context.read<SettingsController>().instanceHost,
-              widget.comment.commentId,
-              body,
-              widget.comment.lang,
-              widget.comment.isAdult);
-          setState(() {
-            widget.comment.body = newComment.body;
-          });
-        }, matchesUsername: widget.comment.user.username),
-        onDelete: whenLoggedIn(context, () async {
-          await api_comments.deleteComment(
-            context.read<SettingsController>().httpClient,
-            context.read<SettingsController>().instanceHost,
-            widget.comment.commentId,
-          );
-          setState(() {
-            widget.comment.body = "deleted";
-          });
-        }, matchesUsername: widget.comment.user.username),
+        onEdit: widget.comment.visibility != 'soft_deleted'
+            ? whenLoggedIn(context, (body) async {
+                var newValue = await api_comments.editComment(
+                    context.read<SettingsController>().httpClient,
+                    context.read<SettingsController>().instanceHost,
+                    widget.comment.commentId,
+                    body,
+                    widget.comment.lang,
+                    widget.comment.isAdult);
+                widget.onUpdate(newValue.copyWith(
+                  childCount: widget.comment.childCount,
+                  children: widget.comment.children,
+                ));
+              }, matchesUsername: widget.comment.user.username)
+            : null,
+        onDelete: widget.comment.visibility != 'soft_deleted'
+            ? whenLoggedIn(context, () async {
+                await api_comments.deleteComment(
+                  context.read<SettingsController>().httpClient,
+                  context.read<SettingsController>().instanceHost,
+                  widget.comment.commentId,
+                );
+                widget.onUpdate(widget.comment.copyWith(
+                  body: '_comment deleted_',
+                  uv: null,
+                  dv: null,
+                  favourites: null,
+                  visibility: 'soft_deleted',
+                ));
+              }, matchesUsername: widget.comment.user.username)
+            : null,
         child: widget.comment.childCount > 0
             ? Column(
                 children: widget.comment.children!
                     .asMap()
                     .entries
                     .map((item) => EntryComment(item.value, (newValue) {
-                          var newComment = widget.comment;
-                          newComment.children![item.key] = newValue;
-                          widget.onUpdate(newComment);
+                          widget.onUpdate(widget.comment.copyWith(
+                            childCount: widget.comment.childCount + 1,
+                            children: [newValue, ...widget.comment.children!],
+                          ));
                         }))
                     .toList(),
               )

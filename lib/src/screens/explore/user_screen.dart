@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/content_sources.dart';
 import 'package:interstellar/src/api/users.dart' as api_users;
+import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/screens/entries/entries_list.dart';
 import 'package:interstellar/src/screens/feed_screen.dart';
 import 'package:interstellar/src/screens/posts/posts_list.dart';
@@ -12,8 +13,8 @@ import 'package:provider/provider.dart';
 
 class UserScreen extends StatefulWidget {
   final int userId;
-  final api_users.DetailedUser? data;
-  final void Function(api_users.DetailedUser)? onUpdate;
+  final DetailedUserModel? data;
+  final void Function(DetailedUserModel)? onUpdate;
 
   const UserScreen(this.userId, {super.key, this.data, this.onUpdate});
 
@@ -22,7 +23,7 @@ class UserScreen extends StatefulWidget {
 }
 
 class _UserScreenState extends State<UserScreen> {
-  api_users.DetailedUser? _data;
+  DetailedUserModel? _data;
   FeedMode _feedMode = FeedMode.entries;
 
   @override
@@ -55,8 +56,7 @@ class _UserScreenState extends State<UserScreen> {
               if (_data!.avatar?.storageUrl != null)
                 Padding(
                     padding: const EdgeInsets.only(right: 12),
-                    child: Avatar(_data!.avatar!.storageUrl,
-                        radius: 32)),
+                    child: Avatar(_data!.avatar!.storageUrl, radius: 32)),
               Expanded(
                 child: Text(
                   _data!.username,
@@ -67,8 +67,7 @@ class _UserScreenState extends State<UserScreen> {
               OutlinedButton(
                 style: ButtonStyle(
                     foregroundColor: _data!.isFollowedByUser == true
-                        ? MaterialStatePropertyAll(
-                        Colors.purple.shade400)
+                        ? MaterialStatePropertyAll(Colors.purple.shade400)
                         : null),
                 onPressed: whenLoggedIn(context, () async {
                   var newValue = await api_users.putFollow(
@@ -106,7 +105,7 @@ class _UserScreenState extends State<UserScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+        appBar: AppBar(
           title: Text(_data?.username ?? ''),
           actions: [
             SegmentedButton(
@@ -132,21 +131,16 @@ class _UserScreenState extends State<UserScreen> {
               },
             ),
           ],
-      ),
-      body: switch (_feedMode) {
-        FeedMode.entries => EntriesListView(
-          contentSource: ContentUser(widget.userId),
-          details: _data != null
-              ? _userDetails()
-              : null,
         ),
-        FeedMode.posts => PostsListView(
-          contentSource: ContentUser(widget.userId),
-          details: _data != null
-              ? _userDetails()
-              : null,
-        ),
-      }
-    );
+        body: switch (_feedMode) {
+          FeedMode.entries => EntriesListView(
+              contentSource: ContentUser(widget.userId),
+              details: _data != null ? _userDetails() : null,
+            ),
+          FeedMode.posts => PostsListView(
+              contentSource: ContentUser(widget.userId),
+              details: _data != null ? _userDetails() : null,
+            ),
+        });
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/posts.dart' as api_posts;
+import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/content_item.dart';
@@ -16,8 +17,8 @@ class PostItem extends StatelessWidget {
     this.onDelete,
   });
 
-  final api_posts.PostItem item;
-  final void Function(api_posts.PostItem) onUpdate;
+  final PostModel item;
+  final void Function(PostModel) onUpdate;
   final Future<void> Function(String)? onReply;
   final Future<void> Function(String)? onEdit;
   final Future<void> Function()? onDelete;
@@ -62,17 +63,9 @@ class PostItem extends StatelessWidget {
         ));
       }),
       onReply: onReply,
-      onEdit: whenLoggedIn(
-        context,
-        onEdit,
-        matchesUsername: item.user.username,
-      ),
-      onDelete: whenLoggedIn(
-        context,
-        onDelete,
-        matchesUsername: item.user.username,
-      ),
-      numComments: item.numComments,
+      onEdit: onEdit,
+      onDelete: onDelete,
+      numComments: item.comments,
     );
   }
 }

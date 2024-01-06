@@ -26,6 +26,8 @@ dependencies:
   url_launcher: ^6.2.2
   webview_flutter: ^4.4.2
   youtube_explode_dart: ^2.0.4
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.8.1
 
 dev_dependencies:
   flutter_test:
@@ -37,6 +39,9 @@ dev_dependencies:
     git:
       url: 'https://github.com/fluttercommunity/flutter_launcher_icons.git'
       ref: '006cb1ed53f969bf11816cde5b16dd520e1ee40e'
+  build_runner: ^2.4.7
+  freezed: ^2.4.6
+  json_serializable: ^6.7.1
 
 flutter_launcher_icons:
   image_path: 'assets/icons/logo.png'

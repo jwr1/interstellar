@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/magazines.dart' as api_magazines;
+import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
@@ -20,8 +21,8 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
   api_magazines.MagazinesSort sort = api_magazines.MagazinesSort.hot;
   String search = "";
 
-  final PagingController<int, api_magazines.DetailedMagazine>
-      _pagingController = PagingController(firstPageKey: 1);
+  final PagingController<int, DetailedMagazineModel> _pagingController =
+      PagingController(firstPageKey: 1);
 
   @override
   void initState() {
@@ -112,10 +113,9 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
               ),
             ),
           ),
-          PagedSliverList<int, api_magazines.DetailedMagazine>(
+          PagedSliverList<int, DetailedMagazineModel>(
             pagingController: _pagingController,
-            builderDelegate:
-                PagedChildBuilderDelegate<api_magazines.DetailedMagazine>(
+            builderDelegate: PagedChildBuilderDelegate<DetailedMagazineModel>(
               itemBuilder: (context, item, index) => InkWell(
                 onTap: () {
                   Navigator.of(context).push(

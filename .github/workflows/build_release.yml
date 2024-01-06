@@ -79,7 +79,9 @@ jobs:
           cider version ${{ github.event.inputs.version }}
 
       - name: Build Flutter app
-        run: flutter build -v ${{ matrix.build_target }}
+        run: |
+          dart run build_runner build
+          flutter build -v ${{ matrix.build_target }}
 
       - name: Rename build for Android
         if: matrix.target == 'android'

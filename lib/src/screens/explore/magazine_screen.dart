@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/content_sources.dart';
 import 'package:interstellar/src/api/magazines.dart' as api_magazines;
+import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/screens/entries/entries_list.dart';
 import 'package:interstellar/src/screens/feed_screen.dart';
 import 'package:interstellar/src/screens/posts/posts_list.dart';
@@ -12,8 +13,8 @@ import 'package:provider/provider.dart';
 
 class MagazineScreen extends StatefulWidget {
   final int magazineId;
-  final api_magazines.DetailedMagazine? data;
-  final void Function(api_magazines.DetailedMagazine)? onUpdate;
+  final DetailedMagazineModel? data;
+  final void Function(DetailedMagazineModel)? onUpdate;
 
   const MagazineScreen(this.magazineId, {super.key, this.data, this.onUpdate});
 
@@ -22,7 +23,7 @@ class MagazineScreen extends StatefulWidget {
 }
 
 class _MagazineScreenState extends State<MagazineScreen> {
-  api_magazines.DetailedMagazine? _data;
+  DetailedMagazineModel? _data;
   FeedMode _feedMode = FeedMode.entries;
 
   @override
@@ -55,8 +56,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
               if (_data!.icon?.storageUrl != null)
                 Padding(
                     padding: const EdgeInsets.only(right: 12),
-                    child:
-                    Avatar(_data!.icon!.storageUrl, radius: 32)),
+                    child: Avatar(_data!.icon!.storageUrl, radius: 32)),
               Expanded(
                 child: Text(
                   _data!.title,
@@ -67,8 +67,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
               OutlinedButton(
                 style: ButtonStyle(
                     foregroundColor: _data!.isUserSubscribed == true
-                        ? MaterialStatePropertyAll(
-                        Colors.purple.shade400)
+                        ? MaterialStatePropertyAll(Colors.purple.shade400)
                         : null),
                 onPressed: whenLoggedIn(context, () async {
                   var newValue = await api_magazines.putSubscribe(
@@ -106,7 +105,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+        appBar: AppBar(
           title: Text(_data?.name ?? ''),
           actions: [
             SegmentedButton(
@@ -132,21 +131,16 @@ class _MagazineScreenState extends State<MagazineScreen> {
               },
             ),
           ],
-      ),
-      body: switch (_feedMode) {
-        FeedMode.entries => EntriesListView(
-          contentSource: ContentMagazine(widget.magazineId),
-          details: _data != null
-              ? _magazineDetails()
-              : null,
         ),
-        FeedMode.posts => PostsListView(
-          contentSource: ContentMagazine(widget.magazineId),
-          details: _data != null
-              ? _magazineDetails()
-              : null,
-        ),
-      }
-    );
+        body: switch (_feedMode) {
+          FeedMode.entries => EntriesListView(
+              contentSource: ContentMagazine(widget.magazineId),
+              details: _data != null ? _magazineDetails() : null,
+            ),
+          FeedMode.posts => PostsListView(
+              contentSource: ContentMagazine(widget.magazineId),
+              details: _data != null ? _magazineDetails() : null,
+            ),
+        });
   }
 }
