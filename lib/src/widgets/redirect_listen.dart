@@ -7,7 +7,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 const _redirectHost = 'localhost';
 const _redirectPort = 46837;
-const _redirectUri = 'http://$_redirectHost:$_redirectPort';
+const redirectUri = 'http://$_redirectHost:$_redirectPort';
 
 class RedirectListener extends StatefulWidget {
   final Uri initUri;
@@ -52,7 +52,7 @@ class _RedirectListenerState extends State<RedirectListener> {
         ..setNavigationDelegate(
           NavigationDelegate(
             onNavigationRequest: (NavigationRequest request) {
-              if (request.url.startsWith(_redirectUri)) {
+              if (request.url.startsWith(redirectUri)) {
                 WebViewCookieManager().clearCookies();
                 Navigator.pop(context, Uri.parse(request.url).queryParameters);
                 return NavigationDecision.prevent;

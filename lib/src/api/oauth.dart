@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/redirect_listen.dart';
 
 const oauthName = 'Interstellar';
 const oauthContact = 'contact@kbin.earth';
-const redirectUri = 'http://localhost:46837';
 const oauthGrants = ['authorization_code', 'refresh_token'];
 const oauthScopes = [
   'read',
