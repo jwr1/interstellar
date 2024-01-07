@@ -12,12 +12,12 @@ import 'package:provider/provider.dart';
 
 class PostPage extends StatefulWidget {
   const PostPage(
-    this.item,
+    this.initData,
     this.onUpdate, {
     super.key,
   });
 
-  final PostModel item;
+  final PostModel initData;
   final void Function(PostModel) onUpdate;
 
   @override
@@ -25,6 +25,8 @@ class PostPage extends StatefulWidget {
 }
 
 class _PostPageState extends State<PostPage> {
+  PostModel? _data;
+
   api_comments.CommentsSort commentsSort = api_comments.CommentsSort.hot;
 
   final PagingController<int, PostCommentModel> _pagingController =
@@ -34,9 +36,18 @@ class _PostPageState extends State<PostPage> {
   void initState() {
     super.initState();
 
+    _data = widget.initData;
+
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
+  }
+
+  void _onUpdate(PostModel newValue) {
+    setState(() {
+      _data = newValue;
+    });
+    widget.onUpdate(newValue);
   }
 
   Future<void> _fetchPage(int pageKey) async {
@@ -44,7 +55,7 @@ class _PostPageState extends State<PostPage> {
       final newPage = await api_comments.fetchComments(
         context.read<SettingsController>().httpClient,
         context.read<SettingsController>().instanceHost,
-        widget.item.postId,
+        _data!.postId,
         page: pageKey,
         sort: commentsSort,
       );
@@ -67,7 +78,7 @@ class _PostPageState extends State<PostPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.item.user.username),
+        title: Text(_data?.user.username ?? ''),
       ),
       body: RefreshIndicator(
         onRefresh: () => Future.sync(
@@ -75,61 +86,62 @@ class _PostPageState extends State<PostPage> {
         ),
         child: CustomScrollView(
           slivers: [
-            SliverToBoxAdapter(
-              child: PostItem(
-                widget.item,
-                widget.onUpdate,
-                onReply: (body) async {
-                  var newComment = await api_comments.postComment(
-                    context.read<SettingsController>().httpClient,
-                    context.read<SettingsController>().instanceHost,
-                    body,
-                    widget.item.postId,
-                  );
-                  var newList = _pagingController.itemList;
-                  newList?.insert(0, newComment);
-                  setState(() {
-                    _pagingController.itemList = newList;
-                  });
-                },
-                onEdit: widget.item.visibility != 'soft_deleted'
-                    ? whenLoggedIn(
-                        context,
-                        (body) async {
-                          final newPost = await api_posts.editPost(
+            if (_data != null)
+              SliverToBoxAdapter(
+                child: PostItem(
+                  _data!,
+                  _onUpdate,
+                  onReply: (body) async {
+                    var newComment = await api_comments.postComment(
+                      context.read<SettingsController>().httpClient,
+                      context.read<SettingsController>().instanceHost,
+                      body,
+                      _data!.postId,
+                    );
+                    var newList = _pagingController.itemList;
+                    newList?.insert(0, newComment);
+                    setState(() {
+                      _pagingController.itemList = newList;
+                    });
+                  },
+                  onEdit: _data!.visibility != 'soft_deleted'
+                      ? whenLoggedIn(
+                          context,
+                          (body) async {
+                            final newPost = await api_posts.editPost(
+                                context.read<SettingsController>().httpClient,
+                                context.read<SettingsController>().instanceHost,
+                                _data!.postId,
+                                body,
+                                _data!.lang,
+                                _data!.isAdult);
+                            _onUpdate(newPost);
+                          },
+                          matchesUsername: _data!.user.username,
+                        )
+                      : null,
+                  onDelete: _data!.visibility != 'soft_deleted'
+                      ? whenLoggedIn(
+                          context,
+                          () async {
+                            await api_posts.deletePost(
                               context.read<SettingsController>().httpClient,
                               context.read<SettingsController>().instanceHost,
-                              widget.item.postId,
-                              body,
-                              widget.item.lang,
-                              widget.item.isAdult);
-                          widget.onUpdate(newPost);
-                        },
-                        matchesUsername: widget.item.user.username,
-                      )
-                    : null,
-                onDelete: widget.item.visibility != 'soft_deleted'
-                    ? whenLoggedIn(
-                        context,
-                        () async {
-                          await api_posts.deletePost(
-                            context.read<SettingsController>().httpClient,
-                            context.read<SettingsController>().instanceHost,
-                            widget.item.postId,
-                          );
-                          widget.onUpdate(widget.item.copyWith(
-                            body: '_post deleted_',
-                            uv: null,
-                            dv: null,
-                            favourites: null,
-                            visibility: 'soft_deleted',
-                          ));
-                        },
-                        matchesUsername: widget.item.user.username,
-                      )
-                    : null,
+                              _data!.postId,
+                            );
+                            _onUpdate(_data!.copyWith(
+                              body: '_post deleted_',
+                              uv: null,
+                              dv: null,
+                              favourites: null,
+                              visibility: 'soft_deleted',
+                            ));
+                          },
+                          matchesUsername: _data!.user.username,
+                        )
+                      : null,
+                ),
               ),
-            ),
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),

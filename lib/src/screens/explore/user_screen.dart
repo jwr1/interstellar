@@ -13,10 +13,10 @@ import 'package:provider/provider.dart';
 
 class UserScreen extends StatefulWidget {
   final int userId;
-  final DetailedUserModel? data;
+  final DetailedUserModel? initData;
   final void Function(DetailedUserModel)? onUpdate;
 
-  const UserScreen(this.userId, {super.key, this.data, this.onUpdate});
+  const UserScreen(this.userId, {super.key, this.initData, this.onUpdate});
 
   @override
   State<UserScreen> createState() => _UserScreenState();
@@ -30,7 +30,7 @@ class _UserScreenState extends State<UserScreen> {
   void initState() {
     super.initState();
 
-    _data = widget.data;
+    _data = widget.initData;
 
     if (_data == null) {
       api_users
@@ -76,12 +76,12 @@ class _UserScreenState extends State<UserScreen> {
                       _data!.userId,
                       !_data!.isFollowedByUser!);
 
-                  if (widget.onUpdate != null) {
-                    widget.onUpdate!(newValue);
-                  }
                   setState(() {
                     _data = newValue;
                   });
+                  if (widget.onUpdate != null) {
+                    widget.onUpdate!(newValue);
+                  }
                 }),
                 child: Row(
                   children: [

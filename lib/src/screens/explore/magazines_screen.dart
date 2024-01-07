@@ -122,7 +122,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                     MaterialPageRoute(
                       builder: (context) => MagazineScreen(
                         item.magazineId,
-                        data: item,
+                        initData: item,
                         onUpdate: (newValue) {
                           var newList = _pagingController.itemList;
                           newList![index] = newValue;

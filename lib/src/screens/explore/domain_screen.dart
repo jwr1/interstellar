@@ -9,10 +9,10 @@ import 'package:provider/provider.dart';
 
 class DomainScreen extends StatefulWidget {
   final int domainId;
-  final DomainModel? data;
+  final DomainModel? initData;
   final void Function(DomainModel)? onUpdate;
 
-  const DomainScreen(this.domainId, {super.key, this.data, this.onUpdate});
+  const DomainScreen(this.domainId, {super.key, this.initData, this.onUpdate});
 
   @override
   State<DomainScreen> createState() => _DomainScreenState();
@@ -25,7 +25,7 @@ class _DomainScreenState extends State<DomainScreen> {
   void initState() {
     super.initState();
 
-    _data = widget.data;
+    _data = widget.initData;
 
     if (_data == null) {
       api_domains
@@ -74,12 +74,12 @@ class _DomainScreenState extends State<DomainScreen> {
                                 _data!.domainId,
                                 !_data!.isUserSubscribed!);
 
-                            if (widget.onUpdate != null) {
-                              widget.onUpdate!(newValue);
-                            }
                             setState(() {
                               _data = newValue;
                             });
+                            if (widget.onUpdate != null) {
+                              widget.onUpdate!(newValue);
+                            }
                           }),
                           child: Row(
                             children: [

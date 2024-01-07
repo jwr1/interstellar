@@ -36,7 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         : (context.read<SettingsController>().isLoggedIn
             ? UserScreen(
                 _meUser!.userId,
-                data: _meUser,
+                initData: _meUser,
               )
             : const Center(
                 child: Text('Not logged in'),

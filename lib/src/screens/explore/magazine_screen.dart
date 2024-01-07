@@ -13,10 +13,11 @@ import 'package:provider/provider.dart';
 
 class MagazineScreen extends StatefulWidget {
   final int magazineId;
-  final DetailedMagazineModel? data;
+  final DetailedMagazineModel? initData;
   final void Function(DetailedMagazineModel)? onUpdate;
 
-  const MagazineScreen(this.magazineId, {super.key, this.data, this.onUpdate});
+  const MagazineScreen(this.magazineId,
+      {super.key, this.initData, this.onUpdate});
 
   @override
   State<MagazineScreen> createState() => _MagazineScreenState();
@@ -30,7 +31,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
   void initState() {
     super.initState();
 
-    _data = widget.data;
+    _data = widget.initData;
 
     if (_data == null) {
       api_magazines
@@ -76,12 +77,12 @@ class _MagazineScreenState extends State<MagazineScreen> {
                       _data!.magazineId,
                       !_data!.isUserSubscribed!);
 
-                  if (widget.onUpdate != null) {
-                    widget.onUpdate!(newValue);
-                  }
                   setState(() {
                     _data = newValue;
                   });
+                  if (widget.onUpdate != null) {
+                    widget.onUpdate!(newValue);
+                  }
                 }),
                 child: Row(
                   children: [

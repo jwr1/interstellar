@@ -69,7 +69,7 @@ class _UsersScreenState extends State<UsersScreen> {
                     MaterialPageRoute(
                       builder: (context) => UserScreen(
                         item.userId,
-                        data: item,
+                        initData: item,
                         onUpdate: (newValue) {
                           var newList = _pagingController.itemList;
                           newList![index] = newValue;

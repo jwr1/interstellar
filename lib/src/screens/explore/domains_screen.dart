@@ -93,7 +93,7 @@ class _DomainsScreenState extends State<DomainsScreen> {
                     MaterialPageRoute(
                       builder: (context) => DomainScreen(
                         item.domainId,
-                        data: item,
+                        initData: item,
                         onUpdate: (newValue) {
                           var newList = _pagingController.itemList;
                           newList![index] = newValue;
