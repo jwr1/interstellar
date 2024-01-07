@@ -48,4 +48,10 @@ class _VideoPlayerState extends State<VideoPlayer> {
       child: Video(controller: controller),
     );
   }
+
+  @override
+  void dispose() {
+    player.dispose();
+    super.dispose();
+  }
 }
