@@ -20,9 +20,4 @@ The app icon is under the `assets/icons` folder, where the `logo.png` file is ju
 
 Icons created by [Benjamin Mathis](https://github.com/BenjMathis1)
 
-To generate a new icon, simply run from the project root:
-
-```
-dart flutter pub get
-dart pub run flutter_launcher_icons
-```
+To generate a new icon, simply run the following: `dart run flutter_launcher_icons`
