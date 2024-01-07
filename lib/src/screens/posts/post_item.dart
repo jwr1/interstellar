@@ -33,6 +33,9 @@ class PostItem extends StatelessWidget {
       user: item.user.username,
       userIcon: item.user.avatar?.storageUrl,
       userIdOnClick: item.user.userId,
+      magazine: item.magazine.name,
+      magazineIcon: item.magazine.icon?.storageUrl,
+      magazineIdOnClick: item.magazine.magazineId,
       boosts: item.uv,
       isBoosted: item.userVote == 1,
       onBoost: whenLoggedIn(context, () async {
