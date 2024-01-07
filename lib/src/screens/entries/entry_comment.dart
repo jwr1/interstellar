@@ -119,9 +119,11 @@ class _EntryCommentState extends State<EntryComment> {
                     .asMap()
                     .entries
                     .map((item) => EntryComment(item.value, (newValue) {
+                          var newChildren = [...widget.comment.children!];
+                          newChildren[item.key] = newValue;
                           widget.onUpdate(widget.comment.copyWith(
                             childCount: widget.comment.childCount + 1,
-                            children: [newValue, ...widget.comment.children!],
+                            children: newChildren,
                           ));
                         }))
                     .toList(),
