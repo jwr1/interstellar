@@ -93,6 +93,7 @@ jobs:
         run: |
           mv ${{ matrix.build_path }}/* linux/appimage/
           cp assets/icons/logo.png linux/appimage/interstellar.png
+          mkdir -p linux/appimage/usr/lib/ && cp $(echo $(ldd -d linux/appimage/interstellar | grep -o '/usr/lib[^ ]*') $(ldd -d linux/appimage/lib/libflutter_linux_gtk.so | grep -o '/usr/lib/[^ ]*')  | tr ' ' '\n' | sort | uniq -u) linux/appimage/usr/lib/
           appimagetool linux/appimage interstellar-${{ matrix.target }}.AppImage
 
       - name: Compress build for Windows
