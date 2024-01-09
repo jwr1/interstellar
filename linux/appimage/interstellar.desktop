@@ -1,7 +1,6 @@
 [Desktop Entry]
 Type=Application
-Terminal=false
 Name=Interstellar
-Exec=interstellar %U
+Exec=LD_LIBRARY_PATH=lib ./interstellar %u
 Icon=interstellar
-Categories=Network;
+Categories=Network

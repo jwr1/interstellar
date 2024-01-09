@@ -1,4 +1,3 @@
 #!/bin/sh
 cd "$(dirname "$0")"
-export LD_LIBRARY_PATH=usr/lib
-exec ./interstellar
+LD_LIBRARY_PATH=lib ./interstellar
