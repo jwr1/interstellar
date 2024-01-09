@@ -50,68 +50,56 @@ class _LoginScreenState extends State<LoginScreen> {
                         Uri.https(instanceHost, '/authorize');
                     final tokenEndpoint = Uri.https(instanceHost, '/token');
 
-                    try {
-                      String identifier = await context
-                          .read<SettingsController>()
-                          .getOAuthIdentifier(instanceHost);
+                    String identifier = await context
+                        .read<SettingsController>()
+                        .getOAuthIdentifier(instanceHost);
 
-                      var grant = oauth2.AuthorizationCodeGrant(
-                        identifier,
-                        authorizationEndpoint,
-                        tokenEndpoint,
+                    var grant = oauth2.AuthorizationCodeGrant(
+                      identifier,
+                      authorizationEndpoint,
+                      tokenEndpoint,
+                    );
+
+                    Uri authorizationUrl = grant.getAuthorizationUrl(
+                        Uri.parse(redirectUri),
+                        scopes: oauthScopes);
+
+                    // Check BuildContext
+                    if (!mounted) return;
+
+                    Map<String, String>? result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => RedirectListener(
+                                authorizationUrl,
+                                title: instanceHost,
+                              )),
+                    );
+
+                    if (result == null || !result.containsKey('code')) {
+                      throw Exception(
+                        result?['message'] != null
+                            ? result!['message']
+                            : 'unsuccessful login',
                       );
-
-                      Uri authorizationUrl = grant.getAuthorizationUrl(
-                          Uri.parse(redirectUri),
-                          scopes: oauthScopes);
-
-                      // Check BuildContext
-                      if (!mounted) return;
-
-                      Map<String, String>? result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => RedirectListener(
-                                  authorizationUrl,
-                                  title: instanceHost,
-                                )),
-                      );
-
-                      if (result == null || !result.containsKey('code')) {
-                        throw Exception(
-                          result?['message'] != null
-                              ? result!['message']
-                              : 'unsuccessful login',
-                        );
-                      }
-
-                      var client =
-                          await grant.handleAuthorizationResponse(result);
-
-                      var user = await api_users.fetchMe(client, instanceHost);
-
-                      // Check BuildContext
-                      if (!mounted) return;
-
-                      String account = '${user.username}@$instanceHost';
-                      context.read<SettingsController>().setOAuthCredentials(
-                            account,
-                            client.credentials,
-                            switchNow: true,
-                          );
-
-                      Navigator.pop(context);
-                    } catch (e) {
-                      // Check BuildContext
-                      if (!mounted) return;
-
-                      ScaffoldMessenger.of(context)
-                        ..removeCurrentSnackBar()
-                        ..showSnackBar(SnackBar(
-                          content: Text(e.toString()),
-                          duration: const Duration(seconds: 15),
-                        ));
                     }
+
+                    var client =
+                        await grant.handleAuthorizationResponse(result);
+
+                    var user = await api_users.fetchMe(client, instanceHost);
+
+                    // Check BuildContext
+                    if (!mounted) return;
+
+                    String account = '${user.username}@$instanceHost';
+                    context.read<SettingsController>().setOAuthCredentials(
+                          account,
+                          client.credentials,
+                          switchNow: true,
+                        );
+
+                    Navigator.pop(context);
                   },
                   child: const Text('Login')),
               const SizedBox(width: 12),

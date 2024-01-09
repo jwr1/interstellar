@@ -56,10 +56,12 @@ void httpErrorHandler(http.Response response, {String? message}) {
       errorDetails = jsonDecode(response.body)['detail'];
     } catch (e) {
       // No error details provided
+      errorDetails = response.reasonPhrase;
     }
 
     throw Exception(
-        '${message != null ? '$message: ' : ''}${response.statusCode}${errorDetails != null ? ' $errorDetails' : ''}');
+      '${message != null ? '$message: ' : ''}${response.statusCode} ${errorDetails ?? ''}',
+    );
   }
 }
 
