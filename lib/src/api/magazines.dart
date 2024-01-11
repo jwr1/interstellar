@@ -4,17 +4,23 @@ import 'package:http/http.dart' as http;
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/utils/utils.dart';
 
+enum MagazinesFilter { all, subscribed, moderated, blocked }
+
 enum MagazinesSort { active, hot, newest }
 
 Future<MagazineListModel> fetchMagazines(
   http.Client client,
   String instanceHost, {
   int? page,
+  MagazinesFilter? filter,
   MagazinesSort? sort,
   String? search,
 }) async {
-  final response = await client.get(Uri.https(instanceHost, '/api/magazines',
-      {'p': page?.toString(), 'sort': sort?.name, 'q': search}));
+  final response = (filter == null || filter == MagazinesFilter.all)
+      ? await client.get(Uri.https(instanceHost, '/api/magazines',
+          {'p': page?.toString(), 'sort': sort?.name, 'q': search}))
+      : await client.get(Uri.https(instanceHost,
+          '/api/magazines/${filter.name}', {'p': page?.toString()}));
 
   httpErrorHandler(response, message: 'Failed to load magazines');
 

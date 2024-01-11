@@ -4,14 +4,20 @@ import 'package:http/http.dart' as http;
 import 'package:interstellar/src/models/domain.dart';
 import 'package:interstellar/src/utils/utils.dart';
 
+enum DomainsFilter { all, subscribed, blocked }
+
 Future<DomainListModel> fetchDomains(
   http.Client client,
   String instanceHost, {
   int? page,
+  DomainsFilter? filter,
   String? search,
 }) async {
-  final response = await client.get(Uri.https(
-      instanceHost, '/api/domains', {'p': page?.toString(), 'q': search}));
+  final response = (filter == null || filter == DomainsFilter.all)
+      ? await client.get(Uri.https(
+          instanceHost, '/api/domains', {'p': page?.toString(), 'q': search}))
+      : await client.get(Uri.https(instanceHost, '/api/domains/${filter.name}',
+          {'p': page?.toString()}));
 
   httpErrorHandler(response, message: 'Failed to load domains');
 

@@ -17,6 +17,7 @@ class DomainsScreen extends StatefulWidget {
 }
 
 class _DomainsScreenState extends State<DomainsScreen> {
+  api_domains.DomainsFilter filter = api_domains.DomainsFilter.all;
   String search = "";
 
   final PagingController<int, DomainModel> _pagingController =
@@ -34,10 +35,12 @@ class _DomainsScreenState extends State<DomainsScreen> {
   Future<void> _fetchPage(int pageKey) async {
     try {
       final newPage = await api_domains.fetchDomains(
-          context.read<SettingsController>().httpClient,
-          context.read<SettingsController>().instanceHost,
-          page: pageKey,
-          search: search.isEmpty ? null : search);
+        context.read<SettingsController>().httpClient,
+        context.read<SettingsController>().instanceHost,
+        page: pageKey,
+        filter: filter,
+        search: search.isEmpty ? null : search,
+      );
 
       final isLastPage =
           newPage.pagination.currentPage == newPage.pagination.maxPage;
@@ -66,20 +69,53 @@ class _DomainsScreenState extends State<DomainsScreen> {
               padding: const EdgeInsets.all(12),
               child: Row(
                 children: [
-                  SizedBox(
-                    width: 128,
-                    child: TextFormField(
-                      initialValue: search,
-                      onChanged: (newSearch) {
-                        setState(() {
-                          search = newSearch;
-                          _pagingController.refresh();
-                        });
-                      },
-                      decoration: const InputDecoration(
-                          border: OutlineInputBorder(), label: Text('Search')),
-                    ),
-                  )
+                  ...whenLoggedIn(context, [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 12),
+                          child: DropdownButton<api_domains.DomainsFilter>(
+                            value: filter,
+                            onChanged: (newFilter) {
+                              if (newFilter != null) {
+                                setState(() {
+                                  filter = newFilter;
+                                  _pagingController.refresh();
+                                });
+                              }
+                            },
+                            items: const [
+                              DropdownMenuItem(
+                                value: api_domains.DomainsFilter.all,
+                                child: Text('All'),
+                              ),
+                              DropdownMenuItem(
+                                value: api_domains.DomainsFilter.subscribed,
+                                child: Text('Subscribed'),
+                              ),
+                              DropdownMenuItem(
+                                value: api_domains.DomainsFilter.blocked,
+                                child: Text('Blocked'),
+                              ),
+                            ],
+                          ),
+                        )
+                      ]) ??
+                      [],
+                  if (filter != api_domains.DomainsFilter.all)
+                    SizedBox(
+                      width: 128,
+                      child: TextFormField(
+                        initialValue: search,
+                        onChanged: (newSearch) {
+                          setState(() {
+                            search = newSearch;
+                            _pagingController.refresh();
+                          });
+                        },
+                        decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            label: Text('Search')),
+                      ),
+                    )
                 ],
               ),
             ),

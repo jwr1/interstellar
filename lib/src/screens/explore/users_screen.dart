@@ -18,6 +18,8 @@ class UsersScreen extends StatefulWidget {
 }
 
 class _UsersScreenState extends State<UsersScreen> {
+  api_users.UsersFilter filter = api_users.UsersFilter.all;
+
   final PagingController<int, DetailedUserModel> _pagingController =
       PagingController(firstPageKey: 1);
 
@@ -36,6 +38,7 @@ class _UsersScreenState extends State<UsersScreen> {
         context.read<SettingsController>().httpClient,
         context.read<SettingsController>().instanceHost,
         page: pageKey,
+        filter: filter,
       );
 
       final isLastPage =
@@ -60,6 +63,50 @@ class _UsersScreenState extends State<UsersScreen> {
       ),
       child: CustomScrollView(
         slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Row(
+                children: [
+                  ...whenLoggedIn(context, [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 12),
+                          child: DropdownButton<api_users.UsersFilter>(
+                            value: filter,
+                            onChanged: (newFilter) {
+                              if (newFilter != null) {
+                                setState(() {
+                                  filter = newFilter;
+                                  _pagingController.refresh();
+                                });
+                              }
+                            },
+                            items: const [
+                              DropdownMenuItem(
+                                value: api_users.UsersFilter.all,
+                                child: Text('All'),
+                              ),
+                              DropdownMenuItem(
+                                value: api_users.UsersFilter.followed,
+                                child: Text('Followed'),
+                              ),
+                              DropdownMenuItem(
+                                value: api_users.UsersFilter.followers,
+                                child: Text('Followers'),
+                              ),
+                              DropdownMenuItem(
+                                value: api_users.UsersFilter.blocked,
+                                child: Text('Blocked'),
+                              ),
+                            ],
+                          ),
+                        )
+                      ]) ??
+                      [],
+                ],
+              ),
+            ),
+          ),
           PagedSliverList<int, DetailedUserModel>(
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<DetailedUserModel>(

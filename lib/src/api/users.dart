@@ -4,14 +4,20 @@ import 'package:http/http.dart' as http;
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/utils/utils.dart';
 
+enum UsersFilter { all, followed, followers, blocked }
+
 Future<UserListModel> fetchUsers(
   http.Client client,
   String instanceHost, {
   int? page,
+  UsersFilter? filter,
 }) async {
-  final response = await client.get(Uri.https(instanceHost, '/api/users', {
-    'p': page?.toString(),
-  }));
+  final response = (filter == null || filter == UsersFilter.all)
+      ? await client.get(Uri.https(instanceHost, '/api/users', {
+          'p': page?.toString(),
+        }))
+      : await client.get(Uri.https(
+          instanceHost, '/api/users/${filter.name}', {'p': page?.toString()}));
 
   httpErrorHandler(response, message: 'Failed to load users');
 

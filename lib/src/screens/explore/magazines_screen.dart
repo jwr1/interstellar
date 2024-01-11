@@ -18,6 +18,7 @@ class MagazinesScreen extends StatefulWidget {
 }
 
 class _MagazinesScreenState extends State<MagazinesScreen> {
+  api_magazines.MagazinesFilter filter = api_magazines.MagazinesFilter.all;
   api_magazines.MagazinesSort sort = api_magazines.MagazinesSort.hot;
   String search = "";
 
@@ -36,11 +37,13 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
   Future<void> _fetchPage(int pageKey) async {
     try {
       final newPage = await api_magazines.fetchMagazines(
-          context.read<SettingsController>().httpClient,
-          context.read<SettingsController>().instanceHost,
-          page: pageKey,
-          sort: sort,
-          search: search.isEmpty ? null : search);
+        context.read<SettingsController>().httpClient,
+        context.read<SettingsController>().instanceHost,
+        page: pageKey,
+        filter: filter,
+        sort: sort,
+        search: search.isEmpty ? null : search,
+      );
 
       final isLastPage =
           newPage.pagination.currentPage == newPage.pagination.maxPage;
@@ -69,46 +72,88 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
               padding: const EdgeInsets.all(12),
               child: Row(
                 children: [
-                  DropdownButton<api_magazines.MagazinesSort>(
-                    value: sort,
-                    onChanged: (newSort) {
-                      if (newSort != null) {
-                        setState(() {
-                          sort = newSort;
-                          _pagingController.refresh();
-                        });
-                      }
-                    },
-                    items: const [
-                      DropdownMenuItem(
-                        value: api_magazines.MagazinesSort.hot,
-                        child: Text('Hot'),
-                      ),
-                      DropdownMenuItem(
-                        value: api_magazines.MagazinesSort.active,
-                        child: Text('Active'),
-                      ),
-                      DropdownMenuItem(
-                        value: api_magazines.MagazinesSort.newest,
-                        child: Text('Newest'),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(width: 12),
-                  SizedBox(
-                    width: 128,
-                    child: TextFormField(
-                      initialValue: search,
-                      onChanged: (newSearch) {
-                        setState(() {
-                          search = newSearch;
-                          _pagingController.refresh();
-                        });
-                      },
-                      decoration: const InputDecoration(
-                          border: OutlineInputBorder(), label: Text('Search')),
-                    ),
-                  )
+                  ...whenLoggedIn(context, [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 12),
+                          child: DropdownButton<api_magazines.MagazinesFilter>(
+                            value: filter,
+                            onChanged: (newFilter) {
+                              if (newFilter != null) {
+                                setState(() {
+                                  filter = newFilter;
+                                  _pagingController.refresh();
+                                });
+                              }
+                            },
+                            items: const [
+                              DropdownMenuItem(
+                                value: api_magazines.MagazinesFilter.all,
+                                child: Text('All'),
+                              ),
+                              DropdownMenuItem(
+                                value: api_magazines.MagazinesFilter.subscribed,
+                                child: Text('Subscribed'),
+                              ),
+                              DropdownMenuItem(
+                                value: api_magazines.MagazinesFilter.moderated,
+                                child: Text('Moderated'),
+                              ),
+                              DropdownMenuItem(
+                                value: api_magazines.MagazinesFilter.blocked,
+                                child: Text('Blocked'),
+                              ),
+                            ],
+                          ),
+                        )
+                      ]) ??
+                      [],
+                  ...(filter == api_magazines.MagazinesFilter.all
+                      ? [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 12),
+                            child: DropdownButton<api_magazines.MagazinesSort>(
+                              value: sort,
+                              onChanged: (newSort) {
+                                if (newSort != null) {
+                                  setState(() {
+                                    sort = newSort;
+                                    _pagingController.refresh();
+                                  });
+                                }
+                              },
+                              items: const [
+                                DropdownMenuItem(
+                                  value: api_magazines.MagazinesSort.hot,
+                                  child: Text('Hot'),
+                                ),
+                                DropdownMenuItem(
+                                  value: api_magazines.MagazinesSort.active,
+                                  child: Text('Active'),
+                                ),
+                                DropdownMenuItem(
+                                  value: api_magazines.MagazinesSort.newest,
+                                  child: Text('Newest'),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            width: 128,
+                            child: TextFormField(
+                              initialValue: search,
+                              onChanged: (newSearch) {
+                                setState(() {
+                                  search = newSearch;
+                                  _pagingController.refresh();
+                                });
+                              },
+                              decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  label: Text('Search')),
+                            ),
+                          ),
+                        ]
+                      : []),
                 ],
               ),
             ),
