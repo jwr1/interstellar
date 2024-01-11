@@ -4,6 +4,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:interstellar/src/screens/explore/explore_screen.dart';
 import 'package:interstellar/src/screens/profile/profile_screen.dart';
 import 'package:interstellar/src/utils/variables.dart';
+import 'package:interstellar/src/widgets/notification_badge.dart';
+import 'package:interstellar/src/widgets/wrapper.dart';
 import 'package:provider/provider.dart';
 
 import 'screens/feed_screen.dart';
@@ -60,20 +62,35 @@ class _MyAppState extends State<MyApp> {
                 return Scaffold(
                   bottomNavigationBar: orientation == Orientation.portrait
                       ? NavigationBar(
-                          destinations: const [
-                            NavigationDestination(
+                          destinations: [
+                            const NavigationDestination(
                                 label: 'Feed',
                                 icon: Icon(Icons.feed_outlined),
                                 selectedIcon: Icon(Icons.feed)),
-                            NavigationDestination(
+                            const NavigationDestination(
                                 label: 'Explore',
                                 icon: Icon(Icons.explore_outlined),
                                 selectedIcon: Icon(Icons.explore)),
                             NavigationDestination(
-                                label: 'Profile',
-                                icon: Icon(Icons.person_outlined),
-                                selectedIcon: Icon(Icons.person)),
-                            NavigationDestination(
+                              label: 'Profile',
+                              icon: Wrapper(
+                                shouldWrap: context
+                                    .watch<SettingsController>()
+                                    .isLoggedIn,
+                                parentBuilder: (child) =>
+                                    NotificationBadge(child: child),
+                                child: const Icon(Icons.person_outlined),
+                              ),
+                              selectedIcon: Wrapper(
+                                shouldWrap: context
+                                    .watch<SettingsController>()
+                                    .isLoggedIn,
+                                parentBuilder: (child) =>
+                                    NotificationBadge(child: child),
+                                child: const Icon(Icons.person),
+                              ),
+                            ),
+                            const NavigationDestination(
                                 label: 'Settings',
                                 icon: Icon(Icons.settings_outlined),
                                 selectedIcon: Icon(Icons.settings)),
@@ -88,20 +105,35 @@ class _MyAppState extends State<MyApp> {
                         selectedIndex: _navIndex,
                         onDestinationSelected: _changeNav,
                         labelType: NavigationRailLabelType.all,
-                        destinations: const [
-                          NavigationRailDestination(
+                        destinations: [
+                          const NavigationRailDestination(
                               label: Text('Feed'),
                               icon: Icon(Icons.feed_outlined),
                               selectedIcon: Icon(Icons.feed)),
-                          NavigationRailDestination(
+                          const NavigationRailDestination(
                               label: Text('Explore'),
                               icon: Icon(Icons.explore_outlined),
                               selectedIcon: Icon(Icons.explore)),
                           NavigationRailDestination(
-                              label: Text('Profile'),
-                              icon: Icon(Icons.person_outlined),
-                              selectedIcon: Icon(Icons.person)),
-                          NavigationRailDestination(
+                            label: const Text('Profile'),
+                            icon: Wrapper(
+                              shouldWrap: context
+                                  .watch<SettingsController>()
+                                  .isLoggedIn,
+                              parentBuilder: (child) =>
+                                  NotificationBadge(child: child),
+                              child: const Icon(Icons.person_outlined),
+                            ),
+                            selectedIcon: Wrapper(
+                              shouldWrap: context
+                                  .watch<SettingsController>()
+                                  .isLoggedIn,
+                              parentBuilder: (child) =>
+                                  NotificationBadge(child: child),
+                              child: const Icon(Icons.person),
+                            ),
+                          ),
+                          const NavigationRailDestination(
                               label: Text('Settings'),
                               icon: Icon(Icons.settings_outlined),
                               selectedIcon: Icon(Icons.settings)),
