@@ -144,7 +144,7 @@ class _PostPageState extends State<PostPage> {
               ),
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(12),
                 child: Row(
                   children: [
                     DropdownButton<api_comments.CommentsSort>(
@@ -188,7 +188,10 @@ class _PostPageState extends State<PostPage> {
               pagingController: _pagingController,
               builderDelegate: PagedChildBuilderDelegate<PostCommentModel>(
                 itemBuilder: (context, item, index) => Padding(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
                   child: PostComment(item, (newValue) {
                     var newList = _pagingController.itemList;
                     newList![index] = newValue;

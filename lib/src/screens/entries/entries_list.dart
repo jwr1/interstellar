@@ -75,7 +75,7 @@ class _EntriesListViewState extends State<EntriesListView> {
             ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(12),
               child: Row(
                 children: [
                   DropdownButton<ContentSort>(
@@ -122,35 +122,33 @@ class _EntriesListViewState extends State<EntriesListView> {
           PagedSliverList<int, EntryModel>(
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<EntryModel>(
-              itemBuilder: (context, item, index) => Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(
-                  clipBehavior: Clip.antiAlias,
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => EntryPage(item, (newValue) {
-                            var newList = _pagingController.itemList;
-                            newList![index] = newValue;
-                            setState(() {
-                              _pagingController.itemList = newList;
-                            });
-                          }),
-                        ),
-                      );
+              itemBuilder: (context, item, index) => Card(
+                margin: const EdgeInsets.all(12),
+                clipBehavior: Clip.antiAlias,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => EntryPage(item, (newValue) {
+                          var newList = _pagingController.itemList;
+                          newList![index] = newValue;
+                          setState(() {
+                            _pagingController.itemList = newList;
+                          });
+                        }),
+                      ),
+                    );
+                  },
+                  child: EntryItem(
+                    item,
+                    (newValue) {
+                      var newList = _pagingController.itemList;
+                      newList![index] = newValue;
+                      setState(() {
+                        _pagingController.itemList = newList;
+                      });
                     },
-                    child: EntryItem(
-                      item,
-                      (newValue) {
-                        var newList = _pagingController.itemList;
-                        newList![index] = newValue;
-                        setState(() {
-                          _pagingController.itemList = newList;
-                        });
-                      },
-                      isPreview: true,
-                    ),
+                    isPreview: true,
                   ),
                 ),
               ),

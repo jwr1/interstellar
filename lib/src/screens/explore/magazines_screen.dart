@@ -66,7 +66,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
         slivers: [
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(12),
               child: Row(
                 children: [
                   DropdownButton<api_magazines.MagazinesSort>(
@@ -135,7 +135,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                   );
                 },
                 child: Padding(
-                  padding: const EdgeInsets.all(12.0),
+                  padding: const EdgeInsets.all(12),
                   child: Row(children: [
                     if (item.icon?.storageUrl != null)
                       Avatar(item.icon!.storageUrl, radius: 16),

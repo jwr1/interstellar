@@ -82,7 +82,7 @@ class _UsersScreenState extends State<UsersScreen> {
                   );
                 },
                 child: Padding(
-                  padding: const EdgeInsets.all(12.0),
+                  padding: const EdgeInsets.all(12),
                   child: Row(children: [
                     if (item.avatar?.storageUrl != null)
                       Avatar(

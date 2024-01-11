@@ -63,7 +63,7 @@ class _DomainsScreenState extends State<DomainsScreen> {
         slivers: [
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(12),
               child: Row(
                 children: [
                   SizedBox(
@@ -106,7 +106,7 @@ class _DomainsScreenState extends State<DomainsScreen> {
                   );
                 },
                 child: Padding(
-                  padding: const EdgeInsets.all(12.0),
+                  padding: const EdgeInsets.all(12),
                   child: Row(children: [
                     Expanded(
                         child:

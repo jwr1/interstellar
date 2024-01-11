@@ -16,7 +16,7 @@ Future<PostCommentListModel> fetchComments(
   final response = await client.get(Uri.https(
       instanceHost,
       '/api/posts/$postId/comments',
-      removeNulls({'p': page?.toString(), 'sortBy': sort?.name})));
+      removeNulls({'p': page?.toString(), 'sort': sort?.name})));
 
   httpErrorHandler(response, message: 'Failed to load comments');
 

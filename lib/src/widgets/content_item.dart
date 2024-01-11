@@ -8,6 +8,7 @@ import 'package:interstellar/src/widgets/markdown.dart';
 import 'package:interstellar/src/widgets/markdown_editor.dart';
 import 'package:interstellar/src/widgets/open_webpage.dart';
 import 'package:interstellar/src/widgets/video.dart';
+import 'package:interstellar/src/widgets/wrapper.dart';
 
 class ContentItem extends StatefulWidget {
   final String? title;
@@ -18,7 +19,6 @@ class ContentItem extends StatefulWidget {
   final DateTime? createdAt;
 
   final bool isPreview;
-  final bool showCollapse;
   final bool showMagazineFirst;
 
   final String? user;
@@ -49,7 +49,8 @@ class ContentItem extends StatefulWidget {
   final Future<void> Function(String)? onEdit;
   final Future<void> Function()? onDelete;
 
-  final Widget? child;
+  final bool isCollapsed;
+  final void Function()? onCollapse;
 
   const ContentItem(
       {this.title,
@@ -59,7 +60,6 @@ class ContentItem extends StatefulWidget {
       this.body,
       this.createdAt,
       this.isPreview = false,
-      this.showCollapse = false,
       this.showMagazineFirst = false,
       this.user,
       this.userIcon,
@@ -82,7 +82,8 @@ class ContentItem extends StatefulWidget {
       this.onReply,
       this.onEdit,
       this.onDelete,
-      this.child,
+      this.isCollapsed = false,
+      this.onCollapse,
       super.key});
 
   @override
@@ -90,7 +91,6 @@ class ContentItem extends StatefulWidget {
 }
 
 class _ContentItemState extends State<ContentItem> {
-  bool _isCollapsed = false;
   TextEditingController? _replyTextController;
   TextEditingController? _editTextController;
   final MenuController _menuController = MenuController();
@@ -161,35 +161,32 @@ class _ContentItemState extends State<ContentItem> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        if (!widget.isPreview && widget.video != null)
-          VideoPlayer(widget.video!),
-        if (widget.image != null &&
-            !(!widget.isPreview && widget.video != null))
-          widget.isPreview
-              ? (widget.video != null
-                  ? Image.network(
-                      widget.image!,
-                      height: 160,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    )
-                  : InkWell(
+        if (widget.image != null || (!widget.isPreview && widget.video != null))
+          Wrapper(
+            shouldWrap: !widget.isPreview,
+            parentBuilder: (child) => Container(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height / 2,
+                ),
+                child: child),
+            child: (!widget.isPreview && widget.video != null)
+                ? VideoPlayer(widget.video!)
+                : Wrapper(
+                    shouldWrap: widget.video == null,
+                    parentBuilder: (child) => InkWell(
                       onTap: () => _onImageClick(context),
-                      child: Image.network(
-                        widget.image!,
-                        height: 160,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                    ))
-              : Container(
-                  constraints: BoxConstraints(
-                    maxHeight: MediaQuery.of(context).size.height / 2,
+                      child: child,
+                    ),
+                    child: widget.isPreview
+                        ? Image.network(
+                            widget.image!,
+                            height: 160,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          )
+                        : Image.network(widget.image!),
                   ),
-                  child: InkWell(
-                    onTap: () => _onImageClick(context),
-                    child: Image.network(widget.image!),
-                  )),
+          ),
         Container(
           padding: const EdgeInsets.all(12),
           child: Column(
@@ -290,13 +287,11 @@ class _ContentItemState extends State<ContentItem> {
                         }),
                       ),
                     ),
-                  if (widget.showCollapse && widget.child != null)
+                  if (widget.onCollapse != null)
                     IconButton(
-                        tooltip: _isCollapsed ? 'Expand' : 'Collapse',
-                        onPressed: () => setState(() {
-                              _isCollapsed = !_isCollapsed;
-                            }),
-                        icon: _isCollapsed
+                        tooltip: widget.isCollapsed ? 'Expand' : 'Collapse',
+                        onPressed: widget.onCollapse,
+                        icon: widget.isCollapsed
                             ? const Icon(Icons.expand_more)
                             : const Icon(Icons.expand_less)),
                   const Spacer(),
@@ -450,11 +445,6 @@ class _ContentItemState extends State<ContentItem> {
                     ],
                   ),
                 ),
-              if (widget.child != null && !_isCollapsed)
-                Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: widget.child,
-                )
             ],
           ),
         ),
