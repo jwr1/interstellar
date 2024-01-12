@@ -100,7 +100,7 @@ class _DomainsScreenState extends State<DomainsScreen> {
                         )
                       ]) ??
                       [],
-                  if (filter != api_domains.DomainsFilter.all)
+                  if (filter == api_domains.DomainsFilter.all)
                     SizedBox(
                       width: 128,
                       child: TextFormField(
