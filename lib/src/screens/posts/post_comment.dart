@@ -72,7 +72,7 @@ class _EntryCommentState extends State<PostComment> {
                 children: widget.comment.children,
               ));
             }),
-            onReply: (body) async {
+            onReply: whenLoggedIn(context, (body) async {
               var newSubComment = await api_comments.postComment(
                 context.read<SettingsController>().httpClient,
                 context.read<SettingsController>().instanceHost,
@@ -85,7 +85,7 @@ class _EntryCommentState extends State<PostComment> {
                 childCount: widget.comment.childCount + 1,
                 children: [newSubComment, ...widget.comment.children!],
               ));
-            },
+            }),
             onEdit: widget.comment.visibility != 'soft_deleted'
                 ? whenLoggedIn(context, (body) async {
                     var newValue = await api_comments.editComment(

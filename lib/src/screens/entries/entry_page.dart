@@ -93,7 +93,7 @@ class _EntryPageState extends State<EntryPage> {
                 child: EntryItem(
                   _data!,
                   _onUpdate,
-                  onReply: (body) async {
+                  onReply: whenLoggedIn(context, (body) async {
                     var newComment = await api_comments.postComment(
                       context.read<SettingsController>().httpClient,
                       context.read<SettingsController>().instanceHost,
@@ -105,7 +105,7 @@ class _EntryPageState extends State<EntryPage> {
                     setState(() {
                       _pagingController.itemList = newList;
                     });
-                  },
+                  }),
                   onEdit: _data!.visibility != 'soft_deleted'
                       ? whenLoggedIn(
                           context,

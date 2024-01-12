@@ -91,7 +91,7 @@ class _PostPageState extends State<PostPage> {
                 child: PostItem(
                   _data!,
                   _onUpdate,
-                  onReply: (body) async {
+                  onReply: whenLoggedIn(context, (body) async {
                     var newComment = await api_comments.postComment(
                       context.read<SettingsController>().httpClient,
                       context.read<SettingsController>().instanceHost,
@@ -103,7 +103,7 @@ class _PostPageState extends State<PostPage> {
                     setState(() {
                       _pagingController.itemList = newList;
                     });
-                  },
+                  }),
                   onEdit: _data!.visibility != 'soft_deleted'
                       ? whenLoggedIn(
                           context,
