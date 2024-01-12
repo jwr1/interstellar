@@ -27,9 +27,12 @@ jobs:
           draft: true
 
   create-build:
+    needs: draft-release
+    environment: production
     name: Create ${{ matrix.target }} build
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         target: [android, linux, windows]
         include:
@@ -48,8 +51,6 @@ jobs:
             build_target: windows
             build_path: build\windows\x64\runner\Release
             asset_extension: .zip
-      fail-fast: false
-    needs: draft-release
     steps:
       - name: Install Android dependencies
         if: matrix.target == 'android'
@@ -77,6 +78,18 @@ jobs:
         run: |
           dart pub global activate cider
           cider version ${{ github.event.inputs.version }}
+
+      - name: Configure Keystore
+        run: |
+          echo "$ANDROID_UPLOAD_KEY" | base64 --decode > upload-keystore.jks
+          echo "storeFile=../upload-keystore.jks" >> key.properties
+          echo "keyAlias=upload" >> key.properties
+          echo "storePassword=$ANDROID_KEYSTORE_PASSWORD" >> key.properties
+          echo "keyPassword=$ANDROID_KEYSTORE_PASSWORD" >> key.properties
+        env:
+          ANDROID_UPLOAD_KEY: ${{ secrets.ANDROID_UPLOAD_KEY }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        working-directory: android
 
       - name: Build Flutter app
         run: |
