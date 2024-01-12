@@ -79,7 +79,8 @@ jobs:
           dart pub global activate cider
           cider version ${{ github.event.inputs.version }}
 
-      - name: Configure Keystore
+      - name: Configure Android Keystore
+        if: matrix.target == 'android'
         run: |
           echo "$ANDROID_UPLOAD_KEY" | base64 --decode > upload-keystore.jks
           echo "storeFile=../upload-keystore.jks" >> key.properties
