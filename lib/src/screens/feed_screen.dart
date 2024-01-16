@@ -18,8 +18,20 @@ class FeedScreen extends StatefulWidget {
 
 enum FeedMode { entries, posts }
 
-class _FeedScreenState extends State<FeedScreen> {
+class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
   FeedMode _feedMode = FeedMode.entries;
+
+  late final AnimationController _animationController = AnimationController(
+    duration: const Duration(milliseconds: 500),
+    vsync: this,
+  );
+  late final Animation<Offset> _slideAnimation = Tween<Offset>(
+    begin: const Offset(1.5, 0),
+    end: Offset.zero
+  ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut
+  ));
 
   @override
   Widget build(BuildContext context) {
@@ -123,65 +135,86 @@ class _FeedScreenState extends State<FeedScreen> {
         floatingActionButton: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
-              child: FloatingActionButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const CreateScreen(CreateType.entry)
-                    )
-                  );
-                },
-                heroTag: null,
-                child: const Text("Entry"),
+            SlideTransition(
+              position: _slideAnimation,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+                child: FloatingActionButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => const CreateScreen(CreateType.entry)
+                        )
+                    );
+                  },
+                  heroTag: null,
+                  child: const Text("Entry"),
+                ),
+              ),
+            ),
+            SlideTransition(
+              position: _slideAnimation,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+                child: FloatingActionButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => const CreateScreen(CreateType.link)
+                        )
+                    );
+                  },
+                  heroTag: null,
+                  child: const Text("Link"),
+                ),
+              ),
+            ),
+            SlideTransition(
+              position: _slideAnimation,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+                child: FloatingActionButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => const CreateScreen(CreateType.image)
+                        )
+                    );
+                  },
+                  heroTag: null,
+                  child: const Text("Image"),
+                ),
+              ),
+            ),
+            SlideTransition(
+              position: _slideAnimation,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+                child: FloatingActionButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => const CreateScreen(CreateType.post)
+                        )
+                    );
+                  },
+                  heroTag: null,
+                  child: const Text("Post"),
+                ),
               ),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
               child: FloatingActionButton(
                 onPressed: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (context) => const CreateScreen(CreateType.link)
-                      )
-                  );
+                  if (_animationController.isDismissed) {
+                    _animationController.forward();
+                  } else {
+                    _animationController.reverse();
+                  }
                 },
-                heroTag: null,
-                child: const Text("Link"),
+                child: const Icon(Icons.add)
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
-              child: FloatingActionButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (context) => const CreateScreen(CreateType.image)
-                      )
-                  );
-                },
-                heroTag: null,
-                child: const Text("Image"),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
-              child: FloatingActionButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (context) => const CreateScreen(CreateType.post)
-                      )
-                  );
-                },
-                heroTag: null,
-                child: const Text("Post"),
-              ),
-            ),
-            FloatingActionButton(
-              onPressed: () {},
-              child: const Icon(Icons.add)
             )
           ],
         ),
