@@ -11,10 +11,16 @@ enum CreateType { entry, link, image, post }
 class CreateScreen extends StatefulWidget {
   const CreateScreen(
     this.type,
-    { super.key }
+    {
+      this.magazineId,
+      this.magazineName,
+      super.key
+    }
   );
 
   final CreateType type;
+  final int? magazineId;
+  final String? magazineName;
 
   @override
   State<CreateScreen> createState() => _CreateScreenState();
@@ -40,17 +46,21 @@ class _CreateScreenState extends State<CreateScreen> {
               var client = context.read<SettingsController>().httpClient;
               var instanceHost = context.read<SettingsController>().instanceHost;
 
-              final magazine = await api_magazines.fetchMagazineByName(
-                  client,
-                  instanceHost,
-                  magazineName);
+              int? magazineId = widget.magazineId;
+              if (magazineId == null) {
+                final magazine = await api_magazines.fetchMagazineByName(
+                    client,
+                    instanceHost,
+                    magazineName);
+                magazineId = magazine.magazineId;
+              }
 
               switch (widget.type) {
                 case CreateType.entry:
                   await api_entries.createEntry(
                     client,
                     instanceHost,
-                    magazine.magazineId,
+                    magazineId,
                     _titleTextController.text,
                     _isOc,
                     _bodyTextController.text,
@@ -60,7 +70,7 @@ class _CreateScreenState extends State<CreateScreen> {
                   await api_entries.createLink(
                     client,
                     instanceHost,
-                    magazine.magazineId,
+                    magazineId,
                     _titleTextController.text,
                     _urlTextController.text,
                     _isOc,
@@ -74,7 +84,7 @@ class _CreateScreenState extends State<CreateScreen> {
                   await api_posts.createPost(
                     client,
                     instanceHost,
-                    magazine.magazineId,
+                    magazineId,
                     _bodyTextController.text,
                     'en',
                     _isAdult);
@@ -114,7 +124,7 @@ class _CreateScreenState extends State<CreateScreen> {
             Padding(
                 padding: const EdgeInsets.all(5),
                 child: MarkdownEditor(
-                  _magazineTextController,
+                  _magazineTextController..text = widget.magazineName ?? '',
                   hintText: "Magazine",
                 )
             ),
