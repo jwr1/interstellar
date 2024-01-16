@@ -90,3 +90,29 @@ Future<void> deletePost(
 
   httpErrorHandler(response, message: "Failed to delete entry");
 }
+
+Future<EntryModel> createEntry(
+  http.Client client,
+  String instanceHost,
+  int magazineID,
+  String title,
+  bool isOc,
+  String body,
+  String lang,
+  bool isAdult,
+) async {
+  final response = await client.post(Uri.https(instanceHost, '/api/magazine/$magazineID/article'),
+    body: jsonEncode({
+      'title': title,
+      'tags': [],
+      'isOc': isOc,
+      'body': body,
+      'lang': lang,
+      'isAdult': isAdult
+    })
+  );
+
+  httpErrorHandler(response, message: "Failed to create entry");
+
+  return EntryModel.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+}

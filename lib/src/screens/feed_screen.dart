@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/content_sources.dart';
+import 'package:interstellar/src/screens/create_screen.dart';
 import 'package:interstellar/src/screens/entries/entries_list.dart';
 import 'package:interstellar/src/screens/posts/posts_list.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
@@ -119,6 +120,17 @@ class _FeedScreenState extends State<FeedScreen> {
               ),
           },
         ),
+        floatingActionButton: whenLoggedIn(context, FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (context) => const CreateScreen()
+              )
+            );
+          },
+          shape: const CircleBorder(),
+          child: const Icon(Icons.add),
+        )),
       ),
     );
   }
