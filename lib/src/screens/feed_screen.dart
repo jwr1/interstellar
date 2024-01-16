@@ -120,17 +120,71 @@ class _FeedScreenState extends State<FeedScreen> {
               ),
           },
         ),
-        floatingActionButton: whenLoggedIn(context, FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (context) => const CreateScreen()
-              )
-            );
-          },
-          shape: const CircleBorder(),
-          child: const Icon(Icons.add),
-        )),
+        floatingActionButton: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+              child: FloatingActionButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const CreateScreen(CreateType.entry)
+                    )
+                  );
+                },
+                heroTag: null,
+                child: const Text("Entry"),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+              child: FloatingActionButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => const CreateScreen(CreateType.link)
+                      )
+                  );
+                },
+                heroTag: null,
+                child: const Text("Link"),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+              child: FloatingActionButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => const CreateScreen(CreateType.image)
+                      )
+                  );
+                },
+                heroTag: null,
+                child: const Text("Image"),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+              child: FloatingActionButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => const CreateScreen(CreateType.post)
+                      )
+                  );
+                },
+                heroTag: null,
+                child: const Text("Post"),
+              ),
+            ),
+            FloatingActionButton(
+              onPressed: () {},
+              child: const Icon(Icons.add)
+            )
+          ],
+        ),
       ),
     );
   }
