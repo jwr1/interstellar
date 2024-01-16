@@ -30,6 +30,7 @@ class _CreateScreenState extends State<CreateScreen> {
   final TextEditingController _titleTextController = TextEditingController();
   final TextEditingController _bodyTextController = TextEditingController();
   final TextEditingController _urlTextController = TextEditingController();
+  final TextEditingController _tagsTextController = TextEditingController();
   final TextEditingController _magazineTextController = TextEditingController();
   bool _isOc = false;
   bool _isAdult = false;
@@ -55,6 +56,8 @@ class _CreateScreenState extends State<CreateScreen> {
                 magazineId = magazine.magazineId;
               }
 
+              var tags = _tagsTextController.text.split(' ');
+
               switch (widget.type) {
                 case CreateType.entry:
                   await api_entries.createEntry(
@@ -65,7 +68,9 @@ class _CreateScreenState extends State<CreateScreen> {
                     _isOc,
                     _bodyTextController.text,
                     'en',
-                    _isAdult);
+                    _isAdult,
+                    tags
+                  );
                 case CreateType.link:
                   await api_entries.createLink(
                     client,
@@ -76,7 +81,9 @@ class _CreateScreenState extends State<CreateScreen> {
                     _isOc,
                     _bodyTextController.text,
                     'en',
-                    _isAdult);
+                    _isAdult,
+                    tags
+                  );
                 case CreateType.image:
                   //TODO: implement image selection.
                   break;
@@ -107,26 +114,34 @@ class _CreateScreenState extends State<CreateScreen> {
                 )
               ),
             Padding(
-                padding: const EdgeInsets.all(5),
-                child: MarkdownEditor(
-                  _bodyTextController,
-                  hintText: "Body",
-                )
+              padding: const EdgeInsets.all(5),
+              child: MarkdownEditor(
+                _bodyTextController,
+                hintText: "Body",
+              )
             ),
             if (widget.type == CreateType.link)
               Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: MarkdownEditor(
-                    _urlTextController,
-                    hintText: "URL",
-                  )
-              ),
-            Padding(
                 padding: const EdgeInsets.all(5),
                 child: MarkdownEditor(
-                  _magazineTextController..text = widget.magazineName ?? '',
-                  hintText: "Magazine",
+                  _urlTextController,
+                  hintText: "URL",
                 )
+              ),
+            if (widget.type != CreateType.post)
+              Padding(
+                padding: const EdgeInsets.all(5),
+                child: MarkdownEditor(
+                  _tagsTextController,
+                  hintText: "Tags",
+                )
+              ),
+            Padding(
+              padding: const EdgeInsets.all(5),
+              child: MarkdownEditor(
+                _magazineTextController..text = widget.magazineName ?? '',
+                hintText: "Magazine",
+              )
             ),
             if (widget.type != CreateType.post)
               Row(

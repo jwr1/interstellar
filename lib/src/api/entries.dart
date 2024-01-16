@@ -100,11 +100,12 @@ Future<EntryModel> createEntry(
   String body,
   String lang,
   bool isAdult,
+  List<String> tags,
 ) async {
   final response = await client.post(Uri.https(instanceHost, '/api/magazine/$magazineID/article'),
     body: jsonEncode({
       'title': title,
-      'tags': [],
+      'tags': tags,
       'isOc': isOc,
       'body': body,
       'lang': lang,
@@ -127,12 +128,13 @@ Future<EntryModel> createLink(
   String body,
   String lang,
   bool isAdult,
+  List<String> tags,
 ) async {
   final response = await client.post(Uri.https(instanceHost, '/api/magazine/$magazineID/link'),
       body: jsonEncode({
         'title': title,
         'url': url,
-        'tags': [],
+        'tags': tags,
         'isOc': isOc,
         'body': body,
         'lang': lang,
@@ -146,21 +148,22 @@ Future<EntryModel> createLink(
 }
 
 Future<EntryModel> createImage(
-    http.Client client,
-    String instanceHost,
-    int magazineID,
-    String title,
-    String image, //should be binary of image
-    String alt,
-    bool isOc,
-    String body,
-    String lang,
-    bool isAdult,
-    ) async {
+  http.Client client,
+  String instanceHost,
+  int magazineID,
+  String title,
+  String image, //should be binary of image
+  String alt,
+  bool isOc,
+  String body,
+  String lang,
+  bool isAdult,
+  List<String> tags,
+) async {
   final response = await client.post(Uri.https(instanceHost, '/api/magazine/$magazineID/link'),
       body: jsonEncode({
         'title': title,
-        'tags': [],
+        'tags': tags,
         'isOc': isOc,
         'body': body,
         'lang': lang,
