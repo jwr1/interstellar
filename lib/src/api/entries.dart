@@ -90,3 +90,93 @@ Future<void> deletePost(
 
   httpErrorHandler(response, message: "Failed to delete entry");
 }
+
+Future<EntryModel> createEntry(
+  http.Client client,
+  String instanceHost,
+  int magazineID, {
+  required String title,
+  required bool isOc,
+  required String body,
+  required String lang,
+  required bool isAdult,
+  required List<String> tags,
+}) async {
+  final response = await client.post(
+    Uri.https(instanceHost, '/api/magazine/$magazineID/article'),
+    body: jsonEncode({
+      'title': title,
+      'tags': tags,
+      'isOc': isOc,
+      'body': body,
+      'lang': lang,
+      'isAdult': isAdult
+    }),
+  );
+
+  httpErrorHandler(response, message: "Failed to create entry");
+
+  return EntryModel.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+}
+
+Future<EntryModel> createLink(
+  http.Client client,
+  String instanceHost,
+  int magazineID, {
+  required String title,
+  required String url,
+  required bool isOc,
+  required String body,
+  required String lang,
+  required bool isAdult,
+  required List<String> tags,
+}) async {
+  final response = await client.post(
+    Uri.https(instanceHost, '/api/magazine/$magazineID/link'),
+    body: jsonEncode({
+      'title': title,
+      'url': url,
+      'tags': tags,
+      'isOc': isOc,
+      'body': body,
+      'lang': lang,
+      'isAdult': isAdult
+    }),
+  );
+
+  httpErrorHandler(response, message: "Failed to create entry");
+
+  return EntryModel.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+}
+
+Future<EntryModel> createImage(
+  http.Client client,
+  String instanceHost,
+  int magazineID, {
+  required String title,
+  required String image, //should be binary of image
+  required String alt,
+  required bool isOc,
+  required String body,
+  required String lang,
+  required bool isAdult,
+  required List<String> tags,
+}) async {
+  final response = await client.post(
+    Uri.https(instanceHost, '/api/magazine/$magazineID/link'),
+    body: jsonEncode({
+      'title': title,
+      'tags': tags,
+      'isOc': isOc,
+      'body': body,
+      'lang': lang,
+      'isAdult': isAdult,
+      'alt': alt,
+      'uploadImage': image
+    }),
+  );
+
+  httpErrorHandler(response, message: "Failed to create entry");
+
+  return EntryModel.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+}

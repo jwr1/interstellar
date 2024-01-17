@@ -5,8 +5,8 @@ import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
-import 'package:interstellar/src/widgets/markdown_editor.dart';
 import 'package:interstellar/src/widgets/open_webpage.dart';
+import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:interstellar/src/widgets/video.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
 
@@ -381,7 +381,7 @@ class _ContentItemState extends State<ContentItem> {
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
-                      MarkdownEditor(_replyTextController!),
+                      TextEditor(_replyTextController!, isMarkdown: true),
                       const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -415,9 +415,8 @@ class _ContentItemState extends State<ContentItem> {
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
-                      MarkdownEditor(
-                        _editTextController!..text = widget.body ?? '',
-                      ),
+                      TextEditor(_editTextController!..text = widget.body ?? '',
+                          isMarkdown: true),
                       const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,

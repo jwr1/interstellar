@@ -8,6 +8,7 @@ import 'package:interstellar/src/screens/posts/posts_list.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
+import 'package:interstellar/src/widgets/floating_menu.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
 import 'package:provider/provider.dart';
 
@@ -142,6 +143,11 @@ class _MagazineScreenState extends State<MagazineScreen> {
               contentSource: ContentMagazine(widget.magazineId),
               details: _data != null ? _magazineDetails() : null,
             ),
-        });
+        },
+      floatingActionButton: whenLoggedIn(context, FloatingMenu(
+        magazineId: widget.magazineId,
+        magazineName: _data?.name,
+      )),
+    );
   }
 }

@@ -79,3 +79,20 @@ Future<void> deletePost(
 
   httpErrorHandler(response, message: "Failed to delete post");
 }
+
+Future<PostModel> createPost(
+  http.Client client,
+  String instanceHost,
+  int magazineID, {
+  required String body,
+  required String lang,
+  required bool isAdult,
+}) async {
+  final response = await client.post(
+      Uri.https(instanceHost, '/api/magazine/$magazineID/posts'),
+      body: jsonEncode({'body': body, 'lang': lang, 'isAdult': isAdult}));
+
+  httpErrorHandler(response, message: "Failed to create post");
+
+  return PostModel.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+}

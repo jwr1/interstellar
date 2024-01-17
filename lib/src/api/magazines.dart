@@ -42,6 +42,20 @@ Future<DetailedMagazineModel> fetchMagazine(
       jsonDecode(response.body) as Map<String, dynamic>);
 }
 
+Future<DetailedMagazineModel> fetchMagazineByName(
+  http.Client client,
+  String instanceHost,
+  String magazineName,
+) async {
+  final response =
+  await client.get(Uri.https(instanceHost, '/api/magazine/name/$magazineName'));
+
+  httpErrorHandler(response, message: 'Failed to load magazine');
+
+  return DetailedMagazineModel.fromJson(
+      jsonDecode(response.body) as Map<String, dynamic>);
+}
+
 Future<DetailedMagazineModel> putSubscribe(
   http.Client client,
   String instanceHost,

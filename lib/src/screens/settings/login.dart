@@ -3,6 +3,7 @@ import 'package:interstellar/src/api/oauth.dart';
 import 'package:interstellar/src/api/users.dart' as api_users;
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/widgets/redirect_listen.dart';
+import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:provider/provider.dart';
 
@@ -33,11 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
-            child: TextField(
-              controller: _instanceHostController,
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(), label: Text('Instance Host')),
-            ),
+            child: TextEditor(_instanceHostController, label: 'Instance Host'),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/content_sources.dart';
+import 'package:interstellar/src/screens/create_screen.dart';
 import 'package:interstellar/src/screens/entries/entries_list.dart';
 import 'package:interstellar/src/screens/posts/posts_list.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/widgets/floating_menu.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:provider/provider.dart';
 
@@ -119,6 +121,7 @@ class _FeedScreenState extends State<FeedScreen> {
               ),
           },
         ),
+        floatingActionButton: whenLoggedIn(context, const FloatingMenu())
       ),
     );
   }
