@@ -108,76 +108,74 @@ class _CreateScreenState extends State<CreateScreen> {
               icon: const Icon(Icons.send))
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          children: [
-            if (widget.type != CreateType.post)
-              Padding(
-                padding: const EdgeInsets.all(5),
-                child: TextEditor(
-                  _titleTextController,
-                  label: "Title",
-                ),
-              ),
-            Padding(
-              padding: const EdgeInsets.all(5),
-              child: TextEditor(
-                _bodyTextController,
-                isMarkdown: true,
-                label: "Body",
-              ),
-            ),
-            if (widget.type != CreateType.post)
-              Padding(
-                padding: const EdgeInsets.all(5),
-                child: TextEditor(
-                  _urlTextController,
-                  keyboardType: TextInputType.url,
-                  label: "URL",
-                ),
-              ),
-            if (widget.type != CreateType.post)
-              Padding(
-                padding: const EdgeInsets.all(5),
-                child: TextEditor(
-                  _tagsTextController,
-                  label: "Tags",
-                  hint: 'Separate with spaces',
-                ),
-              ),
-            Padding(
-              padding: const EdgeInsets.all(5),
-              child: TextEditor(
-                _magazineTextController..text = widget.magazineName ?? '',
-                label: 'Magazine',
-              ),
-            ),
-            if (widget.type != CreateType.post)
-              Row(
-                children: [
-                  Checkbox(
-                    value: _isOc,
-                    onChanged: (bool? value) => setState(() {
-                      _isOc = value!;
-                    }),
-                  ),
-                  const Text("OC"),
-                ],
-              ),
-            Row(
+      body: ListView(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
               children: [
-                Checkbox(
-                  value: _isAdult,
-                  onChanged: (bool? value) => setState(() {
-                    _isAdult = value!;
-                  }),
+                if (widget.type != CreateType.post)
+                  Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: TextEditor(
+                      _titleTextController,
+                      label: "Title",
+                    ),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: TextEditor(
+                    _bodyTextController,
+                    isMarkdown: true,
+                    label: "Body",
+                  ),
                 ),
-                const Text("NSFW")
+                if (widget.type != CreateType.post)
+                  Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: TextEditor(
+                      _urlTextController,
+                      keyboardType: TextInputType.url,
+                      label: "URL",
+                    ),
+                  ),
+                if (widget.type != CreateType.post)
+                  Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: TextEditor(
+                      _tagsTextController,
+                      label: "Tags",
+                      hint: 'Separate with spaces',
+                    ),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: TextEditor(
+                    _magazineTextController..text = widget.magazineName ?? '',
+                    label: 'Magazine',
+                  ),
+                ),
+                if (widget.type != CreateType.post)
+                  CheckboxListTile(
+                    title: const Text('Original Content'),
+                    value: _isOc,
+                    onChanged: (newValue) => setState(() {
+                      _isOc = newValue!;
+                    }),
+                    controlAffinity: ListTileControlAffinity.leading,
+                  ),
+                CheckboxListTile(
+                  title: const Text('NSFW'),
+                  value: _isAdult,
+                  onChanged: (newValue) => setState(() {
+                    _isAdult = newValue!;
+                  }),
+                  controlAffinity: ListTileControlAffinity.leading,
+                ),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
