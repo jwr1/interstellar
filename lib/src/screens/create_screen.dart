@@ -6,7 +6,7 @@ import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/widgets/markdown_editor.dart';
 import 'package:provider/provider.dart';
 
-enum CreateType { entry, link, image, post }
+enum CreateType { entry, post }
 
 class CreateScreen extends StatefulWidget {
   const CreateScreen(
@@ -50,9 +50,9 @@ class _CreateScreenState extends State<CreateScreen> {
               int? magazineId = widget.magazineId;
               if (magazineId == null) {
                 final magazine = await api_magazines.fetchMagazineByName(
-                    client,
-                    instanceHost,
-                    magazineName);
+                  client,
+                  instanceHost,
+                  magazineName);
                 magazineId = magazine.magazineId;
               }
 
@@ -60,33 +60,32 @@ class _CreateScreenState extends State<CreateScreen> {
 
               switch (widget.type) {
                 case CreateType.entry:
-                  await api_entries.createEntry(
-                    client,
-                    instanceHost,
-                    magazineId,
-                    _titleTextController.text,
-                    _isOc,
-                    _bodyTextController.text,
-                    'en',
-                    _isAdult,
-                    tags
-                  );
-                case CreateType.link:
-                  await api_entries.createLink(
-                    client,
-                    instanceHost,
-                    magazineId,
-                    _titleTextController.text,
-                    _urlTextController.text,
-                    _isOc,
-                    _bodyTextController.text,
-                    'en',
-                    _isAdult,
-                    tags
-                  );
-                case CreateType.image:
-                  //TODO: implement image selection.
-                  break;
+                  if (_urlTextController.text.isEmpty) {
+                    await api_entries.createEntry(
+                      client,
+                      instanceHost,
+                      magazineId,
+                      _titleTextController.text,
+                      _isOc,
+                      _bodyTextController.text,
+                      'en',
+                      _isAdult,
+                      tags
+                    );
+                  } else {
+                    await api_entries.createLink(
+                      client,
+                      instanceHost,
+                      magazineId,
+                      _titleTextController.text,
+                      _urlTextController.text,
+                      _isOc,
+                      _bodyTextController.text,
+                      'en',
+                      _isAdult,
+                      tags
+                    );
+                  }
                 case CreateType.post:
                   await api_posts.createPost(
                     client,
@@ -120,7 +119,7 @@ class _CreateScreenState extends State<CreateScreen> {
                 hintText: "Body",
               )
             ),
-            if (widget.type == CreateType.link)
+            if (widget.type != CreateType.post)
               Padding(
                 padding: const EdgeInsets.all(5),
                 child: MarkdownEditor(
