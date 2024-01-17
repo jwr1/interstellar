@@ -144,10 +144,10 @@ class _MagazineScreenState extends State<MagazineScreen> {
               details: _data != null ? _magazineDetails() : null,
             ),
         },
-      floatingActionButton: FloatingMenu(
+      floatingActionButton: whenLoggedIn(context, FloatingMenu(
         magazineId: widget.magazineId,
         magazineName: _data?.name,
-      ),
+      )),
     );
   }
 }

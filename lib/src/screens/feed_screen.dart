@@ -121,7 +121,7 @@ class _FeedScreenState extends State<FeedScreen> {
               ),
           },
         ),
-        floatingActionButton: FloatingMenu()
+        floatingActionButton: whenLoggedIn(context, const FloatingMenu())
       ),
     );
   }
