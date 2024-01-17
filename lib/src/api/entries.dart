@@ -94,15 +94,16 @@ Future<void> deletePost(
 Future<EntryModel> createEntry(
   http.Client client,
   String instanceHost,
-  int magazineID,
-  String title,
-  bool isOc,
-  String body,
-  String lang,
-  bool isAdult,
-  List<String> tags,
-) async {
-  final response = await client.post(Uri.https(instanceHost, '/api/magazine/$magazineID/article'),
+  int magazineID, {
+  required String title,
+  required bool isOc,
+  required String body,
+  required String lang,
+  required bool isAdult,
+  required List<String> tags,
+}) async {
+  final response = await client.post(
+    Uri.https(instanceHost, '/api/magazine/$magazineID/article'),
     body: jsonEncode({
       'title': title,
       'tags': tags,
@@ -110,7 +111,7 @@ Future<EntryModel> createEntry(
       'body': body,
       'lang': lang,
       'isAdult': isAdult
-    })
+    }),
   );
 
   httpErrorHandler(response, message: "Failed to create entry");
@@ -121,25 +122,26 @@ Future<EntryModel> createEntry(
 Future<EntryModel> createLink(
   http.Client client,
   String instanceHost,
-  int magazineID,
-  String title,
-  String url,
-  bool isOc,
-  String body,
-  String lang,
-  bool isAdult,
-  List<String> tags,
-) async {
-  final response = await client.post(Uri.https(instanceHost, '/api/magazine/$magazineID/link'),
-      body: jsonEncode({
-        'title': title,
-        'url': url,
-        'tags': tags,
-        'isOc': isOc,
-        'body': body,
-        'lang': lang,
-        'isAdult': isAdult
-      })
+  int magazineID, {
+  required String title,
+  required String url,
+  required bool isOc,
+  required String body,
+  required String lang,
+  required bool isAdult,
+  required List<String> tags,
+}) async {
+  final response = await client.post(
+    Uri.https(instanceHost, '/api/magazine/$magazineID/link'),
+    body: jsonEncode({
+      'title': title,
+      'url': url,
+      'tags': tags,
+      'isOc': isOc,
+      'body': body,
+      'lang': lang,
+      'isAdult': isAdult
+    }),
   );
 
   httpErrorHandler(response, message: "Failed to create entry");
@@ -150,27 +152,28 @@ Future<EntryModel> createLink(
 Future<EntryModel> createImage(
   http.Client client,
   String instanceHost,
-  int magazineID,
-  String title,
-  String image, //should be binary of image
-  String alt,
-  bool isOc,
-  String body,
-  String lang,
-  bool isAdult,
-  List<String> tags,
-) async {
-  final response = await client.post(Uri.https(instanceHost, '/api/magazine/$magazineID/link'),
-      body: jsonEncode({
-        'title': title,
-        'tags': tags,
-        'isOc': isOc,
-        'body': body,
-        'lang': lang,
-        'isAdult': isAdult,
-        'alt': alt,
-        'uploadImage': image
-      })
+  int magazineID, {
+  required String title,
+  required String image, //should be binary of image
+  required String alt,
+  required bool isOc,
+  required String body,
+  required String lang,
+  required bool isAdult,
+  required List<String> tags,
+}) async {
+  final response = await client.post(
+    Uri.https(instanceHost, '/api/magazine/$magazineID/link'),
+    body: jsonEncode({
+      'title': title,
+      'tags': tags,
+      'isOc': isOc,
+      'body': body,
+      'lang': lang,
+      'isAdult': isAdult,
+      'alt': alt,
+      'uploadImage': image
+    }),
   );
 
   httpErrorHandler(response, message: "Failed to create entry");
