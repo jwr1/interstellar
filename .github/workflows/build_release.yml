@@ -39,18 +39,16 @@ jobs:
           - os: ubuntu-latest
             target: android
             build_target: apk
+            build_flags: --split-per-abi
             build_path: build/app/outputs/flutter-apk
-            asset_extension: .apk
           - os: ubuntu-latest
             target: linux
             build_target: linux
             build_path: build/linux/x64/release/bundle
-            asset_extension: .AppImage
           - os: windows-latest
             target: windows
             build_target: windows
             build_path: build\windows\x64\runner\Release
-            asset_extension: .zip
     steps:
       - name: Install Android dependencies
         if: matrix.target == 'android'
@@ -95,11 +93,21 @@ jobs:
       - name: Build Flutter app
         run: |
           dart run build_runner build
-          flutter build -v ${{ matrix.build_target }}
+          flutter build -v ${{ matrix.build_target }} ${{ matrix.build_flags }}
+
+      - name: Create dist directory
+        if: matrix.target != 'windows'
+        run: mkdir dist
+      - name: Create dist directory
+        if: matrix.target == 'windows'
+        run: md dist
 
       - name: Rename build for Android
         if: matrix.target == 'android'
-        run: mv app-release.apk $GITHUB_WORKSPACE/interstellar-${{ matrix.target }}.apk
+        run: |
+          mv app-armeabi-v7a-release.apk $GITHUB_WORKSPACE/dist/interstellar-android-armeabi-v7a.apk
+          mv app-arm64-v8a-release.apk $GITHUB_WORKSPACE/dist/interstellar-android-arm64-v8a.apk
+          mv app-x86_64-release.apk $GITHUB_WORKSPACE/dist/interstellar-android-x86_64.apk
         working-directory: ${{ matrix.build_path }}
 
       - name: Build AppImage for Linux
@@ -108,16 +116,15 @@ jobs:
           mv ${{ matrix.build_path }}/* linux/appimage/
           cp assets/icons/logo.png linux/appimage/interstellar.png
           cp $(echo $(ldd -d linux/appimage/interstellar | grep -Eo ' (/usr)?/lib/[^ ]*') $(ldd -d linux/appimage/lib/libflutter_linux_gtk.so | grep -Eo ' (/usr)?/lib/[^ ]*')  | tr ' ' '\n' | sort | uniq -u) linux/appimage/lib/
-          appimagetool linux/appimage interstellar-${{ matrix.target }}.AppImage
+          appimagetool linux/appimage dist/interstellar-linux-x86_64.AppImage
 
       - name: Compress build for Windows
         if: matrix.target == 'windows'
-        run: compress-archive -Path * -DestinationPath ${env:GITHUB_WORKSPACE}\interstellar-${{ matrix.target }}.zip
+        run: compress-archive -Path * -DestinationPath ${env:GITHUB_WORKSPACE}\dist\interstellar-windows-x86_64.zip
         working-directory: ${{ matrix.build_path }}
 
       - name: Upload build to release draft
         uses: shogo82148/actions-upload-release-asset@v1
         with:
           upload_url: ${{ needs.draft-release.outputs.upload_url }}
-          asset_path: ./interstellar-${{ matrix.target }}${{ matrix.asset_extension }}
-          asset_name: interstellar-${{ matrix.target }}${{ matrix.asset_extension }}
+          asset_path: dist/*
