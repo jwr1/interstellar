@@ -1,52 +1,36 @@
-import 'package:flutter/material.dart';
-import 'package:interstellar/src/screens/create_screen.dart';
 import 'dart:math';
 
-import 'package:media_kit/media_kit.dart';
+import 'package:flutter/material.dart';
+import 'package:interstellar/src/screens/create_screen.dart';
 
-class FloatingMenu extends StatefulWidget{
-
+class FloatingMenu extends StatefulWidget {
   final int? magazineId;
   final String? magazineName;
 
-  const FloatingMenu({
-    this.magazineId,
-    this.magazineName,
-    super.key
-  });
+  const FloatingMenu({this.magazineId, this.magazineName, super.key});
 
   @override
   State<FloatingMenu> createState() => _FloatingMenuState();
-
 }
 
-class _FloatingMenuState extends State<FloatingMenu> with TickerProviderStateMixin {
+class _FloatingMenuState extends State<FloatingMenu>
+    with TickerProviderStateMixin {
   late final AnimationController _animationController = AnimationController(
-    duration: const Duration(milliseconds: 500),
+    duration: const Duration(milliseconds: 200),
     vsync: this,
   );
-  late final Animation<Offset> _slideAnimationPosts = Tween<Offset>(
-    begin: const Offset(1.5, 0),
-    end: Offset.zero
-  ).animate(CurvedAnimation(
+  late final Animation<Offset> _slideAnimationPosts =
+      Tween<Offset>(begin: const Offset(1.5, 0), end: Offset.zero)
+          .animate(CurvedAnimation(
     parent: _animationController,
-    curve: const Interval(
-      0,
-      0.8,
-      curve: Curves.easeInOut
-    ),
+    curve: const Interval(0, 0.8, curve: Curves.easeInOut),
   ));
 
-  late final Animation<Offset> _slideAnimationEntries = Tween<Offset>(
-    begin: const Offset(1.5, 0),
-    end: Offset.zero
-  ).animate(CurvedAnimation(
+  late final Animation<Offset> _slideAnimationEntries =
+      Tween<Offset>(begin: const Offset(1.5, 0), end: Offset.zero)
+          .animate(CurvedAnimation(
     parent: _animationController,
-    curve: const Interval(
-      0.2,
-      1,
-      curve: Curves.easeInOut
-    ),
+    curve: const Interval(0.2, 1, curve: Curves.easeInOut),
   ));
 
   @override
@@ -63,18 +47,17 @@ class _FloatingMenuState extends State<FloatingMenu> with TickerProviderStateMix
               aspectRatio: 1,
               child: FloatingActionButton(
                 onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
+                  Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => CreateScreen(
-                        CreateType.entry,
-                        magazineId: widget.magazineId,
-                        magazineName: widget.magazineName,
-                      )
-                    )
-                  );
+                            CreateType.entry,
+                            magazineId: widget.magazineId,
+                            magazineName: widget.magazineName,
+                          )));
+                  _animationController.reverse();
                 },
                 heroTag: null,
-                child: const Text("Entry"),
+                tooltip: 'Create thread',
+                child: const Icon(Icons.feed),
               ),
             ),
           ),
@@ -88,18 +71,17 @@ class _FloatingMenuState extends State<FloatingMenu> with TickerProviderStateMix
               aspectRatio: 1,
               child: FloatingActionButton(
                 onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
+                  Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => CreateScreen(
-                        CreateType.post,
-                        magazineId: widget.magazineId,
-                        magazineName: widget.magazineName,
-                      )
-                    )
-                  );
+                            CreateType.post,
+                            magazineId: widget.magazineId,
+                            magazineName: widget.magazineName,
+                          )));
+                  _animationController.reverse();
                 },
                 heroTag: null,
-                child: const Text("Post"),
+                tooltip: 'Create post',
+                child: const Icon(Icons.chat),
               ),
             ),
           ),
@@ -118,7 +100,8 @@ class _FloatingMenuState extends State<FloatingMenu> with TickerProviderStateMix
               animation: _animationController,
               builder: (BuildContext context, Widget? child) {
                 return Transform(
-                  transform: Matrix4.rotationZ(_animationController.value * 0.75 * pi),
+                  transform:
+                      Matrix4.rotationZ(_animationController.value * 0.25 * pi),
                   alignment: FractionalOffset.center,
                   child: const Icon(Icons.add),
                 );
