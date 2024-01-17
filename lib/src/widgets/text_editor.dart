@@ -22,6 +22,7 @@ class TextEditor extends StatelessWidget {
       controller: controller,
       keyboardType:
           keyboardType ?? (isMarkdown ? TextInputType.multiline : null),
+      minLines: isMarkdown ? 2 : null,
       maxLines: isMarkdown ? null : 1,
       decoration: InputDecoration(
         border: const OutlineInputBorder(),

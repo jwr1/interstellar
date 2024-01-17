@@ -24,6 +24,20 @@ Future<PostCommentListModel> fetchComments(
       jsonDecode(response.body) as Map<String, dynamic>);
 }
 
+Future<PostCommentModel> fetchComment(
+  http.Client client,
+  String instanceHost,
+  int commentId,
+) async {
+  final response = await client
+      .get(Uri.https(instanceHost, '/api/post-comments/$commentId'));
+
+  httpErrorHandler(response, message: 'Failed to load comment');
+
+  return PostCommentModel.fromJson(
+      jsonDecode(response.body) as Map<String, dynamic>);
+}
+
 Future<PostCommentModel> putVote(
   http.Client client,
   String instanceHost,

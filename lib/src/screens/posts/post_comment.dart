@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/post_comments.dart' as api_comments;
 import 'package:interstellar/src/models/post_comment.dart';
+import 'package:interstellar/src/screens/posts/post_comment_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/content_item.dart';
@@ -72,6 +73,13 @@ class _EntryCommentState extends State<PostComment> {
                 children: widget.comment.children,
               ));
             }),
+            openContentLabel: 'Open comment',
+            onOpenContent: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) =>
+                    PostCommentScreen(widget.comment.commentId),
+              ),
+            ),
             onReply: whenLoggedIn(context, (body) async {
               var newSubComment = await api_comments.postComment(
                 context.read<SettingsController>().httpClient,
@@ -125,6 +133,19 @@ class _EntryCommentState extends State<PostComment> {
                 : null,
           ),
         ),
+        if (widget.comment.childCount > 0 &&
+            !_isCollapsed &&
+            (widget.comment.children?.isEmpty ?? false))
+          TextButton(
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) =>
+                    PostCommentScreen(widget.comment.commentId),
+              ),
+            ),
+            child: Text(
+                'Open ${widget.comment.childCount} reply${widget.comment.childCount == 1 ? '' : 's'}'),
+          ),
         if (widget.comment.childCount > 0 && !_isCollapsed)
           Container(
             margin: const EdgeInsets.only(left: 1),
