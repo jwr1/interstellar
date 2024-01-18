@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/api/notifications.dart';
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/models/notification.dart';
 import 'package:interstellar/src/models/user.dart';
+import 'package:interstellar/src/screens/entries/entry_comment_screen.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
+import 'package:interstellar/src/screens/posts/post_comment_screen.dart';
+import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
+import 'package:provider/provider.dart';
 
 const notificationTitle = {
   NotificationType.entryCreatedNotification: 'created a thread',
@@ -31,9 +36,10 @@ const notificationTitle = {
 };
 
 class NotificationItem extends StatelessWidget {
-  const NotificationItem(this.item, {super.key});
+  const NotificationItem(this.item, this.onUpdate, {super.key});
 
   final NotificationModel item;
+  final void Function(NotificationModel) onUpdate;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +62,24 @@ class NotificationItem extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       surfaceTintColor: item.status == 'new' ? Colors.amber : null,
       child: InkWell(
-        // onTap: () {},
+        onTap: item.subject.containsKey('commentId')
+            ? () {
+                final commentId = item.subject['commentId'] as int;
+                if (item.subject.containsKey('entryId')) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => EntryCommentScreen(commentId),
+                    ),
+                  );
+                } else if (item.subject.containsKey('postId')) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => PostCommentScreen(commentId),
+                    ),
+                  );
+                }
+              }
+            : null,
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Column(
@@ -91,6 +114,25 @@ class NotificationItem extends StatelessWidget {
                         ),
                       ),
                     ),
+                  const Spacer(),
+                  IconButton(
+                    onPressed: () async {
+                      final newNotification = await putNotificationRead(
+                        context.read<SettingsController>().httpClient,
+                        context.read<SettingsController>().instanceHost,
+                        item.notificationId,
+                        item.status == 'new',
+                      );
+
+                      onUpdate(newNotification);
+                    },
+                    icon: Icon(item.status == 'new'
+                        ? Icons.mark_email_read
+                        : Icons.mark_email_unread),
+                    tooltip: item.status == 'new'
+                        ? 'Mark as read'
+                        : 'Mark as unread',
+                  ),
                 ],
               ),
               if (body.isNotEmpty)

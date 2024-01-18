@@ -64,31 +64,43 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               padding: const EdgeInsets.all(12),
               child: Row(
                 children: [
-                  DropdownButton<NotificationsFilter>(
-                    value: filter,
-                    onChanged: (newFilter) {
-                      if (newFilter != null) {
-                        setState(() {
-                          filter = newFilter;
-                          _pagingController.refresh();
-                        });
-                      }
-                    },
-                    items: const [
-                      DropdownMenuItem(
-                        value: NotificationsFilter.all,
-                        child: Text('All'),
-                      ),
-                      DropdownMenuItem(
-                        value: NotificationsFilter.new_,
-                        child: Text('New'),
-                      ),
-                      DropdownMenuItem(
-                        value: NotificationsFilter.read,
-                        child: Text('Read'),
-                      ),
-                    ],
-                  )
+                  Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: DropdownButton<NotificationsFilter>(
+                      value: filter,
+                      onChanged: (newFilter) {
+                        if (newFilter != null) {
+                          setState(() {
+                            filter = newFilter;
+                            _pagingController.refresh();
+                          });
+                        }
+                      },
+                      items: const [
+                        DropdownMenuItem(
+                          value: NotificationsFilter.all,
+                          child: Text('All'),
+                        ),
+                        DropdownMenuItem(
+                          value: NotificationsFilter.new_,
+                          child: Text('New'),
+                        ),
+                        DropdownMenuItem(
+                          value: NotificationsFilter.read,
+                          child: Text('Read'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  OutlinedButton(
+                      onPressed: () async {
+                        await putNotificationReadAll(
+                          context.read<SettingsController>().httpClient,
+                          context.read<SettingsController>().instanceHost,
+                        );
+                        _pagingController.refresh();
+                      },
+                      child: const Text('Mark all as read'))
                 ],
               ),
             ),
@@ -96,7 +108,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           PagedSliverList<int, NotificationModel>(
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<NotificationModel>(
-              itemBuilder: (context, item, index) => NotificationItem(item),
+              itemBuilder: (context, item, index) =>
+                  NotificationItem(item, (newValue) {
+                var newList = _pagingController.itemList;
+                newList![index] = newValue;
+                setState(() {
+                  _pagingController.itemList = newList;
+                });
+              }),
             ),
           )
         ],

@@ -36,3 +36,28 @@ Future<int> fetchNotificationCount(
 
   return jsonDecode(response.body)['count'];
 }
+
+Future<void> putNotificationReadAll(
+  http.Client client,
+  String instanceHost,
+) async {
+  final response =
+      await client.put(Uri.https(instanceHost, '/api/notifications/read'));
+
+  httpErrorHandler(response, message: 'Failed to mark notifications');
+}
+
+Future<NotificationModel> putNotificationRead(
+  http.Client client,
+  String instanceHost,
+  int notificationId,
+  bool readState,
+) async {
+  final response = await client.put(Uri.https(instanceHost,
+      '/api/notifications/$notificationId/${readState ? 'read' : 'unread'}'));
+
+  httpErrorHandler(response, message: 'Failed to mark notification');
+
+  return NotificationModel.fromJson(
+      jsonDecode(response.body) as Map<String, Object?>);
+}
