@@ -141,7 +141,7 @@ jobs:
 
       - name: Compress build for macOS
         if: matrix.target == 'macOS'
-        run: ditto -c -k --sequesterRsrc --keepParent interstellar.app $GITHUB_WORKSPACE/interstellar-macos-x86_64.zip
+        run: ditto -c -k --sequesterRsrc --keepParent interstellar.app $GITHUB_WORKSPACE/dist/interstellar-macos.zip
         working-directory: ${{ matrix.build_path }}
 
       - name: Compress build for Windows
