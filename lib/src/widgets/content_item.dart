@@ -46,8 +46,6 @@ class ContentItem extends StatefulWidget {
 
   final int? numComments;
   final Future<void> Function(String)? onReply;
-  final String? openContentLabel;
-  final Future<void> Function()? onOpenContent;
   final Future<void> Function(String)? onEdit;
   final Future<void> Function()? onDelete;
 
@@ -81,8 +79,6 @@ class ContentItem extends StatefulWidget {
       this.isDownVoted = false,
       this.onDownVote,
       this.numComments,
-      this.openContentLabel,
-      this.onOpenContent,
       this.onReply,
       this.onEdit,
       this.onDelete,
@@ -317,13 +313,6 @@ class _ContentItemState extends State<ContentItem> {
                         },
                         controller: _menuController,
                         menuChildren: [
-                          if (widget.openContentLabel != null)
-                            MenuItemButton(
-                              onPressed: widget.onOpenContent,
-                              child: Padding(
-                                  padding: const EdgeInsets.all(12),
-                                  child: Text(widget.openContentLabel!)),
-                            ),
                           MenuItemButton(
                             onPressed: widget.onEdit != null
                                 ? () => setState(() {

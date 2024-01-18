@@ -73,13 +73,6 @@ class _EntryCommentState extends State<PostComment> {
                 children: widget.comment.children,
               ));
             }),
-            openContentLabel: 'Open comment',
-            onOpenContent: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) =>
-                    PostCommentScreen(widget.comment.commentId),
-              ),
-            ),
             onReply: whenLoggedIn(context, (body) async {
               var newSubComment = await api_comments.postComment(
                 context.read<SettingsController>().httpClient,
