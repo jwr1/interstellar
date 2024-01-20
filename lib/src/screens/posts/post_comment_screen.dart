@@ -8,10 +8,12 @@ import 'package:provider/provider.dart';
 class PostCommentScreen extends StatefulWidget {
   const PostCommentScreen(
     this.commentId, {
+    this.opUserId,
     super.key,
   });
 
   final int commentId;
+  final int? opUserId;
 
   @override
   State<PostCommentScreen> createState() => _PostCommentScreenState();
@@ -50,7 +52,7 @@ class _PostCommentScreenState extends State<PostCommentScreen> {
                     _comment!,
                     (newComment) => setState(() {
                       _comment = newComment;
-                    }),
+                    }), opUserId: widget.opUserId
                   ),
                 )
               ],

@@ -8,10 +8,11 @@ import 'package:interstellar/src/widgets/content_item.dart';
 import 'package:provider/provider.dart';
 
 class PostComment extends StatefulWidget {
-  const PostComment(this.comment, this.onUpdate, {super.key});
+  const PostComment(this.comment, this.onUpdate, {this.opUserId, super.key});
 
   final PostCommentModel comment;
   final void Function(PostCommentModel) onUpdate;
+  final int? opUserId;
 
   @override
   State<PostComment> createState() => _EntryCommentState();
@@ -32,6 +33,7 @@ class _EntryCommentState extends State<PostComment> {
             user: widget.comment.user.username,
             userIcon: widget.comment.user.avatar?.storageUrl,
             userIdOnClick: widget.comment.user.userId,
+            opUserId: widget.opUserId,
             boosts: widget.comment.uv,
             isBoosted: widget.comment.userVote == 1,
             onBoost: whenLoggedIn(context, () async {
@@ -133,7 +135,7 @@ class _EntryCommentState extends State<PostComment> {
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) =>
-                    PostCommentScreen(widget.comment.commentId),
+                    PostCommentScreen(widget.comment.commentId, opUserId: widget.opUserId),
               ),
             ),
             child: Text(
@@ -162,7 +164,7 @@ class _EntryCommentState extends State<PostComment> {
                           childCount: widget.comment.childCount + 1,
                           children: newChildren,
                         ));
-                      }))
+                      }, opUserId: widget.opUserId))
                   .toList(),
             ),
           ),

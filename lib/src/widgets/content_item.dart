@@ -24,6 +24,7 @@ class ContentItem extends StatefulWidget {
   final String? user;
   final String? userIcon;
   final int? userIdOnClick;
+  final int? opUserId;
 
   final String? magazine;
   final String? magazineIcon;
@@ -64,6 +65,7 @@ class ContentItem extends StatefulWidget {
       this.user,
       this.userIcon,
       this.userIdOnClick,
+      this.opUserId,
       this.magazine,
       this.magazineIcon,
       this.magazineIdOnClick,
@@ -217,6 +219,11 @@ class _ContentItemState extends State<ContentItem> {
                 children: [
                   if (!widget.showMagazineFirst && userWidget != null)
                     userWidget,
+                  if (!widget.showMagazineFirst && widget.opUserId == widget.userIdOnClick)
+                    const Padding(
+                      padding: EdgeInsets.only(right: 10),
+                      child: Text("OP")
+                    ),
                   if (widget.showMagazineFirst && magazineWidget != null)
                     magazineWidget,
                   if (widget.createdAt != null)
@@ -229,6 +236,11 @@ class _ContentItemState extends State<ContentItem> {
                     ),
                   if (widget.showMagazineFirst && userWidget != null)
                     userWidget,
+                  if (widget.showMagazineFirst && widget.opUserId == widget.userIdOnClick)
+                    const Padding(
+                        padding: EdgeInsets.only(right: 10),
+                        child: Text("OP")
+                    ),
                   if (!widget.showMagazineFirst && magazineWidget != null)
                     magazineWidget,
                   if (widget.domain != null)

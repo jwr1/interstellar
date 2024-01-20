@@ -8,10 +8,11 @@ import 'package:interstellar/src/widgets/content_item.dart';
 import 'package:provider/provider.dart';
 
 class EntryComment extends StatefulWidget {
-  const EntryComment(this.comment, this.onUpdate, {super.key});
+  const EntryComment(this.comment, this.onUpdate, {this.opUserId, super.key});
 
   final EntryCommentModel comment;
   final void Function(EntryCommentModel) onUpdate;
+  final int? opUserId;
 
   @override
   State<EntryComment> createState() => _EntryCommentState();
@@ -32,6 +33,7 @@ class _EntryCommentState extends State<EntryComment> {
             user: widget.comment.user.username,
             userIcon: widget.comment.user.avatar?.storageUrl,
             userIdOnClick: widget.comment.user.userId,
+            opUserId: widget.opUserId,
             boosts: widget.comment.uv,
             isBoosted: widget.comment.userVote == 1,
             onBoost: whenLoggedIn(context, () async {
@@ -133,7 +135,7 @@ class _EntryCommentState extends State<EntryComment> {
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) =>
-                    EntryCommentScreen(widget.comment.commentId),
+                    EntryCommentScreen(widget.comment.commentId, opUserId: widget.opUserId),
               ),
             ),
             child: Text(
@@ -162,7 +164,7 @@ class _EntryCommentState extends State<EntryComment> {
                           childCount: widget.comment.childCount + 1,
                           children: newChildren,
                         ));
-                      }))
+                      }, opUserId: widget.opUserId))
                   .toList(),
             ),
           ),
