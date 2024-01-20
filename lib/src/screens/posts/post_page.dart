@@ -198,7 +198,8 @@ class _PostPageState extends State<PostPage> {
                     setState(() {
                       _pagingController.itemList = newList;
                     });
-                  }),
+                  },
+                  opUserId: widget.initData.user.userId),
                 ),
               ),
             )

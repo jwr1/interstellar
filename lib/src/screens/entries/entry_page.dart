@@ -202,7 +202,8 @@ class _EntryPageState extends State<EntryPage> {
                     setState(() {
                       _pagingController.itemList = newList;
                     });
-                  }),
+                  },
+                  opUserId: widget.initData.user.userId),
                 ),
               ),
             )

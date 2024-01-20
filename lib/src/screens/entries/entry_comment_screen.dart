@@ -8,10 +8,12 @@ import 'package:provider/provider.dart';
 class EntryCommentScreen extends StatefulWidget {
   const EntryCommentScreen(
     this.commentId, {
+    this.opUserId,
     super.key,
   });
 
   final int commentId;
+  final int? opUserId;
 
   @override
   State<EntryCommentScreen> createState() => _EntryCommentScreenState();
@@ -50,7 +52,7 @@ class _EntryCommentScreenState extends State<EntryCommentScreen> {
                     _comment!,
                     (newComment) => setState(() {
                       _comment = newComment;
-                    }),
+                    }), opUserId: widget.opUserId
                   ),
                 )
               ],
