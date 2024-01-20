@@ -1,0 +1,14 @@
+name: Blank issue
+description: Don't see your issue here? Open a blank issue
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this issue 🙏.
+        Before you submit, please search the issue tracker to prevent duplicates as a similar issue might already exist.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+    validations:
+      required: true
