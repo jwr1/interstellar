@@ -102,7 +102,7 @@ class _EntryCommentState extends State<PostComment> {
                       childCount: widget.comment.childCount,
                       children: widget.comment.children,
                     ));
-                  })
+                  }, matchesUsername: widget.comment.user.username)
                 : null,
             onDelete: widget.comment.visibility != 'soft_deleted'
                 ? whenLoggedIn(context, () async {
@@ -118,7 +118,7 @@ class _EntryCommentState extends State<PostComment> {
                       favourites: null,
                       visibility: 'soft_deleted',
                     ));
-                  })
+                  }, matchesUsername: widget.comment.user.username)
                 : null,
             isCollapsed: _isCollapsed,
             onCollapse: widget.comment.childCount > 0
