@@ -37,14 +37,23 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         filter: filter,
       );
 
+      // Check BuildContext
+      if (!mounted) return;
+
       final isLastPage =
           newPage.pagination.currentPage == newPage.pagination.maxPage;
+      // Prevent duplicates
+      final currentItemIds =
+          _pagingController.itemList?.map((e) => e.notificationId) ?? [];
+      final newItems = newPage.items
+          .where((e) => !currentItemIds.contains(e.notificationId))
+          .toList();
 
       if (isLastPage) {
-        _pagingController.appendLastPage(newPage.items);
+        _pagingController.appendLastPage(newItems);
       } else {
         final nextPageKey = pageKey + 1;
-        _pagingController.appendPage(newPage.items, nextPageKey);
+        _pagingController.appendPage(newItems, nextPageKey);
       }
     } catch (error) {
       _pagingController.error = error;

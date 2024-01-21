@@ -41,14 +41,23 @@ class _UsersScreenState extends State<UsersScreen> {
         filter: filter,
       );
 
+      // Check BuildContext
+      if (!mounted) return;
+
       final isLastPage =
           newPage.pagination.currentPage == newPage.pagination.maxPage;
+      // Prevent duplicates
+      final currentItemIds =
+          _pagingController.itemList?.map((e) => e.userId) ?? [];
+      final newItems = newPage.items
+          .where((e) => !currentItemIds.contains(e.userId))
+          .toList();
 
       if (isLastPage) {
-        _pagingController.appendLastPage(newPage.items);
+        _pagingController.appendLastPage(newItems);
       } else {
         final nextPageKey = pageKey + 1;
-        _pagingController.appendPage(newPage.items, nextPageKey);
+        _pagingController.appendPage(newItems, nextPageKey);
       }
     } catch (error) {
       _pagingController.error = error;

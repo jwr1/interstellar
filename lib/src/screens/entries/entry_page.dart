@@ -60,14 +60,23 @@ class _EntryPageState extends State<EntryPage> {
         sort: commentsSort,
       );
 
+      // Check BuildContext
+      if (!mounted) return;
+
       final isLastPage =
           newPage.pagination.currentPage == newPage.pagination.maxPage;
+      // Prevent duplicates
+      final currentItemIds =
+          _pagingController.itemList?.map((e) => e.commentId) ?? [];
+      final newItems = newPage.items
+          .where((e) => !currentItemIds.contains(e.commentId))
+          .toList();
 
       if (isLastPage) {
-        _pagingController.appendLastPage(newPage.items);
+        _pagingController.appendLastPage(newItems);
       } else {
         final nextPageKey = pageKey + 1;
-        _pagingController.appendPage(newPage.items, nextPageKey);
+        _pagingController.appendPage(newItems, nextPageKey);
       }
     } catch (error) {
       _pagingController.error = error;
@@ -202,8 +211,7 @@ class _EntryPageState extends State<EntryPage> {
                     setState(() {
                       _pagingController.itemList = newList;
                     });
-                  },
-                  opUserId: widget.initData.user.userId),
+                  }, opUserId: widget.initData.user.userId),
                 ),
               ),
             )
@@ -211,5 +219,11 @@ class _EntryPageState extends State<EntryPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _pagingController.dispose();
+    super.dispose();
   }
 }
