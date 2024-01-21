@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/screens/profile/messages_screen.dart';
 import 'package:interstellar/src/screens/profile/notification_screen.dart';
 import 'package:interstellar/src/screens/profile/self_feed.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
@@ -19,7 +20,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return whenLoggedIn(
           context,
           DefaultTabController(
-            length: 2,
+            length: 3,
             child: Scaffold(
               appBar: AppBar(
                 title:
@@ -30,13 +31,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     icon: NotificationBadge(child: Icon(Icons.notifications)),
                   ),
                   Tab(
+                    text: 'Messages',
+                    icon: Icon(Icons.message),
+                  ),
+                  Tab(
                     text: 'Overview',
-                    icon: Icon(Icons.article),
+                    icon: Icon(Icons.person),
                   ),
                 ]),
               ),
               body: const TabBarView(children: [
                 NotificationsScreen(),
+                MessagesScreen(),
                 SelfFeed(),
               ]),
             ),

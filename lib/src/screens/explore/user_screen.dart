@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/content_sources.dart';
+import 'package:interstellar/src/api/messages.dart';
 import 'package:interstellar/src/api/users.dart' as api_users;
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/screens/entries/entries_list.dart';
 import 'package:interstellar/src/screens/feed_screen.dart';
 import 'package:interstellar/src/screens/posts/posts_list.dart';
+import 'package:interstellar/src/screens/profile/message_thread_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
+import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:provider/provider.dart';
 
 class UserScreen extends StatefulWidget {
@@ -25,6 +28,7 @@ class UserScreen extends StatefulWidget {
 class _UserScreenState extends State<UserScreen> {
   DetailedUserModel? _data;
   FeedMode _feedMode = FeedMode.entries;
+  TextEditingController? _messageController;
 
   @override
   void initState() {
@@ -89,9 +93,63 @@ class _UserScreenState extends State<UserScreen> {
                     Text(' ${intFormat(_data!.followersCount)}'),
                   ],
                 ),
-              )
+              ),
+              if (!_data!.username.contains('@'))
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _messageController = TextEditingController();
+                    });
+                  },
+                  icon: const Icon(Icons.mail),
+                  tooltip: 'Send message',
+                )
             ],
           ),
+          if (_messageController != null)
+            Column(children: [
+              TextEditor(
+                _messageController!,
+                isMarkdown: true,
+                label: 'Message',
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  OutlinedButton(
+                    onPressed: () async {
+                      setState(() {
+                        _messageController = null;
+                      });
+                    },
+                    child: const Text('Cancel'),
+                  ),
+                  FilledButton(
+                    onPressed: () async {
+                      final newThread = await postMessage(
+                        context.read<SettingsController>().httpClient,
+                        context.read<SettingsController>().instanceHost,
+                        _data!.userId,
+                        _messageController!.text,
+                      );
+
+                      setState(() {
+                        _messageController = null;
+
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                MessageThreadScreen(initData: newThread),
+                          ),
+                        );
+                      });
+                    },
+                    child: const Text('Send'),
+                  )
+                ],
+              )
+            ]),
           if (_data!.about != null)
             Padding(
               padding: const EdgeInsets.only(top: 12),
