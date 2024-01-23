@@ -5,7 +5,7 @@ import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/redirect_listen.dart';
 
 const oauthName = 'Interstellar';
-const oauthContact = 'contact@kbin.earth';
+const oauthContact = 'appstore@jwr.one';
 const oauthGrants = ['authorization_code', 'refresh_token'];
 const oauthScopes = [
   'read',
