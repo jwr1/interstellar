@@ -5,6 +5,8 @@ import 'package:interstellar/src/api/posts.dart' as api_posts;
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 enum CreateType { entry, post }
 
@@ -32,6 +34,8 @@ class _CreateScreenState extends State<CreateScreen> {
   final TextEditingController _magazineTextController = TextEditingController();
   bool _isOc = false;
   bool _isAdult = false;
+  final ImagePicker _imagePicker = ImagePicker();
+  File? _imageFile;
 
   @override
   Widget build(BuildContext context) {
@@ -59,22 +63,38 @@ class _CreateScreenState extends State<CreateScreen> {
                   magazineId = magazine.magazineId;
                 }
 
-                var tags = _tagsTextController.text.split(' ');
+                var tags = _tagsTextController.text.isNotEmpty ? _tagsTextController.text.split(' ') : <String>[];
 
                 switch (widget.type) {
                   case CreateType.entry:
                     if (_urlTextController.text.isEmpty) {
-                      await api_entries.createEntry(
-                        client,
-                        instanceHost,
-                        magazineId,
-                        title: _titleTextController.text,
-                        isOc: _isOc,
-                        body: _bodyTextController.text,
-                        lang: 'en',
-                        isAdult: _isAdult,
-                        tags: tags,
-                      );
+                      if (_imageFile == null) {
+                        await api_entries.createEntry(
+                          client,
+                          instanceHost,
+                          magazineId,
+                          title: _titleTextController.text,
+                          isOc: _isOc,
+                          body: _bodyTextController.text,
+                          lang: 'en',
+                          isAdult: _isAdult,
+                          tags: tags,
+                        );
+                      } else {
+                        await api_entries.createImage(
+                          client,
+                          instanceHost,
+                          magazineId,
+                          title: _titleTextController.text,
+                          image: _imageFile!,
+                          alt: "",
+                          isOc: _isOc,
+                          body: _bodyTextController.text,
+                          lang: 'en',
+                          isAdult: _isAdult,
+                          tags: tags,
+                        );
+                      }
                     } else {
                       await api_entries.createLink(
                         client,
@@ -133,10 +153,52 @@ class _CreateScreenState extends State<CreateScreen> {
                 if (widget.type != CreateType.post)
                   Padding(
                     padding: const EdgeInsets.all(5),
-                    child: TextEditor(
-                      _urlTextController,
-                      keyboardType: TextInputType.url,
-                      label: "URL",
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextEditor(
+                            _urlTextController,
+                            keyboardType: TextInputType.url,
+                            label: "URL",
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+                          child: IconButton(
+                            onPressed: () async {
+                              XFile? image = await _imagePicker.pickImage(
+                                  source: ImageSource.gallery
+                              );
+                              if (image != null) {
+                                setState(() {
+                                  _imageFile = File(image.path);
+                                });
+                              }
+                            },
+                            tooltip: 'Upload from gallery',
+                            iconSize: 35,
+                            icon: const Icon(Icons.image),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+                          child: IconButton(
+                            onPressed: () async {
+                              XFile? image = await _imagePicker.pickImage(
+                                  source: ImageSource.camera
+                              );
+                              if (image != null) {
+                                setState(() {
+                                  _imageFile = File(image.path);
+                                });
+                              }
+                            },
+                            tooltip: 'Upload from camera',
+                            iconSize: 35,
+                            icon: const Icon(Icons.camera),
+                          ),
+                        )
+                      ],
                     ),
                   ),
                 if (widget.type != CreateType.post)
