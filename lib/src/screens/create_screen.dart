@@ -4,8 +4,8 @@ import 'package:interstellar/src/api/magazines.dart' as api_magazines;
 import 'package:interstellar/src/api/posts.dart' as api_posts;
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
+import 'package:interstellar/src/widgets/image_selector.dart';
 import 'package:provider/provider.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 enum CreateType { entry, post }
@@ -34,7 +34,6 @@ class _CreateScreenState extends State<CreateScreen> {
   final TextEditingController _magazineTextController = TextEditingController();
   bool _isOc = false;
   bool _isAdult = false;
-  final ImagePicker _imagePicker = ImagePicker();
   File? _imageFile;
 
   @override
@@ -155,49 +154,19 @@ class _CreateScreenState extends State<CreateScreen> {
                     padding: const EdgeInsets.all(5),
                     child: Row(
                       children: [
-                        Expanded(
-                          child: TextEditor(
-                            _urlTextController,
-                            keyboardType: TextInputType.url,
-                            label: "URL",
+                        if (_imageFile == null)
+                          Expanded(
+                            child: TextEditor(
+                              _urlTextController,
+                              keyboardType: TextInputType.url,
+                              label: "URL",
+                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
-                          child: IconButton(
-                            onPressed: () async {
-                              XFile? image = await _imagePicker.pickImage(
-                                  source: ImageSource.gallery
-                              );
-                              if (image != null) {
-                                setState(() {
-                                  _imageFile = File(image.path);
-                                });
-                              }
-                            },
-                            tooltip: 'Upload from gallery',
-                            iconSize: 35,
-                            icon: const Icon(Icons.image),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
-                          child: IconButton(
-                            onPressed: () async {
-                              XFile? image = await _imagePicker.pickImage(
-                                  source: ImageSource.camera
-                              );
-                              if (image != null) {
-                                setState(() {
-                                  _imageFile = File(image.path);
-                                });
-                              }
-                            },
-                            tooltip: 'Upload from camera',
-                            iconSize: 35,
-                            icon: const Icon(Icons.camera),
-                          ),
-                        )
+                        ImageSelector((File? file) {
+                          setState(() {
+                            _imageFile = file;
+                          });
+                        })
                       ],
                     ),
                   ),
