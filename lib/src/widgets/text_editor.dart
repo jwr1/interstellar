@@ -6,6 +6,7 @@ class TextEditor extends StatelessWidget {
   final TextInputType? keyboardType;
   final String? label;
   final String? hint;
+  final void Function(String)? onChanged;
 
   const TextEditor(
     this.controller, {
@@ -13,6 +14,7 @@ class TextEditor extends StatelessWidget {
     this.keyboardType,
     this.label,
     this.hint,
+    this.onChanged,
     super.key,
   });
 
@@ -29,6 +31,7 @@ class TextEditor extends StatelessWidget {
         label: label != null ? Text(label!) : null,
         hintText: hint ?? (isMarkdown ? 'Markdown here...' : null),
       ),
+      onChanged: onChanged,
     );
   }
 }

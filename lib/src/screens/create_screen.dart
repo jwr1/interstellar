@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:interstellar/src/api/entries.dart' as api_entries;
 import 'package:interstellar/src/api/magazines.dart' as api_magazines;
 import 'package:interstellar/src/api/posts.dart' as api_posts;
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/widgets/image_selector.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:provider/provider.dart';
 
@@ -32,6 +34,7 @@ class _CreateScreenState extends State<CreateScreen> {
   final TextEditingController _magazineTextController = TextEditingController();
   bool _isOc = false;
   bool _isAdult = false;
+  XFile? _imageFile;
 
   @override
   Widget build(BuildContext context) {
@@ -59,22 +62,40 @@ class _CreateScreenState extends State<CreateScreen> {
                   magazineId = magazine.magazineId;
                 }
 
-                var tags = _tagsTextController.text.split(' ');
+                var tags = _tagsTextController.text.isNotEmpty
+                    ? _tagsTextController.text.split(' ')
+                    : <String>[];
 
                 switch (widget.type) {
                   case CreateType.entry:
                     if (_urlTextController.text.isEmpty) {
-                      await api_entries.createEntry(
-                        client,
-                        instanceHost,
-                        magazineId,
-                        title: _titleTextController.text,
-                        isOc: _isOc,
-                        body: _bodyTextController.text,
-                        lang: 'en',
-                        isAdult: _isAdult,
-                        tags: tags,
-                      );
+                      if (_imageFile == null) {
+                        await api_entries.createEntry(
+                          client,
+                          instanceHost,
+                          magazineId,
+                          title: _titleTextController.text,
+                          isOc: _isOc,
+                          body: _bodyTextController.text,
+                          lang: 'en',
+                          isAdult: _isAdult,
+                          tags: tags,
+                        );
+                      } else {
+                        await api_entries.createImage(
+                          client,
+                          instanceHost,
+                          magazineId,
+                          title: _titleTextController.text,
+                          image: _imageFile!,
+                          alt: "",
+                          isOc: _isOc,
+                          body: _bodyTextController.text,
+                          lang: 'en',
+                          isAdult: _isAdult,
+                          tags: tags,
+                        );
+                      }
                     } else {
                       await api_entries.createLink(
                         client,
@@ -122,21 +143,39 @@ class _CreateScreenState extends State<CreateScreen> {
                       label: "Title",
                     ),
                   ),
-                Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: TextEditor(
-                    _bodyTextController,
-                    isMarkdown: true,
-                    label: "Body",
-                  ),
-                ),
-                if (widget.type != CreateType.post)
+                if (_imageFile == null)
                   Padding(
                     padding: const EdgeInsets.all(5),
                     child: TextEditor(
-                      _urlTextController,
-                      keyboardType: TextInputType.url,
-                      label: "URL",
+                      _bodyTextController,
+                      isMarkdown: true,
+                      label: "Body",
+                      onChanged: (_) => setState(() {}),
+                    ),
+                  ),
+                if (widget.type != CreateType.post)
+                  Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: Row(
+                      children: [
+                        if (_imageFile == null)
+                          Expanded(
+                            child: TextEditor(
+                              _urlTextController,
+                              keyboardType: TextInputType.url,
+                              label: "URL",
+                              onChanged: (_) => setState(() {}),
+                            ),
+                          ),
+                        if (_bodyTextController.text.isEmpty &&
+                            _urlTextController.text.isEmpty)
+                          ImageSelector(
+                            _imageFile,
+                            (file) => setState(() {
+                              _imageFile = file;
+                            }),
+                          )
+                      ],
                     ),
                   ),
                 if (widget.type != CreateType.post)
