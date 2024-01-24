@@ -1,12 +1,13 @@
 import 'dart:convert';
-import 'dart:io';
+
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:interstellar/src/api/content_sources.dart';
 import 'package:interstellar/src/models/entry.dart';
 import 'package:interstellar/src/utils/utils.dart';
-import 'package:path/path.dart';
 import 'package:mime/mime.dart';
+import 'package:path/path.dart';
 
 Future<EntryListModel> fetchEntries(
   http.Client client,
@@ -157,7 +158,7 @@ Future<EntryModel> createImage(
   String instanceHost,
   int magazineID, {
   required String title,
-  required File image,
+  required XFile image,
   required String alt,
   required bool isOc,
   required String body,
@@ -165,8 +166,14 @@ Future<EntryModel> createImage(
   required bool isAdult,
   required List<String> tags,
 }) async {
-  var request = http.MultipartRequest('POST', Uri.https(instanceHost, '/api/magazine/$magazineID/image'));
-  var multipartFile = http.MultipartFile.fromBytes('uploadImage', image.readAsBytesSync(), filename: basename(image.path), contentType: MediaType.parse(lookupMimeType(image.path)!));
+  var request = http.MultipartRequest(
+      'POST', Uri.https(instanceHost, '/api/magazine/$magazineID/image'));
+  var multipartFile = http.MultipartFile.fromBytes(
+    'uploadImage',
+    await image.readAsBytes(),
+    filename: basename(image.path),
+    contentType: MediaType.parse(lookupMimeType(image.path)!),
+  );
   request.files.add(multipartFile);
   request.fields['title'] = title;
   for (int i = 0; i < tags.length; i++) {
