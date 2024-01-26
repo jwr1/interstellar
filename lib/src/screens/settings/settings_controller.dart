@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/api/oauth.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,6 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SettingsController with ChangeNotifier {
   late ThemeMode _themeMode;
   ThemeMode get themeMode => _themeMode;
+  late FeedSort _defaultFeedSort;
+  FeedSort get defaultFeedSort => _defaultFeedSort;
 
   late Map<String, String> _oauthIdentifiers;
   late Map<String, oauth2.Credentials?> _oauthCredentials;
@@ -28,6 +31,9 @@ class SettingsController with ChangeNotifier {
     _themeMode = prefs.getString('themeMode') != null
         ? ThemeMode.values.byName(prefs.getString("themeMode")!)
         : ThemeMode.system;
+    _defaultFeedSort = prefs.getString('defaultFeedSort') != null
+        ? FeedSort.values.byName(prefs.getString("defaultFeedSort")!)
+        : FeedSort.hot;
 
     _oauthIdentifiers = (jsonDecode(prefs.getString('oauthIdentifiers') ?? '{}')
             as Map<String, dynamic>)
@@ -54,6 +60,19 @@ class SettingsController with ChangeNotifier {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('themeMode', newThemeMode.name);
+  }
+
+  Future<void> updateDefaultFeedSort(FeedSort? newDefaultFeedSort) async {
+    if (newDefaultFeedSort == null) return;
+
+    if (newDefaultFeedSort == _defaultFeedSort) return;
+
+    _defaultFeedSort = newDefaultFeedSort;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('defaultFeedSort', newDefaultFeedSort.name);
   }
 
   Future<String> getOAuthIdentifier(String instanceHost) async {

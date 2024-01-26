@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/api/content_sources.dart';
 import 'package:interstellar/src/api/domains.dart' as api_domains;
+import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/models/domain.dart';
 import 'package:interstellar/src/screens/feed_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
@@ -43,7 +43,7 @@ class _DomainScreenState extends State<DomainScreen> {
   @override
   Widget build(BuildContext context) {
     return FeedScreen(
-      contentSource: ContentDomain(widget.domainId),
+      source: FeedSourceDomain(widget.domainId),
       title: Text(_data?.name ?? ''),
       details: _data != null
           ? Padding(

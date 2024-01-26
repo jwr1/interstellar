@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:interstellar/src/api/content_sources.dart';
+import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/models/entry.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:mime/mime.dart';
@@ -12,9 +12,9 @@ import 'package:path/path.dart';
 Future<EntryListModel> fetchEntries(
   http.Client client,
   String instanceHost,
-  ContentSource source, {
+  FeedSource source, {
   int? page,
-  ContentSort? sort,
+  FeedSort? sort,
 }) async {
   final response = await client.get(Uri.https(
     instanceHost,

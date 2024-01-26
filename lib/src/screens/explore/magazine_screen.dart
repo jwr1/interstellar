@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/api/content_sources.dart';
+import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/api/magazines.dart' as api_magazines;
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/screens/feed_screen.dart';
@@ -47,7 +47,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
   @override
   Widget build(BuildContext context) {
     return FeedScreen(
-      contentSource: ContentMagazine(widget.magazineId),
+      source: FeedSourceMagazine(widget.magazineId),
       title: Text(_data?.name ?? ''),
       details: _data != null
           ? Padding(

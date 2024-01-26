@@ -1,16 +1,16 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:interstellar/src/api/content_sources.dart';
+import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/utils/utils.dart';
 
 Future<PostListModel> fetchPosts(
   http.Client client,
   String instanceHost,
-  ContentSource source, {
+  FeedSource source, {
   int? page,
-  ContentSort? sort,
+  FeedSort? sort,
 }) async {
   if (source.getPostsPath() == null) {
     throw Exception('Failed to load posts');

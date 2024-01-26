@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/api/content_sources.dart';
+import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/api/messages.dart';
 import 'package:interstellar/src/api/users.dart' as api_users;
 import 'package:interstellar/src/models/user.dart';
@@ -49,7 +49,7 @@ class _UserScreenState extends State<UserScreen> {
   @override
   Widget build(BuildContext context) {
     return FeedScreen(
-      contentSource: ContentUser(widget.userId),
+      source: FeedSourceUser(widget.userId),
       title: Text(_data?.username ?? ''),
       details: _data != null
           ? Padding(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:interstellar/src/api/content_sources.dart';
 import 'package:interstellar/src/api/entries.dart' as api_entries;
+import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/api/posts.dart' as api_posts;
 import 'package:interstellar/src/screens/entries/entry_item.dart';
 import 'package:interstellar/src/screens/entries/entry_page.dart';
@@ -15,14 +15,14 @@ import 'package:interstellar/src/widgets/wrapper.dart';
 import 'package:provider/provider.dart';
 
 class FeedScreen extends StatefulWidget {
-  final ContentSource? contentSource;
+  final FeedSource? source;
   final Widget? title;
   final Widget? details;
   final Widget? floatingActionButton;
 
   const FeedScreen({
     super.key,
-    this.contentSource,
+    this.source,
     this.title,
     this.details,
     this.floatingActionButton,
@@ -36,13 +36,19 @@ enum FeedMode { entries, posts }
 
 class _FeedScreenState extends State<FeedScreen> {
   FeedMode _feedMode = FeedMode.entries;
-  ContentSort _sort = ContentSort.hot;
+  FeedSort _sort = FeedSort.hot;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _sort = context.read<SettingsController>().defaultFeedSort;
+  }
 
   @override
   Widget build(BuildContext context) {
-    print(widget.contentSource);
     return Wrapper(
-      shouldWrap: widget.contentSource == null,
+      shouldWrap: widget.source == null,
       parentBuilder: (child) => DefaultTabController(length: 4, child: child),
       child: Scaffold(
         appBar: AppBar(
@@ -52,8 +58,7 @@ class _FeedScreenState extends State<FeedScreen> {
                       ? ''
                       : ' (Anonymous)')),
           actions: [
-            if ((widget.contentSource ?? const ContentAll()).getPostsPath() !=
-                null)
+            if ((widget.source ?? const FeedSourceAll()).getPostsPath() != null)
               Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: SegmentedButton(
@@ -82,20 +87,21 @@ class _FeedScreenState extends State<FeedScreen> {
             Padding(
               padding: const EdgeInsets.only(right: 8),
               child: IconButton(
-                  onPressed: () async {
-                    final newContentSort = await contentSortSelect
-                        .inquireSelection(context, _sort);
+                onPressed: () async {
+                  final newSort =
+                      await feedSortSelect.inquireSelection(context, _sort);
 
-                    if (newContentSort != null && newContentSort != _sort) {
-                      setState(() {
-                        _sort = newContentSort;
-                      });
-                    }
-                  },
-                  icon: const Icon(Icons.sort)),
+                  if (newSort != null && newSort != _sort) {
+                    setState(() {
+                      _sort = newSort;
+                    });
+                  }
+                },
+                icon: const Icon(Icons.sort),
+              ),
             )
           ],
-          bottom: widget.contentSource == null
+          bottom: widget.source == null
               ? whenLoggedIn(
                   context,
                   const TabBar(tabs: [
@@ -119,11 +125,11 @@ class _FeedScreenState extends State<FeedScreen> {
                 )
               : null,
         ),
-        body: widget.contentSource != null
+        body: widget.source != null
             ? FeedScreenBody(
-                contentSource: widget.contentSource!,
-                contentSort: _sort,
-                feedMode: _feedMode,
+                source: widget.source!,
+                sort: _sort,
+                mode: _feedMode,
                 details: widget.details,
               )
             : whenLoggedIn(
@@ -131,94 +137,94 @@ class _FeedScreenState extends State<FeedScreen> {
                 TabBarView(
                   children: [
                     FeedScreenBody(
-                      contentSource: const ContentSub(),
-                      contentSort: _sort,
-                      feedMode: _feedMode,
+                      source: const FeedSourceSub(),
+                      sort: _sort,
+                      mode: _feedMode,
                       details: widget.details,
                     ),
                     FeedScreenBody(
-                      contentSource: const ContentMod(),
-                      contentSort: _sort,
-                      feedMode: _feedMode,
+                      source: const FeedSourceMod(),
+                      sort: _sort,
+                      mode: _feedMode,
                       details: widget.details,
                     ),
                     FeedScreenBody(
-                      contentSource: const ContentFav(),
-                      contentSort: _sort,
-                      feedMode: _feedMode,
+                      source: const FeedSourceFav(),
+                      sort: _sort,
+                      mode: _feedMode,
                       details: widget.details,
                     ),
                     FeedScreenBody(
-                      contentSource: const ContentAll(),
-                      contentSort: _sort,
-                      feedMode: _feedMode,
+                      source: const FeedSourceAll(),
+                      sort: _sort,
+                      mode: _feedMode,
                       details: widget.details,
                     ),
                   ],
                 ),
                 otherwise: FeedScreenBody(
-                  contentSource: const ContentAll(),
-                  contentSort: _sort,
-                  feedMode: _feedMode,
+                  source: const FeedSourceAll(),
+                  sort: _sort,
+                  mode: _feedMode,
                   details: widget.details,
                 ),
               ),
         floatingActionButton: widget.floatingActionButton ??
-            (widget.contentSource == null
+            (widget.source == null
                 ? whenLoggedIn(context, const FloatingMenu())
                 : null),
       ),
     );
   }
-
-  static const SelectionMenu<ContentSort> contentSortSelect = SelectionMenu(
-    'Sort by',
-    [
-      SelectionMenuItem(
-        value: ContentSort.hot,
-        title: 'Hot',
-        icon: Icons.local_fire_department,
-      ),
-      SelectionMenuItem(
-        value: ContentSort.top,
-        title: 'Top',
-        icon: Icons.trending_up,
-      ),
-      SelectionMenuItem(
-        value: ContentSort.newest,
-        title: 'Newest',
-        icon: Icons.auto_awesome_rounded,
-      ),
-      SelectionMenuItem(
-        value: ContentSort.active,
-        title: 'Active',
-        icon: Icons.rocket_launch,
-      ),
-      SelectionMenuItem(
-        value: ContentSort.commented,
-        title: 'Commented',
-        icon: Icons.chat,
-      ),
-      SelectionMenuItem(
-        value: ContentSort.oldest,
-        title: 'Oldest',
-        icon: Icons.access_time_outlined,
-      ),
-    ],
-  );
 }
 
+const SelectionMenu<FeedSort> feedSortSelect = SelectionMenu(
+  'Sort by',
+  [
+    SelectionMenuItem(
+      value: FeedSort.hot,
+      title: 'Hot',
+      icon: Icons.local_fire_department,
+    ),
+    SelectionMenuItem(
+      value: FeedSort.top,
+      title: 'Top',
+      icon: Icons.trending_up,
+    ),
+    SelectionMenuItem(
+      value: FeedSort.newest,
+      title: 'Newest',
+      icon: Icons.auto_awesome_rounded,
+    ),
+    SelectionMenuItem(
+      value: FeedSort.active,
+      title: 'Active',
+      icon: Icons.rocket_launch,
+    ),
+    SelectionMenuItem(
+      value: FeedSort.commented,
+      title: 'Commented',
+      icon: Icons.chat,
+    ),
+    SelectionMenuItem(
+      value: FeedSort.oldest,
+      title: 'Oldest',
+      icon: Icons.access_time_outlined,
+    ),
+  ],
+);
+
 class FeedScreenBody extends StatefulWidget {
-  final ContentSource contentSource;
-  final ContentSort contentSort;
-  final FeedMode feedMode;
+  final FeedSource source;
+  final FeedSort sort;
+  final FeedMode mode;
   final Widget? details;
 
   const FeedScreenBody({
     super.key,
-    required this.contentSource,
-    required this.contentSort,
-    required this.feedMode,
+    required this.source,
+    required this.sort,
+    required this.mode,
     this.details,
   });
 
@@ -239,20 +245,20 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      dynamic newPage = await (switch (widget.feedMode) {
+      dynamic newPage = await (switch (widget.mode) {
         FeedMode.entries => api_entries.fetchEntries(
             context.read<SettingsController>().httpClient,
             context.read<SettingsController>().instanceHost,
-            widget.contentSource,
+            widget.source,
             page: pageKey,
-            sort: widget.contentSort,
+            sort: widget.sort,
           ),
         FeedMode.posts => api_posts.fetchPosts(
             context.read<SettingsController>().httpClient,
             context.read<SettingsController>().instanceHost,
-            widget.contentSource,
+            widget.source,
             page: pageKey,
-            sort: widget.contentSort,
+            sort: widget.sort,
           ),
       });
 
@@ -263,7 +269,7 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
           newPage.pagination.currentPage == newPage.pagination.maxPage;
       // Prevent duplicates
       var newItems = [];
-      switch (widget.feedMode) {
+      switch (widget.mode) {
         case FeedMode.entries:
           final currentItemIds =
               _pagingController.itemList?.map((e) => e.entryId) ?? [];
@@ -321,7 +327,7 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => switch (widget.feedMode) {
+                        builder: (context) => switch (widget.mode) {
                           FeedMode.entries => EntryPage(item, (newValue) {
                               var newList = _pagingController.itemList;
                               newList![index] = newValue;
@@ -340,7 +346,7 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
                       ),
                     );
                   },
-                  child: switch (widget.feedMode) {
+                  child: switch (widget.mode) {
                     FeedMode.entries => EntryItem(
                         item,
                         (newValue) {

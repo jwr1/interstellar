@@ -1,12 +1,12 @@
-enum ContentSort { active, hot, newest, oldest, top, commented }
+enum FeedSort { active, hot, newest, oldest, top, commented }
 
-abstract class ContentSource {
+abstract class FeedSource {
   String getEntriesPath();
   String? getPostsPath();
 }
 
-class ContentAll implements ContentSource {
-  const ContentAll();
+class FeedSourceAll implements FeedSource {
+  const FeedSourceAll();
 
   @override
   String getEntriesPath() => '/api/entries';
@@ -14,8 +14,8 @@ class ContentAll implements ContentSource {
   String getPostsPath() => '/api/posts';
 }
 
-class ContentSub implements ContentSource {
-  const ContentSub();
+class FeedSourceSub implements FeedSource {
+  const FeedSourceSub();
 
   @override
   String getEntriesPath() => '/api/entries/subscribed';
@@ -23,8 +23,8 @@ class ContentSub implements ContentSource {
   String getPostsPath() => '/api/posts/subscribed';
 }
 
-class ContentMod implements ContentSource {
-  const ContentMod();
+class FeedSourceMod implements FeedSource {
+  const FeedSourceMod();
 
   @override
   String getEntriesPath() => '/api/entries/moderated';
@@ -32,8 +32,8 @@ class ContentMod implements ContentSource {
   String getPostsPath() => '/api/posts/moderated';
 }
 
-class ContentFav implements ContentSource {
-  const ContentFav();
+class FeedSourceFav implements FeedSource {
+  const FeedSourceFav();
 
   @override
   String getEntriesPath() => '/api/entries/favourited';
@@ -41,10 +41,10 @@ class ContentFav implements ContentSource {
   String getPostsPath() => '/api/posts/favourited';
 }
 
-class ContentMagazine implements ContentSource {
+class FeedSourceMagazine implements FeedSource {
   final int id;
 
-  const ContentMagazine(this.id);
+  const FeedSourceMagazine(this.id);
 
   @override
   String getEntriesPath() => '/api/magazine/$id/entries';
@@ -52,10 +52,10 @@ class ContentMagazine implements ContentSource {
   String getPostsPath() => '/api/magazine/$id/posts';
 }
 
-class ContentUser implements ContentSource {
+class FeedSourceUser implements FeedSource {
   final int id;
 
-  const ContentUser(this.id);
+  const FeedSourceUser(this.id);
 
   @override
   String getEntriesPath() => '/api/users/$id/entries';
@@ -63,10 +63,10 @@ class ContentUser implements ContentSource {
   String getPostsPath() => '/api/users/$id/posts';
 }
 
-class ContentDomain implements ContentSource {
+class FeedSourceDomain implements FeedSource {
   final int id;
 
-  const ContentDomain(this.id);
+  const FeedSourceDomain(this.id);
 
   @override
   String getEntriesPath() => '/api/domain/$id/entries';
