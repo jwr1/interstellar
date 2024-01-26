@@ -1,17 +1,16 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:interstellar/src/api/comment.dart';
 import 'package:interstellar/src/models/post_comment.dart';
 import 'package:interstellar/src/utils/utils.dart';
-
-enum CommentsSort { newest, top, hot, active, oldest }
 
 Future<PostCommentListModel> fetchComments(
   http.Client client,
   String instanceHost,
   int postId, {
   int? page,
-  CommentsSort? sort,
+  CommentSort? sort,
 }) async {
   final response = await client.get(Uri.https(
       instanceHost,

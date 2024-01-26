@@ -35,14 +35,19 @@ class FeedScreen extends StatefulWidget {
 enum FeedMode { entries, posts }
 
 class _FeedScreenState extends State<FeedScreen> {
-  FeedMode _feedMode = FeedMode.entries;
+  FeedMode _mode = FeedMode.entries;
   FeedSort _sort = FeedSort.hot;
 
   @override
   void initState() {
     super.initState();
 
-    _sort = context.read<SettingsController>().defaultFeedSort;
+    _mode = (widget.source ?? const FeedSourceAll()).getPostsPath() != null
+        ? context.read<SettingsController>().defaultFeedMode
+        : FeedMode.entries;
+    _sort = widget.source == null
+        ? context.read<SettingsController>().defaultFeedSort
+        : context.read<SettingsController>().defaultExploreFeedSort;
   }
 
   @override
@@ -76,10 +81,10 @@ class _FeedScreenState extends State<FeedScreen> {
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     visualDensity: VisualDensity(horizontal: -3, vertical: -3),
                   ),
-                  selected: <FeedMode>{_feedMode},
+                  selected: <FeedMode>{_mode},
                   onSelectionChanged: (Set<FeedMode> newSelection) {
                     setState(() {
-                      _feedMode = newSelection.first;
+                      _mode = newSelection.first;
                     });
                   },
                 ),
@@ -99,7 +104,7 @@ class _FeedScreenState extends State<FeedScreen> {
                 },
                 icon: const Icon(Icons.sort),
               ),
-            )
+            ),
           ],
           bottom: widget.source == null
               ? whenLoggedIn(
@@ -129,7 +134,7 @@ class _FeedScreenState extends State<FeedScreen> {
             ? FeedScreenBody(
                 source: widget.source!,
                 sort: _sort,
-                mode: _feedMode,
+                mode: _mode,
                 details: widget.details,
               )
             : whenLoggedIn(
@@ -139,25 +144,25 @@ class _FeedScreenState extends State<FeedScreen> {
                     FeedScreenBody(
                       source: const FeedSourceSub(),
                       sort: _sort,
-                      mode: _feedMode,
+                      mode: _mode,
                       details: widget.details,
                     ),
                     FeedScreenBody(
                       source: const FeedSourceMod(),
                       sort: _sort,
-                      mode: _feedMode,
+                      mode: _mode,
                       details: widget.details,
                     ),
                     FeedScreenBody(
                       source: const FeedSourceFav(),
                       sort: _sort,
-                      mode: _feedMode,
+                      mode: _mode,
                       details: widget.details,
                     ),
                     FeedScreenBody(
                       source: const FeedSourceAll(),
                       sort: _sort,
-                      mode: _feedMode,
+                      mode: _mode,
                       details: widget.details,
                     ),
                   ],
@@ -165,7 +170,7 @@ class _FeedScreenState extends State<FeedScreen> {
                 otherwise: FeedScreenBody(
                   source: const FeedSourceAll(),
                   sort: _sort,
-                  mode: _feedMode,
+                  mode: _mode,
                   details: widget.details,
                 ),
               ),

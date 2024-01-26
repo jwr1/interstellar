@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:interstellar/src/api/comment.dart';
 import 'package:interstellar/src/api/post_comments.dart' as api_comments;
 import 'package:interstellar/src/api/posts.dart' as api_posts;
 import 'package:interstellar/src/models/post.dart';
@@ -27,7 +28,7 @@ class PostPage extends StatefulWidget {
 class _PostPageState extends State<PostPage> {
   PostModel? _data;
 
-  api_comments.CommentsSort commentsSort = api_comments.CommentsSort.hot;
+  CommentSort commentSort = CommentSort.hot;
 
   final PagingController<int, PostCommentModel> _pagingController =
       PagingController(firstPageKey: 1);
@@ -37,6 +38,7 @@ class _PostPageState extends State<PostPage> {
     super.initState();
 
     _data = widget.initData;
+    commentSort = context.read<SettingsController>().defaultCommentSort;
 
     _pagingController.addPageRequestListener(_fetchPage);
   }
@@ -55,7 +57,7 @@ class _PostPageState extends State<PostPage> {
         context.read<SettingsController>().instanceHost,
         _data!.postId,
         page: pageKey,
-        sort: commentsSort,
+        sort: commentSort,
       );
 
       // Check BuildContext
@@ -86,6 +88,25 @@ class _PostPageState extends State<PostPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_data?.user.username ?? ''),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: IconButton(
+              onPressed: () async {
+                final newSort = await commentSortSelect.inquireSelection(
+                    context, commentSort);
+
+                if (newSort != null && newSort != commentSort) {
+                  setState(() {
+                    commentSort = newSort;
+                    _pagingController.refresh();
+                  });
+                }
+              },
+              icon: const Icon(Icons.sort),
+            ),
+          ),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: () => Future.sync(
@@ -149,48 +170,6 @@ class _PostPageState extends State<PostPage> {
                       : null,
                 ),
               ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Row(
-                  children: [
-                    DropdownButton<api_comments.CommentsSort>(
-                      value: commentsSort,
-                      onChanged: (newSort) {
-                        if (newSort != null) {
-                          setState(() {
-                            commentsSort = newSort;
-                            _pagingController.refresh();
-                          });
-                        }
-                      },
-                      items: const [
-                        DropdownMenuItem(
-                          value: api_comments.CommentsSort.hot,
-                          child: Text('Hot'),
-                        ),
-                        DropdownMenuItem(
-                          value: api_comments.CommentsSort.top,
-                          child: Text('Top'),
-                        ),
-                        DropdownMenuItem(
-                          value: api_comments.CommentsSort.newest,
-                          child: Text('Newest'),
-                        ),
-                        DropdownMenuItem(
-                          value: api_comments.CommentsSort.active,
-                          child: Text('Active'),
-                        ),
-                        DropdownMenuItem(
-                          value: api_comments.CommentsSort.oldest,
-                          child: Text('Oldest'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
             PagedSliverList<int, PostCommentModel>(
               pagingController: _pagingController,
               builderDelegate: PagedChildBuilderDelegate<PostCommentModel>(

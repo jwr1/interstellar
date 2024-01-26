@@ -2,16 +2,24 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:interstellar/src/api/comment.dart';
 import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/api/oauth.dart';
+import 'package:interstellar/src/screens/feed_screen.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsController with ChangeNotifier {
   late ThemeMode _themeMode;
   ThemeMode get themeMode => _themeMode;
+  late FeedMode _defaultFeedMode;
+  FeedMode get defaultFeedMode => _defaultFeedMode;
   late FeedSort _defaultFeedSort;
   FeedSort get defaultFeedSort => _defaultFeedSort;
+  late FeedSort _defaultExploreFeedSort;
+  FeedSort get defaultExploreFeedSort => _defaultExploreFeedSort;
+  late CommentSort _defaultCommentSort;
+  CommentSort get defaultCommentSort => _defaultCommentSort;
 
   late Map<String, String> _oauthIdentifiers;
   late Map<String, oauth2.Credentials?> _oauthCredentials;
@@ -31,9 +39,18 @@ class SettingsController with ChangeNotifier {
     _themeMode = prefs.getString('themeMode') != null
         ? ThemeMode.values.byName(prefs.getString("themeMode")!)
         : ThemeMode.system;
+    _defaultFeedMode = prefs.getString('defaultFeedMode') != null
+        ? FeedMode.values.byName(prefs.getString("defaultFeedMode")!)
+        : FeedMode.entries;
     _defaultFeedSort = prefs.getString('defaultFeedSort') != null
         ? FeedSort.values.byName(prefs.getString("defaultFeedSort")!)
         : FeedSort.hot;
+    _defaultExploreFeedSort = prefs.getString('defaultExploreFeedSort') != null
+        ? FeedSort.values.byName(prefs.getString("defaultExploreFeedSort")!)
+        : FeedSort.newest;
+    _defaultCommentSort = prefs.getString('defaultCommentSort') != null
+        ? CommentSort.values.byName(prefs.getString("defaultCommentSort")!)
+        : CommentSort.hot;
 
     _oauthIdentifiers = (jsonDecode(prefs.getString('oauthIdentifiers') ?? '{}')
             as Map<String, dynamic>)
@@ -62,6 +79,19 @@ class SettingsController with ChangeNotifier {
     await prefs.setString('themeMode', newThemeMode.name);
   }
 
+  Future<void> updateDefaultFeedMode(FeedMode? newDefaultFeedMode) async {
+    if (newDefaultFeedMode == null) return;
+
+    if (newDefaultFeedMode == _defaultFeedMode) return;
+
+    _defaultFeedMode = newDefaultFeedMode;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('defaultFeedMode', newDefaultFeedMode.name);
+  }
+
   Future<void> updateDefaultFeedSort(FeedSort? newDefaultFeedSort) async {
     if (newDefaultFeedSort == null) return;
 
@@ -73,6 +103,37 @@ class SettingsController with ChangeNotifier {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('defaultFeedSort', newDefaultFeedSort.name);
+  }
+
+  Future<void> updateDefaultExploreFeedSort(
+    FeedSort? newDefaultExploreFeedSort,
+  ) async {
+    if (newDefaultExploreFeedSort == null) return;
+
+    if (newDefaultExploreFeedSort == _defaultExploreFeedSort) return;
+
+    _defaultExploreFeedSort = newDefaultExploreFeedSort;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+        'defaultExploreFeedSort', newDefaultExploreFeedSort.name);
+  }
+
+  Future<void> updateDefaultCommentSort(
+    CommentSort? newDefaultCommentSort,
+  ) async {
+    if (newDefaultCommentSort == null) return;
+
+    if (newDefaultCommentSort == _defaultCommentSort) return;
+
+    _defaultCommentSort = newDefaultCommentSort;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('defaultCommentSort', newDefaultCommentSort.name);
   }
 
   Future<String> getOAuthIdentifier(String instanceHost) async {

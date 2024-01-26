@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/api/comments.dart';
+import 'package:interstellar/src/api/entry_comments.dart';
 import 'package:interstellar/src/models/entry_comment.dart';
 import 'package:interstellar/src/screens/entries/entry_comment.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
@@ -49,11 +49,11 @@ class _EntryCommentScreenState extends State<EntryCommentScreen> {
                     vertical: 4,
                   ),
                   child: EntryComment(
-                    _comment!,
-                    (newComment) => setState(() {
-                      _comment = newComment;
-                    }), opUserId: widget.opUserId
-                  ),
+                      _comment!,
+                      (newComment) => setState(() {
+                            _comment = newComment;
+                          }),
+                      opUserId: widget.opUserId),
                 )
               ],
             )

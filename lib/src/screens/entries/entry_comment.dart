@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/api/comments.dart' as api_comments;
+import 'package:interstellar/src/api/entry_comments.dart' as api_comments;
 import 'package:interstellar/src/models/entry_comment.dart';
 import 'package:interstellar/src/screens/entries/entry_comment_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
@@ -134,8 +134,10 @@ class _EntryCommentState extends State<EntryComment> {
           TextButton(
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) =>
-                    EntryCommentScreen(widget.comment.commentId, opUserId: widget.opUserId),
+                builder: (context) => EntryCommentScreen(
+                  widget.comment.commentId,
+                  opUserId: widget.opUserId,
+                ),
               ),
             ),
             child: Text(
