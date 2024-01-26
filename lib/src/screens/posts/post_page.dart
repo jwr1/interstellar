@@ -38,9 +38,7 @@ class _PostPageState extends State<PostPage> {
 
     _data = widget.initData;
 
-    _pagingController.addPageRequestListener((pageKey) {
-      _fetchPage(pageKey);
-    });
+    _pagingController.addPageRequestListener(_fetchPage);
   }
 
   void _onUpdate(PostModel newValue) {

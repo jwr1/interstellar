@@ -38,9 +38,7 @@ class _EntryPageState extends State<EntryPage> {
 
     _data = widget.initData;
 
-    _pagingController.addPageRequestListener((pageKey) {
-      _fetchPage(pageKey);
-    });
+    _pagingController.addPageRequestListener(_fetchPage);
   }
 
   void _onUpdate(EntryModel newValue) {
