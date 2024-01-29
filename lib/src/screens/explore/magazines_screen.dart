@@ -211,8 +211,9 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                     OutlinedButton(
                       style: ButtonStyle(
                           foregroundColor: item.isUserSubscribed == true
-                              ? MaterialStatePropertyAll(Colors.purple.shade400)
-                              : null),
+                              ? null
+                              : MaterialStatePropertyAll(
+                                  Theme.of(context).disabledColor)),
                       onPressed: whenLoggedIn(context, () async {
                         var newValue = await api_magazines.putSubscribe(
                             context.read<SettingsController>().httpClient,

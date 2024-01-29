@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/comment.dart';
 import 'package:interstellar/src/screens/feed_screen.dart';
 import 'package:interstellar/src/screens/settings/login.dart';
-import 'package:interstellar/src/widgets/selection_menu.dart';
 import 'package:interstellar/src/utils/themes.dart';
+import 'package:interstellar/src/widgets/selection_menu.dart';
 
 import 'settings_controller.dart';
 
@@ -18,7 +18,7 @@ class SettingsScreen extends StatelessWidget {
       (option) => option.value == controller.themeMode,
     );
     final currentTheme = themeSelect.options.firstWhere(
-      (option) => option.value == controller.themeIndex,
+      (option) => option.value == controller.themeAccent,
     );
     final currentDefaultFeedMode = feedModeSelect.options.firstWhere(
       (option) => option.value == controller.defaultFeedMode,
@@ -66,10 +66,10 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text('Theme'),
+            title: const Text('Theme Accent Color'),
             leading: const Icon(Icons.palette),
             onTap: () async {
-              controller.updateTheme(
+              controller.updateThemeAccent(
                 await themeSelect.inquireSelection(
                   context,
                   currentTheme.value,
@@ -251,15 +251,15 @@ const SelectionMenu<ThemeMode> themeModeSelect = SelectionMenu(
 );
 
 SelectionMenu<int> themeSelect = SelectionMenu(
-  "Theme",
+  "Theme Accent Color",
   [
     for (int i = 0; i < themes.length; i++)
       SelectionMenuItem(
         value: i,
         title: themes[i].name,
-        icon: Icons.palette
+        icon: Icons.palette,
       )
-  ]
+  ],
 );
 
 const SelectionMenu<FeedMode> feedModeSelect = SelectionMenu(
