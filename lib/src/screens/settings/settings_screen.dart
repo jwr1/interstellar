@@ -3,6 +3,7 @@ import 'package:interstellar/src/api/comment.dart';
 import 'package:interstellar/src/screens/feed_screen.dart';
 import 'package:interstellar/src/screens/settings/login.dart';
 import 'package:interstellar/src/widgets/selection_menu.dart';
+import 'package:interstellar/src/utils/themes.dart';
 
 import 'settings_controller.dart';
 
@@ -15,6 +16,9 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final currentThemeMode = themeModeSelect.options.firstWhere(
       (option) => option.value == controller.themeMode,
+    );
+    final currentTheme = themeSelect.options.firstWhere(
+      (option) => option.value == controller.themeIndex,
     );
     final currentDefaultFeedMode = feedModeSelect.options.firstWhere(
       (option) => option.value == controller.defaultFeedMode,
@@ -58,6 +62,26 @@ class SettingsScreen extends StatelessWidget {
                 Icon(currentThemeMode.icon),
                 const SizedBox(width: 4),
                 Text(currentThemeMode.title),
+              ],
+            ),
+          ),
+          ListTile(
+            title: const Text('Theme'),
+            leading: const Icon(Icons.palette),
+            onTap: () async {
+              controller.updateTheme(
+                await themeSelect.inquireSelection(
+                  context,
+                  currentTheme.value,
+                ),
+              );
+            },
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(currentTheme.icon),
+                const SizedBox(width: 4),
+                Text(currentTheme.title),
               ],
             ),
           ),
@@ -224,6 +248,18 @@ const SelectionMenu<ThemeMode> themeModeSelect = SelectionMenu(
       icon: Icons.dark_mode,
     ),
   ],
+);
+
+SelectionMenu<int> themeSelect = SelectionMenu(
+  "Theme",
+  [
+    for (int i = 0; i < themes.length; i++)
+      SelectionMenuItem(
+        value: i,
+        title: themes[i].name,
+        icon: Icons.palette
+      )
+  ]
 );
 
 const SelectionMenu<FeedMode> feedModeSelect = SelectionMenu(

@@ -13,12 +13,6 @@ import 'screens/feed_screen.dart';
 import 'screens/settings/settings_controller.dart';
 import 'screens/settings/settings_screen.dart';
 
-final defaultLightColorScheme =
-ColorScheme.fromSwatch(primarySwatch: Colors.blue);
-
-final defaultDarkColorScheme = ColorScheme.fromSwatch(
-    primarySwatch: Colors.blue, brightness: Brightness.dark);
-
 class MyApp extends StatefulWidget {
   const MyApp({
     super.key,
@@ -63,11 +57,15 @@ class _MyAppState extends State<MyApp> {
                 onGenerateTitle: (BuildContext context) =>
                 AppLocalizations.of(context)!.appTitle,
                 theme: ThemeData(
-                  colorScheme: lightColourScheme ?? defaultLightColorScheme,
+                  colorScheme: widget.settingsController.theme.name == "Dynamic"
+                      ? lightColourScheme ?? widget.settingsController.theme.lightMode
+                      : widget.settingsController.theme.lightMode,
                   useMaterial3: true
                 ),
                 darkTheme: ThemeData(
-                  colorScheme: darkColourScheme ?? defaultDarkColorScheme,
+                  colorScheme: widget.settingsController.theme.name == "Dynamic"
+                      ? darkColourScheme ?? widget.settingsController.theme.darkMode
+                      : widget.settingsController.theme.darkMode,
                   useMaterial3: true
                 ),
                 themeMode: widget.settingsController.themeMode,

@@ -6,12 +6,16 @@ import 'package:interstellar/src/api/comment.dart';
 import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/api/oauth.dart';
 import 'package:interstellar/src/screens/feed_screen.dart';
+import 'package:interstellar/src/utils/themes.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsController with ChangeNotifier {
   late ThemeMode _themeMode;
   ThemeMode get themeMode => _themeMode;
+  late int _themeIndex;
+  int get themeIndex => _themeIndex;
+  ThemeInfo get theme => themes[_themeIndex];
   late FeedMode _defaultFeedMode;
   FeedMode get defaultFeedMode => _defaultFeedMode;
   late FeedSort _defaultFeedSort;
@@ -39,6 +43,9 @@ class SettingsController with ChangeNotifier {
     _themeMode = prefs.getString('themeMode') != null
         ? ThemeMode.values.byName(prefs.getString("themeMode")!)
         : ThemeMode.system;
+    _themeIndex = prefs.getInt("themeIndex") != null
+        ? prefs.getInt("themeIndex")!
+        : 0;
     _defaultFeedMode = prefs.getString('defaultFeedMode') != null
         ? FeedMode.values.byName(prefs.getString("defaultFeedMode")!)
         : FeedMode.entries;
@@ -77,6 +84,19 @@ class SettingsController with ChangeNotifier {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('themeMode', newThemeMode.name);
+  }
+
+  Future<void> updateTheme(int? newTheme) async {
+    if (newTheme == null) return;
+
+    if (newTheme == _themeIndex) return;
+
+    _themeIndex = newTheme;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('themeIndex', newTheme);
   }
 
   Future<void> updateDefaultFeedMode(FeedMode? newDefaultFeedMode) async {
