@@ -63,6 +63,7 @@ class _MyAppState extends State<MyApp> {
                   useMaterial3: true
                 ),
                 darkTheme: ThemeData(
+                  brightness: Brightness.dark,
                   colorScheme: widget.settingsController.theme.name == "Dynamic"
                       ? darkColourScheme ?? widget.settingsController.theme.darkMode
                       : widget.settingsController.theme.darkMode,
