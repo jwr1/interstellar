@@ -99,7 +99,7 @@ final List<ThemeInfo> themes = [
     darkMode: const ColorScheme(
       brightness: Brightness.dark,
       primary: Color(0xFFCBA6F7),
-      onPrimary: Color(0xFFCBA6F7),
+      onPrimary: Color(0xFFCDD6F4),
       secondary: Color(0xFF181825),
       onSecondary: Color(0xFFF5C2E7),
       error: Color(0xFF585B70),
