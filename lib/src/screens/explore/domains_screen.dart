@@ -163,8 +163,9 @@ class _DomainsScreenState extends State<DomainsScreen> {
                     OutlinedButton(
                       style: ButtonStyle(
                           foregroundColor: item.isUserSubscribed == true
-                              ? MaterialStatePropertyAll(Colors.purple.shade400)
-                              : null),
+                              ? null
+                              : MaterialStatePropertyAll(
+                                  Theme.of(context).disabledColor)),
                       onPressed: whenLoggedIn(context, () async {
                         var newValue = await api_domains.putSubscribe(
                             context.read<SettingsController>().httpClient,

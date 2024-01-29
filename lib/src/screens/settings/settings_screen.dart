@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/comment.dart';
 import 'package:interstellar/src/screens/feed_screen.dart';
 import 'package:interstellar/src/screens/settings/login.dart';
+import 'package:interstellar/src/utils/themes.dart';
 import 'package:interstellar/src/widgets/selection_menu.dart';
 
 import 'settings_controller.dart';
@@ -15,6 +16,9 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final currentThemeMode = themeModeSelect.options.firstWhere(
       (option) => option.value == controller.themeMode,
+    );
+    final currentTheme = themeSelect.options.firstWhere(
+      (option) => option.value == controller.themeAccent,
     );
     final currentDefaultFeedMode = feedModeSelect.options.firstWhere(
       (option) => option.value == controller.defaultFeedMode,
@@ -61,6 +65,26 @@ class SettingsScreen extends StatelessWidget {
                 Icon(currentThemeMode.icon),
                 const SizedBox(width: 4),
                 Text(currentThemeMode.title),
+              ],
+            ),
+          ),
+          ListTile(
+            title: const Text('Theme Accent Color'),
+            leading: const Icon(Icons.palette),
+            onTap: () async {
+              controller.updateThemeAccent(
+                await themeSelect.inquireSelection(
+                  context,
+                  currentTheme.value,
+                ),
+              );
+            },
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(currentTheme.icon),
+                const SizedBox(width: 4),
+                Text(currentTheme.title),
               ],
             ),
           ),
@@ -246,6 +270,18 @@ const SelectionMenu<ThemeMode> themeModeSelect = SelectionMenu(
       title: 'Dark',
       icon: Icons.dark_mode,
     ),
+  ],
+);
+
+SelectionMenu<String> themeSelect = SelectionMenu(
+  "Theme Accent Color",
+  [
+    for (var themeInfo in themes.entries)
+      SelectionMenuItem(
+          value: themeInfo.value.name,
+          title: themeInfo.value.name,
+          icon: Icons.palette
+      )
   ],
 );
 

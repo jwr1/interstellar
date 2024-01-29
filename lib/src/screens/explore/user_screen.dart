@@ -74,10 +74,9 @@ class _UserScreenState extends State<UserScreen> {
                       OutlinedButton(
                         style: ButtonStyle(
                             foregroundColor: _data!.isFollowedByUser == true
-                                ? MaterialStatePropertyAll(
-                                    Colors.purple.shade400,
-                                  )
-                                : null),
+                                ? null
+                                : MaterialStatePropertyAll(
+                                    Theme.of(context).disabledColor)),
                         onPressed: whenLoggedIn(context, () async {
                           var newValue = await api_users.putFollow(
                               context.read<SettingsController>().httpClient,

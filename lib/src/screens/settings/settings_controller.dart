@@ -6,12 +6,16 @@ import 'package:interstellar/src/api/comment.dart';
 import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/api/oauth.dart';
 import 'package:interstellar/src/screens/feed_screen.dart';
+import 'package:interstellar/src/utils/themes.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsController with ChangeNotifier {
   late ThemeMode _themeMode;
   ThemeMode get themeMode => _themeMode;
+  late String _themeAccent;
+  String get themeAccent => _themeAccent;
+  ThemeInfo get theme => themes[_themeAccent]!;
   late FeedMode _defaultFeedMode;
   FeedMode get defaultFeedMode => _defaultFeedMode;
   late FeedSort _defaultEntriesFeedSort;
@@ -41,6 +45,9 @@ class SettingsController with ChangeNotifier {
     _themeMode = prefs.getString('themeMode') != null
         ? ThemeMode.values.byName(prefs.getString("themeMode")!)
         : ThemeMode.system;
+    _themeAccent = prefs.getString("themeAccent") != null
+        ? prefs.getString("themeAccent")!
+        : "Default";
     _defaultFeedMode = prefs.getString('defaultFeedMode') != null
         ? FeedMode.values.byName(prefs.getString("defaultFeedMode")!)
         : FeedMode.entries;
@@ -82,6 +89,19 @@ class SettingsController with ChangeNotifier {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('themeMode', newThemeMode.name);
+  }
+
+  Future<void> updateThemeAccent(String? newThemeAccent) async {
+    if (newThemeAccent == null) return;
+
+    if (newThemeAccent == _themeAccent) return;
+
+    _themeAccent = newThemeAccent;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('themeAccent', newThemeAccent);
   }
 
   Future<void> updateDefaultFeedMode(FeedMode? newDefaultFeedMode) async {
