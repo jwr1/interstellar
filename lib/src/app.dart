@@ -1,3 +1,4 @@
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -11,6 +12,12 @@ import 'package:provider/provider.dart';
 import 'screens/feed_screen.dart';
 import 'screens/settings/settings_controller.dart';
 import 'screens/settings/settings_screen.dart';
+
+final defaultLightColorScheme =
+ColorScheme.fromSwatch(primarySwatch: Colors.blue);
+
+final defaultDarkColorScheme = ColorScheme.fromSwatch(
+    primarySwatch: Colors.blue, brightness: Brightness.dark);
 
 class MyApp extends StatefulWidget {
   const MyApp({
@@ -40,82 +47,47 @@ class _MyAppState extends State<MyApp> {
       builder: (BuildContext context, Widget? child) {
         return ChangeNotifierProvider.value(
           value: widget.settingsController,
-          child: MaterialApp(
-            restorationScopeId: 'app',
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: const [
-              Locale('en', ''),
-            ],
-            onGenerateTitle: (BuildContext context) =>
+          child: DynamicColorBuilder(
+            builder: (lightColourScheme, darkColourScheme) {
+              return MaterialApp(
+                restorationScopeId: 'app',
+                localizationsDelegates: const [
+                  AppLocalizations.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                supportedLocales: const [
+                  Locale('en', ''),
+                ],
+                onGenerateTitle: (BuildContext context) =>
                 AppLocalizations.of(context)!.appTitle,
-            theme: ThemeData(useMaterial3: true),
-            darkTheme: ThemeData.dark(useMaterial3: true),
-            themeMode: widget.settingsController.themeMode,
-            scaffoldMessengerKey: scaffoldMessengerKey,
-            home: OrientationBuilder(
-              builder: (context, orientation) {
-                return Scaffold(
-                  bottomNavigationBar: orientation == Orientation.portrait
-                      ? NavigationBar(
-                          destinations: [
-                            const NavigationDestination(
-                                label: 'Feed',
-                                icon: Icon(Icons.feed_outlined),
-                                selectedIcon: Icon(Icons.feed)),
-                            const NavigationDestination(
-                                label: 'Explore',
-                                icon: Icon(Icons.explore_outlined),
-                                selectedIcon: Icon(Icons.explore)),
-                            NavigationDestination(
-                              label: 'Profile',
-                              icon: Wrapper(
-                                shouldWrap: context
-                                    .watch<SettingsController>()
-                                    .isLoggedIn,
-                                parentBuilder: (child) =>
-                                    NotificationBadge(child: child),
-                                child: const Icon(Icons.person_outlined),
-                              ),
-                              selectedIcon: Wrapper(
-                                shouldWrap: context
-                                    .watch<SettingsController>()
-                                    .isLoggedIn,
-                                parentBuilder: (child) =>
-                                    NotificationBadge(child: child),
-                                child: const Icon(Icons.person),
-                              ),
-                            ),
-                            const NavigationDestination(
-                                label: 'Settings',
-                                icon: Icon(Icons.settings_outlined),
-                                selectedIcon: Icon(Icons.settings)),
-                          ],
-                          selectedIndex: _navIndex,
-                          onDestinationSelected: _changeNav,
-                        )
-                      : null,
-                  body: Row(children: [
-                    if (orientation == Orientation.landscape)
-                      NavigationRail(
-                        selectedIndex: _navIndex,
-                        onDestinationSelected: _changeNav,
-                        labelType: NavigationRailLabelType.all,
+                theme: ThemeData(
+                  colorScheme: lightColourScheme ?? defaultLightColorScheme,
+                  useMaterial3: true
+                ),
+                darkTheme: ThemeData(
+                  colorScheme: darkColourScheme ?? defaultDarkColorScheme,
+                  useMaterial3: true
+                ),
+                themeMode: widget.settingsController.themeMode,
+                scaffoldMessengerKey: scaffoldMessengerKey,
+                home: OrientationBuilder(
+                  builder: (context, orientation) {
+                    return Scaffold(
+                      bottomNavigationBar: orientation == Orientation.portrait
+                          ? NavigationBar(
                         destinations: [
-                          const NavigationRailDestination(
-                              label: Text('Feed'),
+                          const NavigationDestination(
+                              label: 'Feed',
                               icon: Icon(Icons.feed_outlined),
                               selectedIcon: Icon(Icons.feed)),
-                          const NavigationRailDestination(
-                              label: Text('Explore'),
+                          const NavigationDestination(
+                              label: 'Explore',
                               icon: Icon(Icons.explore_outlined),
                               selectedIcon: Icon(Icons.explore)),
-                          NavigationRailDestination(
-                            label: const Text('Profile'),
+                          NavigationDestination(
+                            label: 'Profile',
                             icon: Wrapper(
                               shouldWrap: context
                                   .watch<SettingsController>()
@@ -133,28 +105,73 @@ class _MyAppState extends State<MyApp> {
                               child: const Icon(Icons.person),
                             ),
                           ),
-                          const NavigationRailDestination(
-                              label: Text('Settings'),
+                          const NavigationDestination(
+                              label: 'Settings',
                               icon: Icon(Icons.settings_outlined),
                               selectedIcon: Icon(Icons.settings)),
                         ],
-                      ),
-                    if (orientation == Orientation.landscape)
-                      const VerticalDivider(
-                        thickness: 1,
-                        width: 1,
-                      ),
-                    Expanded(
-                        child: [
-                      const FeedScreen(),
-                      const ExploreScreen(),
-                      const ProfileScreen(),
-                      SettingsScreen(controller: widget.settingsController)
-                    ][_navIndex])
-                  ]),
-                );
-              },
-            ),
+                        selectedIndex: _navIndex,
+                        onDestinationSelected: _changeNav,
+                      )
+                          : null,
+                      body: Row(children: [
+                        if (orientation == Orientation.landscape)
+                          NavigationRail(
+                            selectedIndex: _navIndex,
+                            onDestinationSelected: _changeNav,
+                            labelType: NavigationRailLabelType.all,
+                            destinations: [
+                              const NavigationRailDestination(
+                                  label: Text('Feed'),
+                                  icon: Icon(Icons.feed_outlined),
+                                  selectedIcon: Icon(Icons.feed)),
+                              const NavigationRailDestination(
+                                  label: Text('Explore'),
+                                  icon: Icon(Icons.explore_outlined),
+                                  selectedIcon: Icon(Icons.explore)),
+                              NavigationRailDestination(
+                                label: const Text('Profile'),
+                                icon: Wrapper(
+                                  shouldWrap: context
+                                      .watch<SettingsController>()
+                                      .isLoggedIn,
+                                  parentBuilder: (child) =>
+                                      NotificationBadge(child: child),
+                                  child: const Icon(Icons.person_outlined),
+                                ),
+                                selectedIcon: Wrapper(
+                                  shouldWrap: context
+                                      .watch<SettingsController>()
+                                      .isLoggedIn,
+                                  parentBuilder: (child) =>
+                                      NotificationBadge(child: child),
+                                  child: const Icon(Icons.person),
+                                ),
+                              ),
+                              const NavigationRailDestination(
+                                  label: Text('Settings'),
+                                  icon: Icon(Icons.settings_outlined),
+                                  selectedIcon: Icon(Icons.settings)),
+                            ],
+                          ),
+                        if (orientation == Orientation.landscape)
+                          const VerticalDivider(
+                            thickness: 1,
+                            width: 1,
+                          ),
+                        Expanded(
+                            child: [
+                              const FeedScreen(),
+                              const ExploreScreen(),
+                              const ProfileScreen(),
+                              SettingsScreen(controller: widget.settingsController)
+                            ][_navIndex])
+                      ]),
+                    );
+                  },
+                ),
+              );
+            },
           ),
         );
       },
