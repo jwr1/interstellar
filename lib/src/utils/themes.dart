@@ -74,43 +74,43 @@ class ThemeInfo {
   );
 }
 
-final List<ThemeInfo> themes = [
-  ThemeInfo(
-    "Default"
+final Map<String, ThemeInfo> themes = {
+  "Default": ThemeInfo(
+      "Default"
   ),
-  ThemeInfo(
-    "Dynamic"
+  "Dynamic": ThemeInfo(
+      "Dynamic"
   ),
-  ThemeInfo(
-    "Catppuccin",
-    lightMode: const ColorScheme(
-      brightness: Brightness.light,
-      primary: Color(0xFFDCE0E8),
-      onPrimary: Color(0xFF8839EF),
-      secondary: Color(0xFFE6E9EF),
-      onSecondary: Color(0xFFEA76CB),
-      error: Color(0xFFACB0BE),
-      onError: Color(0xFFD20F39),
-      background: Color(0xFFEFF1F5),
-      onBackground: Color(0xFF4C4F69),
-      surface: Color(0xFFCCD0DA),
-      onSurface: Color(0xFF4C4F69),
-    ),
-    darkMode: const ColorScheme(
-      brightness: Brightness.dark,
-      primary: Color(0xFFCBA6F7),
-      onPrimary: Color(0xFFCDD6F4),
-      secondary: Color(0xFF181825),
-      onSecondary: Color(0xFFF5C2E7),
-      error: Color(0xFF585B70),
-      onError: Color(0xFFF38BA8),
-      background: Color(0xFF1E1E2E),
-      onBackground: Color(0xFFCDD6F4),
-      surface: Color(0xFF313244),
-      onSurface: Color(0xFFCDD6F4),
-    )
+  "Catppuccin": ThemeInfo(
+      "Catppuccin",
+      lightMode: const ColorScheme(
+        brightness: Brightness.light,
+        primary: Color(0xFFDCE0E8),
+        onPrimary: Color(0xFF8839EF),
+        secondary: Color(0xFFE6E9EF),
+        onSecondary: Color(0xFFEA76CB),
+        error: Color(0xFFACB0BE),
+        onError: Color(0xFFD20F39),
+        background: Color(0xFFEFF1F5),
+        onBackground: Color(0xFF4C4F69),
+        surface: Color(0xFFCCD0DA),
+        onSurface: Color(0xFF4C4F69),
+      ),
+      darkMode: const ColorScheme(
+        brightness: Brightness.dark,
+        primary: Color(0xFFCBA6F7),
+        onPrimary: Color(0xFFCDD6F4),
+        secondary: Color(0xFF181825),
+        onSecondary: Color(0xFFF5C2E7),
+        error: Color(0xFF585B70),
+        onError: Color(0xFFF38BA8),
+        background: Color(0xFF1E1E2E),
+        onBackground: Color(0xFFCDD6F4),
+        surface: Color(0xFF313244),
+        onSurface: Color(0xFFCDD6F4),
+      )
   ),
-  ThemeInfo(
+  "Blue": ThemeInfo(
     "Blue",
     lightMode: ColorScheme.fromSwatch(
         primarySwatch: Colors.blue,
@@ -122,7 +122,7 @@ final List<ThemeInfo> themes = [
       brightness: Brightness.dark,
     ),
   ),
-  ThemeInfo(
+  "Purple": ThemeInfo(
     "Purple",
     lightMode: ColorScheme.fromSwatch(
       primarySwatch: Colors.purple,
@@ -132,7 +132,7 @@ final List<ThemeInfo> themes = [
       brightness: Brightness.dark,
     ),
   ),
-  ThemeInfo(
+  "Red": ThemeInfo(
     "Red",
     lightMode: ColorScheme.fromSwatch(
       primarySwatch: Colors.red,
@@ -142,7 +142,7 @@ final List<ThemeInfo> themes = [
       brightness: Brightness.dark,
     ),
   ),
-  ThemeInfo(
+  "Amber": ThemeInfo(
     "Amber",
     lightMode: ColorScheme.fromSwatch(
       primarySwatch: Colors.amber,
@@ -152,4 +152,4 @@ final List<ThemeInfo> themes = [
       brightness: Brightness.dark,
     ),
   ),
-];
+};

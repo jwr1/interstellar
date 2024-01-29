@@ -250,14 +250,14 @@ const SelectionMenu<ThemeMode> themeModeSelect = SelectionMenu(
   ],
 );
 
-SelectionMenu<int> themeSelect = SelectionMenu(
+SelectionMenu<String> themeSelect = SelectionMenu(
   "Theme Accent Color",
   [
-    for (int i = 0; i < themes.length; i++)
+    for (var themeInfo in themes.entries)
       SelectionMenuItem(
-        value: i,
-        title: themes[i].name,
-        icon: Icons.palette,
+          value: themeInfo.value.name,
+          title: themeInfo.value.name,
+          icon: Icons.palette
       )
   ],
 );

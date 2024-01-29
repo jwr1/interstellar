@@ -13,9 +13,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SettingsController with ChangeNotifier {
   late ThemeMode _themeMode;
   ThemeMode get themeMode => _themeMode;
-  late int _themeAccent;
-  int get themeAccent => _themeAccent;
-  ThemeInfo get theme => themes[_themeAccent];
+  late String _themeAccent;
+  String get themeAccent => _themeAccent;
+  ThemeInfo get theme => themes[_themeAccent]!;
   late FeedMode _defaultFeedMode;
   FeedMode get defaultFeedMode => _defaultFeedMode;
   late FeedSort _defaultFeedSort;
@@ -43,8 +43,9 @@ class SettingsController with ChangeNotifier {
     _themeMode = prefs.getString('themeMode') != null
         ? ThemeMode.values.byName(prefs.getString("themeMode")!)
         : ThemeMode.system;
-    _themeAccent =
-        prefs.getInt("themeAccent") != null ? prefs.getInt("themeAccent")! : 0;
+    _themeAccent = prefs.getString("themeAccent") != null
+        ? prefs.getString("themeAccent")!
+        : "Default";
     _defaultFeedMode = prefs.getString('defaultFeedMode') != null
         ? FeedMode.values.byName(prefs.getString("defaultFeedMode")!)
         : FeedMode.entries;
@@ -85,7 +86,7 @@ class SettingsController with ChangeNotifier {
     await prefs.setString('themeMode', newThemeMode.name);
   }
 
-  Future<void> updateThemeAccent(int? newThemeAccent) async {
+  Future<void> updateThemeAccent(String? newThemeAccent) async {
     if (newThemeAccent == null) return;
 
     if (newThemeAccent == _themeAccent) return;
@@ -95,7 +96,7 @@ class SettingsController with ChangeNotifier {
     notifyListeners();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('themeAccent', newThemeAccent);
+    await prefs.setString('themeAccent', newThemeAccent);
   }
 
   Future<void> updateDefaultFeedMode(FeedMode? newDefaultFeedMode) async {
