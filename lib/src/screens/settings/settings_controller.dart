@@ -14,8 +14,10 @@ class SettingsController with ChangeNotifier {
   ThemeMode get themeMode => _themeMode;
   late FeedMode _defaultFeedMode;
   FeedMode get defaultFeedMode => _defaultFeedMode;
-  late FeedSort _defaultFeedSort;
-  FeedSort get defaultFeedSort => _defaultFeedSort;
+  late FeedSort _defaultEntriesFeedSort;
+  FeedSort get defaultEntriesFeedSort => _defaultEntriesFeedSort;
+  late FeedSort _defaultPostsFeedSort;
+  FeedSort get defaultPostsFeedSort => _defaultPostsFeedSort;
   late FeedSort _defaultExploreFeedSort;
   FeedSort get defaultExploreFeedSort => _defaultExploreFeedSort;
   late CommentSort _defaultCommentSort;
@@ -42,8 +44,11 @@ class SettingsController with ChangeNotifier {
     _defaultFeedMode = prefs.getString('defaultFeedMode') != null
         ? FeedMode.values.byName(prefs.getString("defaultFeedMode")!)
         : FeedMode.entries;
-    _defaultFeedSort = prefs.getString('defaultFeedSort') != null
-        ? FeedSort.values.byName(prefs.getString("defaultFeedSort")!)
+    _defaultEntriesFeedSort = prefs.getString('defaultEntriesFeedSort') != null
+        ? FeedSort.values.byName(prefs.getString("defaultEntriesFeedSort")!)
+        : FeedSort.hot;
+    _defaultPostsFeedSort = prefs.getString('defaultPostsFeedSort') != null
+        ? FeedSort.values.byName(prefs.getString("defaultPostsFeedSort")!)
         : FeedSort.hot;
     _defaultExploreFeedSort = prefs.getString('defaultExploreFeedSort') != null
         ? FeedSort.values.byName(prefs.getString("defaultExploreFeedSort")!)
@@ -92,17 +97,30 @@ class SettingsController with ChangeNotifier {
     await prefs.setString('defaultFeedMode', newDefaultFeedMode.name);
   }
 
-  Future<void> updateDefaultFeedSort(FeedSort? newDefaultFeedSort) async {
+  Future<void> updateDefaultEntriesFeedSort(FeedSort? newDefaultFeedSort) async {
     if (newDefaultFeedSort == null) return;
 
-    if (newDefaultFeedSort == _defaultFeedSort) return;
+    if (newDefaultFeedSort == _defaultEntriesFeedSort) return;
 
-    _defaultFeedSort = newDefaultFeedSort;
+    _defaultEntriesFeedSort = newDefaultFeedSort;
 
     notifyListeners();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('defaultFeedSort', newDefaultFeedSort.name);
+  }
+
+  Future<void> updateDefaultPostsFeedSort(FeedSort? newDefaultFeedSort) async {
+    if (newDefaultFeedSort == null) return;
+
+    if (newDefaultFeedSort == _defaultPostsFeedSort) return;
+
+    _defaultPostsFeedSort = newDefaultFeedSort;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('defaultPostsFeedSort', newDefaultFeedSort.name);
   }
 
   Future<void> updateDefaultExploreFeedSort(

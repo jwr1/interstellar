@@ -19,8 +19,11 @@ class SettingsScreen extends StatelessWidget {
     final currentDefaultFeedMode = feedModeSelect.options.firstWhere(
       (option) => option.value == controller.defaultFeedMode,
     );
-    final currentDefaultFeedSort = feedSortSelect.options.firstWhere(
-      (option) => option.value == controller.defaultFeedSort,
+    final currentDefaultEntriesFeedSort = feedSortSelect.options.firstWhere(
+      (option) => option.value == controller.defaultEntriesFeedSort,
+    );
+    final currentDefaultPostsFeedSort = feedSortSelect.options.firstWhere(
+          (option) => option.value == controller.defaultPostsFeedSort,
     );
     final currentDefaultExploreFeedSort = feedSortSelect.options.firstWhere(
       (option) => option.value == controller.defaultExploreFeedSort,
@@ -86,22 +89,42 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text('Default Feed Sort'),
+            title: const Text('Default Threads Feed Sort'),
             leading: const Icon(Icons.sort),
             onTap: () async {
-              controller.updateDefaultFeedSort(
+              controller.updateDefaultEntriesFeedSort(
                 await feedSortSelect.inquireSelection(
                   context,
-                  currentDefaultFeedSort.value,
+                  currentDefaultEntriesFeedSort.value,
                 ),
               );
             },
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(currentDefaultFeedSort.icon),
+                Icon(currentDefaultEntriesFeedSort.icon),
                 const SizedBox(width: 4),
-                Text(currentDefaultFeedSort.title),
+                Text(currentDefaultEntriesFeedSort.title),
+              ],
+            ),
+          ),
+          ListTile(
+            title: const Text('Default Posts Feed Sort'),
+            leading: const Icon(Icons.sort),
+            onTap: () async {
+              controller.updateDefaultPostsFeedSort(
+                await feedSortSelect.inquireSelection(
+                  context,
+                  currentDefaultPostsFeedSort.value,
+                ),
+              );
+            },
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(currentDefaultPostsFeedSort.icon),
+                const SizedBox(width: 4),
+                Text(currentDefaultPostsFeedSort.title),
               ],
             ),
           ),

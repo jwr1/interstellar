@@ -46,7 +46,9 @@ class _FeedScreenState extends State<FeedScreen> {
         ? context.read<SettingsController>().defaultFeedMode
         : FeedMode.entries;
     _sort = widget.source == null
-        ? context.read<SettingsController>().defaultFeedSort
+        ? _mode == FeedMode.entries
+            ? context.read<SettingsController>().defaultEntriesFeedSort
+            : context.read<SettingsController>().defaultPostsFeedSort
         : context.read<SettingsController>().defaultExploreFeedSort;
   }
 
@@ -85,6 +87,11 @@ class _FeedScreenState extends State<FeedScreen> {
                   onSelectionChanged: (Set<FeedMode> newSelection) {
                     setState(() {
                       _mode = newSelection.first;
+                      _sort = widget.source == null
+                          ? _mode == FeedMode.entries
+                            ? context.read<SettingsController>().defaultEntriesFeedSort
+                            : context.read<SettingsController>().defaultPostsFeedSort
+                          : context.read<SettingsController>().defaultExploreFeedSort;
                     });
                   },
                 ),
