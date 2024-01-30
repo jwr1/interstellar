@@ -1,9 +1,13 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:mime/mime.dart';
+import 'package:path/path.dart';
 
 Future<PostListModel> fetchPosts(
   http.Client client,
@@ -91,6 +95,36 @@ Future<PostModel> createPost(
   final response = await client.post(
       Uri.https(instanceHost, '/api/magazine/$magazineID/posts'),
       body: jsonEncode({'body': body, 'lang': lang, 'isAdult': isAdult}));
+
+  httpErrorHandler(response, message: "Failed to create post");
+
+  return PostModel.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+}
+
+Future<PostModel> createImage(
+    http.Client client,
+    String instanceHost,
+    int magazineID, {
+      required XFile image,
+      required String alt,
+      required String body,
+      required String lang,
+      required bool isAdult,
+    }) async {
+  var request = http.MultipartRequest(
+      'POST', Uri.https(instanceHost, '/api/magazine/$magazineID/posts/image'));
+  var multipartFile = http.MultipartFile.fromBytes(
+    'uploadImage',
+    await image.readAsBytes(),
+    filename: basename(image.path),
+    contentType: MediaType.parse(lookupMimeType(image.path)!),
+  );
+  request.files.add(multipartFile);
+  request.fields['body'] = body;
+  request.fields['lang'] = lang;
+  request.fields['isAdult'] = isAdult.toString();
+  request.fields['alt'] = alt;
+  var response = await http.Response.fromStream(await client.send(request));
 
   httpErrorHandler(response, message: "Failed to create post");
 
