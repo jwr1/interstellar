@@ -111,14 +111,27 @@ class _CreateScreenState extends State<CreateScreen> {
                       );
                     }
                   case CreateType.post:
-                    await api_posts.createPost(
-                      client,
-                      instanceHost,
-                      magazineId,
-                      body: _bodyTextController.text,
-                      lang: 'en',
-                      isAdult: _isAdult,
-                    );
+                    if (_imageFile == null) {
+                      await api_posts.createPost(
+                        client,
+                        instanceHost,
+                        magazineId,
+                        body: _bodyTextController.text,
+                        lang: 'en',
+                        isAdult: _isAdult,
+                      );
+                    } else {
+                      await api_posts.createImage(
+                        client,
+                        instanceHost,
+                        magazineId,
+                        image: _imageFile!,
+                        alt: "",
+                        body: _bodyTextController.text,
+                        lang: 'en',
+                        isAdult: _isAdult,
+                      );
+                    }
                 }
 
                 // Check BuildContext
@@ -143,7 +156,7 @@ class _CreateScreenState extends State<CreateScreen> {
                       label: "Title",
                     ),
                   ),
-                if (_imageFile == null)
+                if (_imageFile == null || widget.type == CreateType.post)
                   Padding(
                     padding: const EdgeInsets.all(5),
                     child: TextEditor(
@@ -177,6 +190,13 @@ class _CreateScreenState extends State<CreateScreen> {
                           )
                       ],
                     ),
+                  ),
+                if (widget.type == CreateType.post)
+                  ImageSelector(
+                    _imageFile,
+                      (file) => setState(() {
+                        _imageFile = file;
+                      }),
                   ),
                 if (widget.type != CreateType.post)
                   Padding(
