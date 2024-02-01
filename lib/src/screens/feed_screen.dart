@@ -68,33 +68,23 @@ class _FeedScreenState extends State<FeedScreen> {
             if ((widget.source ?? const FeedSourceAll()).getPostsPath() != null)
               Padding(
                 padding: const EdgeInsets.only(right: 8),
-                child: SegmentedButton(
-                  segments: const [
-                    ButtonSegment(
-                      value: FeedMode.entries,
-                      label: Text("Threads"),
-                    ),
-                    ButtonSegment(
-                      value: FeedMode.posts,
-                      label: Text("Posts"),
-                    ),
-                  ],
-                  style: const ButtonStyle(
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    visualDensity: VisualDensity(horizontal: -3, vertical: -3),
-                  ),
-                  selected: <FeedMode>{_mode},
-                  onSelectionChanged: (Set<FeedMode> newSelection) {
-                    setState(() {
-                      _mode = newSelection.first;
-                      _sort = widget.source == null
-                          ? _mode == FeedMode.entries
-                            ? context.read<SettingsController>().defaultEntriesFeedSort
-                            : context.read<SettingsController>().defaultPostsFeedSort
-                          : context.read<SettingsController>().defaultExploreFeedSort;
-                    });
+                child: IconButton(
+                  onPressed: () async {
+                    final newMode = await feedModeSelect.inquireSelection(context, _mode);
+
+                    if (newMode != null && newMode != _mode) {
+                      setState(() {
+                        _mode = newMode;
+                        _sort = widget.source == null
+                            ? _mode == FeedMode.entries
+                              ? context.read<SettingsController>().defaultEntriesFeedSort
+                              : context.read<SettingsController>().defaultPostsFeedSort
+                            : context.read<SettingsController>().defaultExploreFeedSort;
+                      });
+                    }
                   },
-                ),
+                  icon: _mode == FeedMode.entries ? const Icon(Icons.feed) : const Icon(Icons.chat),
+                )
               ),
             Padding(
               padding: const EdgeInsets.only(right: 8),
@@ -189,6 +179,22 @@ class _FeedScreenState extends State<FeedScreen> {
     );
   }
 }
+
+const SelectionMenu<FeedMode> feedModeSelect = SelectionMenu(
+    "Feed Mode",
+    [
+      SelectionMenuItem(
+        value: FeedMode.entries,
+        title: "Threads",
+        icon: Icons.feed
+      ),
+      SelectionMenuItem(
+        value: FeedMode.posts,
+        title: "Posts",
+        icon: Icons.chat
+      )
+    ]
+);
 
 const SelectionMenu<FeedSort> feedSortSelect = SelectionMenu(
   'Sort by',
