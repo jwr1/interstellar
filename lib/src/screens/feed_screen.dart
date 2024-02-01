@@ -70,21 +70,30 @@ class _FeedScreenState extends State<FeedScreen> {
                 padding: const EdgeInsets.only(right: 8),
                 child: IconButton(
                   onPressed: () async {
-                    final newMode = await feedModeSelect.inquireSelection(context, _mode);
+                    final newMode =
+                        await feedModeSelect.inquireSelection(context, _mode);
 
                     if (newMode != null && newMode != _mode) {
                       setState(() {
                         _mode = newMode;
                         _sort = widget.source == null
                             ? _mode == FeedMode.entries
-                              ? context.read<SettingsController>().defaultEntriesFeedSort
-                              : context.read<SettingsController>().defaultPostsFeedSort
-                            : context.read<SettingsController>().defaultExploreFeedSort;
+                                ? context
+                                    .read<SettingsController>()
+                                    .defaultEntriesFeedSort
+                                : context
+                                    .read<SettingsController>()
+                                    .defaultPostsFeedSort
+                            : context
+                                .read<SettingsController>()
+                                .defaultExploreFeedSort;
                       });
                     }
                   },
-                  icon: _mode == FeedMode.entries ? const Icon(Icons.feed) : const Icon(Icons.chat),
-                )
+                  icon: _mode == FeedMode.entries
+                      ? const Icon(Icons.feed)
+                      : const Icon(Icons.chat),
+                ),
               ),
             Padding(
               padding: const EdgeInsets.only(right: 8),
@@ -181,19 +190,19 @@ class _FeedScreenState extends State<FeedScreen> {
 }
 
 const SelectionMenu<FeedMode> feedModeSelect = SelectionMenu(
-    "Feed Mode",
-    [
-      SelectionMenuItem(
-        value: FeedMode.entries,
-        title: "Threads",
-        icon: Icons.feed
-      ),
-      SelectionMenuItem(
-        value: FeedMode.posts,
-        title: "Posts",
-        icon: Icons.chat
-      )
-    ]
+  'Feed Mode',
+  [
+    SelectionMenuItem(
+      value: FeedMode.entries,
+      title: 'Threads',
+      icon: Icons.feed,
+    ),
+    SelectionMenuItem(
+      value: FeedMode.posts,
+      title: 'Posts',
+      icon: Icons.chat,
+    ),
+  ],
 );
 
 const SelectionMenu<FeedSort> feedSortSelect = SelectionMenu(
