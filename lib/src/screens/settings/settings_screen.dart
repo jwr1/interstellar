@@ -27,7 +27,7 @@ class SettingsScreen extends StatelessWidget {
       (option) => option.value == controller.defaultEntriesFeedSort,
     );
     final currentDefaultPostsFeedSort = feedSortSelect.options.firstWhere(
-          (option) => option.value == controller.defaultPostsFeedSort,
+      (option) => option.value == controller.defaultPostsFeedSort,
     );
     final currentDefaultExploreFeedSort = feedSortSelect.options.firstWhere(
       (option) => option.value == controller.defaultExploreFeedSort,
@@ -275,28 +275,10 @@ const SelectionMenu<ThemeMode> themeModeSelect = SelectionMenu(
 
 SelectionMenu<String> themeSelect = SelectionMenu(
   "Theme Accent Color",
-  [
-    for (var themeInfo in themes.entries)
-      SelectionMenuItem(
+  themes.entries
+      .map((themeInfo) => SelectionMenuItem(
           value: themeInfo.value.name,
           title: themeInfo.value.name,
-          icon: Icons.palette
-      )
-  ],
-);
-
-const SelectionMenu<FeedMode> feedModeSelect = SelectionMenu(
-  'Feed Mode',
-  [
-    SelectionMenuItem(
-      value: FeedMode.entries,
-      title: 'Threads',
-      icon: Icons.feed,
-    ),
-    SelectionMenuItem(
-      value: FeedMode.posts,
-      title: 'Posts',
-      icon: Icons.chat,
-    ),
-  ],
+          icon: Icons.palette))
+      .toList(),
 );
