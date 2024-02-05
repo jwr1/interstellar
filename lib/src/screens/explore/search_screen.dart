@@ -61,12 +61,6 @@ class _SearchScreenState extends State<SearchScreen> {
 
       final isLastPage =
           newPage.pagination.currentPage == newPage.pagination.maxPage;
-      // Prevent duplicates
-      // final currentItemIds =
-      //     _pagingController.itemList?.map((e) => e.magazineId) ?? [];
-      // final newItems = newPage.items
-      //     .where((e) => !currentItemIds.contains(e.magazineId))
-      //     .toList();
 
       if (isLastPage) {
         _pagingController.appendLastPage(newPage.items);
@@ -162,17 +156,134 @@ class _SearchScreenState extends State<SearchScreen> {
                     margin: const EdgeInsets.all(12),
                     clipBehavior: Clip.antiAlias,
                     child: item is EntryModel
-                        ? Text(item.title)
+                        ? EntryItem(
+                            item, (newValue) {
+                              var newList = _pagingController.itemList;
+                              newList![index] = newValue;
+                              setState(() {
+                                _pagingController.itemList = newList;
+                              });
+                            },
+                            isPreview: true,
+                          )
                         : item is EntryCommentModel
-                        ? Text(item.body!)
+                        ? EntryComment(item, (newValue) {
+                            var newList = _pagingController.itemList;
+                            newList![index] = newValue;
+                            setState(() {
+                              _pagingController.itemList = newList;
+                            });
+                          })
                         : item is PostModel
-                        ? Text(item.body!)
+                        ? PostItem(
+                            item, (newValue) {
+                              var newList = _pagingController.itemList;
+                              newList![index] = newValue;
+                              setState(() {
+                                _pagingController.itemList = newList;
+                              });
+                            },
+                          )
                         : item is PostCommentModel
-                        ? Text(item.body!)
+                        ? PostComment(item, (newValue) {
+                            var newList = _pagingController.itemList;
+                            newList![index] = newValue;
+                            setState(() {
+                              _pagingController.itemList = newList;
+                            });
+                          })
                         : item is DetailedUserModel
-                        ? Text(item.username)
+                        ? Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: Row(children: [
+                              if (item.avatar?.storageUrl != null)
+                                Avatar(
+                                  item.avatar!.storageUrl,
+                                  radius: 16,
+                                ),
+                              Container(
+                                width: 8 + (item.avatar?.storageUrl != null ? 0 : 32)),
+                              Expanded(
+                                child: Text(item.username,
+                                    overflow: TextOverflow.ellipsis)),
+                              const SizedBox(width: 12),
+                              OutlinedButton(
+                                style: ButtonStyle(
+                                  foregroundColor: item.isFollowedByUser == true
+                                    ? null
+                                    : MaterialStatePropertyAll(
+                                      Theme.of(context).disabledColor)),
+                                onPressed: whenLoggedIn(context, () async {
+                                  var newValue = await api_users.putFollow(
+                                      context.read<SettingsController>().httpClient,
+                                      context.read<SettingsController>().instanceHost,
+                                      item.userId,
+                                      !item.isFollowedByUser!);
+                                  var newList = _pagingController.itemList;
+                                  newList![index] = newValue;
+                                  setState(() {
+                                    _pagingController.itemList = newList;
+                                  });
+                                }),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.group),
+                                    Text(' ${intFormat(item.followersCount)}'),
+                                  ],
+                                ),
+                              )
+                            ]),
+                          )
                         : item is DetailedMagazineModel
-                        ? Text(item.name)
+                        ? Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: Row(children: [
+                              if (item.icon?.storageUrl != null)
+                                Avatar(item.icon!.storageUrl, radius: 16),
+                              Container(
+                                width: 8 + (item.icon?.storageUrl != null ? 0 : 32)),
+                              Expanded(
+                                child:
+                                Text(item.name, overflow: TextOverflow.ellipsis)),
+                              const Icon(Icons.feed),
+                              Container(
+                                width: 4,
+                              ),
+                              Text(intFormat(item.entryCount)),
+                              const SizedBox(width: 12),
+                              const Icon(Icons.comment),
+                              Container(
+                                width: 4,
+                              ),
+                              Text(intFormat(item.entryCommentCount)),
+                              const SizedBox(width: 12),
+                              OutlinedButton(
+                                style: ButtonStyle(
+                                  foregroundColor: item.isUserSubscribed == true
+                                    ? null
+                                    : MaterialStatePropertyAll(
+                                      Theme.of(context).disabledColor)),
+                                onPressed: whenLoggedIn(context, () async {
+                                  var newValue = await api_magazines.putSubscribe(
+                                      context.read<SettingsController>().httpClient,
+                                      context.read<SettingsController>().instanceHost,
+                                      item.magazineId,
+                                      !item.isUserSubscribed!);
+                                  var newList = _pagingController.itemList;
+                                  newList![index] = newValue;
+                                  setState(() {
+                                    _pagingController.itemList = newList;
+                                  });
+                                }),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.group),
+                                    Text(' ${intFormat(item.subscriptionsCount)}'),
+                                  ],
+                                ),
+                              )
+                            ]),
+                          )
                         : const Text("Unknown"),
                   ),
                 )
