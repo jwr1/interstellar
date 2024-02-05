@@ -49,6 +49,7 @@ class ContentItem extends StatefulWidget {
   final Future<void> Function(String)? onReply;
   final Future<void> Function(String)? onEdit;
   final Future<void> Function()? onDelete;
+  final Future<void> Function()? onGoToOP;
 
   final bool isCollapsed;
   final void Function()? onCollapse;
@@ -84,6 +85,7 @@ class ContentItem extends StatefulWidget {
       this.onReply,
       this.onEdit,
       this.onDelete,
+      this.onGoToOP,
       this.isCollapsed = false,
       this.onCollapse,
       super.key});
@@ -342,6 +344,14 @@ class _ContentItemState extends State<ContentItem> {
                                 padding: EdgeInsets.all(12),
                                 child: Text("Delete")),
                           ),
+                          if (widget.onGoToOP != null)
+                            MenuItemButton(
+                              onPressed: widget.onGoToOP,
+                              child: const Padding(
+                                padding: EdgeInsets.all(12),
+                                child: Text("Go To OP")
+                              )
+                            ),
                         ]),
                   ),
                   if (widget.boosts != null)

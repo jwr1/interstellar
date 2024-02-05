@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/entry_comments.dart' as api_comments;
+import 'package:interstellar/src/api/entries.dart' as api_entries;
 import 'package:interstellar/src/models/entry_comment.dart';
 import 'package:interstellar/src/screens/entries/entry_comment_screen.dart';
+import 'package:interstellar/src/screens/entries/entry_page.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/content_item.dart';
@@ -120,6 +122,20 @@ class _EntryCommentState extends State<EntryComment> {
                     ));
                   }, matchesUsername: widget.comment.user.username)
                 : null,
+            onGoToOP: widget.opUserId != null ? null : () async {
+              final parentEntry = await api_entries.fetchEntry(
+                context.read<SettingsController>().httpClient,
+                context.read<SettingsController>().instanceHost,
+                widget.comment.entryId);
+              if (!mounted) return;
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return EntryPage(parentEntry, (newPage) {});
+                  }
+                )
+              );
+            },
             isCollapsed: _isCollapsed,
             onCollapse: widget.comment.childCount > 0
                 ? () => setState(() {
