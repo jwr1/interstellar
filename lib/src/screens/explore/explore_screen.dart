@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/screens/explore/domains_screen.dart';
 import 'package:interstellar/src/screens/explore/magazines_screen.dart';
+import 'package:interstellar/src/screens/explore/search_screen.dart';
 import 'package:interstellar/src/screens/explore/users_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +17,18 @@ class ExploreScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text(
               'Explore ${context.watch<SettingsController>().instanceHost}'),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (context) => const SearchScreen()
+                    )
+                  );
+                },
+                icon: const Icon(Icons.search)
+            )
+          ],
           bottom: const TabBar(tabs: [
             Tab(
               text: 'Magazines',
