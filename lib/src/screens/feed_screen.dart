@@ -16,7 +16,7 @@ import 'package:provider/provider.dart';
 
 class FeedScreen extends StatefulWidget {
   final FeedSource? source;
-  final Widget? title;
+  final String? title;
   final Widget? details;
   final Widget? floatingActionButton;
 
@@ -54,16 +54,38 @@ class _FeedScreenState extends State<FeedScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final currentFeedModeOption = feedModeSelect.getOption(_mode);
+    final currentFeedSortOption = feedSortSelect.getOption(_sort);
+
     return Wrapper(
       shouldWrap: widget.source == null,
       parentBuilder: (child) => DefaultTabController(length: 4, child: child),
       child: Scaffold(
         appBar: AppBar(
-          title: widget.title ??
-              Text(context.read<SettingsController>().selectedAccount +
-                  (context.read<SettingsController>().isLoggedIn
-                      ? ''
-                      : ' (Anonymous)')),
+          title: ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(
+              widget.title ??
+                  context.read<SettingsController>().selectedAccount +
+                      (context.read<SettingsController>().isLoggedIn
+                          ? ''
+                          : ' (Guest)'),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            subtitle: Row(
+              children: [
+                Text(currentFeedModeOption.title),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: Text('•'),
+                ),
+                Icon(currentFeedSortOption.icon, size: 20),
+                const SizedBox(width: 2),
+                Text(currentFeedSortOption.title),
+              ],
+            ),
+          ),
           actions: [
             if ((widget.source ?? const FeedSourceAll()).getPostsPath() != null)
               Padding(
@@ -199,7 +221,7 @@ const SelectionMenu<FeedMode> feedModeSelect = SelectionMenu(
     ),
     SelectionMenuItem(
       value: FeedMode.posts,
-      title: 'Posts',
+      title: 'Microblog',
       icon: Icons.chat,
     ),
   ],

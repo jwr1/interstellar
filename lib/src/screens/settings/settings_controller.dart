@@ -117,7 +117,8 @@ class SettingsController with ChangeNotifier {
     await prefs.setString('defaultFeedMode', newDefaultFeedMode.name);
   }
 
-  Future<void> updateDefaultEntriesFeedSort(FeedSort? newDefaultFeedSort) async {
+  Future<void> updateDefaultEntriesFeedSort(
+      FeedSort? newDefaultFeedSort) async {
     if (newDefaultFeedSort == null) return;
 
     if (newDefaultFeedSort == _defaultEntriesFeedSort) return;
@@ -127,7 +128,7 @@ class SettingsController with ChangeNotifier {
     notifyListeners();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('defaultFeedSort', newDefaultFeedSort.name);
+    await prefs.setString('defaultFeedSortEntries', newDefaultFeedSort.name);
   }
 
   Future<void> updateDefaultPostsFeedSort(FeedSort? newDefaultFeedSort) async {

@@ -44,7 +44,7 @@ class _DomainScreenState extends State<DomainScreen> {
   Widget build(BuildContext context) {
     return FeedScreen(
       source: FeedSourceDomain(widget.domainId),
-      title: Text(_data?.name ?? ''),
+      title: _data?.name ?? '',
       details: _data != null
           ? Padding(
               padding: const EdgeInsets.all(12),

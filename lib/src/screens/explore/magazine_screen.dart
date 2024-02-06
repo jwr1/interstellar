@@ -48,7 +48,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
   Widget build(BuildContext context) {
     return FeedScreen(
       source: FeedSourceMagazine(widget.magazineId),
-      title: Text(_data?.name ?? ''),
+      title: _data?.name ?? '',
       details: _data != null
           ? Padding(
               padding: const EdgeInsets.all(12),

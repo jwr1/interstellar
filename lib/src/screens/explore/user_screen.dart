@@ -50,7 +50,7 @@ class _UserScreenState extends State<UserScreen> {
   Widget build(BuildContext context) {
     return FeedScreen(
       source: FeedSourceUser(widget.userId),
-      title: Text(_data?.username ?? ''),
+      title: _data?.username ?? '',
       details: _data != null
           ? Padding(
               padding: const EdgeInsets.all(12),

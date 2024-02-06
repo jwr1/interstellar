@@ -27,7 +27,7 @@ class SelectionMenu<T> {
         builder: (BuildContext context) {
           return Column(
             mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(16),
@@ -46,8 +46,15 @@ class SelectionMenu<T> {
                         .primaryContainer
                         .withOpacity(0.2),
                   )),
+              const SizedBox(height: 24),
             ],
           );
         },
       );
+
+  SelectionMenuItem<T> getOption(T value) {
+    return options.firstWhere(
+      (option) => option.value == value,
+    );
+  }
 }

@@ -26,7 +26,7 @@ class PostPage extends StatefulWidget {
 }
 
 class _PostPageState extends State<PostPage> {
-  PostModel? _data;
+  late PostModel _data;
 
   CommentSort commentSort = CommentSort.hot;
 
@@ -55,7 +55,7 @@ class _PostPageState extends State<PostPage> {
       final newPage = await api_comments.fetchComments(
         context.read<SettingsController>().httpClient,
         context.read<SettingsController>().instanceHost,
-        _data!.postId,
+        _data.postId,
         page: pageKey,
         sort: commentSort,
       );
@@ -85,9 +85,27 @@ class _PostPageState extends State<PostPage> {
 
   @override
   Widget build(BuildContext context) {
+    final currentCommentSortOption = commentSortSelect.getOption(commentSort);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(_data?.user.username ?? ''),
+        title: ListTile(
+          contentPadding: EdgeInsets.zero,
+          title: Text(
+            _data.user.username,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          subtitle: Row(
+            children: [
+              const Text('Comments'),
+              const SizedBox(width: 6),
+              Icon(currentCommentSortOption.icon, size: 20),
+              const SizedBox(width: 2),
+              Text(currentCommentSortOption.title),
+            ],
+          ),
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 8),
@@ -114,62 +132,61 @@ class _PostPageState extends State<PostPage> {
         ),
         child: CustomScrollView(
           slivers: [
-            if (_data != null)
-              SliverToBoxAdapter(
-                child: PostItem(
-                  _data!,
-                  _onUpdate,
-                  onReply: whenLoggedIn(context, (body) async {
-                    var newComment = await api_comments.postComment(
-                      context.read<SettingsController>().httpClient,
-                      context.read<SettingsController>().instanceHost,
-                      body,
-                      _data!.postId,
-                    );
-                    var newList = _pagingController.itemList;
-                    newList?.insert(0, newComment);
-                    setState(() {
-                      _pagingController.itemList = newList;
-                    });
-                  }),
-                  onEdit: _data!.visibility != 'soft_deleted'
-                      ? whenLoggedIn(
-                          context,
-                          (body) async {
-                            final newPost = await api_posts.editPost(
-                                context.read<SettingsController>().httpClient,
-                                context.read<SettingsController>().instanceHost,
-                                _data!.postId,
-                                body,
-                                _data!.lang,
-                                _data!.isAdult);
-                            _onUpdate(newPost);
-                          },
-                          matchesUsername: _data!.user.username,
-                        )
-                      : null,
-                  onDelete: _data!.visibility != 'soft_deleted'
-                      ? whenLoggedIn(
-                          context,
-                          () async {
-                            await api_posts.deletePost(
+            SliverToBoxAdapter(
+              child: PostItem(
+                _data,
+                _onUpdate,
+                onReply: whenLoggedIn(context, (body) async {
+                  var newComment = await api_comments.postComment(
+                    context.read<SettingsController>().httpClient,
+                    context.read<SettingsController>().instanceHost,
+                    body,
+                    _data.postId,
+                  );
+                  var newList = _pagingController.itemList;
+                  newList?.insert(0, newComment);
+                  setState(() {
+                    _pagingController.itemList = newList;
+                  });
+                }),
+                onEdit: _data.visibility != 'soft_deleted'
+                    ? whenLoggedIn(
+                        context,
+                        (body) async {
+                          final newPost = await api_posts.editPost(
                               context.read<SettingsController>().httpClient,
                               context.read<SettingsController>().instanceHost,
-                              _data!.postId,
-                            );
-                            _onUpdate(_data!.copyWith(
-                              body: '_post deleted_',
-                              uv: null,
-                              dv: null,
-                              favourites: null,
-                              visibility: 'soft_deleted',
-                            ));
-                          },
-                          matchesUsername: _data!.user.username,
-                        )
-                      : null,
-                ),
+                              _data.postId,
+                              body,
+                              _data.lang,
+                              _data.isAdult);
+                          _onUpdate(newPost);
+                        },
+                        matchesUsername: _data.user.username,
+                      )
+                    : null,
+                onDelete: _data.visibility != 'soft_deleted'
+                    ? whenLoggedIn(
+                        context,
+                        () async {
+                          await api_posts.deletePost(
+                            context.read<SettingsController>().httpClient,
+                            context.read<SettingsController>().instanceHost,
+                            _data.postId,
+                          );
+                          _onUpdate(_data.copyWith(
+                            body: '_post deleted_',
+                            uv: null,
+                            dv: null,
+                            favourites: null,
+                            visibility: 'soft_deleted',
+                          ));
+                        },
+                        matchesUsername: _data.user.username,
+                      )
+                    : null,
               ),
+            ),
             PagedSliverList<int, PostCommentModel>(
               pagingController: _pagingController,
               builderDelegate: PagedChildBuilderDelegate<PostCommentModel>(

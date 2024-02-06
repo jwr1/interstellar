@@ -26,7 +26,7 @@ class EntryPage extends StatefulWidget {
 }
 
 class _EntryPageState extends State<EntryPage> {
-  EntryModel? _data;
+  late EntryModel _data;
 
   CommentSort commentSort = CommentSort.hot;
 
@@ -55,7 +55,7 @@ class _EntryPageState extends State<EntryPage> {
       final newPage = await api_comments.fetchComments(
         context.read<SettingsController>().httpClient,
         context.read<SettingsController>().instanceHost,
-        _data!.entryId,
+        _data.entryId,
         page: pageKey,
         sort: commentSort,
       );
@@ -85,11 +85,27 @@ class _EntryPageState extends State<EntryPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_data == null) return const Center();
+    final currentCommentSortOption = commentSortSelect.getOption(commentSort);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_data?.title ?? ''),
+        title: ListTile(
+          contentPadding: EdgeInsets.zero,
+          title: Text(
+            _data.title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          subtitle: Row(
+            children: [
+              const Text('Comments'),
+              const SizedBox(width: 6),
+              Icon(currentCommentSortOption.icon, size: 20),
+              const SizedBox(width: 2),
+              Text(currentCommentSortOption.title),
+            ],
+          ),
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 8),
@@ -116,64 +132,63 @@ class _EntryPageState extends State<EntryPage> {
         ),
         child: CustomScrollView(
           slivers: [
-            if (_data != null)
-              SliverToBoxAdapter(
-                child: EntryItem(
-                  _data!,
-                  _onUpdate,
-                  onReply: whenLoggedIn(context, (body) async {
-                    var newComment = await api_comments.postComment(
-                      context.read<SettingsController>().httpClient,
-                      context.read<SettingsController>().instanceHost,
-                      body,
-                      _data!.entryId,
-                    );
-                    var newList = _pagingController.itemList;
-                    newList?.insert(0, newComment);
-                    setState(() {
-                      _pagingController.itemList = newList;
-                    });
-                  }),
-                  onEdit: _data!.visibility != 'soft_deleted'
-                      ? whenLoggedIn(
-                          context,
-                          (body) async {
-                            final newEntry = await api_entries.editEntry(
-                                context.read<SettingsController>().httpClient,
-                                context.read<SettingsController>().instanceHost,
-                                _data!.entryId,
-                                _data!.title,
-                                _data!.isOc,
-                                body,
-                                _data!.lang,
-                                _data!.isAdult);
-                            _onUpdate(newEntry);
-                          },
-                          matchesUsername: _data!.user.username,
-                        )
-                      : null,
-                  onDelete: _data!.visibility != 'soft_deleted'
-                      ? whenLoggedIn(
-                          context,
-                          () async {
-                            await api_entries.deletePost(
+            SliverToBoxAdapter(
+              child: EntryItem(
+                _data,
+                _onUpdate,
+                onReply: whenLoggedIn(context, (body) async {
+                  var newComment = await api_comments.postComment(
+                    context.read<SettingsController>().httpClient,
+                    context.read<SettingsController>().instanceHost,
+                    body,
+                    _data.entryId,
+                  );
+                  var newList = _pagingController.itemList;
+                  newList?.insert(0, newComment);
+                  setState(() {
+                    _pagingController.itemList = newList;
+                  });
+                }),
+                onEdit: _data.visibility != 'soft_deleted'
+                    ? whenLoggedIn(
+                        context,
+                        (body) async {
+                          final newEntry = await api_entries.editEntry(
                               context.read<SettingsController>().httpClient,
                               context.read<SettingsController>().instanceHost,
-                              _data!.entryId,
-                            );
-                            _onUpdate(_data!.copyWith(
-                              body: '_thread deleted_',
-                              uv: null,
-                              dv: null,
-                              favourites: null,
-                              visibility: 'soft_deleted',
-                            ));
-                          },
-                          matchesUsername: _data!.user.username,
-                        )
-                      : null,
-                ),
+                              _data.entryId,
+                              _data.title,
+                              _data.isOc,
+                              body,
+                              _data.lang,
+                              _data.isAdult);
+                          _onUpdate(newEntry);
+                        },
+                        matchesUsername: _data.user.username,
+                      )
+                    : null,
+                onDelete: _data.visibility != 'soft_deleted'
+                    ? whenLoggedIn(
+                        context,
+                        () async {
+                          await api_entries.deletePost(
+                            context.read<SettingsController>().httpClient,
+                            context.read<SettingsController>().instanceHost,
+                            _data.entryId,
+                          );
+                          _onUpdate(_data.copyWith(
+                            body: '_thread deleted_',
+                            uv: null,
+                            dv: null,
+                            favourites: null,
+                            visibility: 'soft_deleted',
+                          ));
+                        },
+                        matchesUsername: _data.user.username,
+                      )
+                    : null,
               ),
+            ),
             PagedSliverList<int, EntryCommentModel>(
               pagingController: _pagingController,
               builderDelegate: PagedChildBuilderDelegate<EntryCommentModel>(

@@ -14,27 +14,18 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentThemeMode = themeModeSelect.options.firstWhere(
-      (option) => option.value == controller.themeMode,
-    );
-    final currentTheme = themeSelect.options.firstWhere(
-      (option) => option.value == controller.themeAccent,
-    );
-    final currentDefaultFeedMode = feedModeSelect.options.firstWhere(
-      (option) => option.value == controller.defaultFeedMode,
-    );
-    final currentDefaultEntriesFeedSort = feedSortSelect.options.firstWhere(
-      (option) => option.value == controller.defaultEntriesFeedSort,
-    );
-    final currentDefaultPostsFeedSort = feedSortSelect.options.firstWhere(
-      (option) => option.value == controller.defaultPostsFeedSort,
-    );
-    final currentDefaultExploreFeedSort = feedSortSelect.options.firstWhere(
-      (option) => option.value == controller.defaultExploreFeedSort,
-    );
-    final currentDefaultCommentSort = commentSortSelect.options.firstWhere(
-      (option) => option.value == controller.defaultCommentSort,
-    );
+    final currentThemeMode = themeModeSelect.getOption(controller.themeMode);
+    final currentTheme = themeSelect.getOption(controller.themeAccent);
+    final currentDefaultFeedMode =
+        feedModeSelect.getOption(controller.defaultFeedMode);
+    final currentDefaultEntriesFeedSort =
+        feedSortSelect.getOption(controller.defaultEntriesFeedSort);
+    final currentDefaultPostsFeedSort =
+        feedSortSelect.getOption(controller.defaultPostsFeedSort);
+    final currentDefaultExploreFeedSort =
+        feedSortSelect.getOption(controller.defaultExploreFeedSort);
+    final currentDefaultCommentSort =
+        commentSortSelect.getOption(controller.defaultCommentSort);
 
     return Scaffold(
       appBar: AppBar(
@@ -55,7 +46,7 @@ class SettingsScreen extends StatelessWidget {
               controller.updateThemeMode(
                 await themeModeSelect.inquireSelection(
                   context,
-                  currentThemeMode.value,
+                  controller.themeMode,
                 ),
               );
             },
@@ -133,7 +124,7 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text('Default Posts Feed Sort'),
+            title: const Text('Default Microblog Feed Sort'),
             leading: const Icon(Icons.sort),
             onTap: () async {
               controller.updateDefaultPostsFeedSort(
@@ -154,7 +145,7 @@ class SettingsScreen extends StatelessWidget {
           ),
           ListTile(
             title: const Text('Default Explore Feed Sort'),
-            leading: const Icon(Icons.sort),
+            leading: const Icon(Icons.explore),
             onTap: () async {
               controller.updateDefaultExploreFeedSort(
                 await feedSortSelect.inquireSelection(
