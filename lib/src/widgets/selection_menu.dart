@@ -4,11 +4,13 @@ class SelectionMenuItem<T> {
   final T value;
   final String title;
   final IconData icon;
+  final Color? iconColor;
 
   const SelectionMenuItem({
     required this.value,
     required this.title,
     required this.icon,
+    this.iconColor,
   });
 }
 
@@ -39,7 +41,7 @@ class SelectionMenu<T> {
               ...options.map((option) => ListTile(
                     title: Text(option.title),
                     onTap: () => Navigator.pop(context, option.value),
-                    leading: Icon(option.icon),
+                    leading: Icon(option.icon, color: option.iconColor),
                     selected: oldSelection == option.value,
                     selectedTileColor: Theme.of(context)
                         .colorScheme

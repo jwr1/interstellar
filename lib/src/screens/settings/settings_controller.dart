@@ -13,9 +13,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SettingsController with ChangeNotifier {
   late ThemeMode _themeMode;
   ThemeMode get themeMode => _themeMode;
-  late String _themeAccent;
-  String get themeAccent => _themeAccent;
-  ThemeInfo get theme => themes[_themeAccent]!;
+  late bool _useDynamicColor;
+  bool get useDynamicColor => _useDynamicColor;
+  late String _accentColor;
+  String get accentColor => _accentColor;
+  ThemeInfo get theme =>
+      themes.firstWhere((theme) => theme.name == _accentColor);
   late FeedMode _defaultFeedMode;
   FeedMode get defaultFeedMode => _defaultFeedMode;
   late FeedSort _defaultEntriesFeedSort;
@@ -45,8 +48,11 @@ class SettingsController with ChangeNotifier {
     _themeMode = prefs.getString('themeMode') != null
         ? ThemeMode.values.byName(prefs.getString("themeMode")!)
         : ThemeMode.system;
-    _themeAccent = prefs.getString("themeAccent") != null
-        ? prefs.getString("themeAccent")!
+    _useDynamicColor = prefs.getBool("useDynamicColor") != null
+        ? prefs.getBool("useDynamicColor")!
+        : true;
+    _accentColor = prefs.getString("accentColor") != null
+        ? prefs.getString("accentColor")!
         : "Default";
     _defaultFeedMode = prefs.getString('defaultFeedMode') != null
         ? FeedMode.values.byName(prefs.getString("defaultFeedMode")!)
@@ -91,17 +97,30 @@ class SettingsController with ChangeNotifier {
     await prefs.setString('themeMode', newThemeMode.name);
   }
 
-  Future<void> updateThemeAccent(String? newThemeAccent) async {
-    if (newThemeAccent == null) return;
+  Future<void> updateUseDynamicColor(bool? newUseDynamicColor) async {
+    if (newUseDynamicColor == null) return;
 
-    if (newThemeAccent == _themeAccent) return;
+    if (newUseDynamicColor == _useDynamicColor) return;
 
-    _themeAccent = newThemeAccent;
+    _useDynamicColor = newUseDynamicColor;
 
     notifyListeners();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('themeAccent', newThemeAccent);
+    await prefs.setBool('useDynamicColor', newUseDynamicColor);
+  }
+
+  Future<void> updateAccentColor(String? newThemeAccent) async {
+    if (newThemeAccent == null) return;
+
+    if (newThemeAccent == _accentColor) return;
+
+    _accentColor = newThemeAccent;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('accentColor', newThemeAccent);
   }
 
   Future<void> updateDefaultFeedMode(FeedMode? newDefaultFeedMode) async {

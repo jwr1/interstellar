@@ -15,7 +15,7 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentThemeMode = themeModeSelect.getOption(controller.themeMode);
-    final currentTheme = themeSelect.getOption(controller.themeAccent);
+    final currentTheme = themeSelect.getOption(controller.accentColor);
     final currentDefaultFeedMode =
         feedModeSelect.getOption(controller.defaultFeedMode);
     final currentDefaultEntriesFeedSort =
@@ -41,7 +41,7 @@ class SettingsScreen extends StatelessWidget {
           ),
           ListTile(
             title: const Text('Theme Mode'),
-            leading: const Icon(Icons.palette),
+            leading: const Icon(Icons.brightness_medium),
             onTap: () async {
               controller.updateThemeMode(
                 await themeModeSelect.inquireSelection(
@@ -60,10 +60,21 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text('Theme Accent Color'),
+            title: const Text('Use Dynamic Color'),
+            leading: const Icon(Icons.auto_awesome_rounded),
+            onTap: () {
+              controller.updateUseDynamicColor(!controller.useDynamicColor);
+            },
+            trailing: Switch(
+              value: controller.useDynamicColor,
+              onChanged: controller.updateUseDynamicColor,
+            ),
+          ),
+          ListTile(
+            title: const Text('Accent Color'),
             leading: const Icon(Icons.palette),
             onTap: () async {
-              controller.updateThemeAccent(
+              controller.updateAccentColor(
                 await themeSelect.inquireSelection(
                   context,
                   currentTheme.value,
@@ -73,11 +84,12 @@ class SettingsScreen extends StatelessWidget {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(currentTheme.icon),
+                Icon(currentTheme.icon, color: currentTheme.iconColor),
                 const SizedBox(width: 4),
                 Text(currentTheme.title),
               ],
             ),
+            enabled: !controller.useDynamicColor,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
@@ -266,10 +278,12 @@ const SelectionMenu<ThemeMode> themeModeSelect = SelectionMenu(
 
 SelectionMenu<String> themeSelect = SelectionMenu(
   "Theme Accent Color",
-  themes.entries
+  themes
       .map((themeInfo) => SelectionMenuItem(
-          value: themeInfo.value.name,
-          title: themeInfo.value.name,
-          icon: Icons.palette))
+            value: themeInfo.name,
+            title: themeInfo.name,
+            icon: Icons.brightness_1,
+            iconColor: themeInfo.lightMode?.primary,
+          ))
       .toList(),
 );

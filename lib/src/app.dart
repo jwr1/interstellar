@@ -55,19 +55,21 @@ class _MyAppState extends State<MyApp> {
                   Locale('en', ''),
                 ],
                 onGenerateTitle: (BuildContext context) =>
-                AppLocalizations.of(context)!.appTitle,
+                    AppLocalizations.of(context)!.appTitle,
                 theme: ThemeData(
-                  colorScheme: widget.settingsController.theme.name == "Dynamic"
-                      ? lightColourScheme ?? widget.settingsController.theme.lightMode
+                  colorScheme: widget.settingsController.useDynamicColor &&
+                          lightColourScheme != null
+                      ? lightColourScheme
                       : widget.settingsController.theme.lightMode,
-                  useMaterial3: true
+                  useMaterial3: true,
                 ),
                 darkTheme: ThemeData(
                   brightness: Brightness.dark,
-                  colorScheme: widget.settingsController.theme.name == "Dynamic"
-                      ? darkColourScheme ?? widget.settingsController.theme.darkMode
+                  colorScheme: widget.settingsController.useDynamicColor &&
+                          darkColourScheme != null
+                      ? darkColourScheme
                       : widget.settingsController.theme.darkMode,
-                  useMaterial3: true
+                  useMaterial3: true,
                 ),
                 themeMode: widget.settingsController.themeMode,
                 scaffoldMessengerKey: scaffoldMessengerKey,
@@ -76,42 +78,42 @@ class _MyAppState extends State<MyApp> {
                     return Scaffold(
                       bottomNavigationBar: orientation == Orientation.portrait
                           ? NavigationBar(
-                        destinations: [
-                          const NavigationDestination(
-                              label: 'Feed',
-                              icon: Icon(Icons.feed_outlined),
-                              selectedIcon: Icon(Icons.feed)),
-                          const NavigationDestination(
-                              label: 'Explore',
-                              icon: Icon(Icons.explore_outlined),
-                              selectedIcon: Icon(Icons.explore)),
-                          NavigationDestination(
-                            label: 'Profile',
-                            icon: Wrapper(
-                              shouldWrap: context
-                                  .watch<SettingsController>()
-                                  .isLoggedIn,
-                              parentBuilder: (child) =>
-                                  NotificationBadge(child: child),
-                              child: const Icon(Icons.person_outlined),
-                            ),
-                            selectedIcon: Wrapper(
-                              shouldWrap: context
-                                  .watch<SettingsController>()
-                                  .isLoggedIn,
-                              parentBuilder: (child) =>
-                                  NotificationBadge(child: child),
-                              child: const Icon(Icons.person),
-                            ),
-                          ),
-                          const NavigationDestination(
-                              label: 'Settings',
-                              icon: Icon(Icons.settings_outlined),
-                              selectedIcon: Icon(Icons.settings)),
-                        ],
-                        selectedIndex: _navIndex,
-                        onDestinationSelected: _changeNav,
-                      )
+                              destinations: [
+                                const NavigationDestination(
+                                    label: 'Feed',
+                                    icon: Icon(Icons.feed_outlined),
+                                    selectedIcon: Icon(Icons.feed)),
+                                const NavigationDestination(
+                                    label: 'Explore',
+                                    icon: Icon(Icons.explore_outlined),
+                                    selectedIcon: Icon(Icons.explore)),
+                                NavigationDestination(
+                                  label: 'Profile',
+                                  icon: Wrapper(
+                                    shouldWrap: context
+                                        .watch<SettingsController>()
+                                        .isLoggedIn,
+                                    parentBuilder: (child) =>
+                                        NotificationBadge(child: child),
+                                    child: const Icon(Icons.person_outlined),
+                                  ),
+                                  selectedIcon: Wrapper(
+                                    shouldWrap: context
+                                        .watch<SettingsController>()
+                                        .isLoggedIn,
+                                    parentBuilder: (child) =>
+                                        NotificationBadge(child: child),
+                                    child: const Icon(Icons.person),
+                                  ),
+                                ),
+                                const NavigationDestination(
+                                    label: 'Settings',
+                                    icon: Icon(Icons.settings_outlined),
+                                    selectedIcon: Icon(Icons.settings)),
+                              ],
+                              selectedIndex: _navIndex,
+                              onDestinationSelected: _changeNav,
+                            )
                           : null,
                       body: Row(children: [
                         if (orientation == Orientation.landscape)
@@ -160,11 +162,11 @@ class _MyAppState extends State<MyApp> {
                           ),
                         Expanded(
                             child: [
-                              const FeedScreen(),
-                              const ExploreScreen(),
-                              const ProfileScreen(),
-                              SettingsScreen(controller: widget.settingsController)
-                            ][_navIndex])
+                          const FeedScreen(),
+                          const ExploreScreen(),
+                          const ProfileScreen(),
+                          SettingsScreen(controller: widget.settingsController)
+                        ][_navIndex])
                       ]),
                     );
                   },

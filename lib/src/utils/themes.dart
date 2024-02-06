@@ -74,15 +74,9 @@ class ThemeInfo {
   );
 }
 
-final Map<String, ThemeInfo> themes = {
-  "Default": ThemeInfo(
-      "Default"
-  ),
-  "Dynamic": ThemeInfo(
-      "Dynamic"
-  ),
-  "Catppuccin": ThemeInfo(
-      "Catppuccin",
+final List<ThemeInfo> themes = [
+  ThemeInfo("Default"),
+  ThemeInfo("Catppuccin",
       lightMode: const ColorScheme(
         brightness: Brightness.light,
         primary: Color(0xFFDCE0E8),
@@ -108,21 +102,18 @@ final Map<String, ThemeInfo> themes = {
         onBackground: Color(0xFFCDD6F4),
         surface: Color(0xFF313244),
         onSurface: Color(0xFFCDD6F4),
-      )
-  ),
-  "Blue": ThemeInfo(
+      )),
+  ThemeInfo(
     "Blue",
     lightMode: ColorScheme.fromSwatch(
-        primarySwatch: Colors.blue,
-        backgroundColor: const Color(0xFFFFFBFE)
-    ),
+        primarySwatch: Colors.blue, backgroundColor: const Color(0xFFFFFBFE)),
     darkMode: ColorScheme.fromSwatch(
       primarySwatch: Colors.blue,
       backgroundColor: const Color(0xFF1C1B1F),
       brightness: Brightness.dark,
     ),
   ),
-  "Purple": ThemeInfo(
+  ThemeInfo(
     "Purple",
     lightMode: ColorScheme.fromSwatch(
       primarySwatch: Colors.purple,
@@ -132,7 +123,7 @@ final Map<String, ThemeInfo> themes = {
       brightness: Brightness.dark,
     ),
   ),
-  "Red": ThemeInfo(
+  ThemeInfo(
     "Red",
     lightMode: ColorScheme.fromSwatch(
       primarySwatch: Colors.red,
@@ -142,7 +133,7 @@ final Map<String, ThemeInfo> themes = {
       brightness: Brightness.dark,
     ),
   ),
-  "Amber": ThemeInfo(
+  ThemeInfo(
     "Amber",
     lightMode: ColorScheme.fromSwatch(
       primarySwatch: Colors.amber,
@@ -152,4 +143,4 @@ final Map<String, ThemeInfo> themes = {
       brightness: Brightness.dark,
     ),
   ),
-};
+];
