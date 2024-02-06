@@ -49,7 +49,6 @@ class ContentItem extends StatefulWidget {
   final Future<void> Function(String)? onReply;
   final Future<void> Function(String)? onEdit;
   final Future<void> Function()? onDelete;
-  final Future<void> Function()? onGoToOP;
 
   final bool isCollapsed;
   final void Function()? onCollapse;
@@ -85,7 +84,6 @@ class ContentItem extends StatefulWidget {
       this.onReply,
       this.onEdit,
       this.onDelete,
-      this.onGoToOP,
       this.isCollapsed = false,
       this.onCollapse,
       super.key});
@@ -221,11 +219,10 @@ class _ContentItemState extends State<ContentItem> {
                 children: [
                   if (!widget.showMagazineFirst && userWidget != null)
                     userWidget,
-                  if (!widget.showMagazineFirst && widget.opUserId == widget.userIdOnClick)
+                  if (!widget.showMagazineFirst &&
+                      widget.opUserId == widget.userIdOnClick)
                     const Padding(
-                      padding: EdgeInsets.only(right: 10),
-                      child: Text("OP")
-                    ),
+                        padding: EdgeInsets.only(right: 10), child: Text("OP")),
                   if (widget.showMagazineFirst && magazineWidget != null)
                     magazineWidget,
                   if (widget.createdAt != null)
@@ -238,11 +235,10 @@ class _ContentItemState extends State<ContentItem> {
                     ),
                   if (widget.showMagazineFirst && userWidget != null)
                     userWidget,
-                  if (widget.showMagazineFirst && widget.opUserId == widget.userIdOnClick)
+                  if (widget.showMagazineFirst &&
+                      widget.opUserId == widget.userIdOnClick)
                     const Padding(
-                        padding: EdgeInsets.only(right: 10),
-                        child: Text("OP")
-                    ),
+                        padding: EdgeInsets.only(right: 10), child: Text("OP")),
                   if (!widget.showMagazineFirst && magazineWidget != null)
                     magazineWidget,
                   if (widget.domain != null)
@@ -309,51 +305,44 @@ class _ContentItemState extends State<ContentItem> {
                             ? const Icon(Icons.expand_more)
                             : const Icon(Icons.expand_less)),
                   const Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 12),
-                    child: MenuAnchor(
-                        builder: (BuildContext context,
-                            MenuController controller, Widget? child) {
-                          return IconButton(
-                            icon: const Icon(Icons.more_vert),
-                            onPressed: () {
-                              if (_menuController.isOpen) {
-                                _menuController.close();
-                              } else {
-                                _menuController.open();
-                              }
-                            },
-                          );
-                        },
-                        controller: _menuController,
-                        menuChildren: [
-                          MenuItemButton(
-                            onPressed: widget.onEdit != null
-                                ? () => setState(() {
-                                      _editTextController =
-                                          TextEditingController();
-                                    })
-                                : null,
-                            child: const Padding(
-                                padding: EdgeInsets.all(12),
-                                child: Text("Edit")),
-                          ),
-                          MenuItemButton(
-                            onPressed: widget.onDelete,
-                            child: const Padding(
-                                padding: EdgeInsets.all(12),
-                                child: Text("Delete")),
-                          ),
-                          if (widget.onGoToOP != null)
+                  if (widget.onEdit != null || widget.onDelete != null)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 12),
+                      child: MenuAnchor(
+                          builder: (BuildContext context,
+                              MenuController controller, Widget? child) {
+                            return IconButton(
+                              icon: const Icon(Icons.more_vert),
+                              onPressed: () {
+                                if (_menuController.isOpen) {
+                                  _menuController.close();
+                                } else {
+                                  _menuController.open();
+                                }
+                              },
+                            );
+                          },
+                          controller: _menuController,
+                          menuChildren: [
                             MenuItemButton(
-                              onPressed: widget.onGoToOP,
+                              onPressed: widget.onEdit != null
+                                  ? () => setState(() {
+                                        _editTextController =
+                                            TextEditingController();
+                                      })
+                                  : null,
                               child: const Padding(
-                                padding: EdgeInsets.all(12),
-                                child: Text("Go To OP")
-                              )
+                                  padding: EdgeInsets.all(12),
+                                  child: Text("Edit")),
                             ),
-                        ]),
-                  ),
+                            MenuItemButton(
+                              onPressed: widget.onDelete,
+                              child: const Padding(
+                                  padding: EdgeInsets.all(12),
+                                  child: Text("Delete")),
+                            ),
+                          ]),
+                    ),
                   if (widget.boosts != null)
                     Padding(
                       padding: const EdgeInsets.only(left: 12),

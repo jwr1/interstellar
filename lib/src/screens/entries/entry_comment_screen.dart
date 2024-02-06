@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/api/entries.dart' as api_entries;
 import 'package:interstellar/src/api/entry_comments.dart';
 import 'package:interstellar/src/models/entry_comment.dart';
 import 'package:interstellar/src/screens/entries/entry_comment.dart';
+import 'package:interstellar/src/screens/entries/entry_page.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:provider/provider.dart';
 
@@ -43,17 +45,75 @@ class _EntryCommentScreenState extends State<EntryCommentScreen> {
       body: _comment != null
           ? ListView(
               children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: OutlinedButton(
+                        onPressed: () async {
+                          final parentEntry = await api_entries.fetchEntry(
+                            context.read<SettingsController>().httpClient,
+                            context.read<SettingsController>().instanceHost,
+                            _comment!.entryId,
+                          );
+                          if (!mounted) return;
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(builder: (context) {
+                            return EntryPage(parentEntry, (newPage) {});
+                          }));
+                        },
+                        child: const Text('Open OP'),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: OutlinedButton(
+                        onPressed: _comment!.rootId != null
+                            ? () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(builder: (context) {
+                                    return EntryCommentScreen(
+                                      _comment!.rootId!,
+                                    );
+                                  }),
+                                );
+                              }
+                            : null,
+                        child: const Text('Open Root'),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: OutlinedButton(
+                        onPressed: _comment!.parentId != null
+                            ? () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(builder: (context) {
+                                    return EntryCommentScreen(
+                                      _comment!.parentId!,
+                                    );
+                                  }),
+                                );
+                              }
+                            : null,
+                        child: const Text('Open Parent'),
+                      ),
+                    ),
+                  ],
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
                     vertical: 4,
                   ),
                   child: EntryComment(
-                      _comment!,
-                      (newComment) => setState(() {
-                            _comment = newComment;
-                          }),
-                      opUserId: widget.opUserId),
+                    _comment!,
+                    (newComment) => setState(() {
+                      _comment = newComment;
+                    }),
+                    opUserId: widget.opUserId,
+                  ),
                 )
               ],
             )
