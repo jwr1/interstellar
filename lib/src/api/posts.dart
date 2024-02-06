@@ -31,6 +31,21 @@ Future<PostListModel> fetchPosts(
       jsonDecode(response.body) as Map<String, dynamic>);
 }
 
+Future<PostModel> fetchPost(
+    http.Client client,
+    String instanceHost,
+    int postId
+) async {
+  final response = await client.get(Uri.https(
+      instanceHost,
+    '/api/post/$postId'
+  ));
+
+  httpErrorHandler(response, message: 'Failed to load posts');
+
+  return PostModel.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+}
+
 Future<PostModel> putVote(
   http.Client client,
   String instanceHost,

@@ -28,6 +28,21 @@ Future<EntryListModel> fetchEntries(
       jsonDecode(response.body) as Map<String, dynamic>);
 }
 
+Future<EntryModel> fetchEntry(
+    http.Client client,
+    String instanceHost,
+    int entryId
+) async {
+  final response = await client.get(Uri.https(
+    instanceHost,
+    '/api/entry/$entryId',
+  ));
+
+  httpErrorHandler(response, message: 'Failed to load entries');
+
+  return EntryModel.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+}
+
 Future<EntryModel> putVote(
   http.Client client,
   String instanceHost,
