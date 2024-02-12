@@ -10,12 +10,14 @@ class Avatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CircleAvatar(
-      radius: radius != null && borderRadius != null ? radius! + borderRadius! : radius,
-      child: CircleAvatar(
-        backgroundColor: url != null ? Colors.transparent : null,
-        backgroundImage: url != null ? NetworkImage(url!) : null,
-        radius: radius,
-      )
+        radius: radius != null && borderRadius != null ? radius! + borderRadius! : radius,
+        backgroundColor: radius == null || borderRadius == null ? Colors.transparent : null,
+        child: CircleAvatar(
+          backgroundColor: Colors.transparent,
+          foregroundImage: url != null ? NetworkImage(url!) : null,
+          backgroundImage: url == null ? const AssetImage('assets/icons/logo.png') : null,
+          radius: radius,
+        )
     );
   }
 }
