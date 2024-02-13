@@ -58,6 +58,9 @@ class _EntryPageState extends State<EntryPage> {
         _data.entryId,
         page: pageKey,
         sort: commentSort,
+        usePreferredLangs: whenLoggedIn(
+            context, context.read<SettingsController>().useAccountLangFilter),
+        langs: context.read<SettingsController>().langFilter.toList(),
       );
 
       // Check BuildContext

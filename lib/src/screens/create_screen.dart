@@ -4,6 +4,7 @@ import 'package:interstellar/src/api/entries.dart' as api_entries;
 import 'package:interstellar/src/api/magazines.dart' as api_magazines;
 import 'package:interstellar/src/api/posts.dart' as api_posts;
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/utils/language_codes.dart';
 import 'package:interstellar/src/widgets/image_selector.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:provider/provider.dart';
@@ -35,6 +36,15 @@ class _CreateScreenState extends State<CreateScreen> {
   bool _isOc = false;
   bool _isAdult = false;
   XFile? _imageFile;
+  String _lang = '';
+
+  @override
+  void initState() {
+    super.initState();
+
+    _lang = context.read<SettingsController>().defaultCreateLang;
+    _magazineTextController.text = widget.magazineName ?? '';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +87,7 @@ class _CreateScreenState extends State<CreateScreen> {
                           title: _titleTextController.text,
                           isOc: _isOc,
                           body: _bodyTextController.text,
-                          lang: 'en',
+                          lang: _lang,
                           isAdult: _isAdult,
                           tags: tags,
                         );
@@ -91,7 +101,7 @@ class _CreateScreenState extends State<CreateScreen> {
                           alt: "",
                           isOc: _isOc,
                           body: _bodyTextController.text,
-                          lang: 'en',
+                          lang: _lang,
                           isAdult: _isAdult,
                           tags: tags,
                         );
@@ -105,7 +115,7 @@ class _CreateScreenState extends State<CreateScreen> {
                         url: _urlTextController.text,
                         isOc: _isOc,
                         body: _bodyTextController.text,
-                        lang: 'en',
+                        lang: _lang,
                         isAdult: _isAdult,
                         tags: tags,
                       );
@@ -117,7 +127,7 @@ class _CreateScreenState extends State<CreateScreen> {
                         instanceHost,
                         magazineId,
                         body: _bodyTextController.text,
-                        lang: 'en',
+                        lang: _lang,
                         isAdult: _isAdult,
                       );
                     } else {
@@ -128,7 +138,7 @@ class _CreateScreenState extends State<CreateScreen> {
                         image: _imageFile!,
                         alt: "",
                         body: _bodyTextController.text,
-                        lang: 'en',
+                        lang: _lang,
                         isAdult: _isAdult,
                       );
                     }
@@ -180,23 +190,23 @@ class _CreateScreenState extends State<CreateScreen> {
                               onChanged: (_) => setState(() {}),
                             ),
                           ),
-                        if (_bodyTextController.text.isEmpty &&
-                            _urlTextController.text.isEmpty)
-                          ImageSelector(
-                            _imageFile,
-                            (file) => setState(() {
-                              _imageFile = file;
-                            }),
-                          )
+                        ImageSelector(
+                          _imageFile,
+                          (file) => setState(() {
+                            _imageFile = file;
+                          }),
+                          enabled: _bodyTextController.text.isEmpty &&
+                              _urlTextController.text.isEmpty,
+                        )
                       ],
                     ),
                   ),
                 if (widget.type == CreateType.post)
                   ImageSelector(
                     _imageFile,
-                      (file) => setState(() {
-                        _imageFile = file;
-                      }),
+                    (file) => setState(() {
+                      _imageFile = file;
+                    }),
                   ),
                 if (widget.type != CreateType.post)
                   Padding(
@@ -210,7 +220,7 @@ class _CreateScreenState extends State<CreateScreen> {
                 Padding(
                   padding: const EdgeInsets.all(5),
                   child: TextEditor(
-                    _magazineTextController..text = widget.magazineName ?? '',
+                    _magazineTextController,
                     label: 'Magazine',
                   ),
                 ),
@@ -230,6 +240,26 @@ class _CreateScreenState extends State<CreateScreen> {
                     _isAdult = newValue!;
                   }),
                   controlAffinity: ListTileControlAffinity.leading,
+                ),
+                ListTile(
+                  title: const Text('Language'),
+                  onTap: () async {
+                    final newLang =
+                        await languageSelectionMenu.inquireSelection(
+                      context,
+                      _lang,
+                    );
+
+                    if (newLang != null) {
+                      setState(() {
+                        _lang = newLang;
+                      });
+                    }
+                  },
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [Text(getLangName(_lang))],
+                  ),
                 ),
               ],
             ),

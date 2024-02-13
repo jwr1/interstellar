@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class SelectionMenuItem<T> {
   final T value;
   final String title;
-  final IconData icon;
+  final IconData? icon;
   final Color? iconColor;
 
   const SelectionMenuItem({
     required this.value,
     required this.title,
-    required this.icon,
+    this.icon,
     this.iconColor,
   });
 }
@@ -28,27 +28,34 @@ class SelectionMenu<T> {
         context: context,
         builder: (BuildContext context) {
           return Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
+            children: [
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(12),
                 child: Text(
                   title,
                   style: Theme.of(context).textTheme.titleLarge,
+                  textAlign: TextAlign.center,
                 ),
               ),
-              ...options.map((option) => ListTile(
-                    title: Text(option.title),
-                    onTap: () => Navigator.pop(context, option.value),
-                    leading: Icon(option.icon, color: option.iconColor),
-                    selected: oldSelection == option.value,
-                    selectedTileColor: Theme.of(context)
-                        .colorScheme
-                        .primaryContainer
-                        .withOpacity(0.2),
-                  )),
-              const SizedBox(height: 24),
+              Flexible(
+                child: ListView(shrinkWrap: true, children: [
+                  ...options.map(
+                    (option) => ListTile(
+                      title: Text(option.title),
+                      onTap: () => Navigator.pop(context, option.value),
+                      leading: Icon(option.icon, color: option.iconColor),
+                      selected: oldSelection == option.value,
+                      selectedTileColor: Theme.of(context)
+                          .colorScheme
+                          .primaryContainer
+                          .withOpacity(0.2),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ]),
+              ),
             ],
           );
         },

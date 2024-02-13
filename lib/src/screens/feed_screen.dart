@@ -301,6 +301,9 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
             widget.source,
             page: pageKey,
             sort: widget.sort,
+            usePreferredLangs: whenLoggedIn(context,
+                context.read<SettingsController>().useAccountLangFilter),
+            langs: context.read<SettingsController>().langFilter.toList(),
           ),
         FeedMode.posts => api_posts.fetchPosts(
             context.read<SettingsController>().httpClient,
@@ -308,6 +311,9 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
             widget.source,
             page: pageKey,
             sort: widget.sort,
+            usePreferredLangs: whenLoggedIn(context,
+                context.read<SettingsController>().useAccountLangFilter),
+            langs: context.read<SettingsController>().langFilter.toList(),
           ),
       });
 

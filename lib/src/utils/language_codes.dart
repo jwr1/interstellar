@@ -1,3 +1,5 @@
+import 'package:interstellar/src/widgets/selection_menu.dart';
+
 const languageCodes = {
   'ab': 'Abkhazian',
   'aa': 'Afar',
@@ -183,3 +185,12 @@ const languageCodes = {
   'za': 'Zhuang',
   'zu': 'Zulu',
 };
+
+String getLangName(String langCode) => languageCodes[langCode] ?? langCode;
+
+final languageSelectionMenu = SelectionMenu<String>(
+  'Languages',
+  languageCodes.entries
+      .map((e) => SelectionMenuItem(value: e.key, title: e.value))
+      .toList(),
+);
