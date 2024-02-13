@@ -19,26 +19,27 @@ class SearchList {
 }
 
 Future<SearchList> search(
-    http.Client client,
-    String instanceHost, {
-      int? page,
-      String? search,
-    }) async {
+  http.Client client,
+  String instanceHost, {
+  int? page,
+  String? search,
+}) async {
   final response = await client.get(Uri.https(
-      instanceHost,
-      '/api/search',
-      removeNulls({'p': page?.toString(), 'q': search})));
+    instanceHost,
+    '/api/search',
+    queryParams({'p': page?.toString(), 'q': search}),
+  ));
 
   httpErrorHandler(response, message: 'Failed to load search');
 
   var json = jsonDecode(response.body) as Map<String, dynamic>;
-  
+
   var searchList = SearchList([], PaginationModel.fromJson(json['pagination']));
   for (var actor in json['apActors']) {
     var type = actor['type'];
     if (type == 'user') {
-      searchList.items.add(DetailedUserModel.fromJson(
-          actor['object'] as Map<String, dynamic>));
+      searchList.items.add(
+          DetailedUserModel.fromJson(actor['object'] as Map<String, dynamic>));
     } else if (type == 'magazine') {
       searchList.items.add(DetailedMagazineModel.fromJson(
           actor['object'] as Map<String, dynamic>));
@@ -47,17 +48,15 @@ Future<SearchList> search(
   for (var item in json['items']) {
     var itemType = item['itemType'];
     if (itemType == 'entry') {
-      searchList.items.add(EntryModel.fromJson(
-          item as Map<String, dynamic>));
+      searchList.items.add(EntryModel.fromJson(item as Map<String, dynamic>));
     } else if (itemType == 'entry_comment') {
-      searchList.items.add(EntryCommentModel.fromJson(
-          item as Map<String, dynamic>));
+      searchList.items
+          .add(EntryCommentModel.fromJson(item as Map<String, dynamic>));
     } else if (itemType == 'post') {
-      searchList.items.add(PostModel.fromJson(
-        item as Map<String, dynamic>));
+      searchList.items.add(PostModel.fromJson(item as Map<String, dynamic>));
     } else if (itemType == 'post_comment') {
-      searchList.items.add(PostCommentModel.fromJson(
-          item as Map<String, dynamic>));
+      searchList.items
+          .add(PostCommentModel.fromJson(item as Map<String, dynamic>));
     }
   }
 

@@ -15,11 +15,18 @@ Future<EntryListModel> fetchEntries(
   FeedSource source, {
   int? page,
   FeedSort? sort,
+  List<String>? langs,
+  bool? usePreferredLangs,
 }) async {
   final response = await client.get(Uri.https(
     instanceHost,
     source.getEntriesPath(),
-    removeNulls({'p': page?.toString(), 'sort': sort?.name}),
+    queryParams({
+      'p': page?.toString(),
+      'sort': sort?.name,
+      'lang': langs?.join(','),
+      'usePreferredLangs': (usePreferredLangs ?? false).toString(),
+    }),
   ));
 
   httpErrorHandler(response, message: 'Failed to load entries');
@@ -29,10 +36,7 @@ Future<EntryListModel> fetchEntries(
 }
 
 Future<EntryModel> fetchEntry(
-    http.Client client,
-    String instanceHost,
-    int entryId
-) async {
+    http.Client client, String instanceHost, int entryId) async {
   final response = await client.get(Uri.https(
     instanceHost,
     '/api/entry/$entryId',

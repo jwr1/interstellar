@@ -15,6 +15,8 @@ Future<PostListModel> fetchPosts(
   FeedSource source, {
   int? page,
   FeedSort? sort,
+  List<String>? langs,
+  bool? usePreferredLangs,
 }) async {
   if (source.getPostsPath() == null) {
     throw Exception('Failed to load posts');
@@ -23,7 +25,12 @@ Future<PostListModel> fetchPosts(
   final response = await client.get(Uri.https(
       instanceHost,
       source.getPostsPath()!,
-      removeNulls({'p': page?.toString(), 'sort': sort?.name})));
+      queryParams({
+        'p': page?.toString(),
+        'sort': sort?.name,
+        'lang': langs?.join(','),
+        'usePreferredLangs': (usePreferredLangs ?? false).toString(),
+      })));
 
   httpErrorHandler(response, message: 'Failed to load posts');
 
@@ -32,14 +39,9 @@ Future<PostListModel> fetchPosts(
 }
 
 Future<PostModel> fetchPost(
-    http.Client client,
-    String instanceHost,
-    int postId
-) async {
-  final response = await client.get(Uri.https(
-      instanceHost,
-    '/api/post/$postId'
-  ));
+    http.Client client, String instanceHost, int postId) async {
+  final response =
+      await client.get(Uri.https(instanceHost, '/api/post/$postId'));
 
   httpErrorHandler(response, message: 'Failed to load posts');
 
@@ -117,15 +119,15 @@ Future<PostModel> createPost(
 }
 
 Future<PostModel> createImage(
-    http.Client client,
-    String instanceHost,
-    int magazineID, {
-      required XFile image,
-      required String alt,
-      required String body,
-      required String lang,
-      required bool isAdult,
-    }) async {
+  http.Client client,
+  String instanceHost,
+  int magazineID, {
+  required XFile image,
+  required String alt,
+  required String body,
+  required String lang,
+  required bool isAdult,
+}) async {
   var request = http.MultipartRequest(
       'POST', Uri.https(instanceHost, '/api/magazine/$magazineID/posts/image'));
   var multipartFile = http.MultipartFile.fromBytes(

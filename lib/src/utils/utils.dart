@@ -65,13 +65,12 @@ void httpErrorHandler(http.Response response, {String? message}) {
   }
 }
 
-Map<String, dynamic> removeNulls(Map<String, dynamic> map) {
-  map.forEach((key, value) {
-    if (value == null) {
-      map.remove(key);
-    }
-  });
-  return map;
+Map<String, String> queryParams(Map<String, String?> map) {
+  return Map<String, String>.from(
+    Map.fromEntries(
+      map.entries.where((e) => (e.value != null && e.value!.isNotEmpty)),
+    ),
+  );
 }
 
 T? whenLoggedIn<T>(

@@ -58,6 +58,9 @@ class _PostPageState extends State<PostPage> {
         _data.postId,
         page: pageKey,
         sort: commentSort,
+        usePreferredLangs: whenLoggedIn(
+            context, context.read<SettingsController>().useAccountLangFilter),
+        langs: context.read<SettingsController>().langFilter.toList(),
       );
 
       // Check BuildContext

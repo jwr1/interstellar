@@ -11,11 +11,18 @@ Future<EntryCommentListModel> fetchComments(
   int entryId, {
   int? page,
   CommentSort? sort,
+  List<String>? langs,
+  bool? usePreferredLangs,
 }) async {
   final response = await client.get(Uri.https(
       instanceHost,
       '/api/entry/$entryId/comments',
-      removeNulls({'p': page?.toString(), 'sortBy': sort?.name})));
+      queryParams({
+        'p': page?.toString(),
+        'sortBy': sort?.name,
+        'lang': langs?.join(','),
+        'usePreferredLangs': (usePreferredLangs ?? false).toString(),
+      })));
 
   httpErrorHandler(response, message: 'Failed to load comments');
 

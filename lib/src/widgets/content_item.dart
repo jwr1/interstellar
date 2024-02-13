@@ -328,7 +328,8 @@ class _ContentItemState extends State<ContentItem> {
                               onPressed: widget.onEdit != null
                                   ? () => setState(() {
                                         _editTextController =
-                                            TextEditingController();
+                                            TextEditingController(
+                                                text: widget.body);
                                       })
                                   : null,
                               child: const Padding(
@@ -426,8 +427,7 @@ class _ContentItemState extends State<ContentItem> {
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
-                      TextEditor(_editTextController!..text = widget.body ?? '',
-                          isMarkdown: true),
+                      TextEditor(_editTextController!, isMarkdown: true),
                       const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,

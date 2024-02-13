@@ -19,6 +19,7 @@ class SettingsController with ChangeNotifier {
   String get accentColor => _accentColor;
   ThemeInfo get theme =>
       themes.firstWhere((theme) => theme.name == _accentColor);
+
   late FeedMode _defaultFeedMode;
   FeedMode get defaultFeedMode => _defaultFeedMode;
   late FeedSort _defaultEntriesFeedSort;
@@ -29,6 +30,13 @@ class SettingsController with ChangeNotifier {
   FeedSort get defaultExploreFeedSort => _defaultExploreFeedSort;
   late CommentSort _defaultCommentSort;
   CommentSort get defaultCommentSort => _defaultCommentSort;
+
+  late bool _useAccountLangFilter;
+  bool get useAccountLangFilter => _useAccountLangFilter;
+  late Set<String> _langFilter;
+  Set<String> get langFilter => _langFilter;
+  late String _defaultCreateLang;
+  String get defaultCreateLang => _defaultCreateLang;
 
   late Map<String, String> _oauthIdentifiers;
   late Map<String, oauth2.Credentials?> _oauthCredentials;
@@ -54,6 +62,7 @@ class SettingsController with ChangeNotifier {
     _accentColor = prefs.getString("accentColor") != null
         ? prefs.getString("accentColor")!
         : "Default";
+
     _defaultFeedMode = prefs.getString('defaultFeedMode') != null
         ? FeedMode.values.byName(prefs.getString("defaultFeedMode")!)
         : FeedMode.entries;
@@ -69,6 +78,16 @@ class SettingsController with ChangeNotifier {
     _defaultCommentSort = prefs.getString('defaultCommentSort') != null
         ? CommentSort.values.byName(prefs.getString("defaultCommentSort")!)
         : CommentSort.hot;
+
+    _useAccountLangFilter = prefs.getBool("useAccountLangFilter") != null
+        ? prefs.getBool("useAccountLangFilter")!
+        : true;
+    _langFilter = prefs.getStringList("langFilter") != null
+        ? prefs.getStringList("langFilter")!.toSet()
+        : {};
+    _defaultCreateLang = prefs.getString("defaultCreateLang") != null
+        ? prefs.getString("defaultCreateLang")!
+        : 'en';
 
     _oauthIdentifiers = (jsonDecode(prefs.getString('oauthIdentifiers') ?? '{}')
             as Map<String, dynamic>)
@@ -86,7 +105,6 @@ class SettingsController with ChangeNotifier {
 
   Future<void> updateThemeMode(ThemeMode? newThemeMode) async {
     if (newThemeMode == null) return;
-
     if (newThemeMode == _themeMode) return;
 
     _themeMode = newThemeMode;
@@ -99,7 +117,6 @@ class SettingsController with ChangeNotifier {
 
   Future<void> updateUseDynamicColor(bool? newUseDynamicColor) async {
     if (newUseDynamicColor == null) return;
-
     if (newUseDynamicColor == _useDynamicColor) return;
 
     _useDynamicColor = newUseDynamicColor;
@@ -112,7 +129,6 @@ class SettingsController with ChangeNotifier {
 
   Future<void> updateAccentColor(String? newThemeAccent) async {
     if (newThemeAccent == null) return;
-
     if (newThemeAccent == _accentColor) return;
 
     _accentColor = newThemeAccent;
@@ -125,7 +141,6 @@ class SettingsController with ChangeNotifier {
 
   Future<void> updateDefaultFeedMode(FeedMode? newDefaultFeedMode) async {
     if (newDefaultFeedMode == null) return;
-
     if (newDefaultFeedMode == _defaultFeedMode) return;
 
     _defaultFeedMode = newDefaultFeedMode;
@@ -139,7 +154,6 @@ class SettingsController with ChangeNotifier {
   Future<void> updateDefaultEntriesFeedSort(
       FeedSort? newDefaultFeedSort) async {
     if (newDefaultFeedSort == null) return;
-
     if (newDefaultFeedSort == _defaultEntriesFeedSort) return;
 
     _defaultEntriesFeedSort = newDefaultFeedSort;
@@ -152,7 +166,6 @@ class SettingsController with ChangeNotifier {
 
   Future<void> updateDefaultPostsFeedSort(FeedSort? newDefaultFeedSort) async {
     if (newDefaultFeedSort == null) return;
-
     if (newDefaultFeedSort == _defaultPostsFeedSort) return;
 
     _defaultPostsFeedSort = newDefaultFeedSort;
@@ -167,7 +180,6 @@ class SettingsController with ChangeNotifier {
     FeedSort? newDefaultExploreFeedSort,
   ) async {
     if (newDefaultExploreFeedSort == null) return;
-
     if (newDefaultExploreFeedSort == _defaultExploreFeedSort) return;
 
     _defaultExploreFeedSort = newDefaultExploreFeedSort;
@@ -183,7 +195,6 @@ class SettingsController with ChangeNotifier {
     CommentSort? newDefaultCommentSort,
   ) async {
     if (newDefaultCommentSort == null) return;
-
     if (newDefaultCommentSort == _defaultCommentSort) return;
 
     _defaultCommentSort = newDefaultCommentSort;
@@ -192,6 +203,62 @@ class SettingsController with ChangeNotifier {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('defaultCommentSort', newDefaultCommentSort.name);
+  }
+
+  Future<void> updateUseAccountLangFilter(
+    bool? newUseAccountLangFilter,
+  ) async {
+    if (newUseAccountLangFilter == null) return;
+    if (newUseAccountLangFilter == _useAccountLangFilter) return;
+
+    _useAccountLangFilter = newUseAccountLangFilter;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('useAccountLangFilter', newUseAccountLangFilter);
+  }
+
+  Future<void> addLangFilter(
+    String? newLangFilter,
+  ) async {
+    if (newLangFilter == null) return;
+    if (_langFilter.contains(newLangFilter)) return;
+
+    _langFilter.add(newLangFilter);
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('langFilter', _langFilter.toList());
+  }
+
+  Future<void> removeLangFilter(
+    String? oldLangFilter,
+  ) async {
+    if (oldLangFilter == null) return;
+    if (!_langFilter.contains(oldLangFilter)) return;
+
+    _langFilter.remove(oldLangFilter);
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('langFilter', _langFilter.toList());
+  }
+
+  Future<void> updateDefaultCreateLang(
+    String? newDefaultCreateLang,
+  ) async {
+    if (newDefaultCreateLang == null) return;
+    if (newDefaultCreateLang == _defaultCreateLang) return;
+
+    _defaultCreateLang = newDefaultCreateLang;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('defaultCreateLang', newDefaultCreateLang);
   }
 
   Future<String> getOAuthIdentifier(String instanceHost) async {
@@ -244,7 +311,6 @@ class SettingsController with ChangeNotifier {
 
   Future<void> setSelectedAccount(String? newSelectedAccount) async {
     if (newSelectedAccount == null) return;
-
     if (newSelectedAccount == _selectedAccount) return;
 
     _selectedAccount = newSelectedAccount;

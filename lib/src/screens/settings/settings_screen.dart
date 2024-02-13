@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/comment.dart';
 import 'package:interstellar/src/screens/feed_screen.dart';
 import 'package:interstellar/src/screens/settings/login.dart';
+import 'package:interstellar/src/utils/language_codes.dart';
 import 'package:interstellar/src/utils/themes.dart';
 import 'package:interstellar/src/widgets/selection_menu.dart';
 
@@ -193,6 +194,79 @@ class SettingsScreen extends StatelessWidget {
                 const SizedBox(width: 4),
                 Text(currentDefaultCommentSort.title),
               ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Text('Language',
+                style: Theme.of(context).textTheme.titleMedium),
+          ),
+          SwitchListTile(
+            title: const Text('Use Account Language Filter'),
+            subtitle: const Text(
+                'Please note: language filters only apply to "All" and explore feeds'),
+            value: controller.useAccountLangFilter,
+            onChanged: controller.updateUseAccountLangFilter,
+          ),
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  'Custom Language Filter',
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      color: controller.useAccountLangFilter
+                          ? Theme.of(context).disabledColor
+                          : null),
+                ),
+              ),
+              Flexible(
+                child: Wrap(
+                  children: [
+                    ...(controller.langFilter.map(
+                      (langCode) => Padding(
+                        padding: const EdgeInsets.all(2),
+                        child: InputChip(
+                          isEnabled: !controller.useAccountLangFilter,
+                          label: Text(getLangName(langCode)),
+                          onDeleted: () async {
+                            controller.removeLangFilter(langCode);
+                          },
+                        ),
+                      ),
+                    )),
+                    Padding(
+                      padding: const EdgeInsets.all(2),
+                      child: IconButton(
+                        onPressed: controller.useAccountLangFilter
+                            ? null
+                            : () async {
+                                controller.addLangFilter(
+                                  await languageSelectionMenu.inquireSelection(
+                                      context, null),
+                                );
+                              },
+                        icon: const Icon(Icons.add),
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+          ListTile(
+            title: const Text('Default Create Language'),
+            onTap: () async {
+              controller.updateDefaultCreateLang(
+                await languageSelectionMenu.inquireSelection(
+                  context,
+                  controller.defaultCreateLang,
+                ),
+              );
+            },
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [Text(getLangName(controller.defaultCreateLang))],
             ),
           ),
           Padding(

@@ -5,10 +5,16 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
 class ImageSelector extends StatefulWidget {
-  const ImageSelector(this.selected, this.onSelected, {super.key});
+  const ImageSelector(
+    this.selected,
+    this.onSelected, {
+    this.enabled = true,
+    super.key,
+  });
 
   final XFile? selected;
   final void Function(XFile?) onSelected;
+  final bool enabled;
 
   @override
   State<ImageSelector> createState() => _ImageSelectorState();
@@ -27,13 +33,15 @@ class _ImageSelectorState extends State<ImageSelector> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
                     child: IconButton(
-                      onPressed: () async {
-                        XFile? image = await _imagePicker.pickImage(
-                            source: ImageSource.gallery);
-                        if (image != null) {
-                          widget.onSelected(image);
-                        }
-                      },
+                      onPressed: widget.enabled
+                          ? () async {
+                              XFile? image = await _imagePicker.pickImage(
+                                  source: ImageSource.gallery);
+                              if (image != null) {
+                                widget.onSelected(image);
+                              }
+                            }
+                          : null,
                       tooltip: 'Upload from gallery',
                       iconSize: 35,
                       icon: const Icon(Icons.image),
@@ -43,13 +51,15 @@ class _ImageSelectorState extends State<ImageSelector> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
                       child: IconButton(
-                        onPressed: () async {
-                          XFile? image = await _imagePicker.pickImage(
-                              source: ImageSource.camera);
-                          if (image != null) {
-                            widget.onSelected(image);
-                          }
-                        },
+                        onPressed: widget.enabled
+                            ? () async {
+                                XFile? image = await _imagePicker.pickImage(
+                                    source: ImageSource.camera);
+                                if (image != null) {
+                                  widget.onSelected(image);
+                                }
+                              }
+                            : null,
                         tooltip: 'Upload from camera',
                         iconSize: 35,
                         icon: const Icon(Icons.camera),
