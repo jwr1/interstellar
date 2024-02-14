@@ -31,19 +31,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     icon: NotificationBadge(child: Icon(Icons.notifications)),
                   ),
                   Tab(
-                    text: 'Messages',
-                    icon: Icon(Icons.message),
-                  ),
-                  Tab(
                     text: 'Overview',
                     icon: Icon(Icons.person),
+                  ),
+                  Tab(
+                    text: 'Messages',
+                    icon: Icon(Icons.message),
                   ),
                 ]),
               ),
               body: const TabBarView(children: [
                 NotificationsScreen(),
-                MessagesScreen(),
                 SelfFeed(),
+                MessagesScreen(),
               ]),
             ),
           ),
