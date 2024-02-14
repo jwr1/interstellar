@@ -33,9 +33,12 @@ class MentionMarkdownSyntax extends markdown.InlineSyntax {
     /u/jwr1
     @jwr1@kbin.earth
     @jwr1
+
+    [name here](MENTION)
+    [name here](MENTION "title here")
   */
   static const String _pattern =
-      r'(?:(?:(?:https?:\/\/)?([a-zA-Z0-9][a-zA-Z0-9.-]*\.[a-zA-Z]{2,}))?\/([umc])\/@?|(@|!))([a-zA-Z0-9_]+)(?:@([a-zA-Z0-9][a-zA-Z0-9.-]*\.[a-zA-Z]{2,}))?';
+      r'(?:\[.*?\]\()?(?:(?:(?:https?:\/\/)?([a-zA-Z0-9][a-zA-Z0-9.-]*\.[a-zA-Z]{2,}))?\/([umc])\/@?|(@|!))([a-zA-Z0-9_]+)(?:@([a-zA-Z0-9][a-zA-Z0-9.-]*\.[a-zA-Z]{2,}))?(?:(?:\s*".*?")?\))?';
 
   MentionMarkdownSyntax() : super(_pattern);
 
