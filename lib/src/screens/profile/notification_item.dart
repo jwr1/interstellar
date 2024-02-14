@@ -8,6 +8,7 @@ import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/posts/post_comment_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
 import 'package:provider/provider.dart';
@@ -138,7 +139,7 @@ class NotificationItem extends StatelessWidget {
               if (body.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
-                  child: Markdown(body),
+                  child: Markdown(body, getNameHost(context, user.username)),
                 ),
             ],
           ),

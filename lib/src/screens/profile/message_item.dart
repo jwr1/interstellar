@@ -53,7 +53,8 @@ class MessageItem extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 8),
-                child: Markdown(item.messages.first.body),
+                child: Markdown(item.messages.first.body,
+                    context.read<SettingsController>().instanceHost),
               ),
             ],
           ),

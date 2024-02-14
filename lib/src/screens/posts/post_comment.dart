@@ -40,6 +40,8 @@ class _EntryCommentState extends State<PostComment> {
             parentBuilder: (child) =>
                 InkWell(onTap: widget.onClick, child: child),
             child: ContentItem(
+              originInstance:
+                  getNameHost(context, widget.comment.user.username),
               body: widget.comment.body ?? '_comment deleted_',
               createdAt: widget.comment.createdAt,
               user: widget.comment.user.username,

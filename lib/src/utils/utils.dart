@@ -89,3 +89,12 @@ T? whenLoggedIn<T>(
                     matchesUsername)
         ? value
         : otherwise;
+
+String getNameHost(BuildContext context, String username) {
+  username = username.startsWith('@') ? username.substring(1) : username;
+  final split = username.split('@');
+
+  return split.length > 1
+      ? split[1]
+      : context.read<SettingsController>().instanceHost;
+}

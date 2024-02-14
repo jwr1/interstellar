@@ -39,6 +39,20 @@ Future<DetailedUserModel> fetchUser(
       jsonDecode(response.body) as Map<String, dynamic>);
 }
 
+Future<DetailedUserModel> fetchUserByName(
+  http.Client client,
+  String instanceHost,
+  String username,
+) async {
+  final response =
+      await client.get(Uri.https(instanceHost, '/api/users/name/$username'));
+
+  httpErrorHandler(response, message: 'Failed to load user');
+
+  return DetailedUserModel.fromJson(
+      jsonDecode(response.body) as Map<String, dynamic>);
+}
+
 Future<DetailedUserModel> fetchMe(
   http.Client client,
   String instanceHost,

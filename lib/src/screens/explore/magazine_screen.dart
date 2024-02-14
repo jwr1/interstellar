@@ -100,7 +100,10 @@ class _MagazineScreenState extends State<MagazineScreen> {
                   if (_data!.description != null)
                     Padding(
                       padding: const EdgeInsets.only(top: 12),
-                      child: Markdown(_data!.description!),
+                      child: Markdown(
+                        _data!.description!,
+                        getNameHost(context, _data!.name),
+                      ),
                     )
                 ],
               ),

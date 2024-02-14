@@ -30,6 +30,7 @@ class EntryItem extends StatelessWidget {
     final isVideo = item.url != null && isSupportedVideo(item.url!);
 
     return ContentItem(
+      originInstance: getNameHost(context, item.user.username),
       title: item.title,
       image: item.image?.storageUrl,
       link: item.url != null ? Uri.parse(item.url!) : null,

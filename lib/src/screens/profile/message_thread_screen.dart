@@ -117,7 +117,8 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
-                    child: Markdown(message.body),
+                    child: Markdown(message.body,
+                        context.read<SettingsController>().instanceHost),
                   ),
                 ],
               ),

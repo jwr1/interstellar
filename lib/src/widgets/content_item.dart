@@ -11,6 +11,8 @@ import 'package:interstellar/src/widgets/video.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
 
 class ContentItem extends StatefulWidget {
+  final String originInstance;
+
   final String? title;
   final String? image;
   final Uri? link;
@@ -53,40 +55,42 @@ class ContentItem extends StatefulWidget {
   final bool isCollapsed;
   final void Function()? onCollapse;
 
-  const ContentItem(
-      {this.title,
-      this.image,
-      this.link,
-      this.video,
-      this.body,
-      this.createdAt,
-      this.isPreview = false,
-      this.showMagazineFirst = false,
-      this.user,
-      this.userIcon,
-      this.userIdOnClick,
-      this.opUserId,
-      this.magazine,
-      this.magazineIcon,
-      this.magazineIdOnClick,
-      this.domain,
-      this.domainIdOnClick,
-      this.boosts,
-      this.isBoosted = false,
-      this.onBoost,
-      this.upVotes,
-      this.isUpVoted = false,
-      this.onUpVote,
-      this.downVotes,
-      this.isDownVoted = false,
-      this.onDownVote,
-      this.numComments,
-      this.onReply,
-      this.onEdit,
-      this.onDelete,
-      this.isCollapsed = false,
-      this.onCollapse,
-      super.key});
+  const ContentItem({
+    required this.originInstance,
+    this.title,
+    this.image,
+    this.link,
+    this.video,
+    this.body,
+    this.createdAt,
+    this.isPreview = false,
+    this.showMagazineFirst = false,
+    this.user,
+    this.userIcon,
+    this.userIdOnClick,
+    this.opUserId,
+    this.magazine,
+    this.magazineIcon,
+    this.magazineIdOnClick,
+    this.domain,
+    this.domainIdOnClick,
+    this.boosts,
+    this.isBoosted = false,
+    this.onBoost,
+    this.upVotes,
+    this.isUpVoted = false,
+    this.onUpVote,
+    this.downVotes,
+    this.isDownVoted = false,
+    this.onDownVote,
+    this.numComments,
+    this.onReply,
+    this.onEdit,
+    this.onDelete,
+    this.isCollapsed = false,
+    this.onCollapse,
+    super.key,
+  });
 
   @override
   State<ContentItem> createState() => _ContentItemState();
@@ -272,7 +276,7 @@ class _ContentItemState extends State<ContentItem> {
                         maxLines: 4,
                         overflow: TextOverflow.ellipsis,
                       )
-                    : Markdown(widget.body!),
+                    : Markdown(widget.body!, widget.originInstance),
               const SizedBox(height: 10),
               Row(
                 children: <Widget>[

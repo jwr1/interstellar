@@ -221,7 +221,10 @@ class _UserScreenState extends State<UserScreen> {
                       if (_data!.about != null)
                         Padding(
                           padding: const EdgeInsets.only(top: 12),
-                          child: Markdown(_data!.about!),
+                          child: Markdown(
+                            _data!.about!,
+                            getNameHost(context, _data!.username),
+                          ),
                         )
                     ],
                   ),

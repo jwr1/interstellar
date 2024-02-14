@@ -27,6 +27,7 @@ class PostItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ContentItem(
+      originInstance: getNameHost(context, item.user.username),
       body: item.body,
       image: item.image?.storageUrl,
       createdAt: item.createdAt,
