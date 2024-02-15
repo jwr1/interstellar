@@ -70,6 +70,10 @@ class PostItem extends StatelessWidget {
       onEdit: onEdit,
       onDelete: onDelete,
       numComments: item.comments,
+      openLinkUri: Uri.https(
+        context.read<SettingsController>().instanceHost,
+        '/m/${item.magazine.name}/p/${item.postId}',
+      ),
     );
   }
 }
