@@ -210,10 +210,11 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                     const SizedBox(width: 12),
                     OutlinedButton(
                       style: ButtonStyle(
-                          foregroundColor: item.isUserSubscribed == true
-                              ? null
-                              : MaterialStatePropertyAll(
-                                  Theme.of(context).disabledColor)),
+                        foregroundColor: MaterialStatePropertyAll(
+                            item.isUserSubscribed == true
+                                ? Theme.of(context).colorScheme.primaryContainer
+                                : null),
+                      ),
                       onPressed: whenLoggedIn(context, () async {
                         var newValue = await api_magazines.putSubscribe(
                             context.read<SettingsController>().httpClient,

@@ -120,42 +120,72 @@ class _UserScreenState extends State<UserScreen> {
                             ],
                           ),
                           Expanded(
-                              child: Align(
-                                  alignment: Alignment.centerRight,
-                                  child: OutlinedButton(
-                                    style: ButtonStyle(
-                                        foregroundColor:
-                                            _data!.isFollowedByUser == true
-                                                ? null
-                                                : MaterialStatePropertyAll(
-                                                    Theme.of(context)
-                                                        .disabledColor)),
-                                    onPressed: whenLoggedIn(context, () async {
-                                      var newValue = await api_users.putFollow(
-                                          context
-                                              .read<SettingsController>()
-                                              .httpClient,
-                                          context
-                                              .read<SettingsController>()
-                                              .instanceHost,
-                                          _data!.userId,
-                                          !_data!.isFollowedByUser!);
-                                      setState(() {
-                                        _data = newValue;
-                                      });
-                                      if (widget.onUpdate != null) {
-                                        widget.onUpdate!(newValue);
-                                      }
-                                    }),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const Icon(Icons.group),
-                                        Text(
-                                            ' ${intFormat(_data!.followersCount)}'),
-                                      ],
-                                    ),
-                                  ))),
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: OutlinedButton(
+                                style: ButtonStyle(
+                                  foregroundColor: MaterialStatePropertyAll(
+                                      _data!.isFollowedByUser == true
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .primaryContainer
+                                          : null),
+                                ),
+                                onPressed: whenLoggedIn(context, () async {
+                                  var newValue = await api_users.putFollow(
+                                      context
+                                          .read<SettingsController>()
+                                          .httpClient,
+                                      context
+                                          .read<SettingsController>()
+                                          .instanceHost,
+                                      _data!.userId,
+                                      !_data!.isFollowedByUser!);
+                                  setState(() {
+                                    _data = newValue;
+                                  });
+                                  if (widget.onUpdate != null) {
+                                    widget.onUpdate!(newValue);
+                                  }
+                                }),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(Icons.group),
+                                    Text(
+                                        ' ${intFormat(_data!.followersCount)}'),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          if (whenLoggedIn(context, true) == true)
+                            IconButton(
+                              onPressed: () async {
+                                final newValue = await api_users.putBlock(
+                                  context.read<SettingsController>().httpClient,
+                                  context
+                                      .read<SettingsController>()
+                                      .instanceHost,
+                                  _data!.userId,
+                                  !_data!.isBlockedByUser!,
+                                );
+
+                                setState(() {
+                                  _data = newValue;
+                                });
+                                if (widget.onUpdate != null) {
+                                  widget.onUpdate!(newValue);
+                                }
+                              },
+                              icon: const Icon(Icons.block),
+                              style: ButtonStyle(
+                                foregroundColor: MaterialStatePropertyAll(
+                                    _data!.isBlockedByUser == true
+                                        ? Theme.of(context).colorScheme.error
+                                        : Theme.of(context).disabledColor),
+                              ),
+                            ),
                           if (!_data!.username.contains('@'))
                             IconButton(
                               onPressed: () {

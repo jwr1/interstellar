@@ -81,3 +81,20 @@ Future<DetailedUserModel> putFollow(
   return DetailedUserModel.fromJson(
       jsonDecode(response.body) as Map<String, dynamic>);
 }
+
+Future<DetailedUserModel> putBlock(
+  http.Client client,
+  String instanceHost,
+  int userId,
+  bool state,
+) async {
+  final response = await client.put(Uri.https(
+    instanceHost,
+    '/api/users/$userId/${state ? 'block' : 'unblock'}',
+  ));
+
+  httpErrorHandler(response, message: 'Failed to send block');
+
+  return DetailedUserModel.fromJson(
+      jsonDecode(response.body) as Map<String, dynamic>);
+}

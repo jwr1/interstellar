@@ -232,10 +232,13 @@ class _SearchScreenState extends State<SearchScreen> {
                         const SizedBox(width: 12),
                         OutlinedButton(
                           style: ButtonStyle(
-                              foregroundColor: item.isFollowedByUser == true
-                                  ? null
-                                  : MaterialStatePropertyAll(
-                                      Theme.of(context).disabledColor)),
+                            foregroundColor: MaterialStatePropertyAll(
+                                item.isFollowedByUser == true
+                                    ? Theme.of(context)
+                                        .colorScheme
+                                        .primaryContainer
+                                    : null),
+                          ),
                           onPressed: whenLoggedIn(context, () async {
                             var newValue = await api_users.putFollow(
                                 context.read<SettingsController>().httpClient,
@@ -282,10 +285,13 @@ class _SearchScreenState extends State<SearchScreen> {
                         const SizedBox(width: 12),
                         OutlinedButton(
                           style: ButtonStyle(
-                              foregroundColor: item.isUserSubscribed == true
-                                  ? null
-                                  : MaterialStatePropertyAll(
-                                      Theme.of(context).disabledColor)),
+                            foregroundColor: MaterialStatePropertyAll(
+                                item.isUserSubscribed == true
+                                    ? Theme.of(context)
+                                        .colorScheme
+                                        .primaryContainer
+                                    : null),
+                          ),
                           onPressed: whenLoggedIn(context, () async {
                             var newValue = await api_magazines.putSubscribe(
                                 context.read<SettingsController>().httpClient,

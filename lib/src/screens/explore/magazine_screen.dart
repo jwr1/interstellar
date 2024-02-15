@@ -70,10 +70,13 @@ class _MagazineScreenState extends State<MagazineScreen> {
                       ),
                       OutlinedButton(
                         style: ButtonStyle(
-                            foregroundColor: _data!.isUserSubscribed == true
-                                ? null
-                                : MaterialStatePropertyAll(
-                                    Theme.of(context).disabledColor)),
+                          foregroundColor: MaterialStatePropertyAll(
+                              _data!.isUserSubscribed == true
+                                  ? Theme.of(context)
+                                      .colorScheme
+                                      .primaryContainer
+                                  : null),
+                        ),
                         onPressed: whenLoggedIn(context, () async {
                           var newValue = await api_magazines.putSubscribe(
                               context.read<SettingsController>().httpClient,
@@ -94,7 +97,32 @@ class _MagazineScreenState extends State<MagazineScreen> {
                             Text(' ${intFormat(_data!.subscriptionsCount)}'),
                           ],
                         ),
-                      )
+                      ),
+                      if (whenLoggedIn(context, true) == true)
+                        IconButton(
+                          onPressed: () async {
+                            final newValue = await api_magazines.putBlock(
+                              context.read<SettingsController>().httpClient,
+                              context.read<SettingsController>().instanceHost,
+                              _data!.magazineId,
+                              !_data!.isBlockedByUser!,
+                            );
+
+                            setState(() {
+                              _data = newValue;
+                            });
+                            if (widget.onUpdate != null) {
+                              widget.onUpdate!(newValue);
+                            }
+                          },
+                          icon: const Icon(Icons.block),
+                          style: ButtonStyle(
+                            foregroundColor: MaterialStatePropertyAll(
+                                _data!.isBlockedByUser == true
+                                    ? Theme.of(context).colorScheme.error
+                                    : Theme.of(context).disabledColor),
+                          ),
+                        ),
                     ],
                   ),
                   if (_data!.description != null)

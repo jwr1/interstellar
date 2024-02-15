@@ -55,3 +55,20 @@ Future<DomainModel> putSubscribe(
   return DomainModel.fromJson(
       jsonDecode(response.body) as Map<String, dynamic>);
 }
+
+Future<DomainModel> putBlock(
+  http.Client client,
+  String instanceHost,
+  int domainId,
+  bool state,
+) async {
+  final response = await client.put(Uri.https(
+    instanceHost,
+    '/api/domain/$domainId/${state ? 'block' : 'unblock'}',
+  ));
+
+  httpErrorHandler(response, message: 'Failed to send block');
+
+  return DomainModel.fromJson(
+      jsonDecode(response.body) as Map<String, dynamic>);
+}
