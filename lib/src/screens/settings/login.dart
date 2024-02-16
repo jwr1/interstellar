@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/api/kbin.dart';
 import 'package:interstellar/src/api/oauth.dart';
-import 'package:interstellar/src/api/users.dart' as api_users;
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/widgets/redirect_listen.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
@@ -84,7 +84,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     var client =
                         await grant.handleAuthorizationResponse(result);
 
-                    var user = await api_users.fetchMe(client, instanceHost);
+                    var user =
+                        await KbinAPI(client, instanceHost).users.getMe();
 
                     // Check BuildContext
                     if (!mounted) return;

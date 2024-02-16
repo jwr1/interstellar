@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/api/users.dart' as api_users;
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
@@ -20,9 +19,11 @@ class _SelfFeedState extends State<SelfFeed> {
     super.initState();
 
     if (context.read<SettingsController>().isLoggedIn) {
-      api_users
-          .fetchMe(context.read<SettingsController>().httpClient,
-              context.read<SettingsController>().instanceHost)
+      context
+          .read<SettingsController>()
+          .kbinAPI
+          .users
+          .getMe()
           .then((value) => setState(() {
                 _meUser = value;
               }));

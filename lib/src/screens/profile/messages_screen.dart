@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:interstellar/src/api/messages.dart';
 import 'package:interstellar/src/models/message.dart';
 import 'package:interstellar/src/screens/profile/message_item.dart';
 import 'package:interstellar/src/screens/profile/message_thread_screen.dart';
@@ -27,11 +26,10 @@ class _MessagesScreenState extends State<MessagesScreen> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newPage = await fetchMessages(
-        context.read<SettingsController>().httpClient,
-        context.read<SettingsController>().instanceHost,
-        page: pageKey,
-      );
+      final newPage =
+          await context.read<SettingsController>().kbinAPI.messages.list(
+                page: pageKey,
+              );
 
       // Check BuildContext
       if (!mounted) return;

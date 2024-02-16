@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/api/entry_comments.dart' as api_comments;
 import 'package:interstellar/src/models/entry_comment.dart';
 import 'package:interstellar/src/screens/entries/entry_comment_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
@@ -51,12 +50,11 @@ class _EntryCommentState extends State<EntryComment> {
               boosts: widget.comment.uv,
               isBoosted: widget.comment.userVote == 1,
               onBoost: whenLoggedIn(context, () async {
-                var newValue = await api_comments.putVote(
-                  context.read<SettingsController>().httpClient,
-                  context.read<SettingsController>().instanceHost,
-                  widget.comment.commentId,
-                  1,
-                );
+                var newValue = await context
+                    .read<SettingsController>()
+                    .kbinAPI
+                    .entryComments
+                    .putVote(widget.comment.commentId, 1);
                 widget.onUpdate(newValue.copyWith(
                   childCount: widget.comment.childCount,
                   children: widget.comment.children,
@@ -65,11 +63,11 @@ class _EntryCommentState extends State<EntryComment> {
               upVotes: widget.comment.favourites,
               isUpVoted: widget.comment.isFavourited == true,
               onUpVote: whenLoggedIn(context, () async {
-                var newValue = await api_comments.putFavorite(
-                  context.read<SettingsController>().httpClient,
-                  context.read<SettingsController>().instanceHost,
-                  widget.comment.commentId,
-                );
+                var newValue = await context
+                    .read<SettingsController>()
+                    .kbinAPI
+                    .entryComments
+                    .putFavorite(widget.comment.commentId);
                 widget.onUpdate(newValue.copyWith(
                   childCount: widget.comment.childCount,
                   children: widget.comment.children,
@@ -78,25 +76,26 @@ class _EntryCommentState extends State<EntryComment> {
               downVotes: widget.comment.dv,
               isDownVoted: widget.comment.userVote == -1,
               onDownVote: whenLoggedIn(context, () async {
-                var newValue = await api_comments.putVote(
-                  context.read<SettingsController>().httpClient,
-                  context.read<SettingsController>().instanceHost,
-                  widget.comment.commentId,
-                  -1,
-                );
+                var newValue = await context
+                    .read<SettingsController>()
+                    .kbinAPI
+                    .entryComments
+                    .putVote(widget.comment.commentId, -1);
                 widget.onUpdate(newValue.copyWith(
                   childCount: widget.comment.childCount,
                   children: widget.comment.children,
                 ));
               }),
               onReply: whenLoggedIn(context, (body) async {
-                var newSubComment = await api_comments.postComment(
-                  context.read<SettingsController>().httpClient,
-                  context.read<SettingsController>().instanceHost,
-                  body,
-                  widget.comment.entryId,
-                  parentCommentId: widget.comment.commentId,
-                );
+                var newSubComment = await context
+                    .read<SettingsController>()
+                    .kbinAPI
+                    .entryComments
+                    .create(
+                      body,
+                      widget.comment.entryId,
+                      parentCommentId: widget.comment.commentId,
+                    );
 
                 widget.onUpdate(widget.comment.copyWith(
                   childCount: widget.comment.childCount + 1,
@@ -105,13 +104,16 @@ class _EntryCommentState extends State<EntryComment> {
               }),
               onEdit: widget.comment.visibility != 'soft_deleted'
                   ? whenLoggedIn(context, (body) async {
-                      var newValue = await api_comments.editComment(
-                          context.read<SettingsController>().httpClient,
-                          context.read<SettingsController>().instanceHost,
-                          widget.comment.commentId,
-                          body,
-                          widget.comment.lang,
-                          widget.comment.isAdult);
+                      var newValue = await context
+                          .read<SettingsController>()
+                          .kbinAPI
+                          .entryComments
+                          .edit(
+                            widget.comment.commentId,
+                            body,
+                            widget.comment.lang,
+                            widget.comment.isAdult,
+                          );
                       widget.onUpdate(newValue.copyWith(
                         childCount: widget.comment.childCount,
                         children: widget.comment.children,
@@ -120,11 +122,11 @@ class _EntryCommentState extends State<EntryComment> {
                   : null,
               onDelete: widget.comment.visibility != 'soft_deleted'
                   ? whenLoggedIn(context, () async {
-                      await api_comments.deleteComment(
-                        context.read<SettingsController>().httpClient,
-                        context.read<SettingsController>().instanceHost,
-                        widget.comment.commentId,
-                      );
+                      await context
+                          .read<SettingsController>()
+                          .kbinAPI
+                          .entryComments
+                          .delete(widget.comment.commentId);
                       widget.onUpdate(widget.comment.copyWith(
                         body: '_comment deleted_',
                         uv: null,

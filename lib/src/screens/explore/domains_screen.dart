@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:interstellar/src/api/domains.dart' as api_domains;
+import 'package:interstellar/src/api/domains.dart';
 import 'package:interstellar/src/models/domain.dart';
 import 'package:interstellar/src/screens/explore/domain_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
@@ -17,7 +17,7 @@ class DomainsScreen extends StatefulWidget {
 }
 
 class _DomainsScreenState extends State<DomainsScreen> {
-  api_domains.DomainsFilter filter = api_domains.DomainsFilter.all;
+  KbinAPIDomainsFilter filter = KbinAPIDomainsFilter.all;
   String search = "";
 
   final PagingController<int, DomainModel> _pagingController =
@@ -32,13 +32,12 @@ class _DomainsScreenState extends State<DomainsScreen> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newPage = await api_domains.fetchDomains(
-        context.read<SettingsController>().httpClient,
-        context.read<SettingsController>().instanceHost,
-        page: pageKey,
-        filter: filter,
-        search: search.isEmpty ? null : search,
-      );
+      final newPage =
+          await context.read<SettingsController>().kbinAPI.domains.list(
+                page: pageKey,
+                filter: filter,
+                search: search.isEmpty ? null : search,
+              );
 
       // Check BuildContext
       if (!mounted) return;
@@ -79,7 +78,7 @@ class _DomainsScreenState extends State<DomainsScreen> {
                   ...whenLoggedIn(context, [
                         Padding(
                           padding: const EdgeInsets.only(right: 12),
-                          child: DropdownButton<api_domains.DomainsFilter>(
+                          child: DropdownButton<KbinAPIDomainsFilter>(
                             value: filter,
                             onChanged: (newFilter) {
                               if (newFilter != null) {
@@ -91,15 +90,15 @@ class _DomainsScreenState extends State<DomainsScreen> {
                             },
                             items: const [
                               DropdownMenuItem(
-                                value: api_domains.DomainsFilter.all,
+                                value: KbinAPIDomainsFilter.all,
                                 child: Text('All'),
                               ),
                               DropdownMenuItem(
-                                value: api_domains.DomainsFilter.subscribed,
+                                value: KbinAPIDomainsFilter.subscribed,
                                 child: Text('Subscribed'),
                               ),
                               DropdownMenuItem(
-                                value: api_domains.DomainsFilter.blocked,
+                                value: KbinAPIDomainsFilter.blocked,
                                 child: Text('Blocked'),
                               ),
                             ],
@@ -107,7 +106,7 @@ class _DomainsScreenState extends State<DomainsScreen> {
                         )
                       ]) ??
                       [],
-                  if (filter == api_domains.DomainsFilter.all)
+                  if (filter == KbinAPIDomainsFilter.all)
                     SizedBox(
                       width: 128,
                       child: TextFormField(
@@ -168,11 +167,12 @@ class _DomainsScreenState extends State<DomainsScreen> {
                                 : null),
                       ),
                       onPressed: whenLoggedIn(context, () async {
-                        var newValue = await api_domains.putSubscribe(
-                            context.read<SettingsController>().httpClient,
-                            context.read<SettingsController>().instanceHost,
-                            item.domainId,
-                            !item.isUserSubscribed!);
+                        var newValue = await context
+                            .read<SettingsController>()
+                            .kbinAPI
+                            .domains
+                            .putSubscribe(
+                                item.domainId, !item.isUserSubscribed!);
                         var newList = _pagingController.itemList;
                         newList![index] = newValue;
                         setState(() {

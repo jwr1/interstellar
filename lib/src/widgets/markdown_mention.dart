@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart' as flutter_markdown;
-import 'package:interstellar/src/api/magazines.dart';
-import 'package:interstellar/src/api/users.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
@@ -156,13 +154,12 @@ class MentionWidgetState extends State<MentionWidget> {
 
     try {
       if (modifier == '@') {
-        final user = await fetchUserByName(
-          context.read<SettingsController>().httpClient,
-          context.read<SettingsController>().instanceHost,
-          context.read<SettingsController>().instanceHost == host
-              ? name
-              : '@$name@$host',
-        );
+        final user =
+            await context.read<SettingsController>().kbinAPI.users.getByName(
+                  context.read<SettingsController>().instanceHost == host
+                      ? name
+                      : '@$name@$host',
+                );
 
         setState(() {
           _icon = user.avatar?.storageUrl;
@@ -175,13 +172,15 @@ class MentionWidgetState extends State<MentionWidget> {
           };
         });
       } else if (modifier == '!') {
-        final magazine = await fetchMagazineByName(
-          context.read<SettingsController>().httpClient,
-          context.read<SettingsController>().instanceHost,
-          context.read<SettingsController>().instanceHost == host
-              ? name
-              : '$name@$host',
-        );
+        final magazine = await context
+            .read<SettingsController>()
+            .kbinAPI
+            .magazines
+            .getByName(
+              context.read<SettingsController>().instanceHost == host
+                  ? name
+                  : '$name@$host',
+            );
 
         setState(() {
           _icon = magazine.icon?.storageUrl;

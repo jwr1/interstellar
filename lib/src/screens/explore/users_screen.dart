@@ -32,12 +32,11 @@ class _UsersScreenState extends State<UsersScreen> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newPage = await api_users.fetchUsers(
-        context.read<SettingsController>().httpClient,
-        context.read<SettingsController>().instanceHost,
-        page: pageKey,
-        filter: filter,
-      );
+      final newPage =
+          await context.read<SettingsController>().kbinAPI.users.list(
+                page: pageKey,
+                filter: filter,
+              );
 
       // Check BuildContext
       if (!mounted) return;
@@ -157,11 +156,11 @@ class _UsersScreenState extends State<UsersScreen> {
                                 : null),
                       ),
                       onPressed: whenLoggedIn(context, () async {
-                        var newValue = await api_users.putFollow(
-                            context.read<SettingsController>().httpClient,
-                            context.read<SettingsController>().instanceHost,
-                            item.userId,
-                            !item.isFollowedByUser!);
+                        var newValue = await context
+                            .read<SettingsController>()
+                            .kbinAPI
+                            .users
+                            .putFollow(item.userId, !item.isFollowedByUser!);
                         var newList = _pagingController.itemList;
                         newList![index] = newValue;
                         setState(() {

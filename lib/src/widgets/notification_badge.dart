@@ -1,6 +1,5 @@
 import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/api/notifications.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
 import 'package:provider/provider.dart';
@@ -21,12 +20,14 @@ class _NotificationBadgeState extends State<NotificationBadge> {
   void initState() {
     super.initState();
 
-    fetchNotificationCount(
-      context.read<SettingsController>().httpClient,
-      context.read<SettingsController>().instanceHost,
-    ).then((value) => setState(() {
-          _count = value;
-        }));
+    context
+        .read<SettingsController>()
+        .kbinAPI
+        .notifications
+        .getCount()
+        .then((value) => setState(() {
+              _count = value;
+            }));
   }
 
   @override

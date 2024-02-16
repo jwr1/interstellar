@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/api/entries.dart' as api_entries;
-import 'package:interstellar/src/api/entry_comments.dart';
 import 'package:interstellar/src/models/entry_comment.dart';
 import 'package:interstellar/src/screens/entries/entry_comment.dart';
 import 'package:interstellar/src/screens/entries/entry_page.dart';
@@ -28,8 +26,11 @@ class _EntryCommentScreenState extends State<EntryCommentScreen> {
   void initState() {
     super.initState();
 
-    fetchComment(context.read<SettingsController>().httpClient,
-            context.read<SettingsController>().instanceHost, widget.commentId)
+    context
+        .read<SettingsController>()
+        .kbinAPI
+        .entryComments
+        .get(widget.commentId)
         .then((value) => setState(() {
               _comment = value;
             }));
@@ -52,11 +53,11 @@ class _EntryCommentScreenState extends State<EntryCommentScreen> {
                       padding: const EdgeInsets.all(4),
                       child: OutlinedButton(
                         onPressed: () async {
-                          final parentEntry = await api_entries.fetchEntry(
-                            context.read<SettingsController>().httpClient,
-                            context.read<SettingsController>().instanceHost,
-                            _comment!.entryId,
-                          );
+                          final parentEntry = await context
+                              .read<SettingsController>()
+                              .kbinAPI
+                              .entries
+                              .get(_comment!.entryId);
                           if (!mounted) return;
                           Navigator.of(context)
                               .push(MaterialPageRoute(builder: (context) {

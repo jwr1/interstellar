@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/api/posts.dart' as api_posts;
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
@@ -40,31 +39,29 @@ class PostItem extends StatelessWidget {
       boosts: item.uv,
       isBoosted: item.userVote == 1,
       onBoost: whenLoggedIn(context, () async {
-        onUpdate(await api_posts.putVote(
-          context.read<SettingsController>().httpClient,
-          context.read<SettingsController>().instanceHost,
-          item.postId,
-          1,
-        ));
+        onUpdate(await context
+            .read<SettingsController>()
+            .kbinAPI
+            .posts
+            .putVote(item.postId, 1));
       }),
       upVotes: item.favourites,
       isUpVoted: item.isFavourited == true,
       onUpVote: whenLoggedIn(context, () async {
-        onUpdate(await api_posts.putFavorite(
-          context.read<SettingsController>().httpClient,
-          context.read<SettingsController>().instanceHost,
-          item.postId,
-        ));
+        onUpdate(await context
+            .read<SettingsController>()
+            .kbinAPI
+            .posts
+            .putFavorite(item.postId));
       }),
       downVotes: item.dv,
       isDownVoted: item.userVote == -1,
       onDownVote: whenLoggedIn(context, () async {
-        onUpdate(await api_posts.putVote(
-          context.read<SettingsController>().httpClient,
-          context.read<SettingsController>().instanceHost,
-          item.postId,
-          -1,
-        ));
+        onUpdate(await context
+            .read<SettingsController>()
+            .kbinAPI
+            .posts
+            .putVote(item.postId, -1));
       }),
       onReply: onReply,
       onEdit: onEdit,

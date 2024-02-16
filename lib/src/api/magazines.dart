@@ -4,88 +4,84 @@ import 'package:http/http.dart' as http;
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/utils/utils.dart';
 
-enum MagazinesFilter { all, subscribed, moderated, blocked }
+enum KbinAPIMagazinesFilter { all, subscribed, moderated, blocked }
 
-enum MagazinesSort { active, hot, newest }
+enum KbinAPIMagazinesSort { active, hot, newest }
 
-Future<MagazineListModel> fetchMagazines(
-  http.Client client,
-  String instanceHost, {
-  int? page,
-  MagazinesFilter? filter,
-  MagazinesSort? sort,
-  String? search,
-}) async {
-  final response = (filter == null || filter == MagazinesFilter.all)
-      ? await client.get(Uri.https(instanceHost, '/api/magazines',
-          {'p': page?.toString(), 'sort': sort?.name, 'q': search}))
-      : await client.get(Uri.https(instanceHost,
-          '/api/magazines/${filter.name}', {'p': page?.toString()}));
+class KbinAPIMagazines {
+  final http.Client httpClient;
+  final String instanceHost;
 
-  httpErrorHandler(response, message: 'Failed to load magazines');
+  KbinAPIMagazines(
+    this.httpClient,
+    this.instanceHost,
+  );
 
-  return MagazineListModel.fromJson(
-      jsonDecode(response.body) as Map<String, dynamic>);
-}
+  Future<MagazineListModel> list({
+    int? page,
+    KbinAPIMagazinesFilter? filter,
+    KbinAPIMagazinesSort? sort,
+    String? search,
+  }) async {
+    final path = (filter == null || filter == KbinAPIMagazinesFilter.all)
+        ? '/api/magazines'
+        : '/api/magazines/${filter.name}';
+    final query = queryParams(
+      (filter == null || filter == KbinAPIMagazinesFilter.all)
+          ? {'p': page?.toString(), 'sort': sort?.name, 'q': search}
+          : {'p': page?.toString()},
+    );
 
-Future<DetailedMagazineModel> fetchMagazine(
-  http.Client client,
-  String instanceHost,
-  int magazineId,
-) async {
-  final response =
-      await client.get(Uri.https(instanceHost, '/api/magazine/$magazineId'));
+    final response = await httpClient.get(Uri.https(instanceHost, path, query));
 
-  httpErrorHandler(response, message: 'Failed to load magazine');
+    httpErrorHandler(response, message: 'Failed to load magazines');
 
-  return DetailedMagazineModel.fromJson(
-      jsonDecode(response.body) as Map<String, dynamic>);
-}
+    return MagazineListModel.fromJson(
+        jsonDecode(response.body) as Map<String, dynamic>);
+  }
 
-Future<DetailedMagazineModel> fetchMagazineByName(
-  http.Client client,
-  String instanceHost,
-  String magazineName,
-) async {
-  final response = await client
-      .get(Uri.https(instanceHost, '/api/magazine/name/$magazineName'));
+  Future<DetailedMagazineModel> get(int magazineId) async {
+    final path = '/api/magazine/$magazineId';
 
-  httpErrorHandler(response, message: 'Failed to load magazine');
+    final response = await httpClient.get(Uri.https(instanceHost, path));
 
-  return DetailedMagazineModel.fromJson(
-      jsonDecode(response.body) as Map<String, dynamic>);
-}
+    httpErrorHandler(response, message: 'Failed to load magazine');
 
-Future<DetailedMagazineModel> putSubscribe(
-  http.Client client,
-  String instanceHost,
-  int magazineId,
-  bool state,
-) async {
-  final response = await client.put(Uri.https(
-    instanceHost,
-    '/api/magazine/$magazineId/${state ? 'subscribe' : 'unsubscribe'}',
-  ));
+    return DetailedMagazineModel.fromJson(
+        jsonDecode(response.body) as Map<String, dynamic>);
+  }
 
-  httpErrorHandler(response, message: 'Failed to send subscribe');
+  Future<DetailedMagazineModel> getByName(String magazineName) async {
+    final path = '/api/magazine/name/$magazineName';
 
-  return DetailedMagazineModel.fromJson(
-      jsonDecode(response.body) as Map<String, dynamic>);
-}
+    final response = await httpClient.get(Uri.https(instanceHost, path));
 
-Future<DetailedMagazineModel> putBlock(
-  http.Client client,
-  String instanceHost,
-  int magazineId,
-  bool state,
-) async {
-  final response = await client.put(Uri.https(
-    instanceHost,
-    '/api/magazine/$magazineId/${state ? 'block' : 'unblock'}',
-  ));
+    httpErrorHandler(response, message: 'Failed to load magazine');
 
-  httpErrorHandler(response, message: 'Failed to send block');
+    return DetailedMagazineModel.fromJson(
+        jsonDecode(response.body) as Map<String, dynamic>);
+  }
 
-  return DetailedMagazineModel.fromJson(
-      jsonDecode(response.body) as Map<String, dynamic>);
+  Future<DetailedMagazineModel> putSubscribe(int magazineId, bool state) async {
+    final path =
+        '/api/magazine/$magazineId/${state ? 'subscribe' : 'unsubscribe'}';
+
+    final response = await httpClient.put(Uri.https(instanceHost, path));
+
+    httpErrorHandler(response, message: 'Failed to send subscribe');
+
+    return DetailedMagazineModel.fromJson(
+        jsonDecode(response.body) as Map<String, dynamic>);
+  }
+
+  Future<DetailedMagazineModel> putBlock(int magazineId, bool state) async {
+    final path = '/api/magazine/$magazineId/${state ? 'block' : 'unblock'}';
+
+    final response = await httpClient.put(Uri.https(instanceHost, path));
+
+    httpErrorHandler(response, message: 'Failed to send block');
+
+    return DetailedMagazineModel.fromJson(
+        jsonDecode(response.body) as Map<String, dynamic>);
+  }
 }

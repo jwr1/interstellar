@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/api/notifications.dart';
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/models/notification.dart';
 import 'package:interstellar/src/models/user.dart';
@@ -118,12 +117,14 @@ class NotificationItem extends StatelessWidget {
                   const Spacer(),
                   IconButton(
                     onPressed: () async {
-                      final newNotification = await putNotificationRead(
-                        context.read<SettingsController>().httpClient,
-                        context.read<SettingsController>().instanceHost,
-                        item.notificationId,
-                        item.status == 'new',
-                      );
+                      final newNotification = await context
+                          .read<SettingsController>()
+                          .kbinAPI
+                          .notifications
+                          .putRead(
+                            item.notificationId,
+                            item.status == 'new',
+                          );
 
                       onUpdate(newNotification);
                     },

@@ -28,12 +28,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newPage = await fetchNotifications(
-        context.read<SettingsController>().httpClient,
-        context.read<SettingsController>().instanceHost,
-        page: pageKey,
-        filter: filter,
-      );
+      final newPage = await context
+          .read<SettingsController>()
+          .kbinAPI
+          .notifications
+          .list(page: pageKey, filter: filter);
 
       // Check BuildContext
       if (!mounted) return;
@@ -101,10 +100,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   ),
                   OutlinedButton(
                       onPressed: () async {
-                        await putNotificationReadAll(
-                          context.read<SettingsController>().httpClient,
-                          context.read<SettingsController>().instanceHost,
-                        );
+                        await context
+                            .read<SettingsController>()
+                            .kbinAPI
+                            .notifications
+                            .putReadAll();
                         _pagingController.refresh();
                       },
                       child: const Text('Mark all as read'))

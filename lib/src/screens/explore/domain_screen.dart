@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/api/domains.dart' as api_domains;
 import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/models/domain.dart';
 import 'package:interstellar/src/screens/feed_screen.dart';
@@ -28,12 +27,11 @@ class _DomainScreenState extends State<DomainScreen> {
     _data = widget.initData;
 
     if (_data == null) {
-      api_domains
-          .fetchDomain(
-            context.read<SettingsController>().httpClient,
-            context.read<SettingsController>().instanceHost,
-            widget.domainId,
-          )
+      context
+          .read<SettingsController>()
+          .kbinAPI
+          .domains
+          .get(widget.domainId)
           .then((value) => setState(() {
                 _data = value;
               }));
@@ -70,11 +68,12 @@ class _DomainScreenState extends State<DomainScreen> {
                                   : null),
                         ),
                         onPressed: whenLoggedIn(context, () async {
-                          var newValue = await api_domains.putSubscribe(
-                              context.read<SettingsController>().httpClient,
-                              context.read<SettingsController>().instanceHost,
-                              _data!.domainId,
-                              !_data!.isUserSubscribed!);
+                          var newValue = await context
+                              .read<SettingsController>()
+                              .kbinAPI
+                              .domains
+                              .putSubscribe(
+                                  _data!.domainId, !_data!.isUserSubscribed!);
 
                           setState(() {
                             _data = newValue;
@@ -93,12 +92,14 @@ class _DomainScreenState extends State<DomainScreen> {
                       if (whenLoggedIn(context, true) == true)
                         IconButton(
                           onPressed: () async {
-                            final newValue = await api_domains.putBlock(
-                              context.read<SettingsController>().httpClient,
-                              context.read<SettingsController>().instanceHost,
-                              _data!.domainId,
-                              !_data!.isBlockedByUser!,
-                            );
+                            final newValue = await context
+                                .read<SettingsController>()
+                                .kbinAPI
+                                .domains
+                                .putBlock(
+                                  _data!.domainId,
+                                  !_data!.isBlockedByUser!,
+                                );
 
                             setState(() {
                               _data = newValue;

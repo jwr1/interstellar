@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/feed_source.dart';
-import 'package:interstellar/src/api/magazines.dart' as api_magazines;
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/screens/feed_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
@@ -32,12 +31,11 @@ class _MagazineScreenState extends State<MagazineScreen> {
     _data = widget.initData;
 
     if (_data == null) {
-      api_magazines
-          .fetchMagazine(
-            context.read<SettingsController>().httpClient,
-            context.read<SettingsController>().instanceHost,
-            widget.magazineId,
-          )
+      context
+          .read<SettingsController>()
+          .kbinAPI
+          .magazines
+          .get(widget.magazineId)
           .then((value) => setState(() {
                 _data = value;
               }));
@@ -78,11 +76,12 @@ class _MagazineScreenState extends State<MagazineScreen> {
                                   : null),
                         ),
                         onPressed: whenLoggedIn(context, () async {
-                          var newValue = await api_magazines.putSubscribe(
-                              context.read<SettingsController>().httpClient,
-                              context.read<SettingsController>().instanceHost,
-                              _data!.magazineId,
-                              !_data!.isUserSubscribed!);
+                          var newValue = await context
+                              .read<SettingsController>()
+                              .kbinAPI
+                              .magazines
+                              .putSubscribe(
+                                  _data!.magazineId, !_data!.isUserSubscribed!);
 
                           setState(() {
                             _data = newValue;
@@ -101,12 +100,14 @@ class _MagazineScreenState extends State<MagazineScreen> {
                       if (whenLoggedIn(context, true) == true)
                         IconButton(
                           onPressed: () async {
-                            final newValue = await api_magazines.putBlock(
-                              context.read<SettingsController>().httpClient,
-                              context.read<SettingsController>().instanceHost,
-                              _data!.magazineId,
-                              !_data!.isBlockedByUser!,
-                            );
+                            final newValue = await context
+                                .read<SettingsController>()
+                                .kbinAPI
+                                .magazines
+                                .putBlock(
+                                  _data!.magazineId,
+                                  !_data!.isBlockedByUser!,
+                                );
 
                             setState(() {
                               _data = newValue;

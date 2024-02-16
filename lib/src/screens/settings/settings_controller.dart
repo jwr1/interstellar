@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:interstellar/src/api/comment.dart';
 import 'package:interstellar/src/api/feed_source.dart';
-import 'package:interstellar/src/api/oauth.dart';
+import 'package:interstellar/src/api/kbin.dart';
 import 'package:interstellar/src/screens/feed_screen.dart';
 import 'package:interstellar/src/utils/themes.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
@@ -41,14 +41,14 @@ class SettingsController with ChangeNotifier {
   late Map<String, String> _oauthIdentifiers;
   late Map<String, oauth2.Credentials?> _oauthCredentials;
   late String _selectedAccount;
-  late http.Client _httpClient;
+  late KbinAPI _kbinAPI;
 
   Map<String, String> get oauthIdentifiers => _oauthIdentifiers;
   Map<String, oauth2.Credentials?> get oauthCredentials => _oauthCredentials;
   String get selectedAccount => _selectedAccount;
   String get instanceHost => _selectedAccount.split('@').last;
   bool get isLoggedIn => _selectedAccount.split('@').first.isNotEmpty;
-  http.Client get httpClient => _httpClient;
+  KbinAPI get kbinAPI => _kbinAPI;
 
   Future<void> loadSettings() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -98,7 +98,7 @@ class SettingsController with ChangeNotifier {
         .map((key, value) => MapEntry(
             key, value != null ? oauth2.Credentials.fromJson(value) : null));
     _selectedAccount = prefs.getString('selectedAccount') ?? '@kbin.earth';
-    updateHttpClient();
+    updateKbinAPI();
 
     notifyListeners();
   }
@@ -266,7 +266,7 @@ class SettingsController with ChangeNotifier {
       return _oauthIdentifiers[instanceHost]!;
     }
 
-    String oauthIdentifier = await registerOAuthApp(instanceHost);
+    String oauthIdentifier = await _kbinAPI.oauth.registerApp(instanceHost);
     _oauthIdentifiers[instanceHost] = oauthIdentifier;
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -283,7 +283,7 @@ class SettingsController with ChangeNotifier {
       _selectedAccount = key;
     }
 
-    updateHttpClient();
+    updateKbinAPI();
 
     notifyListeners();
 
@@ -300,7 +300,7 @@ class SettingsController with ChangeNotifier {
     _oauthCredentials.remove(key);
     _selectedAccount = _oauthCredentials.keys.firstOrNull ?? '@kbin.earth';
 
-    updateHttpClient();
+    updateKbinAPI();
 
     notifyListeners();
 
@@ -314,7 +314,7 @@ class SettingsController with ChangeNotifier {
     if (newSelectedAccount == _selectedAccount) return;
 
     _selectedAccount = newSelectedAccount;
-    updateHttpClient();
+    updateKbinAPI();
 
     notifyListeners();
 
@@ -322,15 +322,14 @@ class SettingsController with ChangeNotifier {
     await prefs.setString('selectedAccount', newSelectedAccount);
   }
 
-  Future<void> updateHttpClient() async {
+  Future<void> updateKbinAPI() async {
     oauth2.Credentials? credentials = _oauthCredentials[_selectedAccount];
 
     if (credentials == null) {
-      _httpClient = http.Client();
+      _kbinAPI = KbinAPI(http.Client(), instanceHost);
     } else {
       String identifier = _oauthIdentifiers[instanceHost]!;
-
-      _httpClient = oauth2.Client(
+      final httpClient = oauth2.Client(
         credentials,
         identifier: identifier,
         onCredentialsRefreshed: (newCredentials) async {
@@ -341,6 +340,8 @@ class SettingsController with ChangeNotifier {
               'oauthCredentials', jsonEncode(_oauthCredentials));
         },
       );
+
+      _kbinAPI = KbinAPI(httpClient, instanceHost);
     }
   }
 }

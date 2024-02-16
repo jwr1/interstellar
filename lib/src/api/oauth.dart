@@ -19,10 +19,20 @@ const oauthScopes = [
   'moderate'
 ];
 
-Future<String> registerOAuthApp(
-  String instanceHost,
-) async {
-  final response = await http.post(Uri.https(instanceHost, '/api/client'),
+class KbinAPIOAuth {
+  final http.Client httpClient;
+  final String instanceHost;
+
+  KbinAPIOAuth(
+    this.httpClient,
+    this.instanceHost,
+  );
+
+  Future<String> registerApp(String instanceHost) async {
+    const path = '/api/client';
+
+    final response = await httpClient.post(
+      Uri.https(instanceHost, path),
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -33,9 +43,11 @@ Future<String> registerOAuthApp(
         'redirectUris': [redirectUri],
         'grants': oauthGrants,
         'scopes': oauthScopes
-      }));
+      }),
+    );
 
-  httpErrorHandler(response, message: 'Failed to register client');
+    httpErrorHandler(response, message: 'Failed to register client');
 
-  return (jsonDecode(response.body) as Map<String, dynamic>)['identifier'];
+    return (jsonDecode(response.body) as Map<String, dynamic>)['identifier'];
+  }
 }

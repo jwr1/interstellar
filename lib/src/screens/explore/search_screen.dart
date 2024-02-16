@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:interstellar/src/api/magazines.dart' as api_magazines;
-import 'package:interstellar/src/api/search.dart' as api_search;
-import 'package:interstellar/src/api/users.dart' as api_users;
 import 'package:interstellar/src/models/entry_comment.dart';
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/models/post.dart';
@@ -50,12 +47,11 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newPage = await api_search.search(
-        context.read<SettingsController>().httpClient,
-        context.read<SettingsController>().instanceHost,
-        page: pageKey,
-        search: search,
-      );
+      final newPage =
+          await context.read<SettingsController>().kbinAPI.search.get(
+                page: pageKey,
+                search: search,
+              );
 
       // Check BuildContext
       if (!mounted) return;
@@ -240,11 +236,12 @@ class _SearchScreenState extends State<SearchScreen> {
                                     : null),
                           ),
                           onPressed: whenLoggedIn(context, () async {
-                            var newValue = await api_users.putFollow(
-                                context.read<SettingsController>().httpClient,
-                                context.read<SettingsController>().instanceHost,
-                                item.userId,
-                                !item.isFollowedByUser!);
+                            var newValue = await context
+                                .read<SettingsController>()
+                                .kbinAPI
+                                .users
+                                .putFollow(
+                                    item.userId, !item.isFollowedByUser!);
                             var newList = _pagingController.itemList;
                             newList![index] = newValue;
                             setState(() {
@@ -293,11 +290,12 @@ class _SearchScreenState extends State<SearchScreen> {
                                     : null),
                           ),
                           onPressed: whenLoggedIn(context, () async {
-                            var newValue = await api_magazines.putSubscribe(
-                                context.read<SettingsController>().httpClient,
-                                context.read<SettingsController>().instanceHost,
-                                item.magazineId,
-                                !item.isUserSubscribed!);
+                            var newValue = await context
+                                .read<SettingsController>()
+                                .kbinAPI
+                                .magazines
+                                .putSubscribe(
+                                    item.magazineId, !item.isUserSubscribed!);
                             var newList = _pagingController.itemList;
                             newList![index] = newValue;
                             setState(() {

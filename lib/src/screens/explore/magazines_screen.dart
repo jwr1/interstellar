@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:interstellar/src/api/magazines.dart' as api_magazines;
+import 'package:interstellar/src/api/magazines.dart';
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
@@ -18,8 +18,8 @@ class MagazinesScreen extends StatefulWidget {
 }
 
 class _MagazinesScreenState extends State<MagazinesScreen> {
-  api_magazines.MagazinesFilter filter = api_magazines.MagazinesFilter.all;
-  api_magazines.MagazinesSort sort = api_magazines.MagazinesSort.hot;
+  KbinAPIMagazinesFilter filter = KbinAPIMagazinesFilter.all;
+  KbinAPIMagazinesSort sort = KbinAPIMagazinesSort.hot;
   String search = "";
 
   final PagingController<int, DetailedMagazineModel> _pagingController =
@@ -34,14 +34,13 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newPage = await api_magazines.fetchMagazines(
-        context.read<SettingsController>().httpClient,
-        context.read<SettingsController>().instanceHost,
-        page: pageKey,
-        filter: filter,
-        sort: sort,
-        search: search.isEmpty ? null : search,
-      );
+      final newPage =
+          await context.read<SettingsController>().kbinAPI.magazines.list(
+                page: pageKey,
+                filter: filter,
+                sort: sort,
+                search: search.isEmpty ? null : search,
+              );
 
       // Check BuildContext
       if (!mounted) return;
@@ -82,7 +81,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                   ...whenLoggedIn(context, [
                         Padding(
                           padding: const EdgeInsets.only(right: 12),
-                          child: DropdownButton<api_magazines.MagazinesFilter>(
+                          child: DropdownButton<KbinAPIMagazinesFilter>(
                             value: filter,
                             onChanged: (newFilter) {
                               if (newFilter != null) {
@@ -94,19 +93,19 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                             },
                             items: const [
                               DropdownMenuItem(
-                                value: api_magazines.MagazinesFilter.all,
+                                value: KbinAPIMagazinesFilter.all,
                                 child: Text('All'),
                               ),
                               DropdownMenuItem(
-                                value: api_magazines.MagazinesFilter.subscribed,
+                                value: KbinAPIMagazinesFilter.subscribed,
                                 child: Text('Subscribed'),
                               ),
                               DropdownMenuItem(
-                                value: api_magazines.MagazinesFilter.moderated,
+                                value: KbinAPIMagazinesFilter.moderated,
                                 child: Text('Moderated'),
                               ),
                               DropdownMenuItem(
-                                value: api_magazines.MagazinesFilter.blocked,
+                                value: KbinAPIMagazinesFilter.blocked,
                                 child: Text('Blocked'),
                               ),
                             ],
@@ -114,11 +113,11 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                         )
                       ]) ??
                       [],
-                  ...(filter == api_magazines.MagazinesFilter.all
+                  ...(filter == KbinAPIMagazinesFilter.all
                       ? [
                           Padding(
                             padding: const EdgeInsets.only(right: 12),
-                            child: DropdownButton<api_magazines.MagazinesSort>(
+                            child: DropdownButton<KbinAPIMagazinesSort>(
                               value: sort,
                               onChanged: (newSort) {
                                 if (newSort != null) {
@@ -130,15 +129,15 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                               },
                               items: const [
                                 DropdownMenuItem(
-                                  value: api_magazines.MagazinesSort.hot,
+                                  value: KbinAPIMagazinesSort.hot,
                                   child: Text('Hot'),
                                 ),
                                 DropdownMenuItem(
-                                  value: api_magazines.MagazinesSort.active,
+                                  value: KbinAPIMagazinesSort.active,
                                   child: Text('Active'),
                                 ),
                                 DropdownMenuItem(
-                                  value: api_magazines.MagazinesSort.newest,
+                                  value: KbinAPIMagazinesSort.newest,
                                   child: Text('Newest'),
                                 ),
                               ],
@@ -216,11 +215,12 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                                 : null),
                       ),
                       onPressed: whenLoggedIn(context, () async {
-                        var newValue = await api_magazines.putSubscribe(
-                            context.read<SettingsController>().httpClient,
-                            context.read<SettingsController>().instanceHost,
-                            item.magazineId,
-                            !item.isUserSubscribed!);
+                        var newValue = await context
+                            .read<SettingsController>()
+                            .kbinAPI
+                            .magazines
+                            .putSubscribe(
+                                item.magazineId, !item.isUserSubscribed!);
                         var newList = _pagingController.itemList;
                         newList![index] = newValue;
                         setState(() {

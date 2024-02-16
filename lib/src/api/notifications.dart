@@ -7,57 +7,61 @@ import 'package:interstellar/src/utils/utils.dart';
 // new_ is used because new is a reserved keyword
 enum NotificationsFilter { all, new_, read }
 
-Future<NotificationListModel> fetchNotifications(
-  http.Client client,
-  String instanceHost, {
-  int? page,
-  NotificationsFilter? filter,
-}) async {
-  final filterName =
-      filter == NotificationsFilter.new_ ? 'new' : (filter?.name ?? 'all');
+class KbinAPINotifications {
+  final http.Client httpClient;
+  final String instanceHost;
 
-  final response = await client.get(Uri.https(
-      instanceHost, '/api/notifications/$filterName', {'p': page?.toString()}));
+  KbinAPINotifications(
+    this.httpClient,
+    this.instanceHost,
+  );
 
-  httpErrorHandler(response, message: 'Failed to load notifications');
+  Future<NotificationListModel> list({
+    int? page,
+    NotificationsFilter? filter,
+  }) async {
+    final path =
+        '/api/notifications/${filter == NotificationsFilter.new_ ? 'new' : (filter?.name ?? 'all')}';
+    final query = queryParams({'p': page?.toString()});
 
-  return NotificationListModel.fromJson(
-      jsonDecode(response.body) as Map<String, dynamic>);
-}
+    final response = await httpClient.get(Uri.https(instanceHost, path, query));
 
-Future<int> fetchNotificationCount(
-  http.Client client,
-  String instanceHost,
-) async {
-  final response =
-      await client.get(Uri.https(instanceHost, '/api/notifications/count'));
+    httpErrorHandler(response, message: 'Failed to load notifications');
 
-  httpErrorHandler(response, message: 'Failed to load notification count');
+    return NotificationListModel.fromJson(
+        jsonDecode(response.body) as Map<String, dynamic>);
+  }
 
-  return jsonDecode(response.body)['count'];
-}
+  Future<int> getCount() async {
+    const path = '/api/notifications/count';
 
-Future<void> putNotificationReadAll(
-  http.Client client,
-  String instanceHost,
-) async {
-  final response =
-      await client.put(Uri.https(instanceHost, '/api/notifications/read'));
+    final response = await httpClient.get(Uri.https(instanceHost, path));
 
-  httpErrorHandler(response, message: 'Failed to mark notifications');
-}
+    httpErrorHandler(response, message: 'Failed to load notification count');
 
-Future<NotificationModel> putNotificationRead(
-  http.Client client,
-  String instanceHost,
-  int notificationId,
-  bool readState,
-) async {
-  final response = await client.put(Uri.https(instanceHost,
-      '/api/notifications/$notificationId/${readState ? 'read' : 'unread'}'));
+    return jsonDecode(response.body)['count'];
+  }
 
-  httpErrorHandler(response, message: 'Failed to mark notification');
+  Future<void> putReadAll() async {
+    const path = '/api/notifications/read';
 
-  return NotificationModel.fromJson(
-      jsonDecode(response.body) as Map<String, Object?>);
+    final response = await httpClient.put(Uri.https(instanceHost, path));
+
+    httpErrorHandler(response, message: 'Failed to mark notifications');
+  }
+
+  Future<NotificationModel> putRead(
+    int notificationId,
+    bool readState,
+  ) async {
+    final path =
+        '/api/notifications/$notificationId/${readState ? 'read' : 'unread'}';
+
+    final response = await httpClient.put(Uri.https(instanceHost, path));
+
+    httpErrorHandler(response, message: 'Failed to mark notification');
+
+    return NotificationModel.fromJson(
+        jsonDecode(response.body) as Map<String, Object?>);
+  }
 }

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:interstellar/src/api/feed_source.dart';
-import 'package:interstellar/src/api/messages.dart';
-import 'package:interstellar/src/api/users.dart' as api_users;
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/screens/feed_screen.dart';
 import 'package:interstellar/src/screens/profile/message_thread_screen.dart';
@@ -40,10 +38,11 @@ class _UserScreenState extends State<UserScreen> {
     _data = widget.initData;
 
     if (_data == null) {
-      api_users
-          .fetchUser(
-            context.read<SettingsController>().httpClient,
-            context.read<SettingsController>().instanceHost,
+      context
+          .read<SettingsController>()
+          .kbinAPI
+          .users
+          .get(
             widget.userId,
           )
           .then((value) => setState(() {
@@ -69,88 +68,88 @@ class _UserScreenState extends State<UserScreen> {
                         maxHeight: MediaQuery.of(context).size.height / 3,
                       ),
                       height: _data!.cover == null ? 100 : null,
-                      child: _data!.cover != null ? Image.network(
-                        _data!.cover!.storageUrl,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ) : null,
+                      child: _data!.cover != null
+                          ? Image.network(
+                              _data!.cover!.storageUrl,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            )
+                          : null,
                     ),
                     Positioned(
-                      left: 0,
-                      bottom: 0,
-                      child: Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Avatar(
-                          _data!.avatar?.storageUrl,
-                          radius: 32,
-                          borderRadius: 4,
-                        ),
-                      )
-                    ),
-                    if (whenLoggedIn(context, true, matchesUsername: _data!.username) != null)
-                      Positioned(
-                        right: 0,
-                        top: 0,
+                        left: 0,
+                        bottom: 0,
                         child: Padding(
                           padding: const EdgeInsets.all(12),
-                          child: _aboutTextController == null
-                            ? TextButton(
-                                onPressed: () => setState(() {
-                                  _aboutTextController = TextEditingController(
-                                    text: _data!.about
-                                  );
-                                }),
-                                child: const Text("Edit")
-                              )
-                            : Row(
-                            children: [
-                              TextButton(
-                                onPressed: () async {
-                                  var user = await api_users.updateProfile(
-                                    context.read<SettingsController>().httpClient,
-                                    context.read<SettingsController>().instanceHost,
-                                    _aboutTextController!.text
-                                  );
-                                  if (!mounted) return;
-                                  if (_avatarFile != null) {
-                                    user = await api_users.updateAvatar(
-                                      context.read<SettingsController>().httpClient,
-                                      context.read<SettingsController>().instanceHost,
-                                      _avatarFile!
-                                    );
-                                  }
-                                  if (!mounted) return;
-                                  if (_coverFile != null) {
-                                    user = await api_users.updateCover(
-                                      context.read<SettingsController>().httpClient,
-                                      context.read<SettingsController>().instanceHost,
-                                      _coverFile!
-                                    );
-                                  }
-
-                                  setState(() {
-                                    _data = user;
-                                    _aboutTextController!.dispose();
-                                    _aboutTextController = null;
-                                    _coverFile = null;
-                                    _avatarFile = null;
-                                  });
-                                },
-                                child: const Text("Save")
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _aboutTextController!.dispose();
-                                    _aboutTextController = null;
-                                  });
-                                },
-                                child: const Text("Cancel")
-                              ),
-                            ],
+                          child: Avatar(
+                            _data!.avatar?.storageUrl,
+                            radius: 32,
+                            borderRadius: 4,
                           ),
-                        )
-                      )
+                        )),
+                    if (whenLoggedIn(context, true,
+                            matchesUsername: _data!.username) !=
+                        null)
+                      Positioned(
+                          right: 0,
+                          top: 0,
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: _aboutTextController == null
+                                ? TextButton(
+                                    onPressed: () => setState(() {
+                                          _aboutTextController =
+                                              TextEditingController(
+                                                  text: _data!.about);
+                                        }),
+                                    child: const Text("Edit"))
+                                : Row(
+                                    children: [
+                                      TextButton(
+                                          onPressed: () async {
+                                            var user = await context
+                                                .read<SettingsController>()
+                                                .kbinAPI
+                                                .users
+                                                .updateProfile(
+                                                    _aboutTextController!.text);
+                                            if (!mounted) return;
+                                            if (_avatarFile != null) {
+                                              user = await context
+                                                  .read<SettingsController>()
+                                                  .kbinAPI
+                                                  .users
+                                                  .updateAvatar(_avatarFile!);
+                                            }
+                                            if (!mounted) return;
+                                            if (_coverFile != null) {
+                                              user = await context
+                                                  .read<SettingsController>()
+                                                  .kbinAPI
+                                                  .users
+                                                  .updateCover(_coverFile!);
+                                            }
+
+                                            setState(() {
+                                              _data = user;
+                                              _aboutTextController!.dispose();
+                                              _aboutTextController = null;
+                                              _coverFile = null;
+                                              _avatarFile = null;
+                                            });
+                                          },
+                                          child: const Text("Save")),
+                                      TextButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              _aboutTextController!.dispose();
+                                              _aboutTextController = null;
+                                            });
+                                          },
+                                          child: const Text("Cancel")),
+                                    ],
+                                  ),
+                          ))
                   ],
                 ),
                 Padding(
@@ -205,15 +204,12 @@ class _UserScreenState extends State<UserScreen> {
                                           : null),
                                 ),
                                 onPressed: whenLoggedIn(context, () async {
-                                  var newValue = await api_users.putFollow(
-                                      context
-                                          .read<SettingsController>()
-                                          .httpClient,
-                                      context
-                                          .read<SettingsController>()
-                                          .instanceHost,
-                                      _data!.userId,
-                                      !_data!.isFollowedByUser!);
+                                  var newValue = await context
+                                      .read<SettingsController>()
+                                      .kbinAPI
+                                      .users
+                                      .putFollow(_data!.userId,
+                                          !_data!.isFollowedByUser!);
                                   setState(() {
                                     _data = newValue;
                                   });
@@ -235,14 +231,14 @@ class _UserScreenState extends State<UserScreen> {
                           if (whenLoggedIn(context, true) == true)
                             IconButton(
                               onPressed: () async {
-                                final newValue = await api_users.putBlock(
-                                  context.read<SettingsController>().httpClient,
-                                  context
-                                      .read<SettingsController>()
-                                      .instanceHost,
-                                  _data!.userId,
-                                  !_data!.isBlockedByUser!,
-                                );
+                                final newValue = await context
+                                    .read<SettingsController>()
+                                    .kbinAPI
+                                    .users
+                                    .putBlock(
+                                      _data!.userId,
+                                      !_data!.isBlockedByUser!,
+                                    );
 
                                 setState(() {
                                   _data = newValue;
@@ -292,16 +288,14 @@ class _UserScreenState extends State<UserScreen> {
                               ),
                               FilledButton(
                                 onPressed: () async {
-                                  final newThread = await postMessage(
-                                    context
-                                        .read<SettingsController>()
-                                        .httpClient,
-                                    context
-                                        .read<SettingsController>()
-                                        .instanceHost,
-                                    _data!.userId,
-                                    _messageController!.text,
-                                  );
+                                  final newThread = await context
+                                      .read<SettingsController>()
+                                      .kbinAPI
+                                      .messages
+                                      .create(
+                                        _data!.userId,
+                                        _messageController!.text,
+                                      );
 
                                   setState(() {
                                     _messageController = null;
@@ -323,18 +317,17 @@ class _UserScreenState extends State<UserScreen> {
                         ]),
                       if (_data!.about != null || _aboutTextController != null)
                         Padding(
-                          padding: const EdgeInsets.only(top: 12),
-                          child: _aboutTextController == null
-                              ? Markdown(
-                                _data!.about!,
-                                getNameHost(context, _data!.username),
-                              )
-                              : TextEditor(
-                                _aboutTextController!,
-                                label: "About",
-                                isMarkdown: true,
-                              )
-                        ),
+                            padding: const EdgeInsets.only(top: 12),
+                            child: _aboutTextController == null
+                                ? Markdown(
+                                    _data!.about!,
+                                    getNameHost(context, _data!.username),
+                                  )
+                                : TextEditor(
+                                    _aboutTextController!,
+                                    label: "About",
+                                    isMarkdown: true,
+                                  )),
                       if (_aboutTextController != null)
                         Row(
                           children: [
@@ -342,11 +335,10 @@ class _UserScreenState extends State<UserScreen> {
                             Padding(
                               padding: const EdgeInsets.all(12),
                               child: ImageSelector(
-                                _avatarFile,
-                                (file) => setState(() {
-                                  _avatarFile = file;
-                                })
-                              ),
+                                  _avatarFile,
+                                  (file) => setState(() {
+                                        _avatarFile = file;
+                                      })),
                             )
                           ],
                         ),

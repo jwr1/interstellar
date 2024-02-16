@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/api/messages.dart';
 import 'package:interstellar/src/models/message.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
@@ -67,12 +66,14 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
               children: [
                 FilledButton(
                     onPressed: () async {
-                      final newThread = await postMessageThreadReply(
-                        context.read<SettingsController>().httpClient,
-                        context.read<SettingsController>().instanceHost,
-                        data.threadId,
-                        _controller.text,
-                      );
+                      final newThread = await context
+                          .read<SettingsController>()
+                          .kbinAPI
+                          .messages
+                          .postThreadReply(
+                            data.threadId,
+                            _controller.text,
+                          );
 
                       _controller.text = '';
 

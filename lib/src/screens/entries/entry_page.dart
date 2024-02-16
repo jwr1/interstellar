@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/comment.dart';
-import 'package:interstellar/src/api/entries.dart' as api_entries;
-import 'package:interstellar/src/api/entry_comments.dart' as api_comments;
 import 'package:interstellar/src/models/entry.dart';
 import 'package:interstellar/src/models/entry_comment.dart';
 import 'package:interstellar/src/screens/entries/entry_comment.dart';
@@ -52,16 +50,15 @@ class _EntryPageState extends State<EntryPage> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newPage = await api_comments.fetchComments(
-        context.read<SettingsController>().httpClient,
-        context.read<SettingsController>().instanceHost,
-        _data.entryId,
-        page: pageKey,
-        sort: commentSort,
-        usePreferredLangs: whenLoggedIn(
-            context, context.read<SettingsController>().useAccountLangFilter),
-        langs: context.read<SettingsController>().langFilter.toList(),
-      );
+      final newPage =
+          await context.read<SettingsController>().kbinAPI.entryComments.list(
+                _data.entryId,
+                page: pageKey,
+                sort: commentSort,
+                usePreferredLangs: whenLoggedIn(context,
+                    context.read<SettingsController>().useAccountLangFilter),
+                langs: context.read<SettingsController>().langFilter.toList(),
+              );
 
       // Check BuildContext
       if (!mounted) return;
@@ -140,12 +137,11 @@ class _EntryPageState extends State<EntryPage> {
                 _data,
                 _onUpdate,
                 onReply: whenLoggedIn(context, (body) async {
-                  var newComment = await api_comments.postComment(
-                    context.read<SettingsController>().httpClient,
-                    context.read<SettingsController>().instanceHost,
-                    body,
-                    _data.entryId,
-                  );
+                  var newComment = await context
+                      .read<SettingsController>()
+                      .kbinAPI
+                      .entryComments
+                      .create(body, _data.entryId);
                   var newList = _pagingController.itemList;
                   newList?.insert(0, newComment);
                   setState(() {
@@ -156,15 +152,18 @@ class _EntryPageState extends State<EntryPage> {
                     ? whenLoggedIn(
                         context,
                         (body) async {
-                          final newEntry = await api_entries.editEntry(
-                              context.read<SettingsController>().httpClient,
-                              context.read<SettingsController>().instanceHost,
-                              _data.entryId,
-                              _data.title,
-                              _data.isOc,
-                              body,
-                              _data.lang,
-                              _data.isAdult);
+                          final newEntry = await context
+                              .read<SettingsController>()
+                              .kbinAPI
+                              .entries
+                              .putEdit(
+                                _data.entryId,
+                                _data.title,
+                                _data.isOc,
+                                body,
+                                _data.lang,
+                                _data.isAdult,
+                              );
                           _onUpdate(newEntry);
                         },
                         matchesUsername: _data.user.username,
@@ -174,11 +173,11 @@ class _EntryPageState extends State<EntryPage> {
                     ? whenLoggedIn(
                         context,
                         () async {
-                          await api_entries.deletePost(
-                            context.read<SettingsController>().httpClient,
-                            context.read<SettingsController>().instanceHost,
-                            _data.entryId,
-                          );
+                          await context
+                              .read<SettingsController>()
+                              .kbinAPI
+                              .entries
+                              .delete(_data.entryId);
                           _onUpdate(_data.copyWith(
                             body: '_thread deleted_',
                             uv: null,

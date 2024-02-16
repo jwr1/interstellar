@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/comment.dart';
-import 'package:interstellar/src/api/post_comments.dart' as api_comments;
-import 'package:interstellar/src/api/posts.dart' as api_posts;
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/models/post_comment.dart';
 import 'package:interstellar/src/screens/posts/post_comment.dart';
@@ -52,16 +50,15 @@ class _PostPageState extends State<PostPage> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newPage = await api_comments.fetchComments(
-        context.read<SettingsController>().httpClient,
-        context.read<SettingsController>().instanceHost,
-        _data.postId,
-        page: pageKey,
-        sort: commentSort,
-        usePreferredLangs: whenLoggedIn(
-            context, context.read<SettingsController>().useAccountLangFilter),
-        langs: context.read<SettingsController>().langFilter.toList(),
-      );
+      final newPage =
+          await context.read<SettingsController>().kbinAPI.postComments.list(
+                _data.postId,
+                page: pageKey,
+                sort: commentSort,
+                usePreferredLangs: whenLoggedIn(context,
+                    context.read<SettingsController>().useAccountLangFilter),
+                langs: context.read<SettingsController>().langFilter.toList(),
+              );
 
       // Check BuildContext
       if (!mounted) return;
@@ -140,12 +137,14 @@ class _PostPageState extends State<PostPage> {
                 _data,
                 _onUpdate,
                 onReply: whenLoggedIn(context, (body) async {
-                  var newComment = await api_comments.postComment(
-                    context.read<SettingsController>().httpClient,
-                    context.read<SettingsController>().instanceHost,
-                    body,
-                    _data.postId,
-                  );
+                  var newComment = await context
+                      .read<SettingsController>()
+                      .kbinAPI
+                      .postComments
+                      .create(
+                        body,
+                        _data.postId,
+                      );
                   var newList = _pagingController.itemList;
                   newList?.insert(0, newComment);
                   setState(() {
@@ -156,13 +155,16 @@ class _PostPageState extends State<PostPage> {
                     ? whenLoggedIn(
                         context,
                         (body) async {
-                          final newPost = await api_posts.editPost(
-                              context.read<SettingsController>().httpClient,
-                              context.read<SettingsController>().instanceHost,
-                              _data.postId,
-                              body,
-                              _data.lang,
-                              _data.isAdult);
+                          final newPost = await context
+                              .read<SettingsController>()
+                              .kbinAPI
+                              .posts
+                              .edit(
+                                _data.postId,
+                                body,
+                                _data.lang,
+                                _data.isAdult,
+                              );
                           _onUpdate(newPost);
                         },
                         matchesUsername: _data.user.username,
@@ -172,11 +174,11 @@ class _PostPageState extends State<PostPage> {
                     ? whenLoggedIn(
                         context,
                         () async {
-                          await api_posts.deletePost(
-                            context.read<SettingsController>().httpClient,
-                            context.read<SettingsController>().instanceHost,
-                            _data.postId,
-                          );
+                          await context
+                              .read<SettingsController>()
+                              .kbinAPI
+                              .posts
+                              .delete(_data.postId);
                           _onUpdate(_data.copyWith(
                             body: '_post deleted_',
                             uv: null,

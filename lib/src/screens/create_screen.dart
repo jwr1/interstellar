@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:interstellar/src/api/entries.dart' as api_entries;
-import 'package:interstellar/src/api/magazines.dart' as api_magazines;
-import 'package:interstellar/src/api/posts.dart' as api_posts;
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/language_codes.dart';
 import 'package:interstellar/src/widgets/image_selector.dart';
@@ -57,18 +54,13 @@ class _CreateScreenState extends State<CreateScreen> {
         actions: [
           IconButton(
               onPressed: () async {
+                final api = context.read<SettingsController>().kbinAPI;
+
                 var magazineName = _magazineTextController.text;
-                var client = context.read<SettingsController>().httpClient;
-                var instanceHost =
-                    context.read<SettingsController>().instanceHost;
 
                 int? magazineId = widget.magazineId;
                 if (magazineId == null) {
-                  final magazine = await api_magazines.fetchMagazineByName(
-                    client,
-                    instanceHost,
-                    magazineName,
-                  );
+                  final magazine = await api.magazines.getByName(magazineName);
                   magazineId = magazine.magazineId;
                 }
 
@@ -80,9 +72,7 @@ class _CreateScreenState extends State<CreateScreen> {
                   case CreateType.entry:
                     if (_urlTextController.text.isEmpty) {
                       if (_imageFile == null) {
-                        await api_entries.createEntry(
-                          client,
-                          instanceHost,
+                        await api.entries.createArticle(
                           magazineId,
                           title: _titleTextController.text,
                           isOc: _isOc,
@@ -92,9 +82,7 @@ class _CreateScreenState extends State<CreateScreen> {
                           tags: tags,
                         );
                       } else {
-                        await api_entries.createImage(
-                          client,
-                          instanceHost,
+                        await api.entries.createImage(
                           magazineId,
                           title: _titleTextController.text,
                           image: _imageFile!,
@@ -107,9 +95,7 @@ class _CreateScreenState extends State<CreateScreen> {
                         );
                       }
                     } else {
-                      await api_entries.createLink(
-                        client,
-                        instanceHost,
+                      await api.entries.createLink(
                         magazineId,
                         title: _titleTextController.text,
                         url: _urlTextController.text,
@@ -122,18 +108,14 @@ class _CreateScreenState extends State<CreateScreen> {
                     }
                   case CreateType.post:
                     if (_imageFile == null) {
-                      await api_posts.createPost(
-                        client,
-                        instanceHost,
+                      await api.posts.create(
                         magazineId,
                         body: _bodyTextController.text,
                         lang: _lang,
                         isAdult: _isAdult,
                       );
                     } else {
-                      await api_posts.createImage(
-                        client,
-                        instanceHost,
+                      await api.posts.createImage(
                         magazineId,
                         image: _imageFile!,
                         alt: "",

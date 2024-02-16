@@ -4,71 +4,68 @@ import 'package:http/http.dart' as http;
 import 'package:interstellar/src/models/domain.dart';
 import 'package:interstellar/src/utils/utils.dart';
 
-enum DomainsFilter { all, subscribed, blocked }
+enum KbinAPIDomainsFilter { all, subscribed, blocked }
 
-Future<DomainListModel> fetchDomains(
-  http.Client client,
-  String instanceHost, {
-  int? page,
-  DomainsFilter? filter,
-  String? search,
-}) async {
-  final response = (filter == null || filter == DomainsFilter.all)
-      ? await client.get(Uri.https(
-          instanceHost, '/api/domains', {'p': page?.toString(), 'q': search}))
-      : await client.get(Uri.https(instanceHost, '/api/domains/${filter.name}',
-          {'p': page?.toString()}));
+class KbinAPIDomains {
+  final http.Client httpClient;
+  final String instanceHost;
 
-  httpErrorHandler(response, message: 'Failed to load domains');
+  KbinAPIDomains(
+    this.httpClient,
+    this.instanceHost,
+  );
 
-  return DomainListModel.fromJson(
-      jsonDecode(response.body) as Map<String, dynamic>);
-}
+  Future<DomainListModel> list({
+    int? page,
+    KbinAPIDomainsFilter? filter,
+    String? search,
+  }) async {
+    final path = (filter == null || filter == KbinAPIDomainsFilter.all)
+        ? '/api/domains'
+        : '/api/domains/${filter.name}';
+    final query = queryParams(
+        (filter == null || filter == KbinAPIDomainsFilter.all)
+            ? {'p': page?.toString(), 'q': search}
+            : {'p': page?.toString()});
 
-Future<DomainModel> fetchDomain(
-  http.Client client,
-  String instanceHost,
-  int domainId,
-) async {
-  final response =
-      await client.get(Uri.https(instanceHost, '/api/domain/$domainId'));
+    final response = await httpClient.get(Uri.https(instanceHost, path, query));
 
-  httpErrorHandler(response, message: 'Failed to load domain');
+    httpErrorHandler(response, message: 'Failed to load domains');
 
-  return DomainModel.fromJson(
-      jsonDecode(response.body) as Map<String, dynamic>);
-}
+    return DomainListModel.fromJson(
+        jsonDecode(response.body) as Map<String, dynamic>);
+  }
 
-Future<DomainModel> putSubscribe(
-  http.Client client,
-  String instanceHost,
-  int domainId,
-  bool state,
-) async {
-  final response = await client.put(Uri.https(
-    instanceHost,
-    '/api/domain/$domainId/${state ? 'subscribe' : 'unsubscribe'}',
-  ));
+  Future<DomainModel> get(int domainId) async {
+    final path = '/api/domain/$domainId';
 
-  httpErrorHandler(response, message: 'Failed to send subscribe');
+    final response = await httpClient.get(Uri.https(instanceHost, path));
 
-  return DomainModel.fromJson(
-      jsonDecode(response.body) as Map<String, dynamic>);
-}
+    httpErrorHandler(response, message: 'Failed to load domain');
 
-Future<DomainModel> putBlock(
-  http.Client client,
-  String instanceHost,
-  int domainId,
-  bool state,
-) async {
-  final response = await client.put(Uri.https(
-    instanceHost,
-    '/api/domain/$domainId/${state ? 'block' : 'unblock'}',
-  ));
+    return DomainModel.fromJson(
+        jsonDecode(response.body) as Map<String, dynamic>);
+  }
 
-  httpErrorHandler(response, message: 'Failed to send block');
+  Future<DomainModel> putSubscribe(int domainId, bool state) async {
+    final path = '/api/domain/$domainId/${state ? 'subscribe' : 'unsubscribe'}';
 
-  return DomainModel.fromJson(
-      jsonDecode(response.body) as Map<String, dynamic>);
+    final response = await httpClient.put(Uri.https(instanceHost, path));
+
+    httpErrorHandler(response, message: 'Failed to send subscribe');
+
+    return DomainModel.fromJson(
+        jsonDecode(response.body) as Map<String, dynamic>);
+  }
+
+  Future<DomainModel> putBlock(int domainId, bool state) async {
+    final path = '/api/domain/$domainId/${state ? 'block' : 'unblock'}';
+
+    final response = await httpClient.put(Uri.https(instanceHost, path));
+
+    httpErrorHandler(response, message: 'Failed to send block');
+
+    return DomainModel.fromJson(
+        jsonDecode(response.body) as Map<String, dynamic>);
+  }
 }

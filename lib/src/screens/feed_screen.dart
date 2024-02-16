@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:interstellar/src/api/entries.dart' as api_entries;
 import 'package:interstellar/src/api/feed_source.dart';
-import 'package:interstellar/src/api/posts.dart' as api_posts;
 import 'package:interstellar/src/screens/entries/entry_item.dart';
 import 'package:interstellar/src/screens/entries/entry_page.dart';
 import 'package:interstellar/src/screens/posts/post_item.dart';
@@ -295,26 +293,23 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
   Future<void> _fetchPage(int pageKey) async {
     try {
       dynamic newPage = await (switch (widget.mode) {
-        FeedMode.entries => api_entries.fetchEntries(
-            context.read<SettingsController>().httpClient,
-            context.read<SettingsController>().instanceHost,
-            widget.source,
-            page: pageKey,
-            sort: widget.sort,
-            usePreferredLangs: whenLoggedIn(context,
-                context.read<SettingsController>().useAccountLangFilter),
-            langs: context.read<SettingsController>().langFilter.toList(),
-          ),
-        FeedMode.posts => api_posts.fetchPosts(
-            context.read<SettingsController>().httpClient,
-            context.read<SettingsController>().instanceHost,
-            widget.source,
-            page: pageKey,
-            sort: widget.sort,
-            usePreferredLangs: whenLoggedIn(context,
-                context.read<SettingsController>().useAccountLangFilter),
-            langs: context.read<SettingsController>().langFilter.toList(),
-          ),
+        FeedMode.entries =>
+          context.read<SettingsController>().kbinAPI.entries.list(
+                widget.source,
+                page: pageKey,
+                sort: widget.sort,
+                usePreferredLangs: whenLoggedIn(context,
+                    context.read<SettingsController>().useAccountLangFilter),
+                langs: context.read<SettingsController>().langFilter.toList(),
+              ),
+        FeedMode.posts => context.read<SettingsController>().kbinAPI.posts.list(
+              widget.source,
+              page: pageKey,
+              sort: widget.sort,
+              usePreferredLangs: whenLoggedIn(context,
+                  context.read<SettingsController>().useAccountLangFilter),
+              langs: context.read<SettingsController>().langFilter.toList(),
+            ),
       });
 
       // Check BuildContext
