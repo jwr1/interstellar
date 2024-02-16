@@ -47,6 +47,7 @@ class ContentItem extends StatefulWidget {
   final bool isDownVoted;
   final void Function()? onDownVote;
 
+  final Uri? openLinkUri;
   final int? numComments;
   final Future<void> Function(String)? onReply;
   final Future<void> Function(String)? onEdit;
@@ -83,6 +84,7 @@ class ContentItem extends StatefulWidget {
     this.downVotes,
     this.isDownVoted = false,
     this.onDownVote,
+    this.openLinkUri,
     this.numComments,
     this.onReply,
     this.onEdit,
@@ -309,7 +311,9 @@ class _ContentItemState extends State<ContentItem> {
                             ? const Icon(Icons.expand_more)
                             : const Icon(Icons.expand_less)),
                   const Spacer(),
-                  if (widget.onEdit != null || widget.onDelete != null)
+                  if (widget.openLinkUri != null ||
+                      widget.onEdit != null ||
+                      widget.onDelete != null)
                     Padding(
                       padding: const EdgeInsets.only(left: 12),
                       child: MenuAnchor(
@@ -328,24 +332,56 @@ class _ContentItemState extends State<ContentItem> {
                           },
                           controller: _menuController,
                           menuChildren: [
-                            MenuItemButton(
-                              onPressed: widget.onEdit != null
-                                  ? () => setState(() {
-                                        _editTextController =
-                                            TextEditingController(
-                                                text: widget.body);
-                                      })
-                                  : null,
-                              child: const Padding(
-                                  padding: EdgeInsets.all(12),
-                                  child: Text("Edit")),
-                            ),
-                            MenuItemButton(
-                              onPressed: widget.onDelete,
-                              child: const Padding(
-                                  padding: EdgeInsets.all(12),
-                                  child: Text("Delete")),
-                            ),
+                            if (widget.openLinkUri != null)
+                              MenuItemButton(
+                                onPressed: () =>
+                                    openWebpage(context, widget.openLinkUri!),
+                                child: const Padding(
+                                    padding: EdgeInsets.all(12),
+                                    child: Text("Open Link")),
+                              ),
+                            if (widget.onEdit != null)
+                              MenuItemButton(
+                                onPressed: () => setState(() {
+                                  _editTextController =
+                                      TextEditingController(text: widget.body);
+                                }),
+                                child: const Padding(
+                                    padding: EdgeInsets.all(12),
+                                    child: Text("Edit")),
+                              ),
+                            if (widget.onDelete != null)
+                              MenuItemButton(
+                                onPressed: () => showDialog<String>(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                    title: const Text('Delete Item'),
+                                    actions: <Widget>[
+                                      OutlinedButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text('Cancel'),
+                                      ),
+                                      FilledButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+
+                                          widget.onDelete!();
+                                        },
+                                        child: const Text('Delete'),
+                                      ),
+                                    ],
+                                    actionsOverflowAlignment:
+                                        OverflowBarAlignment.center,
+                                    actionsOverflowButtonSpacing: 8,
+                                    actionsOverflowDirection:
+                                        VerticalDirection.up,
+                                  ),
+                                ),
+                                child: const Padding(
+                                    padding: EdgeInsets.all(12),
+                                    child: Text("Delete")),
+                              ),
                           ]),
                     ),
                   if (widget.boosts != null)
@@ -444,16 +480,17 @@ class _ContentItemState extends State<ContentItem> {
                               child: const Text('Cancel')),
                           const SizedBox(width: 8),
                           FilledButton(
-                              onPressed: () async {
-                                // Wait in case of errors before closing
-                                await widget.onEdit!(_editTextController!.text);
+                            onPressed: () async {
+                              // Wait in case of errors before closing
+                              await widget.onEdit!(_editTextController!.text);
 
-                                setState(() {
-                                  _editTextController!.dispose();
-                                  _editTextController = null;
-                                });
-                              },
-                              child: const Text('Submit'))
+                              setState(() {
+                                _editTextController!.dispose();
+                                _editTextController = null;
+                              });
+                            },
+                            child: const Text('Submit'),
+                          )
                         ],
                       )
                     ],

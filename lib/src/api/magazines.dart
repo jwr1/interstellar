@@ -47,8 +47,8 @@ Future<DetailedMagazineModel> fetchMagazineByName(
   String instanceHost,
   String magazineName,
 ) async {
-  final response =
-  await client.get(Uri.https(instanceHost, '/api/magazine/name/$magazineName'));
+  final response = await client
+      .get(Uri.https(instanceHost, '/api/magazine/name/$magazineName'));
 
   httpErrorHandler(response, message: 'Failed to load magazine');
 
@@ -68,6 +68,23 @@ Future<DetailedMagazineModel> putSubscribe(
   ));
 
   httpErrorHandler(response, message: 'Failed to send subscribe');
+
+  return DetailedMagazineModel.fromJson(
+      jsonDecode(response.body) as Map<String, dynamic>);
+}
+
+Future<DetailedMagazineModel> putBlock(
+  http.Client client,
+  String instanceHost,
+  int magazineId,
+  bool state,
+) async {
+  final response = await client.put(Uri.https(
+    instanceHost,
+    '/api/magazine/$magazineId/${state ? 'block' : 'unblock'}',
+  ));
+
+  httpErrorHandler(response, message: 'Failed to send block');
 
   return DetailedMagazineModel.fromJson(
       jsonDecode(response.body) as Map<String, dynamic>);

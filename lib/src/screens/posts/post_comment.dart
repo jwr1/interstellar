@@ -140,6 +140,10 @@ class _EntryCommentState extends State<PostComment> {
                         _isCollapsed = !_isCollapsed;
                       })
                   : null,
+              openLinkUri: Uri.https(
+                context.read<SettingsController>().instanceHost,
+                '/m/${widget.comment.magazine.name}/p/${widget.comment.postId}/-/reply/${widget.comment.commentId}',
+              ),
             ),
           ),
         ),

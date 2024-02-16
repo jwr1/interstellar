@@ -33,14 +33,57 @@ class MentionMarkdownSyntax extends markdown.InlineSyntax {
     /u/jwr1
     @jwr1@kbin.earth
     @jwr1
-
-    [name here](MENTION)
-    [name here](MENTION "title here")
   */
-  static const String _pattern =
-      r'(?:\[.*?\]\()?(?:(?:(?:https?:\/\/)?([a-zA-Z0-9][a-zA-Z0-9.-]*\.[a-zA-Z]{2,}))?\/([umc])\/@?|(@|!))([a-zA-Z0-9_]+)(?:@([a-zA-Z0-9][a-zA-Z0-9.-]*\.[a-zA-Z]{2,}))?(?:(?:\s*".*?")?\))?';
+  static const String _mentionPattern =
+      r'(?:(?:(?:https?:\/\/)?([a-zA-Z0-9][a-zA-Z0-9.-]*\.[a-zA-Z]{2,}))?\/([umc])\/@?|(@|!))([a-zA-Z0-9_]+)(?:@([a-zA-Z0-9][a-zA-Z0-9.-]*\.[a-zA-Z]{2,}))?';
 
-  MentionMarkdownSyntax() : super(_pattern);
+  /*
+    Should match the following patterns:
+
+    [link name](MENTION)
+    [link name](MENTION "link title")
+  */
+  static const String _mdLinkPattern =
+      r'\[.*?\]\(\s*' + _mentionPattern + r'(?:\s*".*?")?\s*\)';
+  static final _mdLinkPatternRegExp =
+      RegExp(_mdLinkPattern, multiLine: true, caseSensitive: true);
+
+  static final _borderRegExp = RegExp(r'[^a-z0-9@/\\]', caseSensitive: false);
+
+  MentionMarkdownSyntax() : super(_mentionPattern);
+
+  @override
+  bool tryMatch(markdown.InlineParser parser, [int? startMatchPos]) {
+    startMatchPos ??= parser.pos;
+
+    final isMarkdownLink =
+        String.fromCharCode(parser.charAt(parser.pos)) == '[';
+
+    if (parser.pos > 0 && !isMarkdownLink) {
+      final precededBy = String.fromCharCode(parser.charAt(parser.pos - 1));
+      if (_borderRegExp.matchAsPrefix(precededBy) == null) {
+        return false;
+      }
+    }
+
+    var match =
+        _mdLinkPatternRegExp.matchAsPrefix(parser.source, startMatchPos);
+    match ??= pattern.matchAsPrefix(parser.source, startMatchPos);
+    if (match == null) return false;
+
+    if (parser.source.length > match.end && !isMarkdownLink) {
+      final followedBy = String.fromCharCode(parser.charAt(match.end));
+      if (_borderRegExp.matchAsPrefix(followedBy) == null) {
+        return false;
+      }
+    }
+
+    // Write any existing plain text up to this point.
+    parser.writeText();
+
+    if (onMatch(parser, match)) parser.consume(match[0]!.length);
+    return true;
+  }
 
   @override
   bool onMatch(markdown.InlineParser parser, Match match) {

@@ -80,6 +80,10 @@ class EntryItem extends StatelessWidget {
       onEdit: onEdit,
       onDelete: onDelete,
       numComments: item.numComments,
+      openLinkUri: Uri.https(
+        context.read<SettingsController>().instanceHost,
+        '/m/${item.magazine.name}/t/${item.entryId}',
+      ),
     );
   }
 }

@@ -151,10 +151,11 @@ class _UsersScreenState extends State<UsersScreen> {
                     const SizedBox(width: 12),
                     OutlinedButton(
                       style: ButtonStyle(
-                          foregroundColor: item.isFollowedByUser == true
-                              ? null
-                              : MaterialStatePropertyAll(
-                                  Theme.of(context).disabledColor)),
+                        foregroundColor: MaterialStatePropertyAll(
+                            item.isFollowedByUser == true
+                                ? Theme.of(context).colorScheme.primaryContainer
+                                : null),
+                      ),
                       onPressed: whenLoggedIn(context, () async {
                         var newValue = await api_users.putFollow(
                             context.read<SettingsController>().httpClient,
