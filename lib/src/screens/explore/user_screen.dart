@@ -302,6 +302,7 @@ class _UserScreenState extends State<UserScreen> {
                               : TextEditor(
                                 _aboutTextController!,
                                 label: "About",
+                                isMarkdown: true,
                               )
                         ),
                       if (_aboutTextController != null)
