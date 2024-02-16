@@ -1,8 +1,12 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:mime/mime.dart';
+import 'package:path/path.dart';
 
 enum UsersFilter { all, followed, followers, blocked }
 
@@ -82,6 +86,22 @@ Future<DetailedUserModel> putFollow(
       jsonDecode(response.body) as Map<String, dynamic>);
 }
 
+Future<DetailedUserModel> updateProfile(
+  http.Client client,
+  String instanceHost,
+  String about
+) async {
+  final response = await client.put(
+    Uri.https(instanceHost, '/api/users/profile'),
+    body: jsonEncode({'about': about})
+  );
+
+  httpErrorHandler(response, message: 'Failed to update profile');
+
+  return DetailedUserModel.fromJson(
+      jsonDecode(response.body) as Map<String, dynamic>);
+}
+
 Future<DetailedUserModel> putBlock(
   http.Client client,
   String instanceHost,
@@ -94,6 +114,50 @@ Future<DetailedUserModel> putBlock(
   ));
 
   httpErrorHandler(response, message: 'Failed to send block');
+
+  return DetailedUserModel.fromJson(
+      jsonDecode(response.body) as Map<String, dynamic>);
+}
+
+Future<DetailedUserModel> updateAvatar(
+  http.Client client,
+  String instanceHost,
+  XFile image
+) async {
+  var request = http.MultipartRequest(
+      'POST', Uri.https(instanceHost, '/api/users/avatar'));
+  var multipartFile = http.MultipartFile.fromBytes(
+    'uploadImage',
+    await image.readAsBytes(),
+    filename: basename(image.path),
+    contentType: MediaType.parse(lookupMimeType(image.path)!),
+  );
+  request.files.add(multipartFile);
+  var response = await http.Response.fromStream(await client.send(request));
+
+  httpErrorHandler(response, message: 'Failed to update profile');
+
+  return DetailedUserModel.fromJson(
+      jsonDecode(response.body) as Map<String, dynamic>);
+}
+
+Future<DetailedUserModel> updateCover(
+  http.Client client,
+  String instanceHost,
+  XFile image
+) async {
+  var request = http.MultipartRequest(
+      'POST', Uri.https(instanceHost, '/api/users/cover'));
+  var multipartFile = http.MultipartFile.fromBytes(
+    'uploadImage',
+    await image.readAsBytes(),
+    filename: basename(image.path),
+    contentType: MediaType.parse(lookupMimeType(image.path)!),
+  );
+  request.files.add(multipartFile);
+  var response = await http.Response.fromStream(await client.send(request));
+
+  httpErrorHandler(response, message: 'Failed to update profile');
 
   return DetailedUserModel.fromJson(
       jsonDecode(response.body) as Map<String, dynamic>);
