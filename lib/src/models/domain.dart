@@ -1,31 +1,42 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:interstellar/src/models/shared.dart';
+import 'package:interstellar/src/utils/models.dart';
 
 part 'domain.freezed.dart';
-part 'domain.g.dart';
 
 @freezed
 class DomainListModel with _$DomainListModel {
   const factory DomainListModel({
     required List<DomainModel> items,
-    required PaginationModel pagination,
+    required String? nextPage,
   }) = _DomainListModel;
 
-  factory DomainListModel.fromJson(Map<String, Object?> json) =>
-      _$DomainListModelFromJson(json);
+  factory DomainListModel.fromKbin(Map<String, Object?> json) =>
+      DomainListModel(
+        items: (json['items'] as List<dynamic>)
+            .map((post) => DomainModel.fromKbin(post as Map<String, Object?>))
+            .toList(),
+        nextPage: kbinCalcNextPaginationPage(
+            json['pagination'] as Map<String, Object?>),
+      );
 }
 
 @freezed
 class DomainModel with _$DomainModel {
   const factory DomainModel({
+    required int id,
     required String name,
     required int entryCount,
     required int subscriptionsCount,
-    bool? isUserSubscribed,
-    bool? isBlockedByUser,
-    required int domainId,
+    required bool? isUserSubscribed,
+    required bool? isBlockedByUser,
   }) = _DomainModel;
 
-  factory DomainModel.fromJson(Map<String, Object?> json) =>
-      _$DomainModelFromJson(json);
+  factory DomainModel.fromKbin(Map<String, Object?> json) => DomainModel(
+        id: json['domainId'] as int,
+        name: json['name'] as String,
+        entryCount: json['entryCount'] as int,
+        subscriptionsCount: json['subscriptionsCount'] as int,
+        isUserSubscribed: json['isUserSubscribed'] as bool,
+        isBlockedByUser: json['isBlockedByUser'] as bool,
+      );
 }

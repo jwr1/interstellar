@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:interstellar/src/models/shared.dart';
+import 'package:interstellar/src/models/old/shared.dart';
 
 part 'notification.freezed.dart';
 part 'notification.g.dart';

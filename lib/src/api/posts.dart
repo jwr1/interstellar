@@ -41,8 +41,8 @@ class KbinAPIPosts {
 
     httpErrorHandler(response, message: 'Failed to load posts');
 
-    return PostListModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+    return PostListModel.fromKbinPosts(
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
   Future<PostModel> get(int postId) async {
@@ -52,8 +52,8 @@ class KbinAPIPosts {
 
     httpErrorHandler(response, message: 'Failed to load posts');
 
-    return PostModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+    return PostModel.fromKbinPost(
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
   Future<PostModel> putVote(int postID, int choice) async {
@@ -63,8 +63,8 @@ class KbinAPIPosts {
 
     httpErrorHandler(response, message: 'Failed to send vote');
 
-    return PostModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+    return PostModel.fromKbinPost(
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
   Future<PostModel> putFavorite(int postID) async {
@@ -74,8 +74,8 @@ class KbinAPIPosts {
 
     httpErrorHandler(response, message: 'Failed to send vote');
 
-    return PostModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+    return PostModel.fromKbinPost(
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
   Future<PostModel> edit(
@@ -93,8 +93,8 @@ class KbinAPIPosts {
 
     httpErrorHandler(response, message: "Failed to edit post");
 
-    return PostModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+    return PostModel.fromKbinPost(
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
   Future<void> delete(
@@ -120,8 +120,8 @@ class KbinAPIPosts {
 
     httpErrorHandler(response, message: "Failed to create post");
 
-    return PostModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+    return PostModel.fromKbinPost(
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
   Future<PostModel> createImage(
@@ -152,7 +152,7 @@ class KbinAPIPosts {
 
     httpErrorHandler(response, message: "Failed to create post");
 
-    return PostModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+    return PostModel.fromKbinPost(
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 }

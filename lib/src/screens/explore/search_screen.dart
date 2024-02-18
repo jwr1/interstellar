@@ -1,26 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:interstellar/src/models/entry_comment.dart';
-import 'package:interstellar/src/models/magazine.dart';
+import 'package:interstellar/src/models/comment.dart';
+import 'package:interstellar/src/models/old/magazine.dart';
+import 'package:interstellar/src/models/old/user.dart';
 import 'package:interstellar/src/models/post.dart';
-import 'package:interstellar/src/models/post_comment.dart';
-import 'package:interstellar/src/models/user.dart';
-import 'package:interstellar/src/screens/entries/entry_comment_screen.dart';
-import 'package:interstellar/src/screens/entries/entry_page.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
-import 'package:interstellar/src/screens/posts/post_comment_screen.dart';
-import 'package:interstellar/src/screens/posts/post_page.dart';
+import 'package:interstellar/src/screens/feed/post_comment.dart';
+import 'package:interstellar/src/screens/feed/post_comment_screen.dart';
+import 'package:interstellar/src/screens/feed/post_item.dart';
+import 'package:interstellar/src/screens/feed/post_page.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
 import 'package:provider/provider.dart';
 
-import '../../models/entry.dart';
-import '../entries/entry_comment.dart';
-import '../entries/entry_item.dart';
-import '../posts/post_comment.dart';
-import '../posts/post_item.dart';
 import 'magazine_screen.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -123,16 +117,6 @@ class _SearchScreenState extends State<SearchScreen> {
                             });
                           },
                         );
-                      case EntryModel item:
-                        return EntryPage(item, (newValue) {
-                          var newList = _pagingController.itemList;
-                          newList![index] = newValue;
-                          setState(() {
-                            _pagingController.itemList = newList;
-                          });
-                        });
-                      case EntryCommentModel item:
-                        return EntryCommentScreen(item.commentId);
                       case PostModel item:
                         return PostPage(item, (newValue) {
                           var newList = _pagingController.itemList;
@@ -141,8 +125,8 @@ class _SearchScreenState extends State<SearchScreen> {
                             _pagingController.itemList = newList;
                           });
                         });
-                      case PostCommentModel item:
-                        return PostCommentScreen(item.commentId);
+                      case CommentModel item:
+                        return PostCommentScreen(item.postType, item.id);
                       case _:
                         throw "Unrecognized search item";
                     }
@@ -151,8 +135,7 @@ class _SearchScreenState extends State<SearchScreen> {
               }
 
               return Wrapper(
-                shouldWrap:
-                    !(item is EntryCommentModel || item is PostCommentModel),
+                shouldWrap: item is! CommentModel,
                 parentBuilder: (child) => Card(
                   margin: const EdgeInsets.symmetric(
                     horizontal: 12,
@@ -162,31 +145,6 @@ class _SearchScreenState extends State<SearchScreen> {
                   child: InkWell(onTap: onClick, child: child),
                 ),
                 child: switch (item) {
-                  EntryModel item => EntryItem(
-                      item,
-                      (newValue) {
-                        var newList = _pagingController.itemList;
-                        newList![index] = newValue;
-                        setState(() {
-                          _pagingController.itemList = newList;
-                        });
-                      },
-                      isPreview: true,
-                    ),
-                  EntryCommentModel item => Padding(
-                      padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
-                      child: EntryComment(
-                        item,
-                        (newValue) {
-                          var newList = _pagingController.itemList;
-                          newList![index] = newValue;
-                          setState(() {
-                            _pagingController.itemList = newList;
-                          });
-                        },
-                        onClick: onClick,
-                      ),
-                    ),
                   PostModel item => PostItem(
                       item,
                       (newValue) {
@@ -197,7 +155,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         });
                       },
                     ),
-                  PostCommentModel item => Padding(
+                  CommentModel item => Padding(
                       padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
                       child: PostComment(
                         item,

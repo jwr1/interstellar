@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:interstellar/src/models/shared.dart';
-import 'package:interstellar/src/models/user.dart';
+import 'package:interstellar/src/models/old/shared.dart';
+import 'package:interstellar/src/models/old/user.dart';
 
 part 'message.freezed.dart';
 part 'message.g.dart';

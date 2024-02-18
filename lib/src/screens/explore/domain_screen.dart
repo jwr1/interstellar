@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/models/domain.dart';
-import 'package:interstellar/src/screens/feed_screen.dart';
+import 'package:interstellar/src/screens/feed/feed_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:provider/provider.dart';
@@ -73,7 +73,7 @@ class _DomainScreenState extends State<DomainScreen> {
                               .kbinAPI
                               .domains
                               .putSubscribe(
-                                  _data!.domainId, !_data!.isUserSubscribed!);
+                                  _data!.id, !_data!.isUserSubscribed!);
 
                           setState(() {
                             _data = newValue;
@@ -97,7 +97,7 @@ class _DomainScreenState extends State<DomainScreen> {
                                 .kbinAPI
                                 .domains
                                 .putBlock(
-                                  _data!.domainId,
+                                  _data!.id,
                                   !_data!.isBlockedByUser!,
                                 );
 

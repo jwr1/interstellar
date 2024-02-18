@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/feed_source.dart';
-import 'package:interstellar/src/models/magazine.dart';
-import 'package:interstellar/src/screens/feed_screen.dart';
+import 'package:interstellar/src/models/old/magazine.dart';
+import 'package:interstellar/src/screens/feed/feed_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';

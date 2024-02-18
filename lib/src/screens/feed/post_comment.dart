@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/models/entry_comment.dart';
-import 'package:interstellar/src/screens/entries/entry_comment_screen.dart';
+import 'package:interstellar/src/models/comment.dart';
+import 'package:interstellar/src/models/post.dart';
+import 'package:interstellar/src/screens/feed/post_comment_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/content_item.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
 import 'package:provider/provider.dart';
 
-class EntryComment extends StatefulWidget {
-  const EntryComment(
+class PostComment extends StatefulWidget {
+  const PostComment(
     this.comment,
     this.onUpdate, {
     this.opUserId,
@@ -16,16 +17,16 @@ class EntryComment extends StatefulWidget {
     super.key,
   });
 
-  final EntryCommentModel comment;
-  final void Function(EntryCommentModel) onUpdate;
+  final CommentModel comment;
+  final void Function(CommentModel) onUpdate;
   final int? opUserId;
   final void Function()? onClick;
 
   @override
-  State<EntryComment> createState() => _EntryCommentState();
+  State<PostComment> createState() => _EntryCommentState();
 }
 
-class _EntryCommentState extends State<EntryComment> {
+class _EntryCommentState extends State<PostComment> {
   bool _isCollapsed = false;
 
   @override
@@ -39,48 +40,47 @@ class _EntryCommentState extends State<EntryComment> {
             parentBuilder: (child) =>
                 InkWell(onTap: widget.onClick, child: child),
             child: ContentItem(
-              originInstance:
-                  getNameHost(context, widget.comment.user.username),
+              originInstance: getNameHost(context, widget.comment.user.name),
               body: widget.comment.body ?? '_comment deleted_',
               createdAt: widget.comment.createdAt,
-              user: widget.comment.user.username,
-              userIcon: widget.comment.user.avatar?.storageUrl,
-              userIdOnClick: widget.comment.user.userId,
+              user: widget.comment.user.name,
+              userIcon: widget.comment.user.avatar,
+              userIdOnClick: widget.comment.user.id,
               opUserId: widget.opUserId,
-              boosts: widget.comment.uv,
-              isBoosted: widget.comment.userVote == 1,
+              boosts: widget.comment.boosts,
+              isBoosted: widget.comment.myBoost == true,
               onBoost: whenLoggedIn(context, () async {
                 var newValue = await context
                     .read<SettingsController>()
                     .kbinAPI
-                    .entryComments
-                    .putVote(widget.comment.commentId, 1);
+                    .comments
+                    .putVote(widget.comment.postType, widget.comment.id, 1);
                 widget.onUpdate(newValue.copyWith(
                   childCount: widget.comment.childCount,
                   children: widget.comment.children,
                 ));
               }),
-              upVotes: widget.comment.favourites,
-              isUpVoted: widget.comment.isFavourited == true,
+              upVotes: widget.comment.upvotes,
               onUpVote: whenLoggedIn(context, () async {
                 var newValue = await context
                     .read<SettingsController>()
                     .kbinAPI
-                    .entryComments
-                    .putFavorite(widget.comment.commentId);
+                    .comments
+                    .putFavorite(widget.comment.postType, widget.comment.id);
                 widget.onUpdate(newValue.copyWith(
                   childCount: widget.comment.childCount,
                   children: widget.comment.children,
                 ));
               }),
-              downVotes: widget.comment.dv,
-              isDownVoted: widget.comment.userVote == -1,
+              isUpVoted: widget.comment.myVote == 1,
+              downVotes: widget.comment.downvotes,
+              isDownVoted: widget.comment.myVote == -1,
               onDownVote: whenLoggedIn(context, () async {
                 var newValue = await context
                     .read<SettingsController>()
                     .kbinAPI
-                    .entryComments
-                    .putVote(widget.comment.commentId, -1);
+                    .comments
+                    .putVote(widget.comment.postType, widget.comment.id, -1);
                 widget.onUpdate(newValue.copyWith(
                   childCount: widget.comment.childCount,
                   children: widget.comment.children,
@@ -90,11 +90,12 @@ class _EntryCommentState extends State<EntryComment> {
                 var newSubComment = await context
                     .read<SettingsController>()
                     .kbinAPI
-                    .entryComments
+                    .comments
                     .create(
+                      widget.comment.postType,
+                      widget.comment.postId,
                       body,
-                      widget.comment.entryId,
-                      parentCommentId: widget.comment.commentId,
+                      parentCommentId: widget.comment.id,
                     );
 
                 widget.onUpdate(widget.comment.copyWith(
@@ -107,34 +108,36 @@ class _EntryCommentState extends State<EntryComment> {
                       var newValue = await context
                           .read<SettingsController>()
                           .kbinAPI
-                          .entryComments
+                          .comments
                           .edit(
-                            widget.comment.commentId,
+                            widget.comment.postType,
+                            widget.comment.id,
                             body,
                             widget.comment.lang,
                             widget.comment.isAdult,
                           );
+
                       widget.onUpdate(newValue.copyWith(
                         childCount: widget.comment.childCount,
                         children: widget.comment.children,
                       ));
-                    }, matchesUsername: widget.comment.user.username)
+                    }, matchesUsername: widget.comment.user.name)
                   : null,
               onDelete: widget.comment.visibility != 'soft_deleted'
                   ? whenLoggedIn(context, () async {
                       await context
                           .read<SettingsController>()
                           .kbinAPI
-                          .entryComments
-                          .delete(widget.comment.commentId);
+                          .comments
+                          .delete(widget.comment.postType, widget.comment.id);
                       widget.onUpdate(widget.comment.copyWith(
                         body: '_comment deleted_',
-                        uv: null,
-                        dv: null,
-                        favourites: null,
+                        upvotes: null,
+                        downvotes: null,
+                        boosts: null,
                         visibility: 'soft_deleted',
                       ));
-                    }, matchesUsername: widget.comment.user.username)
+                    }, matchesUsername: widget.comment.user.name)
                   : null,
               isCollapsed: _isCollapsed,
               onCollapse: widget.comment.childCount > 0
@@ -144,7 +147,10 @@ class _EntryCommentState extends State<EntryComment> {
                   : null,
               openLinkUri: Uri.https(
                 context.read<SettingsController>().instanceHost,
-                '/m/${widget.comment.magazine.name}/t/${widget.comment.entryId}/-/comment/${widget.comment.commentId}',
+                '/m/${widget.comment.magazine.name}/${switch (widget.comment.postType) {
+                  PostType.thread => 't',
+                  PostType.microblog => 'p',
+                }}/${widget.comment.postId}/-/reply/${widget.comment.id}',
               ),
             ),
           ),
@@ -155,8 +161,9 @@ class _EntryCommentState extends State<EntryComment> {
           TextButton(
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) => EntryCommentScreen(
-                  widget.comment.commentId,
+                builder: (context) => PostCommentScreen(
+                  widget.comment.postType,
+                  widget.comment.id,
                   opUserId: widget.opUserId,
                 ),
               ),
@@ -180,7 +187,7 @@ class _EntryCommentState extends State<EntryComment> {
               children: widget.comment.children!
                   .asMap()
                   .entries
-                  .map((item) => EntryComment(
+                  .map((item) => PostComment(
                         item.value,
                         (newValue) {
                           var newChildren = [...widget.comment.children!];

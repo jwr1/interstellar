@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/models/post_comment.dart';
-import 'package:interstellar/src/screens/posts/post_comment.dart';
-import 'package:interstellar/src/screens/posts/post_page.dart';
+import 'package:interstellar/src/models/comment.dart';
+import 'package:interstellar/src/models/post.dart';
+import 'package:interstellar/src/screens/feed/post_comment.dart';
+import 'package:interstellar/src/screens/feed/post_page.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:provider/provider.dart';
 
 class PostCommentScreen extends StatefulWidget {
   const PostCommentScreen(
+    this.postType,
     this.commentId, {
     this.opUserId,
     super.key,
   });
 
+  final PostType postType;
   final int commentId;
   final int? opUserId;
 
@@ -20,7 +23,7 @@ class PostCommentScreen extends StatefulWidget {
 }
 
 class _PostCommentScreenState extends State<PostCommentScreen> {
-  PostCommentModel? _comment;
+  CommentModel? _comment;
 
   @override
   void initState() {
@@ -29,8 +32,8 @@ class _PostCommentScreenState extends State<PostCommentScreen> {
     context
         .read<SettingsController>()
         .kbinAPI
-        .postComments
-        .get(widget.commentId)
+        .comments
+        .get(widget.postType, widget.commentId)
         .then((value) => setState(() {
               _comment = value;
             }));
@@ -41,7 +44,7 @@ class _PostCommentScreenState extends State<PostCommentScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-            'Comment${_comment != null ? ' by ${_comment!.user.username}' : ''}'),
+            'Comment${_comment != null ? ' by ${_comment!.user.name}' : ''}'),
       ),
       body: _comment != null
           ? ListView(
@@ -82,6 +85,7 @@ class _PostCommentScreenState extends State<PostCommentScreen> {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(builder: (context) {
                                       return PostCommentScreen(
+                                        _comment!.postType,
                                         _comment!.rootId!,
                                       );
                                     }),
@@ -99,6 +103,7 @@ class _PostCommentScreenState extends State<PostCommentScreen> {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(builder: (context) {
                                       return PostCommentScreen(
+                                        _comment!.postType,
                                         _comment!.parentId!,
                                       );
                                     }),

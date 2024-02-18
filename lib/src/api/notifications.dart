@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:interstellar/src/models/notification.dart';
+import 'package:interstellar/src/models/old/notification.dart';
 import 'package:interstellar/src/utils/utils.dart';
 
 // new_ is used because new is a reserved keyword
@@ -29,7 +29,7 @@ class KbinAPINotifications {
     httpErrorHandler(response, message: 'Failed to load notifications');
 
     return NotificationListModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
   Future<int> getCount() async {

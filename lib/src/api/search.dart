@@ -1,13 +1,11 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:interstellar/src/models/entry.dart';
-import 'package:interstellar/src/models/entry_comment.dart';
-import 'package:interstellar/src/models/magazine.dart';
+import 'package:interstellar/src/models/comment.dart';
+import 'package:interstellar/src/models/old/magazine.dart';
+import 'package:interstellar/src/models/old/shared.dart';
+import 'package:interstellar/src/models/old/user.dart';
 import 'package:interstellar/src/models/post.dart';
-import 'package:interstellar/src/models/post_comment.dart';
-import 'package:interstellar/src/models/shared.dart';
-import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/utils/utils.dart';
 
 class SearchList {
@@ -40,7 +38,7 @@ class KbinAPISearch {
 
     httpErrorHandler(response, message: 'Failed to load search');
 
-    var json = jsonDecode(response.body) as Map<String, dynamic>;
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
 
     var searchList =
         SearchList([], PaginationModel.fromJson(json['pagination']));
@@ -48,24 +46,23 @@ class KbinAPISearch {
       var type = actor['type'];
       if (type == 'user') {
         searchList.items.add(DetailedUserModel.fromJson(
-            actor['object'] as Map<String, dynamic>));
+            actor['object'] as Map<String, Object?>));
       } else if (type == 'magazine') {
         searchList.items.add(DetailedMagazineModel.fromJson(
-            actor['object'] as Map<String, dynamic>));
+            actor['object'] as Map<String, Object?>));
       }
     }
     for (var item in json['items']) {
       var itemType = item['itemType'];
       if (itemType == 'entry') {
-        searchList.items.add(EntryModel.fromJson(item as Map<String, dynamic>));
-      } else if (itemType == 'entry_comment') {
         searchList.items
-            .add(EntryCommentModel.fromJson(item as Map<String, dynamic>));
+            .add(PostModel.fromKbinEntry(item as Map<String, Object?>));
       } else if (itemType == 'post') {
-        searchList.items.add(PostModel.fromJson(item as Map<String, dynamic>));
-      } else if (itemType == 'post_comment') {
         searchList.items
-            .add(PostCommentModel.fromJson(item as Map<String, dynamic>));
+            .add(PostModel.fromKbinPost(item as Map<String, Object?>));
+      } else if (itemType == 'entry_comment' || itemType == 'post_comment') {
+        searchList.items
+            .add(CommentModel.fromKbin(item as Map<String, Object?>));
       }
     }
 

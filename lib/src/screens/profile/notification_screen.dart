@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/notifications.dart';
-import 'package:interstellar/src/models/notification.dart';
+import 'package:interstellar/src/models/old/notification.dart';
 import 'package:interstellar/src/screens/profile/notification_item.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:provider/provider.dart';

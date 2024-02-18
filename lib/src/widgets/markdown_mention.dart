@@ -64,9 +64,8 @@ class MentionMarkdownSyntax extends markdown.InlineSyntax {
       }
     }
 
-    var match =
-        _mdLinkPatternRegExp.matchAsPrefix(parser.source, startMatchPos);
-    match ??= pattern.matchAsPrefix(parser.source, startMatchPos);
+    final match = (isMarkdownLink ? _mdLinkPatternRegExp : pattern)
+        .matchAsPrefix(parser.source, startMatchPos);
     if (match == null) return false;
 
     if (parser.source.length > match.end && !isMarkdownLink) {

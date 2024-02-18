@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/feed_source.dart';
-import 'package:interstellar/src/screens/entries/entry_item.dart';
-import 'package:interstellar/src/screens/entries/entry_page.dart';
-import 'package:interstellar/src/screens/posts/post_item.dart';
-import 'package:interstellar/src/screens/posts/post_page.dart';
+import 'package:interstellar/src/models/post.dart';
+import 'package:interstellar/src/screens/feed/post_item.dart';
+import 'package:interstellar/src/screens/feed/post_page.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/floating_menu.dart';
@@ -30,10 +29,8 @@ class FeedScreen extends StatefulWidget {
   State<FeedScreen> createState() => _FeedScreenState();
 }
 
-enum FeedMode { entries, posts }
-
 class _FeedScreenState extends State<FeedScreen> {
-  FeedMode _mode = FeedMode.entries;
+  PostType _mode = PostType.thread;
   FeedSort _sort = FeedSort.hot;
 
   @override
@@ -41,10 +38,10 @@ class _FeedScreenState extends State<FeedScreen> {
     super.initState();
 
     _mode = (widget.source ?? const FeedSourceAll()).getPostsPath() != null
-        ? context.read<SettingsController>().defaultFeedMode
-        : FeedMode.entries;
+        ? context.read<SettingsController>().defaultFeedType
+        : PostType.thread;
     _sort = widget.source == null
-        ? _mode == FeedMode.entries
+        ? _mode == PostType.thread
             ? context.read<SettingsController>().defaultEntriesFeedSort
             : context.read<SettingsController>().defaultPostsFeedSort
         : context.read<SettingsController>().defaultExploreFeedSort;
@@ -52,7 +49,7 @@ class _FeedScreenState extends State<FeedScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final currentFeedModeOption = feedModeSelect.getOption(_mode);
+    final currentFeedModeOption = feedTypeSelect.getOption(_mode);
     final currentFeedSortOption = feedSortSelect.getOption(_sort);
 
     return Wrapper(
@@ -91,13 +88,13 @@ class _FeedScreenState extends State<FeedScreen> {
                 child: IconButton(
                   onPressed: () async {
                     final newMode =
-                        await feedModeSelect.inquireSelection(context, _mode);
+                        await feedTypeSelect.inquireSelection(context, _mode);
 
                     if (newMode != null && newMode != _mode) {
                       setState(() {
                         _mode = newMode;
                         _sort = widget.source == null
-                            ? _mode == FeedMode.entries
+                            ? _mode == PostType.thread
                                 ? context
                                     .read<SettingsController>()
                                     .defaultEntriesFeedSort
@@ -110,7 +107,7 @@ class _FeedScreenState extends State<FeedScreen> {
                       });
                     }
                   },
-                  icon: _mode == FeedMode.entries
+                  icon: _mode == PostType.thread
                       ? const Icon(Icons.feed)
                       : const Icon(Icons.chat),
                 ),
@@ -209,16 +206,16 @@ class _FeedScreenState extends State<FeedScreen> {
   }
 }
 
-const SelectionMenu<FeedMode> feedModeSelect = SelectionMenu(
-  'Feed Mode',
+const SelectionMenu<PostType> feedTypeSelect = SelectionMenu(
+  'Feed Type',
   [
     SelectionMenuItem(
-      value: FeedMode.entries,
+      value: PostType.thread,
       title: 'Threads',
       icon: Icons.feed,
     ),
     SelectionMenuItem(
-      value: FeedMode.posts,
+      value: PostType.microblog,
       title: 'Microblog',
       icon: Icons.chat,
     ),
@@ -264,7 +261,7 @@ const SelectionMenu<FeedSort> feedSortSelect = SelectionMenu(
 class FeedScreenBody extends StatefulWidget {
   final FeedSource source;
   final FeedSort sort;
-  final FeedMode mode;
+  final PostType mode;
   final Widget? details;
 
   const FeedScreenBody({
@@ -280,8 +277,8 @@ class FeedScreenBody extends StatefulWidget {
 }
 
 class _FeedScreenBodyState extends State<FeedScreenBody> {
-  final PagingController<int, dynamic> _pagingController =
-      PagingController(firstPageKey: 1);
+  final PagingController<String, PostModel> _pagingController =
+      PagingController(firstPageKey: '1');
 
   @override
   void initState() {
@@ -290,60 +287,41 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
     _pagingController.addPageRequestListener(_fetchPage);
   }
 
-  Future<void> _fetchPage(int pageKey) async {
+  Future<void> _fetchPage(String pageKey) async {
     try {
-      dynamic newPage = await (switch (widget.mode) {
-        FeedMode.entries =>
+      PostListModel newPage = await (switch (widget.mode) {
+        PostType.thread =>
           context.read<SettingsController>().kbinAPI.entries.list(
                 widget.source,
-                page: pageKey,
+                page: int.parse(pageKey),
                 sort: widget.sort,
                 usePreferredLangs: whenLoggedIn(context,
                     context.read<SettingsController>().useAccountLangFilter),
                 langs: context.read<SettingsController>().langFilter.toList(),
               ),
-        FeedMode.posts => context.read<SettingsController>().kbinAPI.posts.list(
-              widget.source,
-              page: pageKey,
-              sort: widget.sort,
-              usePreferredLangs: whenLoggedIn(context,
-                  context.read<SettingsController>().useAccountLangFilter),
-              langs: context.read<SettingsController>().langFilter.toList(),
-            ),
+        PostType.microblog =>
+          context.read<SettingsController>().kbinAPI.posts.list(
+                widget.source,
+                page: int.parse(pageKey),
+                sort: widget.sort,
+                usePreferredLangs: whenLoggedIn(context,
+                    context.read<SettingsController>().useAccountLangFilter),
+                langs: context.read<SettingsController>().langFilter.toList(),
+              ),
       });
 
       // Check BuildContext
       if (!mounted) return;
 
-      final isLastPage =
-          newPage.pagination.currentPage == newPage.pagination.maxPage;
       // Prevent duplicates
-      var newItems = [];
-      switch (widget.mode) {
-        case FeedMode.entries:
-          final currentItemIds =
-              _pagingController.itemList?.map((e) => e.entryId) ?? [];
-          newItems = newPage.items
-              .where((e) => !currentItemIds.contains(e.entryId))
-              .toList();
-          break;
-        case FeedMode.posts:
-          final currentItemIds =
-              _pagingController.itemList?.map((e) => e.postId) ?? [];
-          newItems = newPage.items
-              .where((e) => !currentItemIds.contains(e.postId))
-              .toList();
-          break;
+      List<PostModel> newItems = [];
+      final currentItemIds =
+          _pagingController.itemList?.map((post) => post.id) ?? [];
+      newItems = newPage.items
+          .where((post) => !currentItemIds.contains(post.id))
+          .toList();
 
-        default:
-      }
-
-      if (isLastPage) {
-        _pagingController.appendLastPage(newItems);
-      } else {
-        final nextPageKey = pageKey + 1;
-        _pagingController.appendPage(newItems, nextPageKey);
-      }
+      _pagingController.appendPage(newItems, newPage.nextPage);
     } catch (error) {
       _pagingController.error = error;
     }
@@ -367,9 +345,9 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
             SliverToBoxAdapter(
               child: widget.details,
             ),
-          PagedSliverList<int, dynamic>(
+          PagedSliverList(
             pagingController: _pagingController,
-            builderDelegate: PagedChildBuilderDelegate<dynamic>(
+            builderDelegate: PagedChildBuilderDelegate<PostModel>(
               itemBuilder: (context, item, index) => Card(
                 margin: const EdgeInsets.all(12),
                 clipBehavior: Clip.antiAlias,
@@ -377,48 +355,27 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => switch (widget.mode) {
-                          FeedMode.entries => EntryPage(item, (newValue) {
-                              var newList = _pagingController.itemList;
-                              newList![index] = newValue;
-                              setState(() {
-                                _pagingController.itemList = newList;
-                              });
-                            }),
-                          FeedMode.posts => PostPage(item, (newValue) {
-                              var newList = _pagingController.itemList;
-                              newList![index] = newValue;
-                              setState(() {
-                                _pagingController.itemList = newList;
-                              });
-                            })
-                        },
+                        builder: (context) => PostPage(item, (newValue) {
+                          var newList = _pagingController.itemList;
+                          newList![index] = newValue;
+                          setState(() {
+                            _pagingController.itemList = newList;
+                          });
+                        }),
                       ),
                     );
                   },
-                  child: switch (widget.mode) {
-                    FeedMode.entries => EntryItem(
-                        item,
-                        (newValue) {
-                          var newList = _pagingController.itemList;
-                          newList![index] = newValue;
-                          setState(() {
-                            _pagingController.itemList = newList;
-                          });
-                        },
-                        isPreview: true,
-                      ),
-                    FeedMode.posts => PostItem(
-                        item,
-                        (newValue) {
-                          var newList = _pagingController.itemList;
-                          newList![index] = newValue;
-                          setState(() {
-                            _pagingController.itemList = newList;
-                          });
-                        },
-                      )
-                  },
+                  child: PostItem(
+                    item,
+                    (newValue) {
+                      var newList = _pagingController.itemList;
+                      newList![index] = newValue;
+                      setState(() {
+                        _pagingController.itemList = newList;
+                      });
+                    },
+                    isPreview: item.type == PostType.thread,
+                  ),
                 ),
               ),
             ),

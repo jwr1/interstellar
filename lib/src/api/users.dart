@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:interstellar/src/models/user.dart';
+import 'package:interstellar/src/models/old/user.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart';
@@ -35,7 +35,7 @@ class KbinAPIUsers {
     httpErrorHandler(response, message: 'Failed to load users');
 
     return UserListModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
   Future<DetailedUserModel> get(int userId) async {
@@ -46,7 +46,7 @@ class KbinAPIUsers {
     httpErrorHandler(response, message: 'Failed to load user');
 
     return DetailedUserModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
   Future<DetailedUserModel> getByName(String username) async {
@@ -57,7 +57,7 @@ class KbinAPIUsers {
     httpErrorHandler(response, message: 'Failed to load user');
 
     return DetailedUserModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
   Future<DetailedUserModel> getMe() async {
@@ -68,7 +68,7 @@ class KbinAPIUsers {
     httpErrorHandler(response, message: 'Failed to load user');
 
     return DetailedUserModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
   Future<DetailedUserModel> putFollow(
@@ -82,7 +82,7 @@ class KbinAPIUsers {
     httpErrorHandler(response, message: 'Failed to send follow');
 
     return DetailedUserModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
   Future<DetailedUserModel> updateProfile(String about) async {
@@ -94,7 +94,7 @@ class KbinAPIUsers {
     httpErrorHandler(response, message: 'Failed to update profile');
 
     return DetailedUserModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
   Future<DetailedUserModel> putBlock(
@@ -108,7 +108,7 @@ class KbinAPIUsers {
     httpErrorHandler(response, message: 'Failed to send block');
 
     return DetailedUserModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
   Future<DetailedUserModel> updateAvatar(XFile image) async {
@@ -128,7 +128,7 @@ class KbinAPIUsers {
     httpErrorHandler(response, message: 'Failed to update profile');
 
     return DetailedUserModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
   Future<DetailedUserModel> updateCover(XFile image) async {
@@ -148,6 +148,6 @@ class KbinAPIUsers {
     httpErrorHandler(response, message: 'Failed to update profile');
 
     return DetailedUserModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 }

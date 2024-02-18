@@ -20,8 +20,8 @@ class _DomainsScreenState extends State<DomainsScreen> {
   KbinAPIDomainsFilter filter = KbinAPIDomainsFilter.all;
   String search = "";
 
-  final PagingController<int, DomainModel> _pagingController =
-      PagingController(firstPageKey: 1);
+  final PagingController<String, DomainModel> _pagingController =
+      PagingController(firstPageKey: '1');
 
   @override
   void initState() {
@@ -30,11 +30,11 @@ class _DomainsScreenState extends State<DomainsScreen> {
     _pagingController.addPageRequestListener(_fetchPage);
   }
 
-  Future<void> _fetchPage(int pageKey) async {
+  Future<void> _fetchPage(String pageKey) async {
     try {
       final newPage =
           await context.read<SettingsController>().kbinAPI.domains.list(
-                page: pageKey,
+                page: int.parse(pageKey),
                 filter: filter,
                 search: search.isEmpty ? null : search,
               );
@@ -42,21 +42,12 @@ class _DomainsScreenState extends State<DomainsScreen> {
       // Check BuildContext
       if (!mounted) return;
 
-      final isLastPage =
-          newPage.pagination.currentPage == newPage.pagination.maxPage;
       // Prevent duplicates
-      final currentItemIds =
-          _pagingController.itemList?.map((e) => e.domainId) ?? [];
-      final newItems = newPage.items
-          .where((e) => !currentItemIds.contains(e.domainId))
-          .toList();
+      final currentItemIds = _pagingController.itemList?.map((e) => e.id) ?? [];
+      final newItems =
+          newPage.items.where((e) => !currentItemIds.contains(e.id)).toList();
 
-      if (isLastPage) {
-        _pagingController.appendLastPage(newItems);
-      } else {
-        final nextPageKey = pageKey + 1;
-        _pagingController.appendPage(newItems, nextPageKey);
-      }
+      _pagingController.appendPage(newItems, newPage.nextPage);
     } catch (error) {
       _pagingController.error = error;
     }
@@ -126,7 +117,7 @@ class _DomainsScreenState extends State<DomainsScreen> {
               ),
             ),
           ),
-          PagedSliverList<int, DomainModel>(
+          PagedSliverList(
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<DomainModel>(
               itemBuilder: (context, item, index) => InkWell(
@@ -134,7 +125,7 @@ class _DomainsScreenState extends State<DomainsScreen> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => DomainScreen(
-                        item.domainId,
+                        item.id,
                         initData: item,
                         onUpdate: (newValue) {
                           var newList = _pagingController.itemList;
@@ -171,8 +162,7 @@ class _DomainsScreenState extends State<DomainsScreen> {
                             .read<SettingsController>()
                             .kbinAPI
                             .domains
-                            .putSubscribe(
-                                item.domainId, !item.isUserSubscribed!);
+                            .putSubscribe(item.id, !item.isUserSubscribed!);
                         var newList = _pagingController.itemList;
                         newList![index] = newValue;
                         setState(() {

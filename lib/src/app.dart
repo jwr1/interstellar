@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:interstellar/src/screens/explore/explore_screen.dart';
+import 'package:interstellar/src/screens/feed/feed_screen.dart';
 import 'package:interstellar/src/screens/profile/profile_screen.dart';
 import 'package:interstellar/src/utils/variables.dart';
 import 'package:interstellar/src/widgets/notification_badge.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
 import 'package:provider/provider.dart';
 
-import 'screens/feed_screen.dart';
 import 'screens/settings/settings_controller.dart';
 import 'screens/settings/settings_screen.dart';
 

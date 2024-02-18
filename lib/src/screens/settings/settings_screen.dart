@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/api/comment.dart';
-import 'package:interstellar/src/screens/feed_screen.dart';
+import 'package:interstellar/src/api/comments.dart';
+import 'package:interstellar/src/screens/feed/feed_screen.dart';
 import 'package:interstellar/src/screens/settings/login.dart';
 import 'package:interstellar/src/utils/language_codes.dart';
 import 'package:interstellar/src/utils/themes.dart';
@@ -18,7 +18,7 @@ class SettingsScreen extends StatelessWidget {
     final currentThemeMode = themeModeSelect.getOption(controller.themeMode);
     final currentTheme = themeSelect.getOption(controller.accentColor);
     final currentDefaultFeedMode =
-        feedModeSelect.getOption(controller.defaultFeedMode);
+        feedTypeSelect.getOption(controller.defaultFeedType);
     final currentDefaultEntriesFeedSort =
         feedSortSelect.getOption(controller.defaultEntriesFeedSort);
     final currentDefaultPostsFeedSort =
@@ -97,11 +97,11 @@ class SettingsScreen extends StatelessWidget {
             child: Text('Feed', style: Theme.of(context).textTheme.titleMedium),
           ),
           ListTile(
-            title: const Text('Default Feed Mode'),
+            title: const Text('Default Feed Type'),
             leading: const Icon(Icons.tab),
             onTap: () async {
-              controller.updateDefaultFeedMode(
-                await feedModeSelect.inquireSelection(
+              controller.updateDefaultFeedType(
+                await feedTypeSelect.inquireSelection(
                   context,
                   currentDefaultFeedMode.value,
                 ),

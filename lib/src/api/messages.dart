@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:interstellar/src/models/message.dart';
+import 'package:interstellar/src/models/old/message.dart';
 import 'package:interstellar/src/utils/utils.dart';
 
 class KbinAPIMessages {
@@ -24,7 +24,7 @@ class KbinAPIMessages {
     httpErrorHandler(response, message: 'Failed to load messages');
 
     return MessageListModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
   Future<MessageThreadModel> create(

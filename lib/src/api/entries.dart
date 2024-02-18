@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:interstellar/src/api/feed_source.dart';
-import 'package:interstellar/src/models/entry.dart';
+import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart';
@@ -18,7 +18,7 @@ class KbinAPIEntries {
     this.instanceHost,
   );
 
-  Future<EntryListModel> list(
+  Future<PostListModel> list(
     FeedSource source, {
     int? page,
     FeedSort? sort,
@@ -37,44 +37,44 @@ class KbinAPIEntries {
 
     httpErrorHandler(response, message: 'Failed to load entries');
 
-    return EntryListModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+    return PostListModel.fromKbinEntries(
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
-  Future<EntryModel> get(int entryId) async {
+  Future<PostModel> get(int entryId) async {
     final path = '/api/entry/$entryId';
 
     final response = await httpClient.get(Uri.https(instanceHost, path));
 
     httpErrorHandler(response, message: 'Failed to load entries');
 
-    return EntryModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+    return PostModel.fromKbinEntry(
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
-  Future<EntryModel> putVote(int entryId, int choice) async {
+  Future<PostModel> putVote(int entryId, int choice) async {
     final path = '/api/entry/$entryId/vote/$choice';
 
     final response = await httpClient.put(Uri.https(instanceHost, path));
 
     httpErrorHandler(response, message: 'Failed to send vote');
 
-    return EntryModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+    return PostModel.fromKbinEntry(
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
-  Future<EntryModel> putFavorite(int entryId) async {
+  Future<PostModel> putFavorite(int entryId) async {
     final path = '/api/entry/$entryId/favourite';
 
     final response = await httpClient.put(Uri.https(instanceHost, path));
 
     httpErrorHandler(response, message: 'Failed to send vote');
 
-    return EntryModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+    return PostModel.fromKbinEntry(
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
-  Future<EntryModel> putEdit(
+  Future<PostModel> edit(
     int entryID,
     String title,
     bool isOc,
@@ -98,8 +98,8 @@ class KbinAPIEntries {
 
     httpErrorHandler(response, message: "Failed to edit entry");
 
-    return EntryModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+    return PostModel.fromKbinEntry(
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
   Future<void> delete(int postID) async {
@@ -109,7 +109,7 @@ class KbinAPIEntries {
     httpErrorHandler(response, message: "Failed to delete entry");
   }
 
-  Future<EntryModel> createArticle(
+  Future<PostModel> createArticle(
     int magazineID, {
     required String title,
     required bool isOc,
@@ -134,11 +134,11 @@ class KbinAPIEntries {
 
     httpErrorHandler(response, message: "Failed to create entry");
 
-    return EntryModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+    return PostModel.fromKbinEntry(
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
-  Future<EntryModel> createLink(
+  Future<PostModel> createLink(
     int magazineID, {
     required String title,
     required String url,
@@ -165,11 +165,11 @@ class KbinAPIEntries {
 
     httpErrorHandler(response, message: "Failed to create entry");
 
-    return EntryModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+    return PostModel.fromKbinEntry(
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
-  Future<EntryModel> createImage(
+  Future<PostModel> createImage(
     int magazineID, {
     required String title,
     required XFile image,
@@ -204,7 +204,7 @@ class KbinAPIEntries {
 
     httpErrorHandler(response, message: "Failed to create entry");
 
-    return EntryModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+    return PostModel.fromKbinEntry(
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 }

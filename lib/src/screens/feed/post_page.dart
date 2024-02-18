@@ -1,35 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:interstellar/src/api/comment.dart';
-import 'package:interstellar/src/models/entry.dart';
-import 'package:interstellar/src/models/entry_comment.dart';
-import 'package:interstellar/src/screens/entries/entry_comment.dart';
-import 'package:interstellar/src/screens/entries/entry_item.dart';
+import 'package:interstellar/src/api/comments.dart';
+import 'package:interstellar/src/models/comment.dart';
+import 'package:interstellar/src/models/post.dart';
+import 'package:interstellar/src/screens/feed/post_comment.dart';
+import 'package:interstellar/src/screens/feed/post_item.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:provider/provider.dart';
 
-class EntryPage extends StatefulWidget {
-  const EntryPage(
+class PostPage extends StatefulWidget {
+  const PostPage(
     this.initData,
     this.onUpdate, {
     super.key,
   });
 
-  final EntryModel initData;
-  final void Function(EntryModel) onUpdate;
+  final PostModel initData;
+  final void Function(PostModel) onUpdate;
 
   @override
-  State<EntryPage> createState() => _EntryPageState();
+  State<PostPage> createState() => _PostPageState();
 }
 
-class _EntryPageState extends State<EntryPage> {
-  late EntryModel _data;
+class _PostPageState extends State<PostPage> {
+  late PostModel _data;
 
   CommentSort commentSort = CommentSort.hot;
 
-  final PagingController<int, EntryCommentModel> _pagingController =
-      PagingController(firstPageKey: 1);
+  final PagingController<String, CommentModel> _pagingController =
+      PagingController(firstPageKey: '1');
 
   @override
   void initState() {
@@ -41,19 +41,20 @@ class _EntryPageState extends State<EntryPage> {
     _pagingController.addPageRequestListener(_fetchPage);
   }
 
-  void _onUpdate(EntryModel newValue) {
+  void _onUpdate(PostModel newValue) {
     setState(() {
       _data = newValue;
     });
     widget.onUpdate(newValue);
   }
 
-  Future<void> _fetchPage(int pageKey) async {
+  Future<void> _fetchPage(String pageKey) async {
     try {
       final newPage =
-          await context.read<SettingsController>().kbinAPI.entryComments.list(
-                _data.entryId,
-                page: pageKey,
+          await context.read<SettingsController>().kbinAPI.comments.list(
+                _data.type,
+                _data.id,
+                page: int.parse(pageKey),
                 sort: commentSort,
                 usePreferredLangs: whenLoggedIn(context,
                     context.read<SettingsController>().useAccountLangFilter),
@@ -63,21 +64,12 @@ class _EntryPageState extends State<EntryPage> {
       // Check BuildContext
       if (!mounted) return;
 
-      final isLastPage =
-          newPage.pagination.currentPage == newPage.pagination.maxPage;
       // Prevent duplicates
-      final currentItemIds =
-          _pagingController.itemList?.map((e) => e.commentId) ?? [];
-      final newItems = newPage.items
-          .where((e) => !currentItemIds.contains(e.commentId))
-          .toList();
+      final currentItemIds = _pagingController.itemList?.map((e) => e.id) ?? [];
+      final newItems =
+          newPage.items.where((e) => !currentItemIds.contains(e.id)).toList();
 
-      if (isLastPage) {
-        _pagingController.appendLastPage(newItems);
-      } else {
-        final nextPageKey = pageKey + 1;
-        _pagingController.appendPage(newItems, nextPageKey);
-      }
+      _pagingController.appendPage(newItems, newPage.nextPage);
     } catch (error) {
       _pagingController.error = error;
     }
@@ -92,7 +84,7 @@ class _EntryPageState extends State<EntryPage> {
         title: ListTile(
           contentPadding: EdgeInsets.zero,
           title: Text(
-            _data.title,
+            _data.user.name,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -133,15 +125,19 @@ class _EntryPageState extends State<EntryPage> {
         child: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
-              child: EntryItem(
+              child: PostItem(
                 _data,
                 _onUpdate,
                 onReply: whenLoggedIn(context, (body) async {
                   var newComment = await context
                       .read<SettingsController>()
                       .kbinAPI
-                      .entryComments
-                      .create(body, _data.entryId);
+                      .comments
+                      .create(
+                        _data.type,
+                        _data.id,
+                        body,
+                      );
                   var newList = _pagingController.itemList;
                   newList?.insert(0, newComment);
                   setState(() {
@@ -152,60 +148,79 @@ class _EntryPageState extends State<EntryPage> {
                     ? whenLoggedIn(
                         context,
                         (body) async {
-                          final newEntry = await context
-                              .read<SettingsController>()
-                              .kbinAPI
-                              .entries
-                              .putEdit(
-                                _data.entryId,
-                                _data.title,
-                                _data.isOc,
-                                body,
-                                _data.lang,
-                                _data.isAdult,
-                              );
-                          _onUpdate(newEntry);
+                          final newPost = await switch (_data.type) {
+                            PostType.thread => context
+                                .read<SettingsController>()
+                                .kbinAPI
+                                .entries
+                                .edit(
+                                  _data.id,
+                                  _data.title!,
+                                  _data.isOc!,
+                                  body,
+                                  _data.lang,
+                                  _data.isAdult,
+                                ),
+                            PostType.microblog => context
+                                .read<SettingsController>()
+                                .kbinAPI
+                                .posts
+                                .edit(
+                                  _data.id,
+                                  body,
+                                  _data.lang,
+                                  _data.isAdult,
+                                ),
+                          };
+                          _onUpdate(newPost);
                         },
-                        matchesUsername: _data.user.username,
+                        matchesUsername: _data.user.name,
                       )
                     : null,
                 onDelete: _data.visibility != 'soft_deleted'
                     ? whenLoggedIn(
                         context,
                         () async {
-                          await context
-                              .read<SettingsController>()
-                              .kbinAPI
-                              .entries
-                              .delete(_data.entryId);
+                          await switch (_data.type) {
+                            PostType.thread => context
+                                .read<SettingsController>()
+                                .kbinAPI
+                                .entries
+                                .delete(_data.id),
+                            PostType.microblog => context
+                                .read<SettingsController>()
+                                .kbinAPI
+                                .posts
+                                .delete(_data.id),
+                          };
                           _onUpdate(_data.copyWith(
-                            body: '_thread deleted_',
-                            uv: null,
-                            dv: null,
-                            favourites: null,
+                            body: '_post deleted_',
+                            upvotes: null,
+                            downvotes: null,
+                            boosts: null,
                             visibility: 'soft_deleted',
                           ));
                         },
-                        matchesUsername: _data.user.username,
+                        matchesUsername: _data.user.name,
                       )
                     : null,
               ),
             ),
-            PagedSliverList<int, EntryCommentModel>(
+            PagedSliverList(
               pagingController: _pagingController,
-              builderDelegate: PagedChildBuilderDelegate<EntryCommentModel>(
+              builderDelegate: PagedChildBuilderDelegate<CommentModel>(
                 itemBuilder: (context, item, index) => Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
                     vertical: 4,
                   ),
-                  child: EntryComment(item, (newValue) {
+                  child: PostComment(item, (newValue) {
                     var newList = _pagingController.itemList;
                     newList![index] = newValue;
                     setState(() {
                       _pagingController.itemList = newList;
                     });
-                  }, opUserId: widget.initData.user.userId),
+                  }, opUserId: widget.initData.user.id),
                 ),
               ),
             )

@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:interstellar/src/api/comment.dart';
+import 'package:interstellar/src/api/comments.dart';
 import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/api/kbin.dart';
-import 'package:interstellar/src/screens/feed_screen.dart';
+import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/utils/themes.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,8 +20,8 @@ class SettingsController with ChangeNotifier {
   ThemeInfo get theme =>
       themes.firstWhere((theme) => theme.name == _accentColor);
 
-  late FeedMode _defaultFeedMode;
-  FeedMode get defaultFeedMode => _defaultFeedMode;
+  late PostType _defaultFeedType;
+  PostType get defaultFeedType => _defaultFeedType;
   late FeedSort _defaultEntriesFeedSort;
   FeedSort get defaultEntriesFeedSort => _defaultEntriesFeedSort;
   late FeedSort _defaultPostsFeedSort;
@@ -63,9 +63,9 @@ class SettingsController with ChangeNotifier {
         ? prefs.getString("accentColor")!
         : "Default";
 
-    _defaultFeedMode = prefs.getString('defaultFeedMode') != null
-        ? FeedMode.values.byName(prefs.getString("defaultFeedMode")!)
-        : FeedMode.entries;
+    _defaultFeedType = prefs.getString('defaultFeedType') != null
+        ? PostType.values.byName(prefs.getString("defaultFeedType")!)
+        : PostType.thread;
     _defaultEntriesFeedSort = prefs.getString('defaultEntriesFeedSort') != null
         ? FeedSort.values.byName(prefs.getString("defaultEntriesFeedSort")!)
         : FeedSort.hot;
@@ -139,16 +139,16 @@ class SettingsController with ChangeNotifier {
     await prefs.setString('accentColor', newThemeAccent);
   }
 
-  Future<void> updateDefaultFeedMode(FeedMode? newDefaultFeedMode) async {
+  Future<void> updateDefaultFeedType(PostType? newDefaultFeedMode) async {
     if (newDefaultFeedMode == null) return;
-    if (newDefaultFeedMode == _defaultFeedMode) return;
+    if (newDefaultFeedMode == _defaultFeedType) return;
 
-    _defaultFeedMode = newDefaultFeedMode;
+    _defaultFeedType = newDefaultFeedMode;
 
     notifyListeners();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('defaultFeedMode', newDefaultFeedMode.name);
+    await prefs.setString('defaultFeedType', newDefaultFeedMode.name);
   }
 
   Future<void> updateDefaultEntriesFeedSort(

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:interstellar/src/models/magazine.dart';
+import 'package:interstellar/src/models/old/magazine.dart';
 import 'package:interstellar/src/utils/utils.dart';
 
 enum KbinAPIMagazinesFilter { all, subscribed, moderated, blocked }
@@ -37,7 +37,7 @@ class KbinAPIMagazines {
     httpErrorHandler(response, message: 'Failed to load magazines');
 
     return MagazineListModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
   Future<DetailedMagazineModel> get(int magazineId) async {
@@ -48,7 +48,7 @@ class KbinAPIMagazines {
     httpErrorHandler(response, message: 'Failed to load magazine');
 
     return DetailedMagazineModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
   Future<DetailedMagazineModel> getByName(String magazineName) async {
@@ -59,7 +59,7 @@ class KbinAPIMagazines {
     httpErrorHandler(response, message: 'Failed to load magazine');
 
     return DetailedMagazineModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
   Future<DetailedMagazineModel> putSubscribe(int magazineId, bool state) async {
@@ -71,7 +71,7 @@ class KbinAPIMagazines {
     httpErrorHandler(response, message: 'Failed to send subscribe');
 
     return DetailedMagazineModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
   Future<DetailedMagazineModel> putBlock(int magazineId, bool state) async {
@@ -82,6 +82,6 @@ class KbinAPIMagazines {
     httpErrorHandler(response, message: 'Failed to send block');
 
     return DetailedMagazineModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 }

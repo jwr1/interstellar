@@ -22,22 +22,17 @@ class ExploreScreen extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                        builder: (context) => const SearchScreen()
-                    )
+                      builder: (context) => const SearchScreen(),
+                    ),
                   );
                 },
-                icon: const Icon(Icons.search)
-            )
+                icon: const Icon(Icons.search))
           ],
           bottom: const TabBar(tabs: [
             Tab(
               text: 'Magazines',
               icon: Icon(Icons.article),
             ),
-            // Tab(
-            //   text: 'Collections',
-            //   icon: Icon(Icons.newspaper),
-            // ),
             Tab(
               text: 'People',
               icon: Icon(Icons.account_circle),
@@ -48,12 +43,13 @@ class ExploreScreen extends StatelessWidget {
             ),
           ]),
         ),
-        body: const TabBarView(children: [
-          MagazinesScreen(),
-          // Placeholder(),
-          UsersScreen(),
-          DomainsScreen()
-        ]),
+        body: const TabBarView(
+          children: [
+            MagazinesScreen(),
+            UsersScreen(),
+            DomainsScreen(),
+          ],
+        ),
       ),
     );
   }

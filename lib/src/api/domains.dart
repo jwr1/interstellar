@@ -32,8 +32,8 @@ class KbinAPIDomains {
 
     httpErrorHandler(response, message: 'Failed to load domains');
 
-    return DomainListModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+    return DomainListModel.fromKbin(
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
   Future<DomainModel> get(int domainId) async {
@@ -43,8 +43,8 @@ class KbinAPIDomains {
 
     httpErrorHandler(response, message: 'Failed to load domain');
 
-    return DomainModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+    return DomainModel.fromKbin(
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
   Future<DomainModel> putSubscribe(int domainId, bool state) async {
@@ -54,8 +54,8 @@ class KbinAPIDomains {
 
     httpErrorHandler(response, message: 'Failed to send subscribe');
 
-    return DomainModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+    return DomainModel.fromKbin(
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 
   Future<DomainModel> putBlock(int domainId, bool state) async {
@@ -65,7 +65,7 @@ class KbinAPIDomains {
 
     httpErrorHandler(response, message: 'Failed to send block');
 
-    return DomainModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
+    return DomainModel.fromKbin(
+        jsonDecode(response.body) as Map<String, Object?>);
   }
 }
