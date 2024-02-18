@@ -1,6 +1,6 @@
 # Interstellar
 
-An app for Kbin; connecting you to the fediverse.
+An app for Kbin or Mbin; connecting you to the fediverse.
 
 ## Installation
 
