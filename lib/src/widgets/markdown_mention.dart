@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart' as flutter_markdown;
+import 'package:interstellar/src/models/magazine.dart';
+import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
@@ -129,6 +131,9 @@ class MentionWidget extends StatefulWidget {
   State<MentionWidget> createState() => MentionWidgetState();
 }
 
+Map<String, DetailedUserModel> _userMentionCache = {};
+Map<String, DetailedMagazineModel> _magazineMentionCache = {};
+
 class MentionWidgetState extends State<MentionWidget> {
   late String _displayName;
   String? _icon;
@@ -153,12 +158,15 @@ class MentionWidgetState extends State<MentionWidget> {
 
     try {
       if (modifier == '@') {
-        final user =
-            await context.read<SettingsController>().kbinAPI.users.getByName(
-                  context.read<SettingsController>().instanceHost == host
-                      ? name
-                      : '@$name@$host',
-                );
+        if (!_userMentionCache.containsKey('$name@$host')) {
+          _userMentionCache['$name@$host'] =
+              await context.read<SettingsController>().kbinAPI.users.getByName(
+                    context.read<SettingsController>().instanceHost == host
+                        ? name
+                        : '@$name@$host',
+                  );
+        }
+        final user = _userMentionCache['$name@$host']!;
 
         setState(() {
           _icon = user.avatar;
@@ -171,15 +179,18 @@ class MentionWidgetState extends State<MentionWidget> {
           };
         });
       } else if (modifier == '!') {
-        final magazine = await context
-            .read<SettingsController>()
-            .kbinAPI
-            .magazines
-            .getByName(
-              context.read<SettingsController>().instanceHost == host
-                  ? name
-                  : '$name@$host',
-            );
+        if (!_magazineMentionCache.containsKey('$name@$host')) {
+          _magazineMentionCache['$name@$host'] = await context
+              .read<SettingsController>()
+              .kbinAPI
+              .magazines
+              .getByName(
+                context.read<SettingsController>().instanceHost == host
+                    ? name
+                    : '$name@$host',
+              );
+        }
+        final magazine = _magazineMentionCache['$name@$host']!;
 
         setState(() {
           _icon = magazine.icon;
