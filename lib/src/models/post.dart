@@ -12,7 +12,7 @@ enum PostType { thread, microblog }
 class PostListModel with _$PostListModel {
   const factory PostListModel({
     required List<PostModel> items,
-    String? nextPage,
+    required String? nextPage,
   }) = _PostListModel;
 
   factory PostListModel.fromKbinEntries(Map<String, Object?> json) =>

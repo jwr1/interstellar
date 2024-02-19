@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:interstellar/src/models/old/user.dart';
+import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart';
@@ -19,7 +19,7 @@ class KbinAPIUsers {
     this.instanceHost,
   );
 
-  Future<UserListModel> list({
+  Future<DetailedUserListModel> list({
     int? page,
     UsersFilter? filter,
   }) async {
@@ -34,7 +34,7 @@ class KbinAPIUsers {
 
     httpErrorHandler(response, message: 'Failed to load users');
 
-    return UserListModel.fromJson(
+    return DetailedUserListModel.fromKbin(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
@@ -45,7 +45,7 @@ class KbinAPIUsers {
 
     httpErrorHandler(response, message: 'Failed to load user');
 
-    return DetailedUserModel.fromJson(
+    return DetailedUserModel.fromKbin(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
@@ -56,7 +56,7 @@ class KbinAPIUsers {
 
     httpErrorHandler(response, message: 'Failed to load user');
 
-    return DetailedUserModel.fromJson(
+    return DetailedUserModel.fromKbin(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
@@ -67,7 +67,7 @@ class KbinAPIUsers {
 
     httpErrorHandler(response, message: 'Failed to load user');
 
-    return DetailedUserModel.fromJson(
+    return DetailedUserModel.fromKbin(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
@@ -81,7 +81,7 @@ class KbinAPIUsers {
 
     httpErrorHandler(response, message: 'Failed to send follow');
 
-    return DetailedUserModel.fromJson(
+    return DetailedUserModel.fromKbin(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
@@ -93,7 +93,7 @@ class KbinAPIUsers {
 
     httpErrorHandler(response, message: 'Failed to update profile');
 
-    return DetailedUserModel.fromJson(
+    return DetailedUserModel.fromKbin(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
@@ -107,7 +107,7 @@ class KbinAPIUsers {
 
     httpErrorHandler(response, message: 'Failed to send block');
 
-    return DetailedUserModel.fromJson(
+    return DetailedUserModel.fromKbin(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
@@ -127,7 +127,7 @@ class KbinAPIUsers {
 
     httpErrorHandler(response, message: 'Failed to update profile');
 
-    return DetailedUserModel.fromJson(
+    return DetailedUserModel.fromKbin(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
@@ -147,7 +147,7 @@ class KbinAPIUsers {
 
     httpErrorHandler(response, message: 'Failed to update profile');
 
-    return DetailedUserModel.fromJson(
+    return DetailedUserModel.fromKbin(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/models/old/message.dart';
+import 'package:interstellar/src/models/message.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
@@ -41,7 +41,7 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
 
     final messageUser = data.participants
         .where((user) =>
-            user.username !=
+            user.name !=
             context
                 .watch<SettingsController>()
                 .selectedAccount
@@ -50,7 +50,7 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
         .first;
 
     return Scaffold(
-      appBar: AppBar(title: Text('Messages with ${messageUser.username}')),
+      appBar: AppBar(title: Text('Messages with ${messageUser.name}')),
       body: ListView(children: [
         Padding(
           padding: const EdgeInsets.all(12),
@@ -104,12 +104,12 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
                       Padding(
                         padding: const EdgeInsets.only(right: 10),
                         child: DisplayName(
-                          message.sender.username,
-                          icon: message.sender.avatar?.storageUrl,
+                          message.sender.name,
+                          icon: message.sender.avatar,
                           onTap: () => Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) =>
-                                  UserScreen(message.sender.userId),
+                                  UserScreen(message.sender.id),
                             ),
                           ),
                         ),

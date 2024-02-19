@@ -61,7 +61,7 @@ class _CreateScreenState extends State<CreateScreen> {
                 int? magazineId = widget.magazineId;
                 if (magazineId == null) {
                   final magazine = await api.magazines.getByName(magazineName);
-                  magazineId = magazine.magazineId;
+                  magazineId = magazine.id;
                 }
 
                 var tags = _tagsTextController.text.isNotEmpty

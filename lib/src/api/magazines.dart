@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:interstellar/src/models/old/magazine.dart';
+import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/utils/utils.dart';
 
 enum KbinAPIMagazinesFilter { all, subscribed, moderated, blocked }
@@ -17,7 +17,7 @@ class KbinAPIMagazines {
     this.instanceHost,
   );
 
-  Future<MagazineListModel> list({
+  Future<DetailedMagazineListModel> list({
     int? page,
     KbinAPIMagazinesFilter? filter,
     KbinAPIMagazinesSort? sort,
@@ -36,7 +36,7 @@ class KbinAPIMagazines {
 
     httpErrorHandler(response, message: 'Failed to load magazines');
 
-    return MagazineListModel.fromJson(
+    return DetailedMagazineListModel.fromKbin(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
@@ -47,7 +47,7 @@ class KbinAPIMagazines {
 
     httpErrorHandler(response, message: 'Failed to load magazine');
 
-    return DetailedMagazineModel.fromJson(
+    return DetailedMagazineModel.fromKbin(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
@@ -58,7 +58,7 @@ class KbinAPIMagazines {
 
     httpErrorHandler(response, message: 'Failed to load magazine');
 
-    return DetailedMagazineModel.fromJson(
+    return DetailedMagazineModel.fromKbin(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
@@ -70,7 +70,7 @@ class KbinAPIMagazines {
 
     httpErrorHandler(response, message: 'Failed to send subscribe');
 
-    return DetailedMagazineModel.fromJson(
+    return DetailedMagazineModel.fromKbin(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
@@ -81,7 +81,7 @@ class KbinAPIMagazines {
 
     httpErrorHandler(response, message: 'Failed to send block');
 
-    return DetailedMagazineModel.fromJson(
+    return DetailedMagazineModel.fromKbin(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 }

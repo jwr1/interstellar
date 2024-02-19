@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/models/old/magazine.dart';
-import 'package:interstellar/src/models/old/notification.dart';
-import 'package:interstellar/src/models/old/user.dart';
+import 'package:interstellar/src/models/magazine.dart';
+import 'package:interstellar/src/models/notification.dart';
 import 'package:interstellar/src/models/post.dart';
+import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/feed/post_comment_screen.dart';
@@ -46,11 +46,11 @@ class NotificationItem extends StatelessWidget {
     Map<String, Object?> rawUser = (item.subject['user'] ??
         item.subject['sender'] ??
         item.subject['bannedBy']) as Map<String, Object?>;
-    UserModel user = UserModel.fromJson(rawUser);
+    UserModel user = UserModel.fromKbin(rawUser);
     MagazineModel? bannedMagazine =
         item.type == NotificationType.banNotification &&
                 item.subject['magazine'] != null
-            ? MagazineModel.fromJson(
+            ? MagazineModel.fromKbin(
                 item.subject['magazine'] as Map<String, Object?>)
             : null;
 
@@ -85,11 +85,11 @@ class NotificationItem extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(right: 10),
                     child: DisplayName(
-                      user.username,
-                      icon: user.avatar?.storageUrl,
+                      user.name,
+                      icon: user.avatar,
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => UserScreen(user.userId),
+                          builder: (context) => UserScreen(user.id),
                         ),
                       ),
                     ),
@@ -100,11 +100,11 @@ class NotificationItem extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 10),
                       child: DisplayName(
                         bannedMagazine.name,
-                        icon: bannedMagazine.icon?.storageUrl,
+                        icon: bannedMagazine.icon,
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) =>
-                                MagazineScreen(bannedMagazine.magazineId),
+                                MagazineScreen(bannedMagazine.id),
                           ),
                         ),
                       ),
@@ -117,7 +117,7 @@ class NotificationItem extends StatelessWidget {
                           .kbinAPI
                           .notifications
                           .putRead(
-                            item.notificationId,
+                            item.id,
                             item.status == 'new',
                           );
 
@@ -135,7 +135,7 @@ class NotificationItem extends StatelessWidget {
               if (body.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
-                  child: Markdown(body, getNameHost(context, user.username)),
+                  child: Markdown(body, getNameHost(context, user.name)),
                 ),
             ],
           ),

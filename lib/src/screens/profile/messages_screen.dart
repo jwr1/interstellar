@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:interstellar/src/models/old/message.dart';
+import 'package:interstellar/src/models/message.dart';
 import 'package:interstellar/src/screens/profile/message_item.dart';
 import 'package:interstellar/src/screens/profile/message_thread_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
@@ -14,8 +14,8 @@ class MessagesScreen extends StatefulWidget {
 }
 
 class _MessagesScreenState extends State<MessagesScreen> {
-  final PagingController<int, MessageThreadModel> _pagingController =
-      PagingController(firstPageKey: 1);
+  final PagingController<String, MessageThreadModel> _pagingController =
+      PagingController(firstPageKey: '1');
 
   @override
   void initState() {
@@ -24,18 +24,16 @@ class _MessagesScreenState extends State<MessagesScreen> {
     _pagingController.addPageRequestListener(_fetchPage);
   }
 
-  Future<void> _fetchPage(int pageKey) async {
+  Future<void> _fetchPage(String pageKey) async {
     try {
       final newPage =
           await context.read<SettingsController>().kbinAPI.messages.list(
-                page: pageKey,
+                page: int.parse(pageKey),
               );
 
       // Check BuildContext
       if (!mounted) return;
 
-      final isLastPage =
-          newPage.pagination.currentPage == newPage.pagination.maxPage;
       // Prevent duplicates
       final currentItemIds =
           _pagingController.itemList?.map((e) => e.threadId) ?? [];
@@ -43,12 +41,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
           .where((e) => !currentItemIds.contains(e.threadId))
           .toList();
 
-      if (isLastPage) {
-        _pagingController.appendLastPage(newItems);
-      } else {
-        final nextPageKey = pageKey + 1;
-        _pagingController.appendPage(newItems, nextPageKey);
-      }
+      _pagingController.appendPage(newItems, newPage.nextPage);
     } catch (error) {
       _pagingController.error = error;
     }
@@ -63,7 +56,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
       child: CustomScrollView(
         slivers: [
           const SliverToBoxAdapter(child: SizedBox(height: 12)),
-          PagedSliverList<int, MessageThreadModel>(
+          PagedSliverList(
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<MessageThreadModel>(
               itemBuilder: (context, item, index) =>

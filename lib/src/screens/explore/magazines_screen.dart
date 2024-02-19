@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/magazines.dart';
-import 'package:interstellar/src/models/old/magazine.dart';
+import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
@@ -22,8 +22,8 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
   KbinAPIMagazinesSort sort = KbinAPIMagazinesSort.hot;
   String search = "";
 
-  final PagingController<int, DetailedMagazineModel> _pagingController =
-      PagingController(firstPageKey: 1);
+  final PagingController<String, DetailedMagazineModel> _pagingController =
+      PagingController(firstPageKey: '1');
 
   @override
   void initState() {
@@ -32,11 +32,11 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
     _pagingController.addPageRequestListener(_fetchPage);
   }
 
-  Future<void> _fetchPage(int pageKey) async {
+  Future<void> _fetchPage(String pageKey) async {
     try {
       final newPage =
           await context.read<SettingsController>().kbinAPI.magazines.list(
-                page: pageKey,
+                page: int.parse(pageKey),
                 filter: filter,
                 sort: sort,
                 search: search.isEmpty ? null : search,
@@ -45,21 +45,12 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
       // Check BuildContext
       if (!mounted) return;
 
-      final isLastPage =
-          newPage.pagination.currentPage == newPage.pagination.maxPage;
       // Prevent duplicates
-      final currentItemIds =
-          _pagingController.itemList?.map((e) => e.magazineId) ?? [];
-      final newItems = newPage.items
-          .where((e) => !currentItemIds.contains(e.magazineId))
-          .toList();
+      final currentItemIds = _pagingController.itemList?.map((e) => e.id) ?? [];
+      final newItems =
+          newPage.items.where((e) => !currentItemIds.contains(e.id)).toList();
 
-      if (isLastPage) {
-        _pagingController.appendLastPage(newItems);
-      } else {
-        final nextPageKey = pageKey + 1;
-        _pagingController.appendPage(newItems, nextPageKey);
-      }
+      _pagingController.appendPage(newItems, newPage.nextPage);
     } catch (error) {
       _pagingController.error = error;
     }
@@ -164,7 +155,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
               ),
             ),
           ),
-          PagedSliverList<int, DetailedMagazineModel>(
+          PagedSliverList(
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<DetailedMagazineModel>(
               itemBuilder: (context, item, index) => InkWell(
@@ -172,7 +163,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => MagazineScreen(
-                        item.magazineId,
+                        item.id,
                         initData: item,
                         onUpdate: (newValue) {
                           var newList = _pagingController.itemList;
@@ -188,10 +179,8 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(12),
                   child: Row(children: [
-                    if (item.icon?.storageUrl != null)
-                      Avatar(item.icon!.storageUrl, radius: 16),
-                    Container(
-                        width: 8 + (item.icon?.storageUrl != null ? 0 : 32)),
+                    if (item.icon != null) Avatar(item.icon, radius: 16),
+                    Container(width: 8 + (item.icon != null ? 0 : 32)),
                     Expanded(
                         child:
                             Text(item.name, overflow: TextOverflow.ellipsis)),
@@ -219,8 +208,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                             .read<SettingsController>()
                             .kbinAPI
                             .magazines
-                            .putSubscribe(
-                                item.magazineId, !item.isUserSubscribed!);
+                            .putSubscribe(item.id, !item.isUserSubscribed!);
                         var newList = _pagingController.itemList;
                         newList![index] = newValue;
                         setState(() {

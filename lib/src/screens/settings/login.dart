@@ -90,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     // Check BuildContext
                     if (!mounted) return;
 
-                    String account = '${user.username}@$instanceHost';
+                    String account = '${user.name}@$instanceHost';
                     context.read<SettingsController>().setOAuthCredentials(
                           account,
                           client.credentials,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/feed_source.dart';
-import 'package:interstellar/src/models/old/magazine.dart';
+import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/screens/feed/feed_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
@@ -55,10 +55,10 @@ class _MagazineScreenState extends State<MagazineScreen> {
                 children: [
                   Row(
                     children: [
-                      if (_data!.icon?.storageUrl != null)
+                      if (_data!.icon != null)
                         Padding(
                             padding: const EdgeInsets.only(right: 12),
-                            child: Avatar(_data!.icon!.storageUrl, radius: 32)),
+                            child: Avatar(_data!.icon, radius: 32)),
                       Expanded(
                         child: Text(
                           _data!.title,
@@ -81,7 +81,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                               .kbinAPI
                               .magazines
                               .putSubscribe(
-                                  _data!.magazineId, !_data!.isUserSubscribed!);
+                                  _data!.id, !_data!.isUserSubscribed!);
 
                           setState(() {
                             _data = newValue;
@@ -105,7 +105,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                                 .kbinAPI
                                 .magazines
                                 .putBlock(
-                                  _data!.magazineId,
+                                  _data!.id,
                                   !_data!.isBlockedByUser!,
                                 );
 

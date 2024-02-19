@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/models/comment.dart';
-import 'package:interstellar/src/models/old/magazine.dart';
-import 'package:interstellar/src/models/old/user.dart';
+import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/models/post.dart';
+import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/feed/post_comment.dart';
 import 'package:interstellar/src/screens/feed/post_comment_screen.dart';
@@ -29,8 +29,8 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   String search = "";
 
-  final PagingController<int, dynamic> _pagingController =
-      PagingController(firstPageKey: 1);
+  final PagingController<String, dynamic> _pagingController =
+      PagingController(firstPageKey: '1');
 
   @override
   void initState() {
@@ -39,26 +39,18 @@ class _SearchScreenState extends State<SearchScreen> {
     _pagingController.addPageRequestListener(_fetchPage);
   }
 
-  Future<void> _fetchPage(int pageKey) async {
+  Future<void> _fetchPage(String pageKey) async {
     try {
       final newPage =
           await context.read<SettingsController>().kbinAPI.search.get(
-                page: pageKey,
+                page: int.parse(pageKey),
                 search: search,
               );
 
       // Check BuildContext
       if (!mounted) return;
 
-      final isLastPage =
-          newPage.pagination.currentPage == newPage.pagination.maxPage;
-
-      if (isLastPage) {
-        _pagingController.appendLastPage(newPage.items);
-      } else {
-        final nextPageKey = pageKey + 1;
-        _pagingController.appendPage(newPage.items, nextPageKey);
-      }
+      _pagingController.appendPage(newPage.items, newPage.nextPage);
     } catch (error) {
       _pagingController.error = error;
     }
@@ -95,7 +87,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     switch (item) {
                       case DetailedUserModel item:
                         return UserScreen(
-                          item.userId,
+                          item.id,
                           initData: item,
                           onUpdate: (newValue) {
                             var newList = _pagingController.itemList;
@@ -107,7 +99,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         );
                       case DetailedMagazineModel item:
                         return MagazineScreen(
-                          item.magazineId,
+                          item.id,
                           initData: item,
                           onUpdate: (newValue) {
                             var newList = _pagingController.itemList;
@@ -172,16 +164,14 @@ class _SearchScreenState extends State<SearchScreen> {
                   DetailedUserModel item => Padding(
                       padding: const EdgeInsets.all(12),
                       child: Row(children: [
-                        if (item.avatar?.storageUrl != null)
+                        if (item.avatar != null)
                           Avatar(
-                            item.avatar!.storageUrl,
+                            item.avatar,
                             radius: 16,
                           ),
-                        Container(
-                            width:
-                                8 + (item.avatar?.storageUrl != null ? 0 : 32)),
+                        Container(width: 8 + (item.avatar != null ? 0 : 32)),
                         Expanded(
-                            child: Text(item.username,
+                            child: Text(item.name,
                                 overflow: TextOverflow.ellipsis)),
                         const SizedBox(width: 12),
                         OutlinedButton(
@@ -198,8 +188,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 .read<SettingsController>()
                                 .kbinAPI
                                 .users
-                                .putFollow(
-                                    item.userId, !item.isFollowedByUser!);
+                                .putFollow(item.id, !item.isFollowedByUser!);
                             var newList = _pagingController.itemList;
                             newList![index] = newValue;
                             setState(() {
@@ -218,11 +207,8 @@ class _SearchScreenState extends State<SearchScreen> {
                   DetailedMagazineModel item => Padding(
                       padding: const EdgeInsets.all(12),
                       child: Row(children: [
-                        if (item.icon?.storageUrl != null)
-                          Avatar(item.icon!.storageUrl, radius: 16),
-                        Container(
-                            width:
-                                8 + (item.icon?.storageUrl != null ? 0 : 32)),
+                        if (item.icon != null) Avatar(item.icon, radius: 16),
+                        Container(width: 8 + (item.icon != null ? 0 : 32)),
                         Expanded(
                             child: Text(item.name,
                                 overflow: TextOverflow.ellipsis)),
@@ -252,8 +238,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 .read<SettingsController>()
                                 .kbinAPI
                                 .magazines
-                                .putSubscribe(
-                                    item.magazineId, !item.isUserSubscribed!);
+                                .putSubscribe(item.id, !item.isUserSubscribed!);
                             var newList = _pagingController.itemList;
                             newList![index] = newValue;
                             setState(() {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/users.dart' as api_users;
-import 'package:interstellar/src/models/old/user.dart';
+import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
@@ -20,8 +20,8 @@ class UsersScreen extends StatefulWidget {
 class _UsersScreenState extends State<UsersScreen> {
   api_users.UsersFilter filter = api_users.UsersFilter.all;
 
-  final PagingController<int, DetailedUserModel> _pagingController =
-      PagingController(firstPageKey: 1);
+  final PagingController<String, DetailedUserModel> _pagingController =
+      PagingController(firstPageKey: '1');
 
   @override
   void initState() {
@@ -30,32 +30,23 @@ class _UsersScreenState extends State<UsersScreen> {
     _pagingController.addPageRequestListener(_fetchPage);
   }
 
-  Future<void> _fetchPage(int pageKey) async {
+  Future<void> _fetchPage(String pageKey) async {
     try {
       final newPage =
           await context.read<SettingsController>().kbinAPI.users.list(
-                page: pageKey,
+                page: int.parse(pageKey),
                 filter: filter,
               );
 
       // Check BuildContext
       if (!mounted) return;
 
-      final isLastPage =
-          newPage.pagination.currentPage == newPage.pagination.maxPage;
       // Prevent duplicates
-      final currentItemIds =
-          _pagingController.itemList?.map((e) => e.userId) ?? [];
-      final newItems = newPage.items
-          .where((e) => !currentItemIds.contains(e.userId))
-          .toList();
+      final currentItemIds = _pagingController.itemList?.map((e) => e.id) ?? [];
+      final newItems =
+          newPage.items.where((e) => !currentItemIds.contains(e.id)).toList();
 
-      if (isLastPage) {
-        _pagingController.appendLastPage(newItems);
-      } else {
-        final nextPageKey = pageKey + 1;
-        _pagingController.appendPage(newItems, nextPageKey);
-      }
+      _pagingController.appendPage(newItems, newPage.nextPage);
     } catch (error) {
       _pagingController.error = error;
     }
@@ -113,7 +104,7 @@ class _UsersScreenState extends State<UsersScreen> {
               ),
             ),
           ),
-          PagedSliverList<int, DetailedUserModel>(
+          PagedSliverList(
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<DetailedUserModel>(
               itemBuilder: (context, item, index) => InkWell(
@@ -121,7 +112,7 @@ class _UsersScreenState extends State<UsersScreen> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => UserScreen(
-                        item.userId,
+                        item.id,
                         initData: item,
                         onUpdate: (newValue) {
                           var newList = _pagingController.itemList;
@@ -137,16 +128,15 @@ class _UsersScreenState extends State<UsersScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(12),
                   child: Row(children: [
-                    if (item.avatar?.storageUrl != null)
+                    if (item.avatar != null)
                       Avatar(
-                        item.avatar!.storageUrl,
+                        item.avatar,
                         radius: 16,
                       ),
-                    Container(
-                        width: 8 + (item.avatar?.storageUrl != null ? 0 : 32)),
+                    Container(width: 8 + (item.avatar != null ? 0 : 32)),
                     Expanded(
-                        child: Text(item.username,
-                            overflow: TextOverflow.ellipsis)),
+                        child:
+                            Text(item.name, overflow: TextOverflow.ellipsis)),
                     const SizedBox(width: 12),
                     OutlinedButton(
                       style: ButtonStyle(
@@ -160,7 +150,7 @@ class _UsersScreenState extends State<UsersScreen> {
                             .read<SettingsController>()
                             .kbinAPI
                             .users
-                            .putFollow(item.userId, !item.isFollowedByUser!);
+                            .putFollow(item.id, !item.isFollowedByUser!);
                         var newList = _pagingController.itemList;
                         newList![index] = newValue;
                         setState(() {

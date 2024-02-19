@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:interstellar/src/api/feed_source.dart';
-import 'package:interstellar/src/models/old/user.dart';
+import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/screens/feed/feed_screen.dart';
 import 'package:interstellar/src/screens/profile/message_thread_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
@@ -55,7 +55,7 @@ class _UserScreenState extends State<UserScreen> {
   Widget build(BuildContext context) {
     return FeedScreen(
       source: FeedSourceUser(widget.userId),
-      title: _data?.username ?? '',
+      title: _data?.name ?? '',
       details: _data != null
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,7 +70,7 @@ class _UserScreenState extends State<UserScreen> {
                       height: _data!.cover == null ? 100 : null,
                       child: _data!.cover != null
                           ? Image.network(
-                              _data!.cover!.storageUrl,
+                              _data!.cover!,
                               width: double.infinity,
                               fit: BoxFit.cover,
                             )
@@ -82,13 +82,13 @@ class _UserScreenState extends State<UserScreen> {
                         child: Padding(
                           padding: const EdgeInsets.all(12),
                           child: Avatar(
-                            _data!.avatar?.storageUrl,
+                            _data!.avatar,
                             radius: 32,
                             borderRadius: 4,
                           ),
                         )),
                     if (whenLoggedIn(context, true,
-                            matchesUsername: _data!.username) !=
+                            matchesUsername: _data!.name) !=
                         null)
                       Positioned(
                           right: 0,
@@ -163,9 +163,9 @@ class _UserScreenState extends State<UserScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                _data!.username.contains('@')
-                                    ? _data!.username.split('@')[1]
-                                    : _data!.username,
+                                _data!.name.contains('@')
+                                    ? _data!.name.split('@')[1]
+                                    : _data!.name,
                                 style: Theme.of(context).textTheme.titleLarge,
                                 softWrap: true,
                               ),
@@ -173,9 +173,9 @@ class _UserScreenState extends State<UserScreen> {
                                 onTap: () async {
                                   await Clipboard.setData(
                                     ClipboardData(
-                                        text: _data!.username.contains('@')
-                                            ? _data!.username
-                                            : '@${_data!.username}@${context.read<SettingsController>().instanceHost}'),
+                                        text: _data!.name.contains('@')
+                                            ? _data!.name
+                                            : '@${_data!.name}@${context.read<SettingsController>().instanceHost}'),
                                   );
 
                                   if (!mounted) return;
@@ -183,9 +183,9 @@ class _UserScreenState extends State<UserScreen> {
                                       const SnackBar(content: Text('Copied')));
                                 },
                                 child: Text(
-                                  _data!.username.contains('@')
-                                      ? _data!.username
-                                      : '@${_data!.username}@${context.read<SettingsController>().instanceHost}',
+                                  _data!.name.contains('@')
+                                      ? _data!.name
+                                      : '@${_data!.name}@${context.read<SettingsController>().instanceHost}',
                                   softWrap: true,
                                 ),
                               )
@@ -208,8 +208,8 @@ class _UserScreenState extends State<UserScreen> {
                                       .read<SettingsController>()
                                       .kbinAPI
                                       .users
-                                      .putFollow(_data!.userId,
-                                          !_data!.isFollowedByUser!);
+                                      .putFollow(
+                                          _data!.id, !_data!.isFollowedByUser!);
                                   setState(() {
                                     _data = newValue;
                                   });
@@ -236,7 +236,7 @@ class _UserScreenState extends State<UserScreen> {
                                     .kbinAPI
                                     .users
                                     .putBlock(
-                                      _data!.userId,
+                                      _data!.id,
                                       !_data!.isBlockedByUser!,
                                     );
 
@@ -255,7 +255,7 @@ class _UserScreenState extends State<UserScreen> {
                                         : Theme.of(context).disabledColor),
                               ),
                             ),
-                          if (!_data!.username.contains('@'))
+                          if (!_data!.name.contains('@'))
                             IconButton(
                               onPressed: () {
                                 setState(() {
@@ -293,7 +293,7 @@ class _UserScreenState extends State<UserScreen> {
                                       .kbinAPI
                                       .messages
                                       .create(
-                                        _data!.userId,
+                                        _data!.id,
                                         _messageController!.text,
                                       );
 
@@ -321,7 +321,7 @@ class _UserScreenState extends State<UserScreen> {
                             child: _aboutTextController == null
                                 ? Markdown(
                                     _data!.about!,
-                                    getNameHost(context, _data!.username),
+                                    getNameHost(context, _data!.name),
                                   )
                                 : TextEditor(
                                     _aboutTextController!,

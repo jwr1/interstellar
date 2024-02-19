@@ -161,11 +161,11 @@ class MentionWidgetState extends State<MentionWidget> {
                 );
 
         setState(() {
-          _icon = user.avatar?.storageUrl;
+          _icon = user.avatar;
           _onClick = () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) => UserScreen(user.userId, initData: user),
+                builder: (context) => UserScreen(user.id, initData: user),
               ),
             );
           };
@@ -182,12 +182,12 @@ class MentionWidgetState extends State<MentionWidget> {
             );
 
         setState(() {
-          _icon = magazine.icon?.storageUrl;
+          _icon = magazine.icon;
           _onClick = () {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) =>
-                    MagazineScreen(magazine.magazineId, initData: magazine),
+                    MagazineScreen(magazine.id, initData: magazine),
               ),
             );
           };

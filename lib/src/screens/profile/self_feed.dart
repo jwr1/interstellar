@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/models/old/user.dart';
+import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:provider/provider.dart';
@@ -35,7 +35,7 @@ class _SelfFeedState extends State<SelfFeed> {
     return (_meUser == null)
         ? const Center(child: CircularProgressIndicator())
         : UserScreen(
-            _meUser!.userId,
+            _meUser!.id,
             initData: _meUser,
           );
   }

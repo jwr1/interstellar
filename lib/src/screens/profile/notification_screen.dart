@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/notifications.dart';
-import 'package:interstellar/src/models/old/notification.dart';
+import 'package:interstellar/src/models/notification.dart';
 import 'package:interstellar/src/screens/profile/notification_item.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:provider/provider.dart';
@@ -16,8 +16,8 @@ class NotificationsScreen extends StatefulWidget {
 class _NotificationsScreenState extends State<NotificationsScreen> {
   NotificationsFilter filter = NotificationsFilter.all;
 
-  final PagingController<int, NotificationModel> _pagingController =
-      PagingController(firstPageKey: 1);
+  final PagingController<String, NotificationModel> _pagingController =
+      PagingController(firstPageKey: '1');
 
   @override
   void initState() {
@@ -26,32 +26,23 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     _pagingController.addPageRequestListener(_fetchPage);
   }
 
-  Future<void> _fetchPage(int pageKey) async {
+  Future<void> _fetchPage(String pageKey) async {
     try {
       final newPage = await context
           .read<SettingsController>()
           .kbinAPI
           .notifications
-          .list(page: pageKey, filter: filter);
+          .list(page: int.parse(pageKey), filter: filter);
 
       // Check BuildContext
       if (!mounted) return;
 
-      final isLastPage =
-          newPage.pagination.currentPage == newPage.pagination.maxPage;
       // Prevent duplicates
-      final currentItemIds =
-          _pagingController.itemList?.map((e) => e.notificationId) ?? [];
-      final newItems = newPage.items
-          .where((e) => !currentItemIds.contains(e.notificationId))
-          .toList();
+      final currentItemIds = _pagingController.itemList?.map((e) => e.id) ?? [];
+      final newItems =
+          newPage.items.where((e) => !currentItemIds.contains(e.id)).toList();
 
-      if (isLastPage) {
-        _pagingController.appendLastPage(newItems);
-      } else {
-        final nextPageKey = pageKey + 1;
-        _pagingController.appendPage(newItems, nextPageKey);
-      }
+      _pagingController.appendPage(newItems, newPage.nextPage);
     } catch (error) {
       _pagingController.error = error;
     }
@@ -112,7 +103,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               ),
             ),
           ),
-          PagedSliverList<int, NotificationModel>(
+          PagedSliverList(
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<NotificationModel>(
               itemBuilder: (context, item, index) =>
