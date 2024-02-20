@@ -163,7 +163,7 @@ class MentionWidgetState extends State<MentionWidget> {
       if (modifier == '@') {
         if (!userMentionCache.containsKey(cacheKey)) {
           userMentionCache[cacheKey] =
-              await context.read<SettingsController>().kbinAPI.users.getByName(
+              await context.read<SettingsController>().api.users.getByName(
                     host != null ? '@$name@$host' : name,
                   );
         }
@@ -181,13 +181,10 @@ class MentionWidgetState extends State<MentionWidget> {
         });
       } else if (modifier == '!') {
         if (!magazineMentionCache.containsKey(cacheKey)) {
-          magazineMentionCache[cacheKey] = await context
-              .read<SettingsController>()
-              .kbinAPI
-              .magazines
-              .getByName(
-                host != null ? '$name@$host' : name,
-              );
+          magazineMentionCache[cacheKey] =
+              await context.read<SettingsController>().api.magazines.getByName(
+                    host != null ? '$name@$host' : name,
+                  );
         }
         final magazine = magazineMentionCache[cacheKey]!;
 

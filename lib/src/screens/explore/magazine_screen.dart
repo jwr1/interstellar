@@ -33,7 +33,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
     if (_data == null) {
       context
           .read<SettingsController>()
-          .kbinAPI
+          .api
           .magazines
           .get(widget.magazineId)
           .then((value) => setState(() {
@@ -78,7 +78,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                         onPressed: whenLoggedIn(context, () async {
                           var newValue = await context
                               .read<SettingsController>()
-                              .kbinAPI
+                              .api
                               .magazines
                               .putSubscribe(
                                   _data!.id, !_data!.isUserSubscribed!);
@@ -102,7 +102,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                           onPressed: () async {
                             final newValue = await context
                                 .read<SettingsController>()
-                                .kbinAPI
+                                .api
                                 .magazines
                                 .putBlock(
                                   _data!.id,

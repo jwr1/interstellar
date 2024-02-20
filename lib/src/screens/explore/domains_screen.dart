@@ -32,12 +32,11 @@ class _DomainsScreenState extends State<DomainsScreen> {
 
   Future<void> _fetchPage(String pageKey) async {
     try {
-      final newPage =
-          await context.read<SettingsController>().kbinAPI.domains.list(
-                page: int.parse(pageKey),
-                filter: filter,
-                search: search.isEmpty ? null : search,
-              );
+      final newPage = await context.read<SettingsController>().api.domains.list(
+            page: int.parse(pageKey),
+            filter: filter,
+            search: search.isEmpty ? null : search,
+          );
 
       // Check BuildContext
       if (!mounted) return;
@@ -160,7 +159,7 @@ class _DomainsScreenState extends State<DomainsScreen> {
                       onPressed: whenLoggedIn(context, () async {
                         var newValue = await context
                             .read<SettingsController>()
-                            .kbinAPI
+                            .api
                             .domains
                             .putSubscribe(item.id, !item.isUserSubscribed!);
                         var newList = _pagingController.itemList;

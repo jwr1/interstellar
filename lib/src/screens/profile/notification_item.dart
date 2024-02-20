@@ -114,7 +114,7 @@ class NotificationItem extends StatelessWidget {
                     onPressed: () async {
                       final newNotification = await context
                           .read<SettingsController>()
-                          .kbinAPI
+                          .api
                           .notifications
                           .putRead(
                             item.id,

@@ -50,16 +50,10 @@ class PostItem extends StatelessWidget {
       isBoosted: item.myBoost == true,
       onBoost: whenLoggedIn(context, () async {
         onUpdate(await switch (item.type) {
-          PostType.thread => context
-              .read<SettingsController>()
-              .kbinAPI
-              .entries
-              .putVote(item.id, 1),
-          PostType.microblog => context
-              .read<SettingsController>()
-              .kbinAPI
-              .posts
-              .putVote(item.id, 1),
+          PostType.thread =>
+            context.read<SettingsController>().api.entries.boost(item.id),
+          PostType.microblog =>
+            context.read<SettingsController>().api.posts.putVote(item.id, 1),
         });
       }),
       upVotes: item.upvotes,
@@ -68,14 +62,11 @@ class PostItem extends StatelessWidget {
         onUpdate(await switch (item.type) {
           PostType.thread => context
               .read<SettingsController>()
-              .kbinAPI
+              .api
               .entries
-              .putFavorite(item.id),
-          PostType.microblog => context
-              .read<SettingsController>()
-              .kbinAPI
-              .posts
-              .putFavorite(item.id),
+              .vote(item.id, 1, item.myVote == 1 ? 0 : 1),
+          PostType.microblog =>
+            context.read<SettingsController>().api.posts.putFavorite(item.id),
         });
       }),
       downVotes: item.downvotes,
@@ -84,14 +75,11 @@ class PostItem extends StatelessWidget {
         onUpdate(await switch (item.type) {
           PostType.thread => context
               .read<SettingsController>()
-              .kbinAPI
+              .api
               .entries
-              .putVote(item.id, -1),
-          PostType.microblog => context
-              .read<SettingsController>()
-              .kbinAPI
-              .posts
-              .putVote(item.id, -1),
+              .vote(item.id, -1, item.myVote == -1 ? 0 : -1),
+          PostType.microblog =>
+            context.read<SettingsController>().api.posts.putVote(item.id, -1),
         });
       }),
       onReply: onReply,

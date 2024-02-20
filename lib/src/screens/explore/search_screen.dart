@@ -41,11 +41,10 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Future<void> _fetchPage(String pageKey) async {
     try {
-      final newPage =
-          await context.read<SettingsController>().kbinAPI.search.get(
-                page: int.parse(pageKey),
-                search: search,
-              );
+      final newPage = await context.read<SettingsController>().api.search.get(
+            page: int.parse(pageKey),
+            search: search,
+          );
 
       // Check BuildContext
       if (!mounted) return;
@@ -186,7 +185,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           onPressed: whenLoggedIn(context, () async {
                             var newValue = await context
                                 .read<SettingsController>()
-                                .kbinAPI
+                                .api
                                 .users
                                 .putFollow(item.id, !item.isFollowedByUser!);
                             var newList = _pagingController.itemList;
@@ -216,13 +215,13 @@ class _SearchScreenState extends State<SearchScreen> {
                         Container(
                           width: 4,
                         ),
-                        Text(intFormat(item.entryCount)),
+                        Text(intFormat(item.threadCount)),
                         const SizedBox(width: 12),
                         const Icon(Icons.comment),
                         Container(
                           width: 4,
                         ),
-                        Text(intFormat(item.entryCommentCount)),
+                        Text(intFormat(item.threadCommentCount)),
                         const SizedBox(width: 12),
                         OutlinedButton(
                           style: ButtonStyle(
@@ -236,7 +235,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           onPressed: whenLoggedIn(context, () async {
                             var newValue = await context
                                 .read<SettingsController>()
-                                .kbinAPI
+                                .api
                                 .magazines
                                 .putSubscribe(item.id, !item.isUserSubscribed!);
                             var newList = _pagingController.itemList;

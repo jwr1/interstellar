@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:interstellar/src/models/comment.dart';
 import 'package:interstellar/src/models/post.dart';
+import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/selection_menu.dart';
 
@@ -50,12 +51,14 @@ const _postTypeKbinComment = {
 };
 
 class KbinAPIComments {
+  final ServerSoftware software;
   final http.Client httpClient;
-  final String instanceHost;
+  final String server;
 
   KbinAPIComments(
+    this.software,
     this.httpClient,
-    this.instanceHost,
+    this.server,
   );
 
   Future<CommentListModel> list(
@@ -74,7 +77,7 @@ class KbinAPIComments {
       'usePreferredLangs': (usePreferredLangs ?? false).toString(),
     });
 
-    final response = await httpClient.get(Uri.https(instanceHost, path, query));
+    final response = await httpClient.get(Uri.https(server, path, query));
 
     httpErrorHandler(response, message: 'Failed to load comments');
 
@@ -85,7 +88,7 @@ class KbinAPIComments {
   Future<CommentModel> get(PostType postType, int commentId) async {
     final path = '/api/${_postTypeKbinComment[postType]}/$commentId';
 
-    final response = await httpClient.get(Uri.https(instanceHost, path));
+    final response = await httpClient.get(Uri.https(server, path));
 
     httpErrorHandler(response, message: 'Failed to load comment');
 
@@ -101,7 +104,7 @@ class KbinAPIComments {
     final path =
         '/api/${_postTypeKbinComment[postType]}/$commentId/vote/$choice';
 
-    final response = await httpClient.put(Uri.https(instanceHost, path));
+    final response = await httpClient.put(Uri.https(server, path));
 
     httpErrorHandler(response, message: 'Failed to send vote');
 
@@ -112,7 +115,7 @@ class KbinAPIComments {
   Future<CommentModel> putFavorite(PostType postType, int commentId) async {
     final path = '/api/${_postTypeKbinComment[postType]}/$commentId/favourite';
 
-    final response = await httpClient.put(Uri.https(instanceHost, path));
+    final response = await httpClient.put(Uri.https(server, path));
 
     httpErrorHandler(response, message: 'Failed to send vote');
 
@@ -130,7 +133,7 @@ class KbinAPIComments {
         '/api/${_postTypeKbin[postType]}/$postId/comments${parentCommentId != null ? '/$parentCommentId/reply' : ''}';
 
     final response = await httpClient.post(
-      Uri.https(instanceHost, path),
+      Uri.https(server, path),
       body: jsonEncode({'body': body}),
     );
 
@@ -150,7 +153,7 @@ class KbinAPIComments {
     final path = '/api/${_postTypeKbinComment[postType]}/$commentId';
 
     final response = await httpClient.put(
-      Uri.https(instanceHost, path),
+      Uri.https(server, path),
       body: jsonEncode({
         'body': body,
         'lang': lang,
@@ -167,7 +170,7 @@ class KbinAPIComments {
   Future<void> delete(PostType postType, int commentId) async {
     final path = '/api/${_postTypeKbinComment[postType]}/$commentId';
 
-    final response = await httpClient.delete(Uri.https(instanceHost, path));
+    final response = await httpClient.delete(Uri.https(server, path));
 
     httpErrorHandler(response, message: "Failed to delete comment");
   }

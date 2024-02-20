@@ -36,7 +36,7 @@ class DomainModel with _$DomainModel {
         name: json['name'] as String,
         entryCount: json['entryCount'] as int,
         subscriptionsCount: json['subscriptionsCount'] as int,
-        isUserSubscribed: json['isUserSubscribed'] as bool,
-        isBlockedByUser: json['isBlockedByUser'] as bool,
+        isUserSubscribed: json['isUserSubscribed'] as bool?,
+        isBlockedByUser: json['isBlockedByUser'] as bool?,
       );
 }

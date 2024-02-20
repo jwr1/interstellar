@@ -30,7 +30,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     try {
       final newPage = await context
           .read<SettingsController>()
-          .kbinAPI
+          .api
           .notifications
           .list(page: int.parse(pageKey), filter: filter);
 
@@ -93,7 +93,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       onPressed: () async {
                         await context
                             .read<SettingsController>()
-                            .kbinAPI
+                            .api
                             .notifications
                             .putReadAll();
                         _pagingController.refresh();

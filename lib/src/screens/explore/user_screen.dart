@@ -40,7 +40,7 @@ class _UserScreenState extends State<UserScreen> {
     if (_data == null) {
       context
           .read<SettingsController>()
-          .kbinAPI
+          .api
           .users
           .get(
             widget.userId,
@@ -109,7 +109,7 @@ class _UserScreenState extends State<UserScreen> {
                                           onPressed: () async {
                                             var user = await context
                                                 .read<SettingsController>()
-                                                .kbinAPI
+                                                .api
                                                 .users
                                                 .updateProfile(
                                                     _aboutTextController!.text);
@@ -117,7 +117,7 @@ class _UserScreenState extends State<UserScreen> {
                                             if (_avatarFile != null) {
                                               user = await context
                                                   .read<SettingsController>()
-                                                  .kbinAPI
+                                                  .api
                                                   .users
                                                   .updateAvatar(_avatarFile!);
                                             }
@@ -125,7 +125,7 @@ class _UserScreenState extends State<UserScreen> {
                                             if (_coverFile != null) {
                                               user = await context
                                                   .read<SettingsController>()
-                                                  .kbinAPI
+                                                  .api
                                                   .users
                                                   .updateCover(_coverFile!);
                                             }
@@ -206,7 +206,7 @@ class _UserScreenState extends State<UserScreen> {
                                 onPressed: whenLoggedIn(context, () async {
                                   var newValue = await context
                                       .read<SettingsController>()
-                                      .kbinAPI
+                                      .api
                                       .users
                                       .putFollow(
                                           _data!.id, !_data!.isFollowedByUser!);
@@ -233,7 +233,7 @@ class _UserScreenState extends State<UserScreen> {
                               onPressed: () async {
                                 final newValue = await context
                                     .read<SettingsController>()
-                                    .kbinAPI
+                                    .api
                                     .users
                                     .putBlock(
                                       _data!.id,
@@ -290,7 +290,7 @@ class _UserScreenState extends State<UserScreen> {
                                 onPressed: () async {
                                   final newThread = await context
                                       .read<SettingsController>()
-                                      .kbinAPI
+                                      .api
                                       .messages
                                       .create(
                                         _data!.id,

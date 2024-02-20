@@ -2,15 +2,18 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:interstellar/src/models/message.dart';
+import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 
 class KbinAPIMessages {
+  final ServerSoftware software;
   final http.Client httpClient;
-  final String instanceHost;
+  final String server;
 
   KbinAPIMessages(
+    this.software,
     this.httpClient,
-    this.instanceHost,
+    this.server,
   );
 
   Future<MessageListModel> list({
@@ -19,7 +22,7 @@ class KbinAPIMessages {
     const path = '/api/messages';
     final query = queryParams({'p': page?.toString()});
 
-    final response = await httpClient.get(Uri.https(instanceHost, path, query));
+    final response = await httpClient.get(Uri.https(server, path, query));
 
     httpErrorHandler(response, message: 'Failed to load messages');
 
@@ -34,7 +37,7 @@ class KbinAPIMessages {
     final path = '/api/users/$userId/message';
 
     final response = await httpClient.post(
-      Uri.https(instanceHost, path),
+      Uri.https(server, path),
       body: jsonEncode({'body': body}),
     );
 
@@ -51,7 +54,7 @@ class KbinAPIMessages {
     final path = '/api/messages/thread/$threadId/reply';
 
     final response = await httpClient.post(
-      Uri.https(instanceHost, path),
+      Uri.https(server, path),
       body: jsonEncode({'body': body}),
     );
 

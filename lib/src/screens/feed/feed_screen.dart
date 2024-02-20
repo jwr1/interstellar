@@ -278,7 +278,7 @@ class FeedScreenBody extends StatefulWidget {
 
 class _FeedScreenBodyState extends State<FeedScreenBody> {
   final PagingController<String, PostModel> _pagingController =
-      PagingController(firstPageKey: '1');
+      PagingController(firstPageKey: '');
 
   @override
   void initState() {
@@ -290,24 +290,22 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
   Future<void> _fetchPage(String pageKey) async {
     try {
       PostListModel newPage = await (switch (widget.mode) {
-        PostType.thread =>
-          context.read<SettingsController>().kbinAPI.entries.list(
-                widget.source,
-                page: int.parse(pageKey),
-                sort: widget.sort,
-                usePreferredLangs: whenLoggedIn(context,
-                    context.read<SettingsController>().useAccountLangFilter),
-                langs: context.read<SettingsController>().langFilter.toList(),
-              ),
-        PostType.microblog =>
-          context.read<SettingsController>().kbinAPI.posts.list(
-                widget.source,
-                page: int.parse(pageKey),
-                sort: widget.sort,
-                usePreferredLangs: whenLoggedIn(context,
-                    context.read<SettingsController>().useAccountLangFilter),
-                langs: context.read<SettingsController>().langFilter.toList(),
-              ),
+        PostType.thread => context.read<SettingsController>().api.entries.list(
+              widget.source,
+              page: pageKey.isEmpty ? null : pageKey,
+              sort: widget.sort,
+              usePreferredLangs: whenLoggedIn(context,
+                  context.read<SettingsController>().useAccountLangFilter),
+              langs: context.read<SettingsController>().langFilter.toList(),
+            ),
+        PostType.microblog => context.read<SettingsController>().api.posts.list(
+              widget.source,
+              page: int.parse(pageKey),
+              sort: widget.sort,
+              usePreferredLangs: whenLoggedIn(context,
+                  context.read<SettingsController>().useAccountLangFilter),
+              langs: context.read<SettingsController>().langFilter.toList(),
+            ),
       });
 
       // Check BuildContext
@@ -322,7 +320,9 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
           .toList();
 
       _pagingController.appendPage(newItems, newPage.nextPage);
-    } catch (error) {
+    } catch (error, st) {
+      print(error);
+      print(st);
       _pagingController.error = error;
     }
   }

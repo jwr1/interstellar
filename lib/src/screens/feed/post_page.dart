@@ -51,7 +51,7 @@ class _PostPageState extends State<PostPage> {
   Future<void> _fetchPage(String pageKey) async {
     try {
       final newPage =
-          await context.read<SettingsController>().kbinAPI.comments.list(
+          await context.read<SettingsController>().api.comments.list(
                 _data.type,
                 _data.id,
                 page: int.parse(pageKey),
@@ -131,7 +131,7 @@ class _PostPageState extends State<PostPage> {
                 onReply: whenLoggedIn(context, (body) async {
                   var newComment = await context
                       .read<SettingsController>()
-                      .kbinAPI
+                      .api
                       .comments
                       .create(
                         _data.type,
@@ -151,26 +151,23 @@ class _PostPageState extends State<PostPage> {
                           final newPost = await switch (_data.type) {
                             PostType.thread => context
                                 .read<SettingsController>()
-                                .kbinAPI
+                                .api
                                 .entries
                                 .edit(
                                   _data.id,
                                   _data.title!,
                                   _data.isOc!,
                                   body,
-                                  _data.lang,
+                                  _data.lang!,
                                   _data.isAdult,
                                 ),
-                            PostType.microblog => context
-                                .read<SettingsController>()
-                                .kbinAPI
-                                .posts
-                                .edit(
-                                  _data.id,
-                                  body,
-                                  _data.lang,
-                                  _data.isAdult,
-                                ),
+                            PostType.microblog =>
+                              context.read<SettingsController>().api.posts.edit(
+                                    _data.id,
+                                    body,
+                                    _data.lang!,
+                                    _data.isAdult,
+                                  ),
                           };
                           _onUpdate(newPost);
                         },
@@ -184,12 +181,12 @@ class _PostPageState extends State<PostPage> {
                           await switch (_data.type) {
                             PostType.thread => context
                                 .read<SettingsController>()
-                                .kbinAPI
+                                .api
                                 .entries
                                 .delete(_data.id),
                             PostType.microblog => context
                                 .read<SettingsController>()
-                                .kbinAPI
+                                .api
                                 .posts
                                 .delete(_data.id),
                           };

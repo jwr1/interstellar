@@ -35,7 +35,7 @@ class CommentModel with _$CommentModel {
     required int? parentId,
     required String? image,
     required String? body,
-    required String lang,
+    required String? lang,
     required int? upvotes,
     required int? downvotes,
     required int? boosts,
@@ -80,4 +80,44 @@ class CommentModel with _$CommentModel {
         childCount: json['childCount'] as int,
         visibility: json['visibility'] as String,
       );
+
+  // factory CommentModel.fromLemmy(
+  //     Map<String, Object?> json, List<dynamic> allCommentsJson) {
+  //   final lemmyComment = json['comment'] as Map<String, Object?>;
+  //   final lemmyCounts = json['counts'] as Map<String, Object?>;
+
+  //   final lemmyPath = lemmyComment['path'] as String;
+  //   final lemmyPathSegments =
+  //       lemmyPath.split('.').map((e) => int.parse(e)).toList();
+
+  //   return CommentModel(
+  //     id: json['commentId'] as int,
+  //     user: UserModel.fromLemmy(json['creator'] as Map<String, Object?>),
+  //     magazine:
+  //         MagazineModel.fromLemmy(json['community'] as Map<String, Object?>),
+  //     postType: PostType.thread,
+  //     postId: (json['post'] as Map<String, Object?>)['id'] as int,
+  //     rootId: lemmyPathSegments.length > 2 ? lemmyPathSegments[1] : null,
+  //     parentId: lemmyPathSegments.length > 2
+  //         ? lemmyPathSegments[lemmyPathSegments.length - 2]
+  //         : null,
+  //     image: null,
+  //     body: json['content'] as String,
+  //     lang: null,
+  //     upvotes: lemmyCounts['upvotes'] as int,
+  //     downvotes: lemmyCounts['downvotes'] as int,
+  //     boosts: null,
+  //     myVote: json['my_vote'] as int?,
+  //     myBoost: null,
+  //     isAdult: json['isAdult'] as bool,
+  //     createdAt: DateTime.parse(json['createdAt'] as String),
+  //     editedAt: optionalDateTime(json['editedAt'] as String?),
+  //     lastActive: DateTime.parse(json['lastActive'] as String),
+  //     children: (json['children'] as List<dynamic>)
+  //         .map((c) => CommentModel.fromKbin(c as Map<String, Object?>))
+  //         .toList(),
+  //     childCount: json['childCount'] as int,
+  //     visibility: json['visibility'] as String,
+  //   );
+  // }
 }

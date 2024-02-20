@@ -73,4 +73,10 @@ class UserModel with _$UserModel {
         name: json['username'] as String,
         avatar: kbinGetImageUrl(json['avatar'] as Map<String, Object?>?),
       );
+
+  factory UserModel.fromLemmy(Map<String, Object?> json) => UserModel(
+        id: json['id'] as int,
+        name: json['name'] as String,
+        avatar: json['avatar'] as String?,
+      );
 }

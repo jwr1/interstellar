@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/redirect_listen.dart';
 
@@ -20,12 +21,14 @@ const oauthScopes = [
 ];
 
 class KbinAPIOAuth {
+  final ServerSoftware software;
   final http.Client httpClient;
-  final String instanceHost;
+  final String server;
 
   KbinAPIOAuth(
+    this.software,
     this.httpClient,
-    this.instanceHost,
+    this.server,
   );
 
   Future<String> registerApp(String instanceHost) async {

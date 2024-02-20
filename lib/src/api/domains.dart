@@ -2,17 +2,20 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:interstellar/src/models/domain.dart';
+import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 
 enum KbinAPIDomainsFilter { all, subscribed, blocked }
 
 class KbinAPIDomains {
+  final ServerSoftware software;
   final http.Client httpClient;
-  final String instanceHost;
+  final String server;
 
   KbinAPIDomains(
+    this.software,
     this.httpClient,
-    this.instanceHost,
+    this.server,
   );
 
   Future<DomainListModel> list({
@@ -28,7 +31,7 @@ class KbinAPIDomains {
             ? {'p': page?.toString(), 'q': search}
             : {'p': page?.toString()});
 
-    final response = await httpClient.get(Uri.https(instanceHost, path, query));
+    final response = await httpClient.get(Uri.https(server, path, query));
 
     httpErrorHandler(response, message: 'Failed to load domains');
 
@@ -39,7 +42,7 @@ class KbinAPIDomains {
   Future<DomainModel> get(int domainId) async {
     final path = '/api/domain/$domainId';
 
-    final response = await httpClient.get(Uri.https(instanceHost, path));
+    final response = await httpClient.get(Uri.https(server, path));
 
     httpErrorHandler(response, message: 'Failed to load domain');
 
@@ -50,7 +53,7 @@ class KbinAPIDomains {
   Future<DomainModel> putSubscribe(int domainId, bool state) async {
     final path = '/api/domain/$domainId/${state ? 'subscribe' : 'unsubscribe'}';
 
-    final response = await httpClient.put(Uri.https(instanceHost, path));
+    final response = await httpClient.put(Uri.https(server, path));
 
     httpErrorHandler(response, message: 'Failed to send subscribe');
 
@@ -61,7 +64,7 @@ class KbinAPIDomains {
   Future<DomainModel> putBlock(int domainId, bool state) async {
     final path = '/api/domain/$domainId/${state ? 'block' : 'unblock'}';
 
-    final response = await httpClient.put(Uri.https(instanceHost, path));
+    final response = await httpClient.put(Uri.https(server, path));
 
     httpErrorHandler(response, message: 'Failed to send block');
 

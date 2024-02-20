@@ -31,7 +31,7 @@ class _PostCommentScreenState extends State<PostCommentScreen> {
 
     context
         .read<SettingsController>()
-        .kbinAPI
+        .api
         .comments
         .get(widget.postType, widget.commentId)
         .then((value) => setState(() {
@@ -63,7 +63,7 @@ class _PostCommentScreenState extends State<PostCommentScreen> {
                           onPressed: () async {
                             final parentEntry = await context
                                 .read<SettingsController>()
-                                .kbinAPI
+                                .api
                                 .posts
                                 .get(
                                   _comment!.postId,

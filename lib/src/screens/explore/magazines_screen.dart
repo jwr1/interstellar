@@ -35,7 +35,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
   Future<void> _fetchPage(String pageKey) async {
     try {
       final newPage =
-          await context.read<SettingsController>().kbinAPI.magazines.list(
+          await context.read<SettingsController>().api.magazines.list(
                 page: int.parse(pageKey),
                 filter: filter,
                 sort: sort,
@@ -51,7 +51,9 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
           newPage.items.where((e) => !currentItemIds.contains(e.id)).toList();
 
       _pagingController.appendPage(newItems, newPage.nextPage);
-    } catch (error) {
+    } catch (error, st) {
+      print(error);
+      print(st);
       _pagingController.error = error;
     }
   }
@@ -188,13 +190,13 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                     Container(
                       width: 4,
                     ),
-                    Text(intFormat(item.entryCount)),
+                    Text(intFormat(item.threadCount)),
                     const SizedBox(width: 12),
                     const Icon(Icons.comment),
                     Container(
                       width: 4,
                     ),
-                    Text(intFormat(item.entryCommentCount)),
+                    Text(intFormat(item.threadCommentCount)),
                     const SizedBox(width: 12),
                     OutlinedButton(
                       style: ButtonStyle(
@@ -206,7 +208,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                       onPressed: whenLoggedIn(context, () async {
                         var newValue = await context
                             .read<SettingsController>()
-                            .kbinAPI
+                            .api
                             .magazines
                             .putSubscribe(item.id, !item.isUserSubscribed!);
                         var newList = _pagingController.itemList;

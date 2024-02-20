@@ -54,7 +54,7 @@ class _CreateScreenState extends State<CreateScreen> {
         actions: [
           IconButton(
               onPressed: () async {
-                final api = context.read<SettingsController>().kbinAPI;
+                final api = context.read<SettingsController>().api;
 
                 var magazineName = _magazineTextController.text;
 

@@ -5,17 +5,20 @@ import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/models/post.dart';
+import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart';
 
-class KbinAPIPosts {
+class APIPosts {
+  final ServerSoftware software;
   final http.Client httpClient;
-  final String instanceHost;
+  final String server;
 
-  KbinAPIPosts(
+  APIPosts(
+    this.software,
     this.httpClient,
-    this.instanceHost,
+    this.server,
   );
 
   Future<PostListModel> list(
@@ -37,7 +40,7 @@ class KbinAPIPosts {
       'usePreferredLangs': (usePreferredLangs ?? false).toString(),
     });
 
-    final response = await httpClient.get(Uri.https(instanceHost, path, query));
+    final response = await httpClient.get(Uri.https(server, path, query));
 
     httpErrorHandler(response, message: 'Failed to load posts');
 
@@ -48,7 +51,7 @@ class KbinAPIPosts {
   Future<PostModel> get(int postId) async {
     final path = '/api/post/$postId';
 
-    final response = await httpClient.get(Uri.https(instanceHost, path));
+    final response = await httpClient.get(Uri.https(server, path));
 
     httpErrorHandler(response, message: 'Failed to load posts');
 
@@ -59,7 +62,7 @@ class KbinAPIPosts {
   Future<PostModel> putVote(int postID, int choice) async {
     final path = '/api/post/$postID/vote/$choice';
 
-    final response = await httpClient.put(Uri.https(instanceHost, path));
+    final response = await httpClient.put(Uri.https(server, path));
 
     httpErrorHandler(response, message: 'Failed to send vote');
 
@@ -70,7 +73,7 @@ class KbinAPIPosts {
   Future<PostModel> putFavorite(int postID) async {
     final path = '/api/post/$postID/favourite';
 
-    final response = await httpClient.put(Uri.https(instanceHost, path));
+    final response = await httpClient.put(Uri.https(server, path));
 
     httpErrorHandler(response, message: 'Failed to send vote');
 
@@ -87,7 +90,7 @@ class KbinAPIPosts {
     final path = '/api/post/$postID';
 
     final response = await httpClient.put(
-      Uri.https(instanceHost, path),
+      Uri.https(server, path),
       body: jsonEncode({'body': body, 'lang': lang, 'isAdult': isAdult}),
     );
 
@@ -102,7 +105,7 @@ class KbinAPIPosts {
   ) async {
     final path = '/api/post/$postID';
 
-    final response = await httpClient.delete(Uri.https(instanceHost, path));
+    final response = await httpClient.delete(Uri.https(server, path));
 
     httpErrorHandler(response, message: "Failed to delete post");
   }
@@ -115,7 +118,7 @@ class KbinAPIPosts {
   }) async {
     final path = '/api/magazine/$magazineID/posts';
 
-    final response = await httpClient.post(Uri.https(instanceHost, path),
+    final response = await httpClient.post(Uri.https(server, path),
         body: jsonEncode({'body': body, 'lang': lang, 'isAdult': isAdult}));
 
     httpErrorHandler(response, message: "Failed to create post");
@@ -134,7 +137,7 @@ class KbinAPIPosts {
   }) async {
     final path = '/api/magazine/$magazineID/posts/image';
 
-    var request = http.MultipartRequest('POST', Uri.https(instanceHost, path));
+    var request = http.MultipartRequest('POST', Uri.https(server, path));
 
     var multipartFile = http.MultipartFile.fromBytes(
       'uploadImage',

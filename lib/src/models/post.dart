@@ -33,6 +33,13 @@ class PostListModel with _$PostListModel {
         nextPage: kbinCalcNextPaginationPage(
             json['pagination'] as Map<String, Object?>),
       );
+
+  factory PostListModel.fromLemmy(Map<String, Object?> json) => PostListModel(
+        items: (json['posts'] as List<dynamic>)
+            .map((post) => PostModel.fromLemmy(post as Map<String, Object?>))
+            .toList(),
+        nextPage: json['next_page'] as String?,
+      );
 }
 
 @freezed
@@ -47,7 +54,7 @@ class PostModel with _$PostModel {
     required String? url,
     required String? image,
     required String? body,
-    required String lang,
+    required String? lang,
     required int numComments,
     required int? upvotes,
     required int? downvotes,
@@ -120,4 +127,37 @@ class PostModel with _$PostModel {
         lastActive: DateTime.parse(json['lastActive'] as String),
         visibility: json['visibility'] as String,
       );
+
+  factory PostModel.fromLemmy(Map<String, Object?> json) {
+    final lemmyPost = json['post'] as Map<String, Object?>;
+    final lemmyCounts = json['counts'] as Map<String, Object?>;
+
+    return PostModel(
+      type: PostType.thread,
+      id: lemmyPost['id'] as int,
+      user: UserModel.fromLemmy(json['creator'] as Map<String, Object?>),
+      magazine:
+          MagazineModel.fromLemmy(json['community'] as Map<String, Object?>),
+      domain: null,
+      title: lemmyPost['name'] as String,
+      url: lemmyPost['url'] as String?,
+      image: lemmyPost['thumbnail_url'] as String?,
+      body: lemmyPost['body'] as String?,
+      lang: null,
+      numComments: lemmyCounts['comments'] as int,
+      upvotes: lemmyCounts['upvotes'] as int,
+      downvotes: lemmyCounts['downvotes'] as int,
+      boosts: null,
+      myVote: json['my_vote'] as int?,
+      myBoost: null,
+      isOc: null,
+      isAdult: lemmyPost['nsfw'] as bool,
+      isPinned: (lemmyPost['featured_community'] as bool ||
+          lemmyPost['featured_local'] as bool),
+      createdAt: DateTime.parse(lemmyPost['published'] as String),
+      editedAt: optionalDateTime(lemmyPost['updated'] as String?),
+      lastActive: DateTime.parse(lemmyCounts['newest_comment_time'] as String),
+      visibility: 'visible',
+    );
+  }
 }

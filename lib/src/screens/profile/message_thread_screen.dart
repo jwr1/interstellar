@@ -68,7 +68,7 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
                     onPressed: () async {
                       final newThread = await context
                           .read<SettingsController>()
-                          .kbinAPI
+                          .api
                           .messages
                           .postThreadReply(
                             data.threadId,

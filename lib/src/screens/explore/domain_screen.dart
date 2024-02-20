@@ -29,7 +29,7 @@ class _DomainScreenState extends State<DomainScreen> {
     if (_data == null) {
       context
           .read<SettingsController>()
-          .kbinAPI
+          .api
           .domains
           .get(widget.domainId)
           .then((value) => setState(() {
@@ -70,7 +70,7 @@ class _DomainScreenState extends State<DomainScreen> {
                         onPressed: whenLoggedIn(context, () async {
                           var newValue = await context
                               .read<SettingsController>()
-                              .kbinAPI
+                              .api
                               .domains
                               .putSubscribe(
                                   _data!.id, !_data!.isUserSubscribed!);
@@ -94,7 +94,7 @@ class _DomainScreenState extends State<DomainScreen> {
                           onPressed: () async {
                             final newValue = await context
                                 .read<SettingsController>()
-                                .kbinAPI
+                                .api
                                 .domains
                                 .putBlock(
                                   _data!.id,

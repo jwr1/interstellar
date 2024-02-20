@@ -52,7 +52,7 @@ class _EntryCommentState extends State<PostComment> {
               onBoost: whenLoggedIn(context, () async {
                 var newValue = await context
                     .read<SettingsController>()
-                    .kbinAPI
+                    .api
                     .comments
                     .putVote(widget.comment.postType, widget.comment.id, 1);
                 widget.onUpdate(newValue.copyWith(
@@ -64,7 +64,7 @@ class _EntryCommentState extends State<PostComment> {
               onUpVote: whenLoggedIn(context, () async {
                 var newValue = await context
                     .read<SettingsController>()
-                    .kbinAPI
+                    .api
                     .comments
                     .putFavorite(widget.comment.postType, widget.comment.id);
                 widget.onUpdate(newValue.copyWith(
@@ -78,7 +78,7 @@ class _EntryCommentState extends State<PostComment> {
               onDownVote: whenLoggedIn(context, () async {
                 var newValue = await context
                     .read<SettingsController>()
-                    .kbinAPI
+                    .api
                     .comments
                     .putVote(widget.comment.postType, widget.comment.id, -1);
                 widget.onUpdate(newValue.copyWith(
@@ -89,7 +89,7 @@ class _EntryCommentState extends State<PostComment> {
               onReply: whenLoggedIn(context, (body) async {
                 var newSubComment = await context
                     .read<SettingsController>()
-                    .kbinAPI
+                    .api
                     .comments
                     .create(
                       widget.comment.postType,
@@ -107,13 +107,13 @@ class _EntryCommentState extends State<PostComment> {
                   ? whenLoggedIn(context, (body) async {
                       var newValue = await context
                           .read<SettingsController>()
-                          .kbinAPI
+                          .api
                           .comments
                           .edit(
                             widget.comment.postType,
                             widget.comment.id,
                             body,
-                            widget.comment.lang,
+                            widget.comment.lang!,
                             widget.comment.isAdult,
                           );
 
@@ -127,7 +127,7 @@ class _EntryCommentState extends State<PostComment> {
                   ? whenLoggedIn(context, () async {
                       await context
                           .read<SettingsController>()
-                          .kbinAPI
+                          .api
                           .comments
                           .delete(widget.comment.postType, widget.comment.id);
                       widget.onUpdate(widget.comment.copyWith(

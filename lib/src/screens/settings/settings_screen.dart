@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/comments.dart';
 import 'package:interstellar/src/screens/feed/feed_screen.dart';
-import 'package:interstellar/src/screens/settings/login.dart';
+import 'package:interstellar/src/screens/settings/login_select.dart';
 import 'package:interstellar/src/utils/language_codes.dart';
 import 'package:interstellar/src/utils/themes.dart';
 import 'package:interstellar/src/widgets/selection_menu.dart';
@@ -274,7 +274,7 @@ class SettingsScreen extends StatelessWidget {
             child: Text('Accounts',
                 style: Theme.of(context).textTheme.titleMedium),
           ),
-          ...(controller.oauthCredentials.keys.toList()..sort())
+          ...(controller.accounts.keys.toList()..sort())
               .map((account) => ListTile(
                     title: Text(
                       account,
@@ -284,6 +284,8 @@ class SettingsScreen extends StatelessWidget {
                             : FontWeight.normal,
                       ),
                     ),
+                    subtitle: Text(controller
+                        .servers[account.split('@').last]!.software.name),
                     onTap: () => controller.setSelectedAccount(account),
                     trailing: IconButton(
                         onPressed: () {
@@ -311,12 +313,12 @@ class SettingsScreen extends StatelessWidget {
                         icon: const Icon(Icons.delete_outline)),
                   )),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(12),
             child: OutlinedButton(
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => const LoginScreen(),
+                    builder: (context) => const LoginSelectScreen(),
                   ),
                 );
               },

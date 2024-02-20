@@ -27,7 +27,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
   Future<void> _fetchPage(String pageKey) async {
     try {
       final newPage =
-          await context.read<SettingsController>().kbinAPI.messages.list(
+          await context.read<SettingsController>().api.messages.list(
                 page: int.parse(pageKey),
               );
 

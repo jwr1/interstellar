@@ -5,46 +5,66 @@ import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/models/post.dart';
+import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart';
 
-class KbinAPIEntries {
+class APIThreads {
+  final ServerSoftware software;
   final http.Client httpClient;
-  final String instanceHost;
+  final String server;
 
-  KbinAPIEntries(
+  APIThreads(
+    this.software,
     this.httpClient,
-    this.instanceHost,
+    this.server,
   );
 
   Future<PostListModel> list(
     FeedSource source, {
-    int? page,
+    String? page,
     FeedSort? sort,
     List<String>? langs,
     bool? usePreferredLangs,
   }) async {
-    final path = source.getEntriesPath();
-    final query = queryParams({
-      'p': page?.toString(),
-      'sort': sort?.name,
-      'lang': langs?.join(','),
-      'usePreferredLangs': (usePreferredLangs ?? false).toString(),
-    });
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        final path = source.getEntriesPath();
+        final query = queryParams({
+          'p': page,
+          'sort': sort?.name,
+          'lang': langs?.join(','),
+          'usePreferredLangs': (usePreferredLangs ?? false).toString(),
+        });
 
-    final response = await httpClient.get(Uri.https(instanceHost, path, query));
+        final response = await httpClient.get(Uri.https(server, path, query));
 
-    httpErrorHandler(response, message: 'Failed to load entries');
+        httpErrorHandler(response, message: 'Failed to load entries');
 
-    return PostListModel.fromKbinEntries(
-        jsonDecode(response.body) as Map<String, Object?>);
+        return PostListModel.fromKbinEntries(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        const path = '/api/v3/post/list';
+        final query = queryParams({
+          'page_cursor': page,
+        });
+
+        final response = await httpClient.get(Uri.https(server, path, query));
+
+        httpErrorHandler(response, message: 'Failed to load posts');
+
+        return PostListModel.fromLemmy(
+            jsonDecode(response.body) as Map<String, Object?>);
+    }
   }
 
   Future<PostModel> get(int entryId) async {
     final path = '/api/entry/$entryId';
 
-    final response = await httpClient.get(Uri.https(instanceHost, path));
+    final response = await httpClient.get(Uri.https(server, path));
 
     httpErrorHandler(response, message: 'Failed to load entries');
 
@@ -52,26 +72,55 @@ class KbinAPIEntries {
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
-  Future<PostModel> putVote(int entryId, int choice) async {
-    final path = '/api/entry/$entryId/vote/$choice';
+  Future<PostModel> vote(int postId, int choice, int newScore) async {
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        final path = choice == 1
+            ? '/api/entry/$postId/favourite'
+            : '/api/entry/$postId/vote/$choice';
 
-    final response = await httpClient.put(Uri.https(instanceHost, path));
+        final response = await httpClient.put(Uri.https(server, path));
 
-    httpErrorHandler(response, message: 'Failed to send vote');
+        httpErrorHandler(response, message: 'Failed to send vote');
 
-    return PostModel.fromKbinEntry(
-        jsonDecode(response.body) as Map<String, Object?>);
+        return PostModel.fromKbinEntry(
+            jsonDecode(response.body) as Map<String, Object?>);
+      case ServerSoftware.lemmy:
+        const path = '/api/v3/post/like';
+
+        final response = await httpClient.post(
+          Uri.https(server, path),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'post_id': postId,
+            'score': newScore,
+          }),
+        );
+
+        httpErrorHandler(response, message: 'Failed to send vote');
+
+        return PostModel.fromLemmy(
+            jsonDecode(response.body)['post_view'] as Map<String, Object?>);
+    }
   }
 
-  Future<PostModel> putFavorite(int entryId) async {
-    final path = '/api/entry/$entryId/favourite';
+  Future<PostModel> boost(int postId) async {
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        final path = '/api/entry/$postId/vote/1';
 
-    final response = await httpClient.put(Uri.https(instanceHost, path));
+        final response = await httpClient.put(Uri.https(server, path));
 
-    httpErrorHandler(response, message: 'Failed to send vote');
+        httpErrorHandler(response, message: 'Failed to send boost');
 
-    return PostModel.fromKbinEntry(
-        jsonDecode(response.body) as Map<String, Object?>);
+        return PostModel.fromKbinEntry(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        throw Exception('Tried to boost on lemmy');
+    }
   }
 
   Future<PostModel> edit(
@@ -85,7 +134,7 @@ class KbinAPIEntries {
     final path = '/api/entry/$entryID';
 
     final response = await httpClient.put(
-      Uri.https(instanceHost, path),
+      Uri.https(server, path),
       body: jsonEncode({
         'title': title,
         'tags': [],
@@ -104,7 +153,7 @@ class KbinAPIEntries {
 
   Future<void> delete(int postID) async {
     final response =
-        await httpClient.delete(Uri.https(instanceHost, '/api/entry/$postID'));
+        await httpClient.delete(Uri.https(server, '/api/entry/$postID'));
 
     httpErrorHandler(response, message: "Failed to delete entry");
   }
@@ -121,7 +170,7 @@ class KbinAPIEntries {
     final path = '/api/magazine/$magazineID/article';
 
     final response = await httpClient.post(
-      Uri.https(instanceHost, path),
+      Uri.https(server, path),
       body: jsonEncode({
         'title': title,
         'tags': tags,
@@ -151,7 +200,7 @@ class KbinAPIEntries {
     final path = '/api/magazine/$magazineID/link';
 
     final response = await httpClient.post(
-      Uri.https(instanceHost, path),
+      Uri.https(server, path),
       body: jsonEncode({
         'title': title,
         'url': url,
@@ -182,7 +231,7 @@ class KbinAPIEntries {
   }) async {
     final path = '/api/magazine/$magazineID/image';
 
-    var request = http.MultipartRequest('POST', Uri.https(instanceHost, path));
+    var request = http.MultipartRequest('POST', Uri.https(server, path));
     var multipartFile = http.MultipartFile.fromBytes(
       'uploadImage',
       await image.readAsBytes(),

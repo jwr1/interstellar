@@ -2,14 +2,53 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:interstellar/src/api/api.dart';
 import 'package:interstellar/src/api/comments.dart';
 import 'package:interstellar/src/api/feed_source.dart';
-import 'package:interstellar/src/api/kbin.dart';
 import 'package:interstellar/src/models/post.dart';
+import 'package:interstellar/src/utils/jwt_http_client.dart';
 import 'package:interstellar/src/utils/themes.dart';
 import 'package:interstellar/src/widgets/markdown_mention.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:shared_preferences/shared_preferences.dart';
+
+enum ServerSoftware { kbin, mbin, lemmy }
+
+class Server {
+  final ServerSoftware software;
+  final String? oauthIdentifier;
+
+  Server(this.software, {this.oauthIdentifier});
+
+  factory Server.fromJson(Map<String, Object?> json) => Server(
+        ServerSoftware.values.byName(json['software'] as String),
+        oauthIdentifier: json['oauthIdentifier'] as String?,
+      );
+
+  Map<String, dynamic> toJson() => {
+        'software': software.name,
+        'oauthIdentifier': oauthIdentifier,
+      };
+}
+
+class Account {
+  final oauth2.Credentials? oauth;
+  final String? jwt;
+
+  Account({this.oauth, this.jwt});
+
+  factory Account.fromJson(Map<String, Object?> json) => Account(
+        oauth: json['oauth'] == null
+            ? null
+            : oauth2.Credentials.fromJson(json['oauth'] as String),
+        jwt: json['jwt'] as String?,
+      );
+
+  Map<String, dynamic> toJson() => {
+        'oauth': oauth?.toJson(),
+        'jwt': jwt,
+      };
+}
 
 class SettingsController with ChangeNotifier {
   late ThemeMode _themeMode;
@@ -39,17 +78,18 @@ class SettingsController with ChangeNotifier {
   late String _defaultCreateLang;
   String get defaultCreateLang => _defaultCreateLang;
 
-  late Map<String, String> _oauthIdentifiers;
-  late Map<String, oauth2.Credentials?> _oauthCredentials;
+  late Map<String, Server> _servers;
+  late Map<String, Account> _accounts;
   late String _selectedAccount;
-  late KbinAPI _kbinAPI;
+  late API _api;
 
-  Map<String, String> get oauthIdentifiers => _oauthIdentifiers;
-  Map<String, oauth2.Credentials?> get oauthCredentials => _oauthCredentials;
+  Map<String, Server> get servers => _servers;
+  Map<String, Account> get accounts => _accounts;
   String get selectedAccount => _selectedAccount;
   String get instanceHost => _selectedAccount.split('@').last;
   bool get isLoggedIn => _selectedAccount.split('@').first.isNotEmpty;
-  KbinAPI get kbinAPI => _kbinAPI;
+  ServerSoftware get serverSoftware => _servers[instanceHost]!.software;
+  API get api => _api;
 
   Future<void> loadSettings() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -90,16 +130,14 @@ class SettingsController with ChangeNotifier {
         ? prefs.getString("defaultCreateLang")!
         : 'en';
 
-    _oauthIdentifiers = (jsonDecode(prefs.getString('oauthIdentifiers') ?? '{}')
+    _servers = (jsonDecode(prefs.getString('servers') ??
+            '{"kbin.earth":{"software":"kbin"}}') as Map<String, dynamic>)
+        .map((key, value) => MapEntry(key, Server.fromJson(value)));
+    _accounts = (jsonDecode(prefs.getString('accounts') ?? '{"@kbin.earth":{}}')
             as Map<String, dynamic>)
-        .map((key, value) => MapEntry(key, value));
-    _oauthCredentials = (jsonDecode(
-                prefs.getString('oauthCredentials') ?? '{"@kbin.earth":null}')
-            as Map<String, dynamic>)
-        .map((key, value) => MapEntry(
-            key, value != null ? oauth2.Credentials.fromJson(value) : null));
+        .map((key, value) => MapEntry(key, Account.fromJson(value)));
     _selectedAccount = prefs.getString('selectedAccount') ?? '@kbin.earth';
-    updateKbinAPI();
+    updateAPI();
 
     notifyListeners();
   }
@@ -262,51 +300,67 @@ class SettingsController with ChangeNotifier {
     await prefs.setString('defaultCreateLang', newDefaultCreateLang);
   }
 
-  Future<String> getOAuthIdentifier(String instanceHost) async {
-    if (_oauthIdentifiers.containsKey(instanceHost)) {
-      return _oauthIdentifiers[instanceHost]!;
-    }
-
-    String oauthIdentifier = await _kbinAPI.oauth.registerApp(instanceHost);
-    _oauthIdentifiers[instanceHost] = oauthIdentifier;
+  Future<void> setServer(ServerSoftware software, String server) async {
+    _servers[server] = Server(software);
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('oauthIdentifiers', jsonEncode(_oauthIdentifiers));
+    await prefs.setString('servers', jsonEncode(_servers));
+  }
+
+  Future<String> getKbinOAuthIdentifier(
+      ServerSoftware software, String server) async {
+    if (_servers.containsKey(server) &&
+        _servers[server]!.oauthIdentifier != null) {
+      return _servers[server]!.oauthIdentifier!;
+    }
+
+    if (software == ServerSoftware.lemmy) {
+      throw Exception('Tried to register oauth for lemmy');
+    }
+
+    String oauthIdentifier = await _api.oauth.registerApp(server);
+    _servers[server] = Server(software, oauthIdentifier: oauthIdentifier);
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('servers', jsonEncode(_servers));
 
     return oauthIdentifier;
   }
 
-  Future<void> setOAuthCredentials(String key, oauth2.Credentials? value,
-      {bool? switchNow}) async {
-    _oauthCredentials[key] = value;
+  Future<void> setAccount(
+    String key,
+    Account value, {
+    bool switchNow = false,
+  }) async {
+    _accounts[key] = value;
 
-    if (switchNow ?? false) {
+    if (switchNow) {
       _selectedAccount = key;
     }
 
-    updateKbinAPI();
+    updateAPI();
 
     notifyListeners();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('oauthCredentials', jsonEncode(_oauthCredentials));
-    if (switchNow ?? false) {
+    await prefs.setString('accounts', jsonEncode(_accounts));
+    if (switchNow) {
       await prefs.setString('selectedAccount', key);
     }
   }
 
   Future<void> removeOAuthCredentials(String key) async {
-    if (!_oauthCredentials.containsKey(key)) return;
+    if (!_accounts.containsKey(key)) return;
 
-    _oauthCredentials.remove(key);
-    _selectedAccount = _oauthCredentials.keys.firstOrNull ?? '@kbin.earth';
+    _accounts.remove(key);
+    _selectedAccount = _accounts.keys.firstOrNull ?? '@kbin.earth';
 
-    updateKbinAPI();
+    updateAPI();
 
     notifyListeners();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('oauthCredentials', jsonEncode(_oauthCredentials));
+    await prefs.setString('accounts', jsonEncode(_accounts));
     await prefs.setString('selectedAccount', _selectedAccount);
   }
 
@@ -315,7 +369,7 @@ class SettingsController with ChangeNotifier {
     if (newSelectedAccount == _selectedAccount) return;
 
     _selectedAccount = newSelectedAccount;
-    updateKbinAPI();
+    updateAPI();
 
     userMentionCache.clear();
     magazineMentionCache.clear();
@@ -326,26 +380,37 @@ class SettingsController with ChangeNotifier {
     await prefs.setString('selectedAccount', newSelectedAccount);
   }
 
-  Future<void> updateKbinAPI() async {
-    oauth2.Credentials? credentials = _oauthCredentials[_selectedAccount];
+  Future<void> updateAPI() async {
+    http.Client httpClient = http.Client();
 
-    if (credentials == null) {
-      _kbinAPI = KbinAPI(http.Client(), instanceHost);
-    } else {
-      String identifier = _oauthIdentifiers[instanceHost]!;
-      final httpClient = oauth2.Client(
-        credentials,
-        identifier: identifier,
-        onCredentialsRefreshed: (newCredentials) async {
-          _oauthCredentials[_selectedAccount] = newCredentials;
+    switch (serverSoftware) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        oauth2.Credentials? credentials = _accounts[_selectedAccount]!.oauth;
+        if (credentials != null) {
+          String identifier = _servers[instanceHost]!.oauthIdentifier!;
+          httpClient = oauth2.Client(
+            credentials,
+            identifier: identifier,
+            onCredentialsRefreshed: (newCredentials) async {
+              _accounts[_selectedAccount] = Account(oauth: newCredentials);
 
-          final SharedPreferences prefs = await SharedPreferences.getInstance();
-          await prefs.setString(
-              'oauthCredentials', jsonEncode(_oauthCredentials));
-        },
-      );
-
-      _kbinAPI = KbinAPI(httpClient, instanceHost);
+              final SharedPreferences prefs =
+                  await SharedPreferences.getInstance();
+              await prefs.setString('accounts', jsonEncode(_accounts));
+            },
+          );
+        }
+        break;
+      case ServerSoftware.lemmy:
+        String? jwt = _accounts[_selectedAccount]!.jwt;
+        if (jwt != null) {
+          httpClient = JwtHttpClient(jwt);
+        }
+        break;
+      default:
     }
+
+    _api = API(serverSoftware, httpClient, instanceHost);
   }
 }

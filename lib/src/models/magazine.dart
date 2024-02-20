@@ -15,11 +15,20 @@ class DetailedMagazineListModel with _$DetailedMagazineListModel {
   factory DetailedMagazineListModel.fromKbin(Map<String, Object?> json) =>
       DetailedMagazineListModel(
         items: (json['items'] as List<dynamic>)
-            .map((post) =>
-                DetailedMagazineModel.fromKbin(post as Map<String, Object?>))
+            .map((item) =>
+                DetailedMagazineModel.fromKbin(item as Map<String, Object?>))
             .toList(),
         nextPage: kbinCalcNextPaginationPage(
             json['pagination'] as Map<String, Object?>),
+      );
+
+  factory DetailedMagazineListModel.fromLemmy(Map<String, Object?> json) =>
+      DetailedMagazineListModel(
+        items: (json['communities'] as List<dynamic>)
+            .map((item) =>
+                DetailedMagazineModel.fromLemmy(item as Map<String, Object?>))
+            .toList(),
+        nextPage: null,
       );
 }
 
@@ -32,13 +41,12 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
     required String? icon,
     required String? description,
     required String? rules,
-    required UserModel owner,
     required List<UserModel> moderators,
     required int subscriptionsCount,
-    required int entryCount,
-    required int entryCommentCount,
-    required int postCount,
-    required int postCommentCount,
+    required int threadCount,
+    required int threadCommentCount,
+    required int? microblogCount,
+    required int? microblogCommentCount,
     required bool isAdult,
     required bool? isUserSubscribed,
     required bool? isBlockedByUser,
@@ -52,18 +60,44 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
       icon: kbinGetImageUrl(json['icon'] as Map<String, Object?>?),
       description: json['description'] as String?,
       rules: json['rules'] as String?,
-      owner: UserModel.fromKbin(json['owner'] as Map<String, Object?>),
       moderators: ((json['moderators'] ?? []) as List<dynamic>)
           .map((user) => UserModel.fromKbin(user as Map<String, Object?>))
           .toList(),
       subscriptionsCount: json['subscriptionsCount'] as int,
-      entryCount: json['entryCount'] as int,
-      entryCommentCount: json['entryCommentCount'] as int,
-      postCount: json['postCount'] as int,
-      postCommentCount: json['postCommentCount'] as int,
+      threadCount: json['entryCount'] as int,
+      threadCommentCount: json['entryCommentCount'] as int,
+      microblogCount: json['postCount'] as int,
+      microblogCommentCount: json['postCommentCount'] as int,
       isAdult: json['isAdult'] as bool,
       isUserSubscribed: json['isUserSubscribed'] as bool?,
       isBlockedByUser: json['isBlockedByUser'] as bool?,
+    );
+
+    magazineMentionCache[magazine.name] = magazine;
+
+    return magazine;
+  }
+
+  factory DetailedMagazineModel.fromLemmy(Map<String, Object?> json) {
+    final lemmyCommunity = json['community'] as Map<String, Object?>;
+    final lemmyCounts = json['counts'] as Map<String, Object?>;
+
+    final magazine = DetailedMagazineModel(
+      id: lemmyCommunity['id'] as int,
+      name: lemmyCommunity['name'] as String,
+      title: lemmyCommunity['title'] as String,
+      icon: lemmyCommunity['icon'] as String?,
+      description: lemmyCommunity['description'] as String?,
+      rules: null,
+      moderators: [],
+      subscriptionsCount: lemmyCounts['subscribers'] as int,
+      threadCount: lemmyCounts['posts'] as int,
+      threadCommentCount: lemmyCounts['comments'] as int,
+      microblogCount: null,
+      microblogCommentCount: null,
+      isAdult: lemmyCommunity['nsfw'] as bool,
+      isUserSubscribed: (json['subscribed'] as String) == 'Subscribed',
+      isBlockedByUser: json['blocked'] as bool?,
     );
 
     magazineMentionCache[magazine.name] = magazine;
@@ -84,5 +118,11 @@ class MagazineModel with _$MagazineModel {
         id: json['magazineId'] as int,
         name: json['name'] as String,
         icon: kbinGetImageUrl(json['icon'] as Map<String, Object?>?),
+      );
+
+  factory MagazineModel.fromLemmy(Map<String, Object?> json) => MagazineModel(
+        id: json['id'] as int,
+        name: json['name'] as String,
+        icon: json['icon'] as String?,
       );
 }

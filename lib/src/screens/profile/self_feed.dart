@@ -12,7 +12,7 @@ class SelfFeed extends StatefulWidget {
 }
 
 class _SelfFeedState extends State<SelfFeed> {
-  DetailedUserModel? _meUser;
+  UserModel? _meUser;
 
   @override
   void initState() {
@@ -21,7 +21,7 @@ class _SelfFeedState extends State<SelfFeed> {
     if (context.read<SettingsController>().isLoggedIn) {
       context
           .read<SettingsController>()
-          .kbinAPI
+          .api
           .users
           .getMe()
           .then((value) => setState(() {
@@ -34,9 +34,6 @@ class _SelfFeedState extends State<SelfFeed> {
   Widget build(BuildContext context) {
     return (_meUser == null)
         ? const Center(child: CircularProgressIndicator())
-        : UserScreen(
-            _meUser!.id,
-            initData: _meUser,
-          );
+        : UserScreen(_meUser!.id);
   }
 }

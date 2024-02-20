@@ -22,7 +22,7 @@ class _NotificationBadgeState extends State<NotificationBadge> {
 
     context
         .read<SettingsController>()
-        .kbinAPI
+        .api
         .notifications
         .getCount()
         .then((value) => setState(() {
