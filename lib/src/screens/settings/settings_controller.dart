@@ -7,6 +7,7 @@ import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/api/kbin.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/utils/themes.dart';
+import 'package:interstellar/src/widgets/markdown_mention.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -315,6 +316,9 @@ class SettingsController with ChangeNotifier {
 
     _selectedAccount = newSelectedAccount;
     updateKbinAPI();
+
+    userMentionCache.clear();
+    magazineMentionCache.clear();
 
     notifyListeners();
 

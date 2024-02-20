@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/utils/models.dart';
+import 'package:interstellar/src/widgets/markdown_mention.dart';
 
 part 'magazine.freezed.dart';
 
@@ -43,27 +44,32 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
     required bool? isBlockedByUser,
   }) = _DetailedMagazineModel;
 
-  factory DetailedMagazineModel.fromKbin(Map<String, Object?> json) =>
-      DetailedMagazineModel(
-        id: json['magazineId'] as int,
-        name: json['name'] as String,
-        title: json['title'] as String,
-        icon: kbinGetImageUrl(json['icon'] as Map<String, Object?>?),
-        description: json['description'] as String?,
-        rules: json['rules'] as String?,
-        owner: UserModel.fromKbin(json['owner'] as Map<String, Object?>),
-        moderators: ((json['moderators'] ?? []) as List<dynamic>)
-            .map((user) => UserModel.fromKbin(user as Map<String, Object?>))
-            .toList(),
-        subscriptionsCount: json['subscriptionsCount'] as int,
-        entryCount: json['entryCount'] as int,
-        entryCommentCount: json['entryCommentCount'] as int,
-        postCount: json['postCount'] as int,
-        postCommentCount: json['postCommentCount'] as int,
-        isAdult: json['isAdult'] as bool,
-        isUserSubscribed: json['isUserSubscribed'] as bool?,
-        isBlockedByUser: json['isBlockedByUser'] as bool?,
-      );
+  factory DetailedMagazineModel.fromKbin(Map<String, Object?> json) {
+    final magazine = DetailedMagazineModel(
+      id: json['magazineId'] as int,
+      name: json['name'] as String,
+      title: json['title'] as String,
+      icon: kbinGetImageUrl(json['icon'] as Map<String, Object?>?),
+      description: json['description'] as String?,
+      rules: json['rules'] as String?,
+      owner: UserModel.fromKbin(json['owner'] as Map<String, Object?>),
+      moderators: ((json['moderators'] ?? []) as List<dynamic>)
+          .map((user) => UserModel.fromKbin(user as Map<String, Object?>))
+          .toList(),
+      subscriptionsCount: json['subscriptionsCount'] as int,
+      entryCount: json['entryCount'] as int,
+      entryCommentCount: json['entryCommentCount'] as int,
+      postCount: json['postCount'] as int,
+      postCommentCount: json['postCommentCount'] as int,
+      isAdult: json['isAdult'] as bool,
+      isUserSubscribed: json['isUserSubscribed'] as bool?,
+      isBlockedByUser: json['isBlockedByUser'] as bool?,
+    );
+
+    magazineMentionCache[magazine.name] = magazine;
+
+    return magazine;
+  }
 }
 
 @freezed
