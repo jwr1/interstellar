@@ -150,10 +150,10 @@ class MentionWidgetState extends State<MentionWidget> {
     final modifier = widget.name[0];
     final split = widget.name.substring(1).split('@');
     final name = split[0];
-    final host = (split.length > 1 && split[1] != widget.originInstance)
+    final host = (split.length > 1)
         ? split[1]
-        : null;
-    final cacheKey = host != null ? '$name@$host' : name;
+        : widget.originInstance;
+    final cacheKey = '$name@$host';
 
     setState(() {
       _displayName = modifier + name;
@@ -164,7 +164,7 @@ class MentionWidgetState extends State<MentionWidget> {
         if (!userMentionCache.containsKey(cacheKey)) {
           userMentionCache[cacheKey] =
               await context.read<SettingsController>().api.users.getByName(
-                    host != null ? '@$name@$host' : name,
+                    '@$name@$host',
                   );
         }
         final user = userMentionCache[cacheKey]!;
@@ -183,7 +183,7 @@ class MentionWidgetState extends State<MentionWidget> {
         if (!magazineMentionCache.containsKey(cacheKey)) {
           magazineMentionCache[cacheKey] =
               await context.read<SettingsController>().api.magazines.getByName(
-                    host != null ? '$name@$host' : name,
+                    '$name@$host',
                   );
         }
         final magazine = magazineMentionCache[cacheKey]!;

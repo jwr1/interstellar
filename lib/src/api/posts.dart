@@ -23,7 +23,7 @@ class APIPosts {
 
   Future<PostListModel> list(
     FeedSource source, {
-    int? page,
+    String? page,
     FeedSort? sort,
     List<String>? langs,
     bool? usePreferredLangs,
@@ -34,7 +34,7 @@ class APIPosts {
 
     final path = source.getPostsPath()!;
     final query = queryParams({
-      'p': page?.toString(),
+      'p': page,
       'sort': sort?.name,
       'lang': langs?.join(','),
       'usePreferredLangs': (usePreferredLangs ?? false).toString(),
