@@ -47,8 +47,14 @@ class APIMagazines {
 
       case ServerSoftware.lemmy:
         const path = '/api/v3/community/list';
+        final query = queryParams({
+          'limit': '50',
+          'listingType': 'All',
+          'sort': 'TopAll',
+          'page': page?.toString(),
+        });
 
-        final response = await httpClient.get(Uri.https(server, path));
+        final response = await httpClient.get(Uri.https(server, path, query));
 
         httpErrorHandler(response, message: 'Failed to load magazines');
 

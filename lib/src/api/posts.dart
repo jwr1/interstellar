@@ -23,16 +23,23 @@ class APIPosts {
 
   Future<PostListModel> list(
     FeedSource source, {
+    int? sourceId,
     String? page,
     FeedSort? sort,
     List<String>? langs,
     bool? usePreferredLangs,
   }) async {
-    if (source.getPostsPath() == null) {
-      throw Exception('Failed to load posts');
-    }
+    final path = switch (source) {
+      FeedSource.all => '/api/posts',
+      FeedSource.subscribed => '/api/posts/subscribed',
+      FeedSource.moderated => '/api/posts/moderated',
+      FeedSource.favorited => '/api/posts/favourited',
+      FeedSource.magazine => '/api/magazine/${sourceId!}/posts',
+      FeedSource.user => '/api/users/${sourceId!}/posts',
+      FeedSource.domain =>
+        throw Exception('Domain source not allowed for microblog'),
+    };
 
-    final path = source.getPostsPath()!;
     final query = queryParams({
       'p': page,
       'sort': sort?.name,

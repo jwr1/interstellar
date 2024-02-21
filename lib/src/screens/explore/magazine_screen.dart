@@ -45,7 +45,8 @@ class _MagazineScreenState extends State<MagazineScreen> {
   @override
   Widget build(BuildContext context) {
     return FeedScreen(
-      source: FeedSourceMagazine(widget.magazineId),
+      source: FeedSource.magazine,
+      sourceId: widget.magazineId,
       title: _data?.name ?? '',
       details: _data != null
           ? Padding(

@@ -7,7 +7,6 @@ import 'package:interstellar/src/api/entries.dart';
 import 'package:interstellar/src/api/magazines.dart';
 import 'package:interstellar/src/api/messages.dart';
 import 'package:interstellar/src/api/notifications.dart';
-import 'package:interstellar/src/api/oauth.dart';
 import 'package:interstellar/src/api/posts.dart';
 import 'package:interstellar/src/api/search.dart';
 import 'package:interstellar/src/api/users.dart';
@@ -19,7 +18,6 @@ class API {
   final http.Client httpClient;
   final String server;
 
-  final KbinAPIOAuth oauth;
   final KbinAPIComments comments;
   final KbinAPIDomains domains;
   final APIThreads entries;
@@ -34,8 +32,7 @@ class API {
     this.software,
     this.httpClient,
     this.server,
-  )   : oauth = KbinAPIOAuth(software, httpClient, server),
-        comments = KbinAPIComments(software, httpClient, server),
+  )   : comments = KbinAPIComments(software, httpClient, server),
         domains = KbinAPIDomains(software, httpClient, server),
         entries = APIThreads(software, httpClient, server),
         magazines = APIMagazines(software, httpClient, server),

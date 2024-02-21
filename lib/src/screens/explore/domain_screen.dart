@@ -41,7 +41,8 @@ class _DomainScreenState extends State<DomainScreen> {
   @override
   Widget build(BuildContext context) {
     return FeedScreen(
-      source: FeedSourceDomain(widget.domainId),
+      source: FeedSource.domain,
+      sourceId: widget.domainId,
       title: _data?.name ?? '',
       details: _data != null
           ? Padding(

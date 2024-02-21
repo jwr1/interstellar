@@ -1,6 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:interstellar/src/utils/models.dart';
-import 'package:interstellar/src/widgets/markdown_mention.dart';
 
 part 'user.freezed.dart';
 
@@ -38,26 +37,20 @@ class DetailedUserModel with _$DetailedUserModel {
     required bool? isBlockedByUser,
   }) = _DetailedUserModel;
 
-  factory DetailedUserModel.fromKbin(Map<String, Object?> json) {
-    final user = DetailedUserModel(
-      id: json['userId'] as int,
-      name: json['username'] as String,
-      avatar: kbinGetImageUrl(json['avatar'] as Map<String, Object?>?),
-      cover: kbinGetImageUrl(json['cover'] as Map<String, Object?>?),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      isBot: json['isBot'] as bool,
-      about: json['about'] as String?,
-      followersCount: json['followersCount'] as int,
-      isFollowedByUser: json['isFollowedByUser'] as bool?,
-      isFollowerOfUser: json['isFollowerOfUser'] as bool?,
-      isBlockedByUser: json['isBlockedByUser'] as bool?,
-    );
-
-    userMentionCache[
-        user.name.startsWith('@') ? user.name.substring(1) : user.name] = user;
-
-    return user;
-  }
+  factory DetailedUserModel.fromKbin(Map<String, Object?> json) =>
+      DetailedUserModel(
+        id: json['userId'] as int,
+        name: json['username'] as String,
+        avatar: kbinGetImageUrl(json['avatar'] as Map<String, Object?>?),
+        cover: kbinGetImageUrl(json['cover'] as Map<String, Object?>?),
+        createdAt: DateTime.parse(json['createdAt'] as String),
+        isBot: json['isBot'] as bool,
+        about: json['about'] as String?,
+        followersCount: json['followersCount'] as int,
+        isFollowedByUser: json['isFollowedByUser'] as bool?,
+        isFollowerOfUser: json['isFollowerOfUser'] as bool?,
+        isBlockedByUser: json['isBlockedByUser'] as bool?,
+      );
 }
 
 @freezed

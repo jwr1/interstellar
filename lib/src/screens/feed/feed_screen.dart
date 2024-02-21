@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 
 class FeedScreen extends StatefulWidget {
   final FeedSource? source;
+  final int? sourceId;
   final String? title;
   final Widget? details;
   final Widget? floatingActionButton;
@@ -20,6 +21,7 @@ class FeedScreen extends StatefulWidget {
   const FeedScreen({
     super.key,
     this.source,
+    this.sourceId,
     this.title,
     this.details,
     this.floatingActionButton,
@@ -37,7 +39,8 @@ class _FeedScreenState extends State<FeedScreen> {
   void initState() {
     super.initState();
 
-    _mode = (widget.source ?? const FeedSourceAll()).getPostsPath() != null
+    _mode = context.read<SettingsController>().serverSoftware !=
+            ServerSoftware.lemmy
         ? context.read<SettingsController>().defaultFeedType
         : PostType.thread;
     _sort = widget.source == null
@@ -82,7 +85,10 @@ class _FeedScreenState extends State<FeedScreen> {
             ),
           ),
           actions: [
-            if ((widget.source ?? const FeedSourceAll()).getPostsPath() != null)
+            // Domain FeedSource is not available for microblogs
+            if (widget.source != FeedSource.domain &&
+                context.read<SettingsController>().serverSoftware !=
+                    ServerSoftware.lemmy)
               Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: IconButton(
@@ -156,6 +162,7 @@ class _FeedScreenState extends State<FeedScreen> {
         body: widget.source != null
             ? FeedScreenBody(
                 source: widget.source!,
+                sourceId: widget.sourceId,
                 sort: _sort,
                 mode: _mode,
                 details: widget.details,
@@ -165,25 +172,25 @@ class _FeedScreenState extends State<FeedScreen> {
                 TabBarView(
                   children: [
                     FeedScreenBody(
-                      source: const FeedSourceSub(),
+                      source: FeedSource.subscribed,
                       sort: _sort,
                       mode: _mode,
                       details: widget.details,
                     ),
                     FeedScreenBody(
-                      source: const FeedSourceMod(),
+                      source: FeedSource.moderated,
                       sort: _sort,
                       mode: _mode,
                       details: widget.details,
                     ),
                     FeedScreenBody(
-                      source: const FeedSourceFav(),
+                      source: FeedSource.favorited,
                       sort: _sort,
                       mode: _mode,
                       details: widget.details,
                     ),
                     FeedScreenBody(
-                      source: const FeedSourceAll(),
+                      source: FeedSource.all,
                       sort: _sort,
                       mode: _mode,
                       details: widget.details,
@@ -191,7 +198,7 @@ class _FeedScreenState extends State<FeedScreen> {
                   ],
                 ),
                 otherwise: FeedScreenBody(
-                  source: const FeedSourceAll(),
+                  source: FeedSource.all,
                   sort: _sort,
                   mode: _mode,
                   details: widget.details,
@@ -260,6 +267,7 @@ const SelectionMenu<FeedSort> feedSortSelect = SelectionMenu(
 
 class FeedScreenBody extends StatefulWidget {
   final FeedSource source;
+  final int? sourceId;
   final FeedSort sort;
   final PostType mode;
   final Widget? details;
@@ -267,6 +275,7 @@ class FeedScreenBody extends StatefulWidget {
   const FeedScreenBody({
     super.key,
     required this.source,
+    this.sourceId,
     required this.sort,
     required this.mode,
     this.details,
@@ -292,6 +301,7 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
       PostListModel newPage = await (switch (widget.mode) {
         PostType.thread => context.read<SettingsController>().api.entries.list(
               widget.source,
+              sourceId: widget.sourceId,
               page: pageKey.isEmpty ? null : pageKey,
               sort: widget.sort,
               usePreferredLangs: whenLoggedIn(context,
@@ -300,6 +310,7 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
             ),
         PostType.microblog => context.read<SettingsController>().api.posts.list(
               widget.source,
+              sourceId: widget.sourceId,
               page: pageKey.isEmpty ? null : pageKey,
               sort: widget.sort,
               usePreferredLangs: whenLoggedIn(context,

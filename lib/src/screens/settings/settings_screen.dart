@@ -99,6 +99,7 @@ class SettingsScreen extends StatelessWidget {
           ListTile(
             title: const Text('Default Feed Type'),
             leading: const Icon(Icons.tab),
+            enabled: controller.serverSoftware != ServerSoftware.lemmy,
             onTap: () async {
               controller.updateDefaultFeedType(
                 await feedTypeSelect.inquireSelection(

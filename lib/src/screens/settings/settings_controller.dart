@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:interstellar/src/api/api.dart';
 import 'package:interstellar/src/api/comments.dart';
 import 'package:interstellar/src/api/feed_source.dart';
+import 'package:interstellar/src/api/oauth.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/utils/jwt_http_client.dart';
 import 'package:interstellar/src/utils/themes.dart';
@@ -137,7 +138,7 @@ class SettingsController with ChangeNotifier {
             as Map<String, dynamic>)
         .map((key, value) => MapEntry(key, Account.fromJson(value)));
     _selectedAccount = prefs.getString('selectedAccount') ?? '@kbin.earth';
-    updateAPI();
+    await updateAPI();
 
     notifyListeners();
   }
@@ -300,7 +301,9 @@ class SettingsController with ChangeNotifier {
     await prefs.setString('defaultCreateLang', newDefaultCreateLang);
   }
 
-  Future<void> setServer(ServerSoftware software, String server) async {
+  Future<void> saveServer(ServerSoftware software, String server) async {
+    if (_servers.containsKey(server)) return;
+
     _servers[server] = Server(software);
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -318,7 +321,7 @@ class SettingsController with ChangeNotifier {
       throw Exception('Tried to register oauth for lemmy');
     }
 
-    String oauthIdentifier = await _api.oauth.registerApp(server);
+    String oauthIdentifier = await registerOauthApp(server);
     _servers[server] = Server(software, oauthIdentifier: oauthIdentifier);
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();

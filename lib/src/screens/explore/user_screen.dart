@@ -54,7 +54,8 @@ class _UserScreenState extends State<UserScreen> {
   @override
   Widget build(BuildContext context) {
     return FeedScreen(
-      source: FeedSourceUser(widget.userId),
+      source: FeedSource.user,
+      sourceId: widget.userId,
       title: _data?.name ?? '',
       details: _data != null
           ? Column(

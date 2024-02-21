@@ -54,7 +54,7 @@ class _LoginSelectScreenState extends State<LoginSelectScreen> {
 
                     await context
                         .read<SettingsController>()
-                        .setServer(software, _instanceHostController.text);
+                        .saveServer(software, _instanceHostController.text);
 
                     // Check BuildContext
                     if (!mounted) return;

@@ -23,6 +23,7 @@ class APIThreads {
 
   Future<PostListModel> list(
     FeedSource source, {
+    int? sourceId,
     String? page,
     FeedSort? sort,
     List<String>? langs,
@@ -31,7 +32,15 @@ class APIThreads {
     switch (software) {
       case ServerSoftware.kbin:
       case ServerSoftware.mbin:
-        final path = source.getEntriesPath();
+        final path = switch (source) {
+          FeedSource.all => '/api/entries',
+          FeedSource.subscribed => '/api/entries/subscribed',
+          FeedSource.moderated => '/api/entries/moderated',
+          FeedSource.favorited => '/api/entries/favourited',
+          FeedSource.magazine => '/api/magazine/${sourceId!}/entries',
+          FeedSource.user => '/api/users/${sourceId!}/entries',
+          FeedSource.domain => '/api/users/${sourceId!}/entries',
+        };
         final query = queryParams({
           'p': page,
           'sort': sort?.name,
@@ -50,7 +59,17 @@ class APIThreads {
         const path = '/api/v3/post/list';
         final query = queryParams({
           'page_cursor': page,
-        });
+        }..addAll(switch (source) {
+            FeedSource.all => {'type_': 'All'},
+            FeedSource.subscribed => {'type_': 'Subscribed'},
+            FeedSource.moderated => {'type_': 'ModeratorView'},
+            FeedSource.favorited => {'liked_only': 'true'},
+            FeedSource.magazine => {'community_id': sourceId!.toString()},
+            FeedSource.user =>
+              throw Exception('User source not allowed for lemmy'),
+            FeedSource.domain =>
+              throw Exception('Domain source not allowed for lemmy'),
+          }));
 
         final response = await httpClient.get(Uri.https(server, path, query));
 

@@ -22,8 +22,8 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
   KbinAPIMagazinesSort sort = KbinAPIMagazinesSort.hot;
   String search = "";
 
-  final PagingController<String, DetailedMagazineModel> _pagingController =
-      PagingController(firstPageKey: '1');
+  final PagingController<int, DetailedMagazineModel> _pagingController =
+      PagingController(firstPageKey: 1);
 
   @override
   void initState() {
@@ -32,11 +32,11 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
     _pagingController.addPageRequestListener(_fetchPage);
   }
 
-  Future<void> _fetchPage(String pageKey) async {
+  Future<void> _fetchPage(int pageKey) async {
     try {
       final newPage =
           await context.read<SettingsController>().api.magazines.list(
-                page: int.parse(pageKey),
+                page: pageKey,
                 filter: filter,
                 sort: sort,
                 search: search.isEmpty ? null : search,
@@ -50,7 +50,14 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
       final newItems =
           newPage.items.where((e) => !currentItemIds.contains(e.id)).toList();
 
-      _pagingController.appendPage(newItems, newPage.nextPage);
+      _pagingController.appendPage(
+          newItems,
+          context.read<SettingsController>().serverSoftware ==
+                  ServerSoftware.lemmy
+              ? (newPage.items.isEmpty ? null : pageKey + 1)
+              : (newPage.nextPage == null
+                  ? null
+                  : int.parse(newPage.nextPage!)));
     } catch (error, st) {
       print(error);
       print(st);

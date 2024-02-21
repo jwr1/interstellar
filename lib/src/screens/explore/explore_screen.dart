@@ -12,42 +12,47 @@ class ExploreScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: context.watch<SettingsController>().serverSoftware ==
+              ServerSoftware.lemmy
+          ? 2
+          : 4,
       child: Scaffold(
         appBar: AppBar(
           title: Text(
               'Explore ${context.watch<SettingsController>().instanceHost}'),
-          actions: [
-            IconButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const SearchScreen(),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.search))
-          ],
-          bottom: const TabBar(tabs: [
-            Tab(
+          bottom: TabBar(tabs: [
+            const Tab(
               text: 'Magazines',
               icon: Icon(Icons.article),
             ),
-            Tab(
-              text: 'People',
-              icon: Icon(Icons.account_circle),
-            ),
-            Tab(
-              text: 'Domains',
-              icon: Icon(Icons.public),
+            if (context.watch<SettingsController>().serverSoftware !=
+                ServerSoftware.lemmy)
+              const Tab(
+                text: 'People',
+                icon: Icon(Icons.account_circle),
+              ),
+            if (context.watch<SettingsController>().serverSoftware !=
+                ServerSoftware.lemmy)
+              const Tab(
+                text: 'Domains',
+                icon: Icon(Icons.public),
+              ),
+            const Tab(
+              text: 'Search',
+              icon: Icon(Icons.search),
             ),
           ]),
         ),
-        body: const TabBarView(
+        body: TabBarView(
           children: [
-            MagazinesScreen(),
-            UsersScreen(),
-            DomainsScreen(),
+            const MagazinesScreen(),
+            if (context.watch<SettingsController>().serverSoftware !=
+                ServerSoftware.lemmy)
+              const UsersScreen(),
+            if (context.watch<SettingsController>().serverSoftware !=
+                ServerSoftware.lemmy)
+              const DomainsScreen(),
+            const SearchScreen(),
           ],
         ),
       ),
