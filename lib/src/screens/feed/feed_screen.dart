@@ -300,7 +300,7 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
             ),
         PostType.microblog => context.read<SettingsController>().api.posts.list(
               widget.source,
-              page: int.parse(pageKey),
+              page: pageKey.isEmpty ? null : pageKey,
               sort: widget.sort,
               usePreferredLangs: whenLoggedIn(context,
                   context.read<SettingsController>().useAccountLangFilter),
