@@ -10,6 +10,15 @@ import 'package:interstellar/src/utils/utils.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart';
 
+const Map<FeedSort, String> lemmyFeedSortMap = {
+  FeedSort.active: 'Active',
+  FeedSort.hot: 'Hot',
+  FeedSort.newest: 'New',
+  FeedSort.oldest: 'Old',
+  FeedSort.top: 'TopAll',
+  FeedSort.commented: 'MostComments',
+};
+
 class APIThreads {
   final ServerSoftware software;
   final http.Client httpClient;
@@ -59,6 +68,7 @@ class APIThreads {
         const path = '/api/v3/post/list';
         final query = queryParams({
           'page_cursor': page,
+          'sort': lemmyFeedSortMap[sort],
         }..addAll(switch (source) {
             FeedSource.all => {'type_': 'All'},
             FeedSource.subscribed => {'type_': 'Subscribed'},
