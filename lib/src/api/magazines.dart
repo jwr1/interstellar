@@ -64,25 +64,61 @@ class APIMagazines {
   }
 
   Future<DetailedMagazineModel> get(int magazineId) async {
-    final path = '/api/magazine/$magazineId';
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        final path = '/api/magazine/$magazineId';
 
-    final response = await httpClient.get(Uri.https(server, path));
+        final response = await httpClient.get(Uri.https(server, path));
 
-    httpErrorHandler(response, message: 'Failed to load magazine');
+        httpErrorHandler(response, message: 'Failed to load magazine');
 
-    return DetailedMagazineModel.fromKbin(
-        jsonDecode(response.body) as Map<String, Object?>);
+        return DetailedMagazineModel.fromKbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        const path = '/api/v3/community';
+        final query = queryParams({
+          'id': magazineId.toString(),
+        });
+
+        final response = await httpClient.get(Uri.https(server, path, query));
+
+        httpErrorHandler(response, message: 'Failed to load magazine');
+
+        return DetailedMagazineModel.fromLemmy(
+            jsonDecode(response.body)['community_view']
+                as Map<String, Object?>);
+    }
   }
 
   Future<DetailedMagazineModel> getByName(String magazineName) async {
-    final path = '/api/magazine/name/$magazineName';
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        final path = '/api/magazine/name/$magazineName';
 
-    final response = await httpClient.get(Uri.https(server, path));
+        final response = await httpClient.get(Uri.https(server, path));
 
-    httpErrorHandler(response, message: 'Failed to load magazine');
+        httpErrorHandler(response, message: 'Failed to load magazine');
 
-    return DetailedMagazineModel.fromKbin(
-        jsonDecode(response.body) as Map<String, Object?>);
+        return DetailedMagazineModel.fromKbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        const path = '/api/v3/community';
+        final query = queryParams({
+          'name': magazineName.toString(),
+        });
+
+        final response = await httpClient.get(Uri.https(server, path, query));
+
+        httpErrorHandler(response, message: 'Failed to load magazine');
+
+        return DetailedMagazineModel.fromLemmy(
+            jsonDecode(response.body)['community_view']
+                as Map<String, Object?>);
+    }
   }
 
   Future<DetailedMagazineModel> putSubscribe(int magazineId, bool state) async {
