@@ -61,7 +61,7 @@ class CommentModel with _$CommentModel {
         rootId: json['rootId'] as int?,
         parentId: json['parentId'] as int?,
         image: kbinGetImageUrl(json['image'] as Map<String, Object?>?),
-        body: json['body'] as String,
+        body: json['body'] as String?,
         lang: json['lang'] as String,
         upvotes: json['favourites'] as int?,
         downvotes: json['dv'] as int?,
