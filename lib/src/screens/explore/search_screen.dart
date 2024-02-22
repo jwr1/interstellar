@@ -239,7 +239,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 .read<SettingsController>()
                                 .api
                                 .magazines
-                                .putSubscribe(item.id, !item.isUserSubscribed!);
+                                .subscribe(item.id, !item.isUserSubscribed!);
                             var newList = _pagingController.itemList;
                             newList![index] = newValue;
                             setState(() {

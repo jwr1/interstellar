@@ -81,8 +81,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                               .read<SettingsController>()
                               .api
                               .magazines
-                              .putSubscribe(
-                                  _data!.id, !_data!.isUserSubscribed!);
+                              .subscribe(_data!.id, !_data!.isUserSubscribed!);
 
                           setState(() {
                             _data = newValue;
@@ -105,7 +104,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                                 .read<SettingsController>()
                                 .api
                                 .magazines
-                                .putBlock(
+                                .block(
                                   _data!.id,
                                   !_data!.isBlockedByUser!,
                                 );

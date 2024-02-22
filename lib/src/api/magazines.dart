@@ -121,26 +121,70 @@ class APIMagazines {
     }
   }
 
-  Future<DetailedMagazineModel> putSubscribe(int magazineId, bool state) async {
-    final path =
-        '/api/magazine/$magazineId/${state ? 'subscribe' : 'unsubscribe'}';
+  Future<DetailedMagazineModel> subscribe(int magazineId, bool state) async {
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        final path =
+            '/api/magazine/$magazineId/${state ? 'subscribe' : 'unsubscribe'}';
 
-    final response = await httpClient.put(Uri.https(server, path));
+        final response = await httpClient.put(Uri.https(server, path));
 
-    httpErrorHandler(response, message: 'Failed to send subscribe');
+        httpErrorHandler(response, message: 'Failed to send subscribe');
 
-    return DetailedMagazineModel.fromKbin(
-        jsonDecode(response.body) as Map<String, Object?>);
+        return DetailedMagazineModel.fromKbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        const path = '/api/v3/community/follow';
+
+        final response = await httpClient.post(
+          Uri.https(server, path),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'community_id': magazineId,
+            'follow': state,
+          }),
+        );
+
+        httpErrorHandler(response, message: 'Failed to send subscribe');
+
+        return DetailedMagazineModel.fromLemmy(
+            jsonDecode(response.body)['community_view']
+                as Map<String, Object?>);
+    }
   }
 
-  Future<DetailedMagazineModel> putBlock(int magazineId, bool state) async {
-    final path = '/api/magazine/$magazineId/${state ? 'block' : 'unblock'}';
+  Future<DetailedMagazineModel> block(int magazineId, bool state) async {
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        final path = '/api/magazine/$magazineId/${state ? 'block' : 'unblock'}';
 
-    final response = await httpClient.put(Uri.https(server, path));
+        final response = await httpClient.put(Uri.https(server, path));
 
-    httpErrorHandler(response, message: 'Failed to send block');
+        httpErrorHandler(response, message: 'Failed to send block');
 
-    return DetailedMagazineModel.fromKbin(
-        jsonDecode(response.body) as Map<String, Object?>);
+        return DetailedMagazineModel.fromKbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        const path = '/api/v3/community/block';
+
+        final response = await httpClient.post(
+          Uri.https(server, path),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'community_id': magazineId,
+            'block': state,
+          }),
+        );
+
+        httpErrorHandler(response, message: 'Failed to send block');
+
+        return DetailedMagazineModel.fromLemmy(
+            jsonDecode(response.body)['community_view']
+                as Map<String, Object?>);
+    }
   }
 }

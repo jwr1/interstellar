@@ -90,7 +90,7 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
       microblogCount: null,
       microblogCommentCount: null,
       isAdult: lemmyCommunity['nsfw'] as bool,
-      isUserSubscribed: (json['subscribed'] as String) == 'Subscribed',
+      isUserSubscribed: (json['subscribed'] as String) != 'NotSubscribed',
       isBlockedByUser: json['blocked'] as bool?,
     );
 
