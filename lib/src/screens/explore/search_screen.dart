@@ -40,6 +40,8 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Future<void> _fetchPage(String pageKey) async {
+    if (search.isEmpty) _pagingController.appendLastPage([]);
+
     try {
       final newPage = await context.read<SettingsController>().api.search.get(
             page: int.parse(pageKey),
