@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:interstellar/src/api/comments.dart';
 import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/models/user.dart';
+import 'package:interstellar/src/screens/feed/post_comment.dart';
 import 'package:interstellar/src/screens/feed/post_item.dart';
 import 'package:interstellar/src/screens/profile/message_thread_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
@@ -16,7 +18,9 @@ import 'package:provider/provider.dart';
 
 import 'package:interstellar/src/models/post.dart';
 
-enum UserFeedType { thread, microblog, comment, follower, following }
+import '../../models/comment.dart';
+
+enum UserFeedType { thread, microblog, comment, reply, follower, following }
 
 class UserScreen extends StatefulWidget {
   final int userId;
@@ -63,7 +67,7 @@ class _UserScreenState extends State<UserScreen> {
           title: Text(_data?.name ?? ''),
         ),
         body: DefaultTabController(
-          length: 5,
+          length: 6,
           child: NestedScrollView(
             headerSliverBuilder: (context, innBoxIsScolled) => [
               SliverToBoxAdapter(
@@ -380,6 +384,8 @@ class _UserScreenState extends State<UserScreen> {
               const SliverAppBar(
                 automaticallyImplyLeading: false,
                 title: TabBar(
+                  isScrollable: true,
+                  tabAlignment: TabAlignment.start,
                   tabs: [
                     Tab(
                       text: 'Threads',
@@ -391,6 +397,10 @@ class _UserScreenState extends State<UserScreen> {
                     ),
                     Tab(
                       text: 'Comments',
+                      icon: Icon(Icons.comment),
+                    ),
+                    Tab(
+                      text: 'Replies',
                       icon: Icon(Icons.comment),
                     ),
                     Tab(
@@ -419,6 +429,10 @@ class _UserScreenState extends State<UserScreen> {
                 UserScreenBody(
                     mode: UserFeedType.comment,
                     data: _data
+                ),
+                UserScreenBody(
+                    mode: UserFeedType.reply,
+                  data: _data,
                 ),
                 UserScreenBody(
                     mode: UserFeedType.follower,
@@ -491,11 +505,21 @@ class _UserScreenBodyState extends State<UserScreenBody> {
           langs: context.read<SettingsController>().langFilter.toList(),
         ),
         UserFeedType.comment =>
-            context.read<SettingsController>().api.posts.list(
-              FeedSource.user,
-              sourceId: widget.data!.id,
+            context.read<SettingsController>().api.comments.listFromUser(
+              PostType.thread,
+              widget.data!.id,
               page: pageKey,
-              sort: FeedSort.newest,
+              sort: CommentSort.newest,
+              usePreferredLangs: whenLoggedIn(context,
+                  context.read<SettingsController>().useAccountLangFilter),
+              langs: context.read<SettingsController>().langFilter.toList(),
+            ),
+        UserFeedType.reply =>
+            context.read<SettingsController>().api.comments.listFromUser(
+              PostType.microblog,
+              widget.data!.id,
+              page: pageKey,
+              sort: CommentSort.newest,
               usePreferredLangs: whenLoggedIn(context,
                   context.read<SettingsController>().useAccountLangFilter),
               langs: context.read<SettingsController>().langFilter.toList(),
@@ -524,14 +548,19 @@ class _UserScreenBodyState extends State<UserScreenBody> {
 
       if (!mounted) return;
 
-      List<dynamic> newItems = [];
       final currentItemIds =
           _pagingController.itemList?.map((post) => post.id) ?? [];
-      newItems = newPage.items
-          .where((post) => !currentItemIds.contains(post.id))
-          .toList();
+      List<dynamic> newItems = (switch (newPage) {
+        PostListModel newPage => newPage.items.where((element) => !currentItemIds.contains(element.id)).toList(),
+        CommentListModel newPage => newPage.items.where((element) => !currentItemIds.contains(element.id)).toList(),
+        Object newPage => []
+      });
 
-      _pagingController.appendPage(newItems, newPage.nextPage);
+      _pagingController.appendPage(newItems, (switch (newPage) {
+        PostListModel newPage => newPage.nextPage,
+        CommentListModel newPage => newPage.nextPage,
+        Object newPage => ''
+      }));
 
     } catch (error) {
       _pagingController.error = error;
@@ -575,7 +604,26 @@ class _UserScreenBodyState extends State<UserScreenBody> {
                         },
                         isPreview: item.type == PostType.thread,
                       ),
-                  UserFeedType.comment => Text("comment"),
+                  UserFeedType.comment => PostComment(
+                    item,
+                    (newValue) {
+                      var newList = _pagingController.itemList;
+                      newList![index] = newValue;
+                      setState(() {
+                        _pagingController.itemList = newList;
+                      });
+                    }
+                  ),
+                  UserFeedType.reply => PostComment(
+                      item,
+                          (newValue) {
+                        var newList = _pagingController.itemList;
+                        newList![index] = newValue;
+                        setState(() {
+                          _pagingController.itemList = newList;
+                        });
+                      }
+                  ),
                   UserFeedType.follower => Text("follower"),
                   UserFeedType.following => Text("Following")
                 };
