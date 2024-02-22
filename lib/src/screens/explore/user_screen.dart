@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,6 +20,9 @@ import 'package:provider/provider.dart';
 import 'package:interstellar/src/models/post.dart';
 
 import '../../models/comment.dart';
+import '../../widgets/wrapper.dart';
+import '../feed/post_comment_screen.dart';
+import '../feed/post_page.dart';
 
 enum UserFeedType { thread, microblog, comment, reply, follower, following }
 
@@ -525,24 +529,14 @@ class _UserScreenBodyState extends State<UserScreenBody> {
               langs: context.read<SettingsController>().langFilter.toList(),
             ),
         UserFeedType.follower =>
-            context.read<SettingsController>().api.posts.list(
-              FeedSource.user,
-              sourceId: widget.data!.id,
+            context.read<SettingsController>().api.users.listFollowers(
+              widget.data!.id,
               page: pageKey,
-              sort: FeedSort.newest,
-              usePreferredLangs: whenLoggedIn(context,
-                  context.read<SettingsController>().useAccountLangFilter),
-              langs: context.read<SettingsController>().langFilter.toList(),
             ),
         UserFeedType.following =>
-            context.read<SettingsController>().api.posts.list(
-              FeedSource.user,
-              sourceId: widget.data!.id,
+            context.read<SettingsController>().api.users.listFollowing(
+              widget.data!.id,
               page: pageKey,
-              sort: FeedSort.newest,
-              usePreferredLangs: whenLoggedIn(context,
-                  context.read<SettingsController>().useAccountLangFilter),
-              langs: context.read<SettingsController>().langFilter.toList(),
             ),
       });
 
@@ -553,12 +547,14 @@ class _UserScreenBodyState extends State<UserScreenBody> {
       List<dynamic> newItems = (switch (newPage) {
         PostListModel newPage => newPage.items.where((element) => !currentItemIds.contains(element.id)).toList(),
         CommentListModel newPage => newPage.items.where((element) => !currentItemIds.contains(element.id)).toList(),
+        DetailedUserListModel newPage => newPage.items.where((element) => !currentItemIds.contains(element.id)).toList(),
         Object newPage => []
       });
 
       _pagingController.appendPage(newItems, (switch (newPage) {
         PostListModel newPage => newPage.nextPage,
         CommentListModel newPage => newPage.nextPage,
+        DetailedUserListModel newPage => newPage.nextPage,
         Object newPage => ''
       }));
 
@@ -579,54 +575,192 @@ class _UserScreenBodyState extends State<UserScreenBody> {
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<dynamic>(
               itemBuilder: (context, item, index) {
-                return switch (widget.mode) {
-                  UserFeedType.thread =>
-                      PostItem(
-                        item,
-                        (newValue) {
-                          var newList = _pagingController.itemList;
-                          newList![index] = newValue;
-                          setState(() {
-                            _pagingController.itemList = newList;
+                onClick() {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) {
+                      switch (widget.mode) {
+                        case UserFeedType.follower:
+                        case UserFeedType.following:
+                          return UserScreen(
+                            item.id,
+                            initData: item,
+                            onUpdate: (newValue) {
+                              var newList = _pagingController.itemList;
+                              newList![index] = newValue;
+                              setState(() {
+                                _pagingController.itemList = newList;
+                              });
+                            },
+                          );
+                        case UserFeedType.thread:
+                        case UserFeedType.microblog:
+                          return PostPage(item, (newValue) {
+                            var newList = _pagingController.itemList;
+                            newList![index] = newValue;
+                            setState(() {
+                              _pagingController.itemList = newList;
+                            });
                           });
-                        },
-                        isPreview: item.type == PostType.thread,
-                      ),
-                  UserFeedType.microblog =>
-                      PostItem(
-                        item,
-                        (newValue) {
-                          var newList = _pagingController.itemList;
-                          newList![index] = newValue;
-                          setState(() {
-                            _pagingController.itemList = newList;
-                          });
-                        },
-                        isPreview: item.type == PostType.thread,
-                      ),
-                  UserFeedType.comment => PostComment(
-                    item,
-                    (newValue) {
-                      var newList = _pagingController.itemList;
-                      newList![index] = newValue;
-                      setState(() {
-                        _pagingController.itemList = newList;
-                      });
-                    }
-                  ),
-                  UserFeedType.reply => PostComment(
-                      item,
-                          (newValue) {
-                        var newList = _pagingController.itemList;
-                        newList![index] = newValue;
-                        setState(() {
-                          _pagingController.itemList = newList;
-                        });
+                        case UserFeedType.comment:
+                          case UserFeedType.reply:
+                          return PostCommentScreen(item.postType, item.id);
                       }
+                    }),
+                  );
+                }
+
+
+                return Wrapper(
+                  shouldWrap: item is! CommentModel,
+                  parentBuilder: (child) => Card(
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: InkWell(onTap: onClick, child: child)
                   ),
-                  UserFeedType.follower => Text("follower"),
-                  UserFeedType.following => Text("Following")
-                };
+                  child: switch (widget.mode) {
+                    UserFeedType.thread =>
+                      PostItem(
+                        item,
+                        (newValue) {
+                          var newList = _pagingController.itemList;
+                          newList![index] = newValue;
+                          setState(() {
+                            _pagingController.itemList = newList;
+                          });
+                        },
+                        isPreview: item.type == PostType.thread,
+                      ),
+                    UserFeedType.microblog =>
+                      PostItem(
+                        item,
+                        (newValue) {
+                          var newList = _pagingController.itemList;
+                          newList![index] = newValue;
+                          setState(() {
+                            _pagingController.itemList = newList;
+                          });
+                        },
+                        isPreview: item.type == PostType.thread,
+                      ),
+                    UserFeedType.comment => Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                      child: PostComment(
+                        item,
+                        (newValue) {
+                          var newList = _pagingController.itemList;
+                          newList![index] = newValue;
+                          setState(() {
+                            _pagingController.itemList = newList;
+                          });
+                        },
+                        onClick: onClick,
+                      )
+                    ),
+                    UserFeedType.reply => Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                      child: PostComment(
+                        item,
+                        (newValue) {
+                          var newList = _pagingController.itemList;
+                          newList![index] = newValue;
+                          setState(() {
+                            _pagingController.itemList = newList;
+                          });
+                        },
+                        onClick: onClick,
+                      )
+                    ),
+                    UserFeedType.follower => Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Row(children: [
+                        if (item.avatar != null)
+                          Avatar(
+                            item.avatar,
+                            radius: 16,
+                          ),
+                        Container(width: 8 + (item.avatar != null ? 0 : 32)),
+                        Expanded(
+                            child: Text(item.name,
+                                overflow: TextOverflow.ellipsis)),
+                        const SizedBox(width: 12),
+                        OutlinedButton(
+                          style: ButtonStyle(
+                            foregroundColor: MaterialStatePropertyAll(
+                                item.isFollowedByUser == true
+                                    ? Theme.of(context)
+                                    .colorScheme
+                                    .primaryContainer
+                                    : null),
+                          ),
+                          onPressed: whenLoggedIn(context, () async {
+                            var newValue = await context
+                                .read<SettingsController>()
+                                .api
+                                .users
+                                .putFollow(item.id, !item.isFollowedByUser!);
+                            var newList = _pagingController.itemList;
+                            newList![index] = newValue;
+                            setState(() {
+                              _pagingController.itemList = newList;
+                            });
+                          }),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.group),
+                              Text(' ${intFormat(item.followersCount)}'),
+                            ],
+                          ),
+                        )
+                      ]),
+                    ),
+                    UserFeedType.following => Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Row(children: [
+                        if (item.avatar != null)
+                          Avatar(
+                            item.avatar,
+                            radius: 16,
+                          ),
+                        Container(width: 8 + (item.avatar != null ? 0 : 32)),
+                        Expanded(
+                            child: Text(item.name,
+                                overflow: TextOverflow.ellipsis)),
+                        const SizedBox(width: 12),
+                        OutlinedButton(
+                          style: ButtonStyle(
+                            foregroundColor: MaterialStatePropertyAll(
+                                item.isFollowedByUser == true
+                                    ? Theme.of(context)
+                                    .colorScheme
+                                    .primaryContainer
+                                    : null),
+                          ),
+                          onPressed: whenLoggedIn(context, () async {
+                            var newValue = await context
+                                .read<SettingsController>()
+                                .api
+                                .users
+                                .putFollow(item.id, !item.isFollowedByUser!);
+                            var newList = _pagingController.itemList;
+                            newList![index] = newValue;
+                            setState(() {
+                              _pagingController.itemList = newList;
+                            });
+                          }),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.group),
+                              Text(' ${intFormat(item.followersCount)}'),
+                            ],
+                          ),
+                        )
+                      ]),
+                    ),
+                  },
+                );
               }
             )
           )
