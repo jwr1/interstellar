@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,10 +18,10 @@ import 'package:provider/provider.dart';
 
 import 'package:interstellar/src/models/post.dart';
 
-import '../../models/comment.dart';
-import '../../widgets/wrapper.dart';
-import '../feed/post_comment_screen.dart';
-import '../feed/post_page.dart';
+import 'package:interstellar/src/models/comment.dart';
+import 'package:interstellar/src/widgets/wrapper.dart';
+import 'package:interstellar/src/screens/feed/post_comment_screen.dart';
+import 'package:interstellar/src/screens/feed/post_page.dart';
 
 enum UserFeedType { thread, microblog, comment, reply, follower, following }
 
@@ -409,11 +408,11 @@ class _UserScreenState extends State<UserScreen> {
                     ),
                     Tab(
                       text: 'Followers',
-                      icon: Icon(Icons.follow_the_signs),
+                      icon: Icon(Icons.people),
                     ),
                     Tab(
                       text: 'Following',
-                      icon: Icon(Icons.follow_the_signs),
+                      icon: Icon(Icons.groups),
                     )
                   ],
                 ),
