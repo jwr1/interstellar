@@ -21,6 +21,19 @@ class CommentListModel with _$CommentListModel {
         nextPage: kbinCalcNextPaginationPage(
             json['pagination'] as Map<String, Object?>),
       );
+
+  factory CommentListModel.fromLemmy(Map<String, Object?> json) =>
+      CommentListModel(
+        items: (json['comments'] as List<dynamic>)
+            .where(
+                (c) => (c['comment']['path'] as String).split('.').length == 2)
+            .map((c) => CommentModel.fromLemmy(
+                  c as Map<String, Object?>,
+                  possibleChildren: json['comments'] as List<dynamic>,
+                ))
+            .toList(),
+        nextPage: null,
+      );
 }
 
 @freezed
@@ -44,7 +57,6 @@ class CommentModel with _$CommentModel {
     required bool? isAdult,
     required DateTime createdAt,
     required DateTime? editedAt,
-    required DateTime lastActive,
     required List<CommentModel>? children,
     required int childCount,
     required String visibility,
@@ -73,7 +85,6 @@ class CommentModel with _$CommentModel {
         isAdult: json['isAdult'] as bool,
         createdAt: DateTime.parse(json['createdAt'] as String),
         editedAt: optionalDateTime(json['editedAt'] as String?),
-        lastActive: DateTime.parse(json['lastActive'] as String),
         children: (json['children'] as List<dynamic>)
             .map((c) => CommentModel.fromKbin(c as Map<String, Object?>))
             .toList(),
@@ -81,43 +92,53 @@ class CommentModel with _$CommentModel {
         visibility: json['visibility'] as String,
       );
 
-  // factory CommentModel.fromLemmy(
-  //     Map<String, Object?> json, List<dynamic> allCommentsJson) {
-  //   final lemmyComment = json['comment'] as Map<String, Object?>;
-  //   final lemmyCounts = json['counts'] as Map<String, Object?>;
+  factory CommentModel.fromLemmy(
+    Map<String, Object?> json, {
+    List<dynamic> possibleChildren = const [],
+  }) {
+    final lemmyComment = json['comment'] as Map<String, Object?>;
+    final lemmyCounts = json['counts'] as Map<String, Object?>;
 
-  //   final lemmyPath = lemmyComment['path'] as String;
-  //   final lemmyPathSegments =
-  //       lemmyPath.split('.').map((e) => int.parse(e)).toList();
+    final lemmyPath = lemmyComment['path'] as String;
+    final lemmyPathSegments =
+        lemmyPath.split('.').map((e) => int.parse(e)).toList();
 
-  //   return CommentModel(
-  //     id: json['commentId'] as int,
-  //     user: UserModel.fromLemmy(json['creator'] as Map<String, Object?>),
-  //     magazine:
-  //         MagazineModel.fromLemmy(json['community'] as Map<String, Object?>),
-  //     postType: PostType.thread,
-  //     postId: (json['post'] as Map<String, Object?>)['id'] as int,
-  //     rootId: lemmyPathSegments.length > 2 ? lemmyPathSegments[1] : null,
-  //     parentId: lemmyPathSegments.length > 2
-  //         ? lemmyPathSegments[lemmyPathSegments.length - 2]
-  //         : null,
-  //     image: null,
-  //     body: json['content'] as String,
-  //     lang: null,
-  //     upvotes: lemmyCounts['upvotes'] as int,
-  //     downvotes: lemmyCounts['downvotes'] as int,
-  //     boosts: null,
-  //     myVote: json['my_vote'] as int?,
-  //     myBoost: null,
-  //     isAdult: json['isAdult'] as bool,
-  //     createdAt: DateTime.parse(json['createdAt'] as String),
-  //     editedAt: optionalDateTime(json['editedAt'] as String?),
-  //     lastActive: DateTime.parse(json['lastActive'] as String),
-  //     children: (json['children'] as List<dynamic>)
-  //         .map((c) => CommentModel.fromKbin(c as Map<String, Object?>))
-  //         .toList(),
-  //     childCount: json['childCount'] as int,
-  //     visibility: json['visibility'] as String,
-  //   );
-  // }
+    final children = possibleChildren
+        .where((c) {
+          String childPath = c['comment']['path'];
+
+          return childPath.startsWith('$lemmyPath.') &&
+              (childPath.split('.').length == lemmyPathSegments.length + 1);
+        })
+        .map((c) =>
+            CommentModel.fromLemmy(c, possibleChildren: possibleChildren))
+        .toList();
+
+    return CommentModel(
+      id: lemmyComment['id'] as int,
+      user: UserModel.fromLemmy(json['creator'] as Map<String, Object?>),
+      magazine:
+          MagazineModel.fromLemmy(json['community'] as Map<String, Object?>),
+      postType: PostType.thread,
+      postId: (json['post'] as Map<String, Object?>)['id'] as int,
+      rootId: lemmyPathSegments.length > 2 ? lemmyPathSegments[1] : null,
+      parentId: lemmyPathSegments.length > 2
+          ? lemmyPathSegments[lemmyPathSegments.length - 2]
+          : null,
+      image: null,
+      body: lemmyComment['content'] as String,
+      lang: null,
+      upvotes: lemmyCounts['upvotes'] as int,
+      downvotes: lemmyCounts['downvotes'] as int,
+      boosts: null,
+      myVote: json['my_vote'] as int?,
+      myBoost: null,
+      isAdult: null,
+      createdAt: DateTime.parse(lemmyComment['published'] as String),
+      editedAt: optionalDateTime(json['updated'] as String?),
+      children: children,
+      childCount: lemmyCounts['child_count'] as int,
+      visibility: 'visible',
+    );
+  }
 }

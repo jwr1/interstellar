@@ -18,7 +18,7 @@ class API {
   final http.Client httpClient;
   final String server;
 
-  final KbinAPIComments comments;
+  final APIComments comments;
   final KbinAPIDomains domains;
   final APIThreads entries;
   final APIMagazines magazines;
@@ -32,7 +32,7 @@ class API {
     this.software,
     this.httpClient,
     this.server,
-  )   : comments = KbinAPIComments(software, httpClient, server),
+  )   : comments = APIComments(software, httpClient, server),
         domains = KbinAPIDomains(software, httpClient, server),
         entries = APIThreads(software, httpClient, server),
         magazines = APIMagazines(software, httpClient, server),

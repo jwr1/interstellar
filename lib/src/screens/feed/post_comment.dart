@@ -54,7 +54,7 @@ class _EntryCommentState extends State<PostComment> {
                     .read<SettingsController>()
                     .api
                     .comments
-                    .putVote(widget.comment.postType, widget.comment.id, 1);
+                    .boost(widget.comment.postType, widget.comment.id);
                 widget.onUpdate(newValue.copyWith(
                   childCount: widget.comment.childCount,
                   children: widget.comment.children,
@@ -66,7 +66,8 @@ class _EntryCommentState extends State<PostComment> {
                     .read<SettingsController>()
                     .api
                     .comments
-                    .putFavorite(widget.comment.postType, widget.comment.id);
+                    .vote(widget.comment.postType, widget.comment.id, 1,
+                        widget.comment.myVote == 1 ? 0 : 1);
                 widget.onUpdate(newValue.copyWith(
                   childCount: widget.comment.childCount,
                   children: widget.comment.children,
@@ -80,7 +81,8 @@ class _EntryCommentState extends State<PostComment> {
                     .read<SettingsController>()
                     .api
                     .comments
-                    .putVote(widget.comment.postType, widget.comment.id, -1);
+                    .vote(widget.comment.postType, widget.comment.id, -1,
+                        widget.comment.myVote == -1 ? 0 : -1);
                 widget.onUpdate(newValue.copyWith(
                   childCount: widget.comment.childCount,
                   children: widget.comment.children,

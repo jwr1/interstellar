@@ -28,6 +28,6 @@ void main() async {
   // Load user settings
   final settingsController = SettingsController();
   await settingsController.loadSettings();
-  print(settingsController.api);
+
   runApp(MyApp(settingsController: settingsController));
 }
