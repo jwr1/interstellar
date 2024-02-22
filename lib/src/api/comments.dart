@@ -85,6 +85,30 @@ class KbinAPIComments {
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
+  Future<CommentListModel> listFromUser(
+      PostType postType,
+      int userId, {
+        String? page,
+        CommentSort? sort,
+        List<String>? langs,
+        bool? usePreferredLangs,
+      }) async {
+    final path = '/api/users/$userId/${_postTypeKbinComment[postType]}';
+    final query = queryParams({
+      'p': page,
+      'sortBy': sort?.name,
+      'lang': langs?.join(','),
+      'usePreferredLangs': (usePreferredLangs ?? false).toString(),
+    });
+
+    final response = await httpClient.get(Uri.https(server, path, query));
+
+    httpErrorHandler(response, message: 'Failed to load comments');
+
+    return CommentListModel.fromKbin(
+        jsonDecode(response.body) as Map<String, Object?>);
+  }
+
   Future<CommentModel> get(PostType postType, int commentId) async {
     final path = '/api/${_postTypeKbinComment[postType]}/$commentId';
 

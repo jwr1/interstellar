@@ -167,4 +167,38 @@ class KbinAPIUsers {
     return DetailedUserModel.fromKbin(
         jsonDecode(response.body) as Map<String, Object?>);
   }
+
+  Future<DetailedUserListModel> listFollowers(
+    int userId, {
+    String? page
+  }) async {
+    final path = '/api/users/$userId/followers';
+    final query = queryParams({
+      'p': page,
+    });
+
+    final response = await httpClient.get(Uri.https(server, path, query));
+
+    httpErrorHandler(response, message: 'Failed to load followers');
+
+    return DetailedUserListModel.fromKbin(
+        jsonDecode(response.body) as Map<String, Object?>);
+  }
+
+  Future<DetailedUserListModel> listFollowing(
+      int userId, {
+        String? page
+      }) async {
+    final path = '/api/users/$userId/followed';
+    final query = queryParams({
+      'p': page,
+    });
+
+    final response = await httpClient.get(Uri.https(server, path, query));
+
+    httpErrorHandler(response, message: 'Failed to load following');
+
+    return DetailedUserListModel.fromKbin(
+        jsonDecode(response.body) as Map<String, Object?>);
+  }
 }
