@@ -140,6 +140,7 @@ class SettingsScreen extends StatelessWidget {
           ListTile(
             title: const Text('Default Microblog Feed Sort'),
             leading: const Icon(Icons.sort),
+            enabled: controller.serverSoftware != ServerSoftware.lemmy,
             onTap: () async {
               controller.updateDefaultPostsFeedSort(
                 await feedSortSelect.inquireSelection(

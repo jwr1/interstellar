@@ -26,19 +26,26 @@ class APIUsers {
     int? page,
     UsersFilter? filter,
   }) async {
-    final path = (filter == null || filter == UsersFilter.all)
-        ? '/api/users'
-        : '/api/users/${filter.name}';
-    final query = queryParams({
-      'p': page?.toString(),
-    });
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        final path = (filter == null || filter == UsersFilter.all)
+            ? '/api/users'
+            : '/api/users/${filter.name}';
+        final query = queryParams({
+          'p': page?.toString(),
+        });
 
-    final response = await httpClient.get(Uri.https(server, path, query));
+        final response = await httpClient.get(Uri.https(server, path, query));
 
-    httpErrorHandler(response, message: 'Failed to load users');
+        httpErrorHandler(response, message: 'Failed to load users');
 
-    return DetailedUserListModel.fromKbin(
-        jsonDecode(response.body) as Map<String, Object?>);
+        return DetailedUserListModel.fromKbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        throw Exception('List users not allowed on lemmy');
+    }
   }
 
   Future<DetailedUserModel> get(int userId) async {
@@ -57,7 +64,7 @@ class APIUsers {
       case ServerSoftware.lemmy:
         const path = '/api/v3/user';
         final query = queryParams({
-          'person_id': userId.toString()
+          'person_id': userId.toString(),
         });
 
         final response = await httpClient.get(Uri.https(server, path, query));
@@ -65,7 +72,7 @@ class APIUsers {
         httpErrorHandler(response, message: "Failed to load user");
 
         return DetailedUserModel.fromLemmy(
-          jsonDecode(response.body) as Map<String, Object?>);
+            jsonDecode(response.body) as Map<String, Object?>);
     }
   }
 
@@ -85,7 +92,7 @@ class APIUsers {
       case ServerSoftware.lemmy:
         const path = '/api/v3/user';
         final query = queryParams({
-          'username': username
+          'username': username,
         });
 
         final response = await httpClient.get(Uri.https(server, path, query));
@@ -122,18 +129,25 @@ class APIUsers {
     }
   }
 
-  Future<DetailedUserModel> putFollow(
+  Future<DetailedUserModel> follow(
     int userId,
     bool state,
   ) async {
-    final path = '/api/users/$userId/${state ? 'follow' : 'unfollow'}';
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        final path = '/api/users/$userId/${state ? 'follow' : 'unfollow'}';
 
-    final response = await httpClient.put(Uri.https(server, path));
+        final response = await httpClient.put(Uri.https(server, path));
 
-    httpErrorHandler(response, message: 'Failed to send follow');
+        httpErrorHandler(response, message: 'Failed to send follow');
 
-    return DetailedUserModel.fromKbin(
-        jsonDecode(response.body) as Map<String, Object?>);
+        return DetailedUserModel.fromKbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        throw Exception('User follow not allowed on lemmy');
+    }
   }
 
   Future<DetailedUserModel?> updateProfile(String about) async {
@@ -154,8 +168,8 @@ class APIUsers {
         const path = '/api/v3/user/save_user_settings';
 
         final response = await httpClient.put(Uri.https(server, path),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({'bio': about}));
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'bio': about}));
 
         httpErrorHandler(response, message: "Failed to load user");
 
@@ -170,7 +184,6 @@ class APIUsers {
     switch (software) {
       case ServerSoftware.kbin:
       case ServerSoftware.mbin:
-
         final path = '/api/users/$userId/${state ? 'block' : 'unblock'}';
 
         final response = await httpClient.put(Uri.https(server, path));
@@ -183,12 +196,14 @@ class APIUsers {
       case ServerSoftware.lemmy:
         const path = '/api/v3/user/block';
 
-        final response = await httpClient.post(Uri.https(server, path),
+        final response = await httpClient.post(
+          Uri.https(server, path),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
             'person_id': userId,
-            'block': state
-          }));
+            'block': state,
+          }),
+        );
 
         httpErrorHandler(response, message: "Failed to send block");
 
@@ -212,7 +227,7 @@ class APIUsers {
         );
         request.files.add(multipartFile);
         var response =
-        await http.Response.fromStream(await httpClient.send(request));
+            await http.Response.fromStream(await httpClient.send(request));
 
         httpErrorHandler(response, message: 'Failed to update avatar');
 
@@ -222,8 +237,8 @@ class APIUsers {
       case ServerSoftware.lemmy:
         const pictrsPath = '/pictrs/image';
 
-        var request = http.MultipartRequest('POST',
-            Uri.https(server, pictrsPath));
+        var request =
+            http.MultipartRequest('POST', Uri.https(server, pictrsPath));
         var multipartFile = http.MultipartFile.fromBytes(
           'images[]',
           await image.readAsBytes(),
@@ -239,15 +254,17 @@ class APIUsers {
         final json = jsonDecode(pictrsResponse.body) as Map<String, Object?>;
 
         final imageName = ((json['files'] as List<Object?>).first
-                                as Map<String, Object?>)['file'] as String?;
+            as Map<String, Object?>)['file'] as String?;
 
         const path = '/api/v3/user/save_user_settings';
 
-        final response = await httpClient.put(Uri.https(server, path),
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({
-              'avatar': 'https://$server/pictrs/image/$imageName'
-            }));
+        final response = await httpClient.put(
+          Uri.https(server, path),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'avatar': 'https://$server/pictrs/image/$imageName',
+          }),
+        );
 
         httpErrorHandler(response, message: "Failed to update avatar");
 
@@ -270,7 +287,7 @@ class APIUsers {
         );
         request.files.add(multipartFile);
         var response =
-        await http.Response.fromStream(await httpClient.send(request));
+            await http.Response.fromStream(await httpClient.send(request));
 
         httpErrorHandler(response, message: 'Failed to update cover');
 
@@ -280,8 +297,8 @@ class APIUsers {
       case ServerSoftware.lemmy:
         const pictrsPath = '/pictrs/image';
 
-        var request = http.MultipartRequest('POST',
-            Uri.https(server, pictrsPath));
+        var request =
+            http.MultipartRequest('POST', Uri.https(server, pictrsPath));
         var multipartFile = http.MultipartFile.fromBytes(
           'images[]',
           await image.readAsBytes(),
@@ -290,61 +307,74 @@ class APIUsers {
         );
         request.files.add(multipartFile);
         var pictrsResponse =
-        await http.Response.fromStream(await httpClient.send(request));
+            await http.Response.fromStream(await httpClient.send(request));
 
         httpErrorHandler(pictrsResponse, message: 'Failed to upload cover');
 
         final json = jsonDecode(pictrsResponse.body) as Map<String, Object?>;
 
         final imageName = ((json['files'] as List<Object?>).first
-        as Map<String, Object?>)['file'] as String?;
+            as Map<String, Object?>)['file'] as String?;
 
         const path = '/api/v3/user/save_user_settings';
 
         final response = await httpClient.put(Uri.https(server, path),
             headers: {'Content-Type': 'application/json'},
             body: jsonEncode({
-              'banner': 'https://$server/pictrs/image/$imageName'
+              'banner': 'https://$server/pictrs/image/$imageName',
             }));
 
         httpErrorHandler(response, message: "Failed to update cover");
 
         return null;
     }
-
   }
 
   Future<DetailedUserListModel> listFollowers(
     int userId, {
-    String? page
+    String? page,
   }) async {
-    final path = '/api/users/$userId/followers';
-    final query = queryParams({
-      'p': page,
-    });
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        final path = '/api/users/$userId/followers';
+        final query = queryParams({
+          'p': page,
+        });
 
-    final response = await httpClient.get(Uri.https(server, path, query));
+        final response = await httpClient.get(Uri.https(server, path, query));
 
-    httpErrorHandler(response, message: 'Failed to load followers');
+        httpErrorHandler(response, message: 'Failed to load followers');
 
-    return DetailedUserListModel.fromKbin(
-        jsonDecode(response.body) as Map<String, Object?>);
+        return DetailedUserListModel.fromKbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        throw Exception('User followers not allowed on lemmy');
+    }
   }
 
   Future<DetailedUserListModel> listFollowing(
-      int userId, {
-        String? page
-      }) async {
-    final path = '/api/users/$userId/followed';
-    final query = queryParams({
-      'p': page,
-    });
+    int userId, {
+    String? page,
+  }) async {
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        final path = '/api/users/$userId/followed';
+        final query = queryParams({
+          'p': page,
+        });
 
-    final response = await httpClient.get(Uri.https(server, path, query));
+        final response = await httpClient.get(Uri.https(server, path, query));
 
-    httpErrorHandler(response, message: 'Failed to load following');
+        httpErrorHandler(response, message: 'Failed to load following');
 
-    return DetailedUserListModel.fromKbin(
-        jsonDecode(response.body) as Map<String, Object?>);
+        return DetailedUserListModel.fromKbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        throw Exception('List following not allowed on lemmy');
+    }
   }
 }

@@ -174,35 +174,38 @@ class _SearchScreenState extends State<SearchScreen> {
                         Expanded(
                             child: Text(item.name,
                                 overflow: TextOverflow.ellipsis)),
-                        const SizedBox(width: 12),
-                        OutlinedButton(
-                          style: ButtonStyle(
-                            foregroundColor: MaterialStatePropertyAll(
-                                item.isFollowedByUser == true
-                                    ? Theme.of(context)
-                                        .colorScheme
-                                        .primaryContainer
-                                    : null),
-                          ),
-                          onPressed: whenLoggedIn(context, () async {
-                            var newValue = await context
-                                .read<SettingsController>()
-                                .api
-                                .users
-                                .putFollow(item.id, !item.isFollowedByUser!);
-                            var newList = _pagingController.itemList;
-                            newList![index] = newValue;
-                            setState(() {
-                              _pagingController.itemList = newList;
-                            });
-                          }),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.group),
-                              Text(' ${intFormat(item.followersCount)}'),
-                            ],
-                          ),
-                        )
+                        if (item.followersCount != null)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 12),
+                            child: OutlinedButton(
+                              style: ButtonStyle(
+                                foregroundColor: MaterialStatePropertyAll(
+                                    item.isFollowedByUser == true
+                                        ? Theme.of(context)
+                                            .colorScheme
+                                            .primaryContainer
+                                        : null),
+                              ),
+                              onPressed: whenLoggedIn(context, () async {
+                                var newValue = await context
+                                    .read<SettingsController>()
+                                    .api
+                                    .users
+                                    .follow(item.id, !item.isFollowedByUser!);
+                                var newList = _pagingController.itemList;
+                                newList![index] = newValue;
+                                setState(() {
+                                  _pagingController.itemList = newList;
+                                });
+                              }),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.group),
+                                  Text(' ${intFormat(item.followersCount!)}'),
+                                ],
+                              ),
+                            ),
+                          )
                       ]),
                     ),
                   DetailedMagazineModel item => Padding(

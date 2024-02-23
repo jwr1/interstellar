@@ -91,7 +91,7 @@ class _PostPageState extends State<PostPage> {
         title: ListTile(
           contentPadding: EdgeInsets.zero,
           title: Text(
-            _data.user.name,
+            _data.title ?? '',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),

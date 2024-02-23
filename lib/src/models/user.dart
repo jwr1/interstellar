@@ -31,7 +31,7 @@ class DetailedUserModel with _$DetailedUserModel {
     required DateTime createdAt,
     required bool isBot,
     required String? about,
-    required int followersCount,
+    required int? followersCount,
     required bool? isFollowedByUser,
     required bool? isFollowerOfUser,
     required bool? isBlockedByUser,
@@ -57,17 +57,17 @@ class DetailedUserModel with _$DetailedUserModel {
     final lemmyPerson = lemmyPersonView['person'] as Map<String, Object?>;
 
     return DetailedUserModel(
-        id: lemmyPerson['id'] as int,
-        name: lemmyPerson['name'] as String,
-        avatar: lemmyPerson['avatar'] as String?,
-        cover: lemmyPerson['banner'] as String?,
-        createdAt: DateTime.parse(lemmyPerson['published'] as String),
-        isBot: lemmyPerson['bot_account'] as bool,
-        about: lemmyPerson['bio'] as String?,
-        followersCount: 0,
-        isFollowedByUser: null,
-        isFollowerOfUser: null,
-        isBlockedByUser: lemmyPerson['banned'] as bool
+      id: lemmyPerson['id'] as int,
+      name: lemmyPerson['name'] as String,
+      avatar: lemmyPerson['avatar'] as String?,
+      cover: lemmyPerson['banner'] as String?,
+      createdAt: DateTime.parse(lemmyPerson['published'] as String),
+      isBot: lemmyPerson['bot_account'] as bool,
+      about: lemmyPerson['bio'] as String?,
+      followersCount: null,
+      isFollowedByUser: null,
+      isFollowerOfUser: null,
+      isBlockedByUser: (json['blocked'] as bool?) ?? false,
     );
   }
 }

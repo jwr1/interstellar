@@ -229,46 +229,42 @@ class _UserScreenState extends State<UserScreen> {
                                       )
                                     ],
                                   ),
-                                  Expanded(
-                                    child: Align(
-                                      alignment: Alignment.centerRight,
-                                      child: OutlinedButton(
-                                        style: ButtonStyle(
-                                          foregroundColor:
-                                              MaterialStatePropertyAll(
-                                                  _data!.isFollowedByUser ==
-                                                          true
-                                                      ? Theme.of(context)
-                                                          .colorScheme
-                                                          .primaryContainer
-                                                      : null),
-                                        ),
-                                        onPressed:
-                                            whenLoggedIn(context, () async {
-                                          var newValue = await context
-                                              .read<SettingsController>()
-                                              .api
-                                              .users
-                                              .putFollow(_data!.id,
-                                                  !_data!.isFollowedByUser!);
-                                          setState(() {
-                                            _data = newValue;
-                                          });
-                                          if (widget.onUpdate != null) {
-                                            widget.onUpdate!(newValue);
-                                          }
-                                        }),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            const Icon(Icons.group),
-                                            Text(
-                                                ' ${intFormat(_data!.followersCount)}'),
-                                          ],
-                                        ),
+                                  const Spacer(),
+                                  if (_data!.followersCount != null)
+                                    OutlinedButton(
+                                      style: ButtonStyle(
+                                        foregroundColor:
+                                            MaterialStatePropertyAll(
+                                                _data!.isFollowedByUser == true
+                                                    ? Theme.of(context)
+                                                        .colorScheme
+                                                        .primaryContainer
+                                                    : null),
+                                      ),
+                                      onPressed:
+                                          whenLoggedIn(context, () async {
+                                        var newValue = await context
+                                            .read<SettingsController>()
+                                            .api
+                                            .users
+                                            .follow(_data!.id,
+                                                !_data!.isFollowedByUser!);
+                                        setState(() {
+                                          _data = newValue;
+                                        });
+                                        if (widget.onUpdate != null) {
+                                          widget.onUpdate!(newValue);
+                                        }
+                                      }),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Icon(Icons.group),
+                                          Text(
+                                              ' ${intFormat(_data!.followersCount!)}'),
+                                        ],
                                       ),
                                     ),
-                                  ),
                                   if (whenLoggedIn(context, true) == true)
                                     IconButton(
                                       onPressed: () async {
@@ -419,7 +415,9 @@ class _UserScreenState extends State<UserScreen> {
                             text: 'Threads',
                             icon: Icon(Icons.feed),
                           ),
-                          if (context.watch<SettingsController>().serverSoftware !=
+                          if (context
+                                  .watch<SettingsController>()
+                                  .serverSoftware !=
                               ServerSoftware.lemmy)
                             const Tab(
                               text: 'Microblogs',
@@ -429,19 +427,25 @@ class _UserScreenState extends State<UserScreen> {
                             text: 'Comments',
                             icon: Icon(Icons.comment),
                           ),
-                          if (context.watch<SettingsController>().serverSoftware !=
+                          if (context
+                                  .watch<SettingsController>()
+                                  .serverSoftware !=
                               ServerSoftware.lemmy)
                             const Tab(
                               text: 'Replies',
                               icon: Icon(Icons.comment),
                             ),
-                          if (context.watch<SettingsController>().serverSoftware !=
+                          if (context
+                                  .watch<SettingsController>()
+                                  .serverSoftware !=
                               ServerSoftware.lemmy)
                             const Tab(
                               text: 'Followers',
                               icon: Icon(Icons.people),
                             ),
-                          if (context.watch<SettingsController>().serverSoftware !=
+                          if (context
+                                  .watch<SettingsController>()
+                                  .serverSoftware !=
                               ServerSoftware.lemmy)
                             const Tab(
                               text: 'Following',
@@ -734,7 +738,7 @@ class _UserScreenBodyState extends State<UserScreenBody> {
                                 .read<SettingsController>()
                                 .api
                                 .users
-                                .putFollow(item.id, !item.isFollowedByUser!);
+                                .follow(item.id, !item.isFollowedByUser!);
                             var newList = _pagingController.itemList;
                             newList![index] = newValue;
                             setState(() {
@@ -777,7 +781,7 @@ class _UserScreenBodyState extends State<UserScreenBody> {
                                 .read<SettingsController>()
                                 .api
                                 .users
-                                .putFollow(item.id, !item.isFollowedByUser!);
+                                .follow(item.id, !item.isFollowedByUser!);
                             var newList = _pagingController.itemList;
                             newList![index] = newValue;
                             setState(() {
