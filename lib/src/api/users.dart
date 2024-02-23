@@ -11,12 +11,12 @@ import 'package:path/path.dart';
 
 enum UsersFilter { all, followed, followers, blocked }
 
-class KbinAPIUsers {
+class APIUsers {
   final ServerSoftware software;
   final http.Client httpClient;
   final String server;
 
-  KbinAPIUsers(
+  APIUsers(
     this.software,
     this.httpClient,
     this.server,
@@ -42,25 +42,59 @@ class KbinAPIUsers {
   }
 
   Future<DetailedUserModel> get(int userId) async {
-    final path = '/api/users/$userId';
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        final path = '/api/users/$userId';
 
-    final response = await httpClient.get(Uri.https(server, path));
+        final response = await httpClient.get(Uri.https(server, path));
 
-    httpErrorHandler(response, message: 'Failed to load user');
+        httpErrorHandler(response, message: 'Failed to load user');
 
-    return DetailedUserModel.fromKbin(
-        jsonDecode(response.body) as Map<String, Object?>);
+        return DetailedUserModel.fromKbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        const path = '/api/v3/user';
+        final query = queryParams({
+          'person_id': userId.toString()
+        });
+
+        final response = await httpClient.get(Uri.https(server, path, query));
+
+        httpErrorHandler(response, message: "Failed to load user");
+
+        return DetailedUserModel.fromLemmy(
+          jsonDecode(response.body) as Map<String, Object?>);
+    }
   }
 
   Future<DetailedUserModel> getByName(String username) async {
-    final path = '/api/users/name/$username';
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        final path = '/api/users/name/$username';
 
-    final response = await httpClient.get(Uri.https(server, path));
+        final response = await httpClient.get(Uri.https(server, path));
 
-    httpErrorHandler(response, message: 'Failed to load user');
+        httpErrorHandler(response, message: 'Failed to load user');
 
-    return DetailedUserModel.fromKbin(
-        jsonDecode(response.body) as Map<String, Object?>);
+        return DetailedUserModel.fromKbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        const path = '/api/v3/user';
+        final query = queryParams({
+          'username': username
+        });
+
+        final response = await httpClient.get(Uri.https(server, path, query));
+
+        httpErrorHandler(response, message: "Failed to load user");
+
+        return DetailedUserModel.fromLemmy(
+            jsonDecode(response.body) as Map<String, Object?>);
+    }
   }
 
   Future<UserModel> getMe() async {
@@ -102,70 +136,182 @@ class KbinAPIUsers {
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
-  Future<DetailedUserModel> updateProfile(String about) async {
-    const path = '/api/users/profile';
+  Future<DetailedUserModel?> updateProfile(String about) async {
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        const path = '/api/users/profile';
 
-    final response = await httpClient.put(Uri.https(server, path),
-        body: jsonEncode({'about': about}));
+        final response = await httpClient.put(Uri.https(server, path),
+            body: jsonEncode({'about': about}));
 
-    httpErrorHandler(response, message: 'Failed to update profile');
+        httpErrorHandler(response, message: 'Failed to update profile');
 
-    return DetailedUserModel.fromKbin(
-        jsonDecode(response.body) as Map<String, Object?>);
+        return DetailedUserModel.fromKbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        const path = '/api/v3/user/save_user_settings';
+
+        final response = await httpClient.put(Uri.https(server, path),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({'bio': about}));
+
+        httpErrorHandler(response, message: "Failed to load user");
+
+        return null;
+    }
   }
 
   Future<DetailedUserModel> putBlock(
     int userId,
     bool state,
   ) async {
-    final path = '/api/users/$userId/${state ? 'block' : 'unblock'}';
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
 
-    final response = await httpClient.put(Uri.https(server, path));
+        final path = '/api/users/$userId/${state ? 'block' : 'unblock'}';
 
-    httpErrorHandler(response, message: 'Failed to send block');
+        final response = await httpClient.put(Uri.https(server, path));
 
-    return DetailedUserModel.fromKbin(
-        jsonDecode(response.body) as Map<String, Object?>);
+        httpErrorHandler(response, message: 'Failed to send block');
+
+        return DetailedUserModel.fromKbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        const path = '/api/v3/user/block';
+
+        final response = await httpClient.post(Uri.https(server, path),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'person_id': userId,
+            'block': state
+          }));
+
+        httpErrorHandler(response, message: "Failed to send block");
+
+        return DetailedUserModel.fromLemmy(
+            jsonDecode(response.body) as Map<String, Object?>);
+    }
   }
 
-  Future<DetailedUserModel> updateAvatar(XFile image) async {
-    const path = '/api/users/avatar';
+  Future<DetailedUserModel?> updateAvatar(XFile image) async {
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        const path = '/api/users/avatar';
 
-    var request = http.MultipartRequest('POST', Uri.https(server, path));
-    var multipartFile = http.MultipartFile.fromBytes(
-      'uploadImage',
-      await image.readAsBytes(),
-      filename: basename(image.path),
-      contentType: MediaType.parse(lookupMimeType(image.path)!),
-    );
-    request.files.add(multipartFile);
-    var response =
+        var request = http.MultipartRequest('POST', Uri.https(server, path));
+        var multipartFile = http.MultipartFile.fromBytes(
+          'uploadImage',
+          await image.readAsBytes(),
+          filename: basename(image.path),
+          contentType: MediaType.parse(lookupMimeType(image.path)!),
+        );
+        request.files.add(multipartFile);
+        var response =
         await http.Response.fromStream(await httpClient.send(request));
 
-    httpErrorHandler(response, message: 'Failed to update profile');
+        httpErrorHandler(response, message: 'Failed to update avatar');
 
-    return DetailedUserModel.fromKbin(
-        jsonDecode(response.body) as Map<String, Object?>);
+        return DetailedUserModel.fromKbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        const pictrsPath = '/pictrs/image';
+
+        var request = http.MultipartRequest('POST',
+            Uri.https(server, pictrsPath));
+        var multipartFile = http.MultipartFile.fromBytes(
+          'images[]',
+          await image.readAsBytes(),
+          filename: basename(image.path),
+          contentType: MediaType.parse(lookupMimeType(image.path)!),
+        );
+        request.files.add(multipartFile);
+        var pictrsResponse =
+            await http.Response.fromStream(await httpClient.send(request));
+
+        httpErrorHandler(pictrsResponse, message: 'Failed to upload avatar');
+
+        final json = jsonDecode(pictrsResponse.body) as Map<String, Object?>;
+
+        final imageName = ((json['files'] as List<Object?>).first
+                                as Map<String, Object?>)['file'] as String?;
+
+        const path = '/api/v3/user/save_user_settings';
+
+        final response = await httpClient.put(Uri.https(server, path),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'avatar': 'https://$server/pictrs/image/$imageName'
+            }));
+
+        httpErrorHandler(response, message: "Failed to update avatar");
+
+        return null;
+    }
   }
 
-  Future<DetailedUserModel> updateCover(XFile image) async {
-    const path = '/api/users/cover';
+  Future<DetailedUserModel?> updateCover(XFile image) async {
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        const path = '/api/users/cover';
 
-    var request = http.MultipartRequest('POST', Uri.https(server, path));
-    var multipartFile = http.MultipartFile.fromBytes(
-      'uploadImage',
-      await image.readAsBytes(),
-      filename: basename(image.path),
-      contentType: MediaType.parse(lookupMimeType(image.path)!),
-    );
-    request.files.add(multipartFile);
-    var response =
+        var request = http.MultipartRequest('POST', Uri.https(server, path));
+        var multipartFile = http.MultipartFile.fromBytes(
+          'uploadImage',
+          await image.readAsBytes(),
+          filename: basename(image.path),
+          contentType: MediaType.parse(lookupMimeType(image.path)!),
+        );
+        request.files.add(multipartFile);
+        var response =
         await http.Response.fromStream(await httpClient.send(request));
 
-    httpErrorHandler(response, message: 'Failed to update profile');
+        httpErrorHandler(response, message: 'Failed to update cover');
 
-    return DetailedUserModel.fromKbin(
-        jsonDecode(response.body) as Map<String, Object?>);
+        return DetailedUserModel.fromKbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        const pictrsPath = '/pictrs/image';
+
+        var request = http.MultipartRequest('POST',
+            Uri.https(server, pictrsPath));
+        var multipartFile = http.MultipartFile.fromBytes(
+          'images[]',
+          await image.readAsBytes(),
+          filename: basename(image.path),
+          contentType: MediaType.parse(lookupMimeType(image.path)!),
+        );
+        request.files.add(multipartFile);
+        var pictrsResponse =
+        await http.Response.fromStream(await httpClient.send(request));
+
+        httpErrorHandler(pictrsResponse, message: 'Failed to upload cover');
+
+        final json = jsonDecode(pictrsResponse.body) as Map<String, Object?>;
+
+        final imageName = ((json['files'] as List<Object?>).first
+        as Map<String, Object?>)['file'] as String?;
+
+        const path = '/api/v3/user/save_user_settings';
+
+        final response = await httpClient.put(Uri.https(server, path),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'banner': 'https://$server/pictrs/image/$imageName'
+            }));
+
+        httpErrorHandler(response, message: "Failed to update cover");
+
+        return null;
+    }
+
   }
 
   Future<DetailedUserListModel> listFollowers(

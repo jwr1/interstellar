@@ -26,7 +26,7 @@ class API {
   final KbinAPINotifications notifications;
   final APIPosts posts;
   final KbinAPISearch search;
-  final KbinAPIUsers users;
+  final APIUsers users;
 
   API(
     this.software,
@@ -40,7 +40,7 @@ class API {
         notifications = KbinAPINotifications(software, httpClient, server),
         posts = APIPosts(software, httpClient, server),
         search = KbinAPISearch(software, httpClient, server),
-        users = KbinAPIUsers(software, httpClient, server);
+        users = APIUsers(software, httpClient, server);
 }
 
 Future<ServerSoftware?> getServerSoftware(String server) async {

@@ -70,7 +70,10 @@ class _UserScreenState extends State<UserScreen> {
         body: _data == null
             ? const Center(child: CircularProgressIndicator())
             : DefaultTabController(
-                length: 6,
+                length: context.watch<SettingsController>().serverSoftware ==
+                        ServerSoftware.lemmy
+                    ? 2
+                    : 6,
                 child: NestedScrollView(
                   headerSliverBuilder: (context, innerBoxIsScrolled) => [
                     SliverToBoxAdapter(
@@ -156,7 +159,9 @@ class _UserScreenState extends State<UserScreen> {
                                                     }
 
                                                     setState(() {
-                                                      _data = user;
+                                                      if (user != null) {
+                                                        _data = user;
+                                                      }
                                                       _aboutTextController!
                                                           .dispose();
                                                       _aboutTextController =
@@ -404,36 +409,44 @@ class _UserScreenState extends State<UserScreen> {
                         ),
                       ],
                     )),
-                    const SliverAppBar(
+                    SliverAppBar(
                       automaticallyImplyLeading: false,
                       title: TabBar(
                         isScrollable: true,
                         tabAlignment: TabAlignment.start,
                         tabs: [
-                          Tab(
+                          const Tab(
                             text: 'Threads',
                             icon: Icon(Icons.feed),
                           ),
-                          Tab(
-                            text: 'Microblogs',
-                            icon: Icon(Icons.chat),
-                          ),
-                          Tab(
+                          if (context.watch<SettingsController>().serverSoftware !=
+                              ServerSoftware.lemmy)
+                            const Tab(
+                              text: 'Microblogs',
+                              icon: Icon(Icons.chat),
+                            ),
+                          const Tab(
                             text: 'Comments',
                             icon: Icon(Icons.comment),
                           ),
-                          Tab(
-                            text: 'Replies',
-                            icon: Icon(Icons.comment),
-                          ),
-                          Tab(
-                            text: 'Followers',
-                            icon: Icon(Icons.people),
-                          ),
-                          Tab(
-                            text: 'Following',
-                            icon: Icon(Icons.groups),
-                          )
+                          if (context.watch<SettingsController>().serverSoftware !=
+                              ServerSoftware.lemmy)
+                            const Tab(
+                              text: 'Replies',
+                              icon: Icon(Icons.comment),
+                            ),
+                          if (context.watch<SettingsController>().serverSoftware !=
+                              ServerSoftware.lemmy)
+                            const Tab(
+                              text: 'Followers',
+                              icon: Icon(Icons.people),
+                            ),
+                          if (context.watch<SettingsController>().serverSoftware !=
+                              ServerSoftware.lemmy)
+                            const Tab(
+                              text: 'Following',
+                              icon: Icon(Icons.groups),
+                            )
                         ],
                       ),
                       pinned: true,
@@ -444,26 +457,34 @@ class _UserScreenState extends State<UserScreen> {
                       mode: UserFeedType.thread,
                       data: _data,
                     ),
-                    UserScreenBody(
-                      mode: UserFeedType.microblog,
-                      data: _data,
-                    ),
+                    if (context.watch<SettingsController>().serverSoftware !=
+                        ServerSoftware.lemmy)
+                      UserScreenBody(
+                        mode: UserFeedType.microblog,
+                        data: _data,
+                      ),
                     UserScreenBody(
                       mode: UserFeedType.comment,
                       data: _data,
                     ),
-                    UserScreenBody(
-                      mode: UserFeedType.reply,
-                      data: _data,
-                    ),
-                    UserScreenBody(
-                      mode: UserFeedType.follower,
-                      data: _data,
-                    ),
-                    UserScreenBody(
-                      mode: UserFeedType.following,
-                      data: _data,
-                    ),
+                    if (context.watch<SettingsController>().serverSoftware !=
+                        ServerSoftware.lemmy)
+                      UserScreenBody(
+                        mode: UserFeedType.reply,
+                        data: _data,
+                      ),
+                    if (context.watch<SettingsController>().serverSoftware !=
+                        ServerSoftware.lemmy)
+                      UserScreenBody(
+                        mode: UserFeedType.follower,
+                        data: _data,
+                      ),
+                    if (context.watch<SettingsController>().serverSoftware !=
+                        ServerSoftware.lemmy)
+                      UserScreenBody(
+                        mode: UserFeedType.following,
+                        data: _data,
+                      ),
                   ]),
                 ),
               ));

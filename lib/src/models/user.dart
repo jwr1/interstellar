@@ -51,6 +51,25 @@ class DetailedUserModel with _$DetailedUserModel {
         isFollowerOfUser: json['isFollowerOfUser'] as bool?,
         isBlockedByUser: json['isBlockedByUser'] as bool?,
       );
+
+  factory DetailedUserModel.fromLemmy(Map<String, Object?> json) {
+    final lemmyPersonView = json['person_view'] as Map<String, Object?>;
+    final lemmyPerson = lemmyPersonView['person'] as Map<String, Object?>;
+
+    return DetailedUserModel(
+        id: lemmyPerson['id'] as int,
+        name: lemmyPerson['name'] as String,
+        avatar: lemmyPerson['avatar'] as String?,
+        cover: lemmyPerson['banner'] as String?,
+        createdAt: DateTime.parse(lemmyPerson['published'] as String),
+        isBot: lemmyPerson['bot_account'] as bool,
+        about: lemmyPerson['bio'] as String?,
+        followersCount: 0,
+        isFollowedByUser: null,
+        isFollowerOfUser: null,
+        isBlockedByUser: lemmyPerson['banned'] as bool
+    );
+  }
 }
 
 @freezed

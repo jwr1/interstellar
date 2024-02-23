@@ -65,6 +65,28 @@ class APIThreads {
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
+        if (source == FeedSource.user) {
+          const path = '/api/v3/user';
+          final query = queryParams({
+            'person_id': sourceId.toString(),
+            'page': page,
+            'sort': lemmyFeedSortMap[sort]
+          });
+
+          final response = await httpClient.get(Uri.https(server, path, query));
+
+          httpErrorHandler(response, message: "Failed to load user");
+
+          final json = jsonDecode(response.body) as Map<String, Object?>;
+          // this is a workaround for lemmy not returning
+          // page info from this request
+          if ((json['posts']  as List<dynamic>).isNotEmpty) {
+            json['next_page'] = (int.parse(page!) + 1).toString();
+          }
+
+          return PostListModel.fromLemmy(json);
+        }
+
         const path = '/api/v3/post/list';
         final query = queryParams({
           'page_cursor': page,

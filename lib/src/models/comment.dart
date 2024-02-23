@@ -32,7 +32,7 @@ class CommentListModel with _$CommentListModel {
                   possibleChildren: json['comments'] as List<dynamic>,
                 ))
             .toList(),
-        nextPage: null,
+        nextPage: json['next_page'] as String?,
       );
 }
 
