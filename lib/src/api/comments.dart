@@ -121,20 +121,45 @@ class APIComments {
     List<String>? langs,
     bool? usePreferredLangs,
   }) async {
-    final path = '/api/users/$userId/${_postTypeKbinComment[postType]}';
-    final query = queryParams({
-      'p': page,
-      'sortBy': sort?.name,
-      'lang': langs?.join(','),
-      'usePreferredLangs': (usePreferredLangs ?? false).toString(),
-    });
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        final path = '/api/users/$userId/${_postTypeKbinComment[postType]}';
+        final query = queryParams({
+          'p': page,
+          'sortBy': sort?.name,
+          'lang': langs?.join(','),
+          'usePreferredLangs': (usePreferredLangs ?? false).toString(),
+        });
 
-    final response = await httpClient.get(Uri.https(server, path, query));
+        final response = await httpClient.get(Uri.https(server, path, query));
 
-    httpErrorHandler(response, message: 'Failed to load comments');
+        httpErrorHandler(response, message: 'Failed to load comments');
 
-    return CommentListModel.fromKbin(
-        jsonDecode(response.body) as Map<String, Object?>);
+        return CommentListModel.fromKbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        const path = '/api/v3/user';
+        final query = queryParams({
+          'person_id': userId.toString(),
+          'page': page,
+          'sort': lemmyCommentSortMap[sort]
+        });
+
+        final response = await httpClient.get(Uri.https(server, path, query));
+
+        httpErrorHandler(response, message: "Failed to load user");
+
+        final json = jsonDecode(response.body) as Map<String, Object?>;
+        // this is a workaround for lemmy not returning
+        // page info from this request
+        if ((json['comments']  as List<dynamic>).isNotEmpty) {
+          json['next_page'] = (int.parse(page!) + 1).toString();
+        }
+
+        return CommentListModel.fromLemmy(json);
+    }
   }
 
   Future<CommentModel> get(PostType postType, int commentId) async {
