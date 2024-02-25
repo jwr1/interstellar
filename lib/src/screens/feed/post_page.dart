@@ -10,21 +10,25 @@ import 'package:interstellar/src/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class PostPage extends StatefulWidget {
-  const PostPage(
+  const PostPage({
+    this.postType,
+    this.postId,
     this.initData,
-    this.onUpdate, {
+    this.onUpdate,
     super.key,
   });
 
-  final PostModel initData;
-  final void Function(PostModel) onUpdate;
+  final PostType? postType;
+  final int? postId;
+  final PostModel? initData;
+  final void Function(PostModel)? onUpdate;
 
   @override
   State<PostPage> createState() => _PostPageState();
 }
 
 class _PostPageState extends State<PostPage> {
-  late PostModel _data;
+  PostModel? _data;
 
   CommentSort commentSort = CommentSort.hot;
 
@@ -35,8 +39,27 @@ class _PostPageState extends State<PostPage> {
   void initState() {
     super.initState();
 
-    _data = widget.initData;
     commentSort = context.read<SettingsController>().defaultCommentSort;
+
+    _initData();
+  }
+
+  void _initData() async {
+    if (widget.initData != null) {
+      _data = widget.initData!;
+    } else if (widget.postType != null && widget.postId != null) {
+      final newPost = await switch (widget.postType!) {
+        PostType.thread =>
+          context.read<SettingsController>().api.entries.get(widget.postId!),
+        PostType.microblog =>
+          context.read<SettingsController>().api.posts.get(widget.postId!),
+      };
+      setState(() {
+        _data = newPost;
+      });
+    } else {
+      throw Exception('Post data was uninitialized');
+    }
 
     _pagingController.addPageRequestListener(_fetchPage);
   }
@@ -45,15 +68,15 @@ class _PostPageState extends State<PostPage> {
     setState(() {
       _data = newValue;
     });
-    widget.onUpdate(newValue);
+    widget.onUpdate?.call(newValue);
   }
 
   Future<void> _fetchPage(int pageKey) async {
     try {
       final newPage =
           await context.read<SettingsController>().api.comments.list(
-                _data.type,
-                _data.id,
+                _data!.type,
+                _data!.id,
                 page: pageKey,
                 sort: commentSort,
                 usePreferredLangs: whenLoggedIn(context,
@@ -86,12 +109,18 @@ class _PostPageState extends State<PostPage> {
   Widget build(BuildContext context) {
     final currentCommentSortOption = commentSortSelect.getOption(commentSort);
 
+    if (_data == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    PostModel post = _data!;
+
     return Scaffold(
       appBar: AppBar(
         title: ListTile(
           contentPadding: EdgeInsets.zero,
           title: Text(
-            _data.title ?? '',
+            post.title ?? '',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -133,7 +162,7 @@ class _PostPageState extends State<PostPage> {
           slivers: [
             SliverToBoxAdapter(
               child: PostItem(
-                _data,
+                post,
                 _onUpdate,
                 onReply: whenLoggedIn(context, (body) async {
                   var newComment = await context
@@ -141,8 +170,8 @@ class _PostPageState extends State<PostPage> {
                       .api
                       .comments
                       .create(
-                        _data.type,
-                        _data.id,
+                        post.type,
+                        post.id,
                         body,
                       );
                   var newList = _pagingController.itemList;
@@ -151,53 +180,53 @@ class _PostPageState extends State<PostPage> {
                     _pagingController.itemList = newList;
                   });
                 }),
-                onEdit: _data.visibility != 'soft_deleted'
+                onEdit: post.visibility != 'soft_deleted'
                     ? whenLoggedIn(
                         context,
                         (body) async {
-                          final newPost = await switch (_data.type) {
+                          final newPost = await switch (post.type) {
                             PostType.thread => context
                                 .read<SettingsController>()
                                 .api
                                 .entries
                                 .edit(
-                                  _data.id,
-                                  _data.title!,
-                                  _data.isOc!,
+                                  post.id,
+                                  post.title!,
+                                  post.isOc!,
                                   body,
-                                  _data.lang!,
-                                  _data.isAdult,
+                                  post.lang!,
+                                  post.isAdult,
                                 ),
                             PostType.microblog =>
                               context.read<SettingsController>().api.posts.edit(
-                                    _data.id,
+                                    post.id,
                                     body,
-                                    _data.lang!,
-                                    _data.isAdult,
+                                    post.lang!,
+                                    post.isAdult,
                                   ),
                           };
                           _onUpdate(newPost);
                         },
-                        matchesUsername: _data.user.name,
+                        matchesUsername: post.user.name,
                       )
                     : null,
-                onDelete: _data.visibility != 'soft_deleted'
+                onDelete: post.visibility != 'soft_deleted'
                     ? whenLoggedIn(
                         context,
                         () async {
-                          await switch (_data.type) {
+                          await switch (post.type) {
                             PostType.thread => context
                                 .read<SettingsController>()
                                 .api
                                 .entries
-                                .delete(_data.id),
+                                .delete(post.id),
                             PostType.microblog => context
                                 .read<SettingsController>()
                                 .api
                                 .posts
-                                .delete(_data.id),
+                                .delete(post.id),
                           };
-                          _onUpdate(_data.copyWith(
+                          _onUpdate(post.copyWith(
                             body: '_post deleted_',
                             upvotes: null,
                             downvotes: null,
@@ -205,7 +234,7 @@ class _PostPageState extends State<PostPage> {
                             visibility: 'soft_deleted',
                           ));
                         },
-                        matchesUsername: _data.user.name,
+                        matchesUsername: post.user.name,
                       )
                     : null,
               ),
@@ -218,13 +247,17 @@ class _PostPageState extends State<PostPage> {
                     horizontal: 12,
                     vertical: 4,
                   ),
-                  child: PostComment(item, (newValue) {
-                    var newList = _pagingController.itemList;
-                    newList![index] = newValue;
-                    setState(() {
-                      _pagingController.itemList = newList;
-                    });
-                  }, opUserId: widget.initData.user.id),
+                  child: PostComment(
+                    item,
+                    (newValue) {
+                      var newList = _pagingController.itemList;
+                      newList![index] = newValue;
+                      setState(() {
+                        _pagingController.itemList = newList;
+                      });
+                    },
+                    opUserId: post.user.id,
+                  ),
                 ),
               ),
             )

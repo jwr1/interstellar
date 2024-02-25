@@ -61,18 +61,14 @@ class _PostCommentScreenState extends State<PostCommentScreen> {
                         padding: const EdgeInsets.all(4),
                         child: OutlinedButton(
                           onPressed: () async {
-                            final parentEntry = await context
-                                .read<SettingsController>()
-                                .api
-                                .posts
-                                .get(
-                                  _comment!.postId,
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context) {
+                                return PostPage(
+                                  postType: _comment!.postType,
+                                  postId: _comment!.postId,
                                 );
-                            if (!mounted) return;
-                            Navigator.of(context)
-                                .push(MaterialPageRoute(builder: (context) {
-                              return PostPage(parentEntry, (newPage) {});
-                            }));
+                              }),
+                            );
                           },
                           child: const Text('Open OP'),
                         ),

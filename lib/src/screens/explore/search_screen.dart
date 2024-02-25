@@ -111,13 +111,16 @@ class _SearchScreenState extends State<SearchScreen> {
                           },
                         );
                       case PostModel item:
-                        return PostPage(item, (newValue) {
-                          var newList = _pagingController.itemList;
-                          newList![index] = newValue;
-                          setState(() {
-                            _pagingController.itemList = newList;
-                          });
-                        });
+                        return PostPage(
+                          initData: item,
+                          onUpdate: (newValue) {
+                            var newList = _pagingController.itemList;
+                            newList![index] = newValue;
+                            setState(() {
+                              _pagingController.itemList = newList;
+                            });
+                          },
+                        );
                       case CommentModel item:
                         return PostCommentScreen(item.postType, item.id);
                       case _:

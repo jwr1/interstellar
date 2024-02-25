@@ -640,13 +640,16 @@ class _UserScreenBodyState extends State<UserScreenBody> {
                         );
                       case UserFeedType.thread:
                       case UserFeedType.microblog:
-                        return PostPage(item, (newValue) {
-                          var newList = _pagingController.itemList;
-                          newList![index] = newValue;
-                          setState(() {
-                            _pagingController.itemList = newList;
-                          });
-                        });
+                        return PostPage(
+                          initData: item,
+                          onUpdate: (newValue) {
+                            var newList = _pagingController.itemList;
+                            newList![index] = newValue;
+                            setState(() {
+                              _pagingController.itemList = newList;
+                            });
+                          },
+                        );
                       case UserFeedType.comment:
                       case UserFeedType.reply:
                         return PostCommentScreen(item.postType, item.id);

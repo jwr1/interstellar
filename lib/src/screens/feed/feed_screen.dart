@@ -366,13 +366,16 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => PostPage(item, (newValue) {
-                          var newList = _pagingController.itemList;
-                          newList![index] = newValue;
-                          setState(() {
-                            _pagingController.itemList = newList;
-                          });
-                        }),
+                        builder: (context) => PostPage(
+                          initData: item,
+                          onUpdate: (newValue) {
+                            var newList = _pagingController.itemList;
+                            newList![index] = newValue;
+                            setState(() {
+                              _pagingController.itemList = newList;
+                            });
+                          },
+                        ),
                       ),
                     );
                   },
