@@ -254,49 +254,106 @@ class APIComments {
     String body, {
     int? parentCommentId,
   }) async {
-    final path =
-        '/api/${_postTypeKbin[postType]}/$postId/comments${parentCommentId != null ? '/$parentCommentId/reply' : ''}';
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        final path =
+            '/api/${_postTypeKbin[postType]}/$postId/comments${parentCommentId != null ? '/$parentCommentId/reply' : ''}';
 
-    final response = await httpClient.post(
-      Uri.https(server, path),
-      body: jsonEncode({'body': body}),
-    );
+        final response = await httpClient.post(
+          Uri.https(server, path),
+          body: jsonEncode({'body': body}),
+        );
 
-    httpErrorHandler(response, message: 'Failed to post comment');
+        httpErrorHandler(response, message: 'Failed to create comment');
 
-    return CommentModel.fromKbin(
-        jsonDecode(response.body) as Map<String, Object?>);
+        return CommentModel.fromKbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        const path = '/api/v3/comment';
+
+        final response = await httpClient.post(
+          Uri.https(server, path),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'content': body,
+            'post_id': postId,
+            'parent_id': parentCommentId
+          }),
+        );
+
+        httpErrorHandler(response, message: 'Failed to create comment');
+
+        return CommentModel.fromLemmy(
+            jsonDecode(response.body)['comment_view'] as Map<String, Object?>);
+    }
   }
 
   Future<CommentModel> edit(
     PostType postType,
     int commentId,
     String body,
-    String lang,
-    bool? isAdult,
   ) async {
-    final path = '/api/${_postTypeKbinComment[postType]}/$commentId';
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        final path = '/api/${_postTypeKbinComment[postType]}/$commentId';
 
-    final response = await httpClient.put(
-      Uri.https(server, path),
-      body: jsonEncode({
-        'body': body,
-        'lang': lang,
-        'isAdult': isAdult ?? false,
-      }),
-    );
+        final response = await httpClient.put(
+          Uri.https(server, path),
+          body: jsonEncode({
+            'body': body,
+          }),
+        );
 
-    httpErrorHandler(response, message: "Failed to edit comment");
+        httpErrorHandler(response, message: "Failed to edit comment");
 
-    return CommentModel.fromKbin(
-        jsonDecode(response.body) as Map<String, Object?>);
+        return CommentModel.fromKbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        const path = '/api/v3/comment';
+
+        final response = await httpClient.put(
+          Uri.https(server, path),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'comment_id': commentId,
+            'content': body,
+          }),
+        );
+
+        httpErrorHandler(response, message: "Failed to edit comment");
+
+        return CommentModel.fromLemmy(
+            jsonDecode(response.body)['comment_view'] as Map<String, Object?>);
+    }
   }
 
   Future<void> delete(PostType postType, int commentId) async {
-    final path = '/api/${_postTypeKbinComment[postType]}/$commentId';
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        final path = '/api/${_postTypeKbinComment[postType]}/$commentId';
 
-    final response = await httpClient.delete(Uri.https(server, path));
+        final response = await httpClient.delete(Uri.https(server, path));
 
-    httpErrorHandler(response, message: "Failed to delete comment");
+        httpErrorHandler(response, message: "Failed to delete comment");
+
+      case ServerSoftware.lemmy:
+        const path = '/api/v3/comment/delete';
+
+        final response = await httpClient.post(
+          Uri.https(server, path),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'comment_id': commentId,
+            'deleted': true,
+          }),
+        );
+
+        httpErrorHandler(response, message: "Failed to delete comment");
+    }
   }
 }

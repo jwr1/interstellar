@@ -115,8 +115,6 @@ class _EntryCommentState extends State<PostComment> {
                             widget.comment.postType,
                             widget.comment.id,
                             body,
-                            widget.comment.lang!,
-                            widget.comment.isAdult,
                           );
 
                       widget.onUpdate(newValue.copyWith(

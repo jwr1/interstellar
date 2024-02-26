@@ -126,7 +126,10 @@ class CommentModel with _$CommentModel {
           ? lemmyPathSegments[lemmyPathSegments.length - 2]
           : null,
       image: null,
-      body: lemmyComment['content'] as String,
+      body:
+          (lemmyComment['deleted'] as bool) || (lemmyComment['removed'] as bool)
+              ? null
+              : lemmyComment['content'] as String,
       lang: null,
       upvotes: lemmyCounts['upvotes'] as int,
       downvotes: lemmyCounts['downvotes'] as int,
