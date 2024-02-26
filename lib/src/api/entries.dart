@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/utils/models.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart';
@@ -78,11 +79,9 @@ class APIThreads {
           httpErrorHandler(response, message: "Failed to load user");
 
           final json = jsonDecode(response.body) as Map<String, Object?>;
-          // this is a workaround for lemmy not returning
-          // page info from this request
-          if ((json['posts']  as List<dynamic>).isNotEmpty) {
-            json['next_page'] = (int.parse(page!) + 1).toString();
-          }
+
+          json['next_page'] =
+              lemmyCalcNextIntPage(json['posts'] as List<dynamic>, page);
 
           return PostListModel.fromLemmy(json);
         }

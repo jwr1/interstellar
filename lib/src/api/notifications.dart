@@ -20,12 +20,12 @@ class KbinAPINotifications {
   );
 
   Future<NotificationListModel> list({
-    int? page,
+    String? page,
     NotificationsFilter? filter,
   }) async {
     final path =
         '/api/notifications/${filter == NotificationsFilter.new_ ? 'new' : (filter?.name ?? 'all')}';
-    final query = queryParams({'p': page?.toString()});
+    final query = queryParams({'p': page});
 
     final response = await httpClient.get(Uri.https(server, path, query));
 

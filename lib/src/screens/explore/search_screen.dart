@@ -30,7 +30,7 @@ class _SearchScreenState extends State<SearchScreen> {
   String search = "";
 
   final PagingController<String, dynamic> _pagingController =
-      PagingController(firstPageKey: '1');
+      PagingController(firstPageKey: '');
 
   @override
   void initState() {
@@ -44,7 +44,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
     try {
       final newPage = await context.read<SettingsController>().api.search.get(
-            page: int.parse(pageKey),
+            page: nullIfEmpty(pageKey),
             search: search,
           );
 

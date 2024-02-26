@@ -19,7 +19,7 @@ class KbinAPIDomains {
   );
 
   Future<DomainListModel> list({
-    int? page,
+    String? page,
     KbinAPIDomainsFilter? filter,
     String? search,
   }) async {
@@ -28,8 +28,8 @@ class KbinAPIDomains {
         : '/api/domains/${filter.name}';
     final query = queryParams(
         (filter == null || filter == KbinAPIDomainsFilter.all)
-            ? {'p': page?.toString(), 'q': search}
-            : {'p': page?.toString()});
+            ? {'p': page, 'q': search}
+            : {'p': page});
 
     final response = await httpClient.get(Uri.https(server, path, query));
 

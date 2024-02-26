@@ -511,7 +511,7 @@ class UserScreenBody extends StatefulWidget {
 
 class _UserScreenBodyState extends State<UserScreenBody> {
   final PagingController<String, dynamic> _pagingController =
-      PagingController(firstPageKey: '1');
+      PagingController(firstPageKey: '');
 
   @override
   void didUpdateWidget(covariant oldWidget) {
@@ -533,7 +533,7 @@ class _UserScreenBodyState extends State<UserScreenBody> {
           context.read<SettingsController>().api.entries.list(
                 FeedSource.user,
                 sourceId: widget.data!.id,
-                page: pageKey,
+                page: nullIfEmpty(pageKey),
                 sort: FeedSort.newest,
                 usePreferredLangs: whenLoggedIn(context,
                     context.read<SettingsController>().useAccountLangFilter),
@@ -543,7 +543,7 @@ class _UserScreenBodyState extends State<UserScreenBody> {
           context.read<SettingsController>().api.posts.list(
                 FeedSource.user,
                 sourceId: widget.data!.id,
-                page: pageKey,
+                page: nullIfEmpty(pageKey),
                 sort: FeedSort.newest,
                 usePreferredLangs: whenLoggedIn(context,
                     context.read<SettingsController>().useAccountLangFilter),
@@ -553,7 +553,7 @@ class _UserScreenBodyState extends State<UserScreenBody> {
           context.read<SettingsController>().api.comments.listFromUser(
                 PostType.thread,
                 widget.data!.id,
-                page: pageKey,
+                page: nullIfEmpty(pageKey),
                 sort: CommentSort.newest,
                 usePreferredLangs: whenLoggedIn(context,
                     context.read<SettingsController>().useAccountLangFilter),
@@ -563,7 +563,7 @@ class _UserScreenBodyState extends State<UserScreenBody> {
           context.read<SettingsController>().api.comments.listFromUser(
                 PostType.microblog,
                 widget.data!.id,
-                page: pageKey,
+                page: nullIfEmpty(pageKey),
                 sort: CommentSort.newest,
                 usePreferredLangs: whenLoggedIn(context,
                     context.read<SettingsController>().useAccountLangFilter),
@@ -572,12 +572,12 @@ class _UserScreenBodyState extends State<UserScreenBody> {
         UserFeedType.follower =>
           context.read<SettingsController>().api.users.listFollowers(
                 widget.data!.id,
-                page: pageKey,
+                page: nullIfEmpty(pageKey),
               ),
         UserFeedType.following =>
           context.read<SettingsController>().api.users.listFollowing(
                 widget.data!.id,
-                page: pageKey,
+                page: nullIfEmpty(pageKey),
               ),
       });
 
@@ -595,7 +595,7 @@ class _UserScreenBodyState extends State<UserScreenBody> {
         DetailedUserListModel newPage => newPage.items
             .where((element) => !currentItemIds.contains(element.id))
             .toList(),
-        Object newPage => []
+        Object _ => []
       });
 
       _pagingController.appendPage(
@@ -604,7 +604,7 @@ class _UserScreenBodyState extends State<UserScreenBody> {
             PostListModel newPage => newPage.nextPage,
             CommentListModel newPage => newPage.nextPage,
             DetailedUserListModel newPage => newPage.nextPage,
-            Object newPage => ''
+            Object _ => null
           }));
     } catch (error) {
       _pagingController.error = error;

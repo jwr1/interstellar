@@ -302,7 +302,7 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
         PostType.thread => context.read<SettingsController>().api.entries.list(
               widget.source,
               sourceId: widget.sourceId,
-              page: pageKey.isEmpty ? null : pageKey,
+              page: nullIfEmpty(pageKey),
               sort: widget.sort,
               usePreferredLangs: whenLoggedIn(context,
                   context.read<SettingsController>().useAccountLangFilter),
@@ -311,7 +311,7 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
         PostType.microblog => context.read<SettingsController>().api.posts.list(
               widget.source,
               sourceId: widget.sourceId,
-              page: pageKey.isEmpty ? null : pageKey,
+              page: nullIfEmpty(pageKey),
               sort: widget.sort,
               usePreferredLangs: whenLoggedIn(context,
                   context.read<SettingsController>().useAccountLangFilter),

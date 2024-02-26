@@ -4,6 +4,7 @@ import 'package:interstellar/src/models/message.dart';
 import 'package:interstellar/src/screens/profile/message_item.dart';
 import 'package:interstellar/src/screens/profile/message_thread_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class MessagesScreen extends StatefulWidget {
@@ -15,7 +16,7 @@ class MessagesScreen extends StatefulWidget {
 
 class _MessagesScreenState extends State<MessagesScreen> {
   final PagingController<String, MessageThreadModel> _pagingController =
-      PagingController(firstPageKey: '1');
+      PagingController(firstPageKey: '');
 
   @override
   void initState() {
@@ -28,7 +29,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
     try {
       final newPage =
           await context.read<SettingsController>().api.messages.list(
-                page: int.parse(pageKey),
+                page: nullIfEmpty(pageKey),
               );
 
       // Check BuildContext

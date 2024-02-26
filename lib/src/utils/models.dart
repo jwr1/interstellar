@@ -20,3 +20,9 @@ String lemmyGetActorName(Map<String, Object?> json) {
       ? (json['name'] as String)
       : '${json['name'] as String}@${Uri.parse(json['actor_id'] as String).host}';
 }
+
+String? lemmyCalcNextIntPage(
+  List<dynamic> list,
+  String? currentPage,
+) =>
+    list.isEmpty ? null : (int.parse(currentPage ?? '0') + 1).toString();

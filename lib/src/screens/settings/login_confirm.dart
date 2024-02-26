@@ -88,9 +88,8 @@ class _LoginConfirmScreenState extends State<LoginConfirmScreen> {
                       body: jsonEncode({
                         'username_or_email': _usernameEmailTextController.text,
                         'password': _passwordTextController.text,
-                        'totp_2fa_token': _totpTokenTextController.text.isEmpty
-                            ? null
-                            : _totpTokenTextController.text.isEmpty,
+                        'totp_2fa_token':
+                            nullIfEmpty(_totpTokenTextController.text),
                       }),
                     );
                     httpErrorHandler(response, message: 'Failed to login');

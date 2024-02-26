@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/utils/models.dart';
 import 'package:interstellar/src/utils/utils.dart';
 
 enum KbinAPIMagazinesFilter { all, subscribed, moderated, blocked }
@@ -21,7 +22,7 @@ class APIMagazines {
   );
 
   Future<DetailedMagazineListModel> list({
-    int? page,
+    String? page,
     KbinAPIMagazinesFilter? filter,
     KbinAPIMagazinesSort? sort,
     String? search,
@@ -34,8 +35,8 @@ class APIMagazines {
             : '/api/magazines/${filter.name}';
         final query = queryParams(
           (filter == null || filter == KbinAPIMagazinesFilter.all)
-              ? {'p': page?.toString(), 'sort': sort?.name, 'q': search}
-              : {'p': page?.toString()},
+              ? {'p': page, 'sort': sort?.name, 'q': search}
+              : {'p': page},
         );
 
         final response = await httpClient.get(Uri.https(server, path, query));
@@ -51,15 +52,19 @@ class APIMagazines {
           'limit': '50',
           'listingType': 'All',
           'sort': 'TopAll',
-          'page': page?.toString(),
+          'page': page,
         });
 
         final response = await httpClient.get(Uri.https(server, path, query));
 
         httpErrorHandler(response, message: 'Failed to load magazines');
 
-        return DetailedMagazineListModel.fromLemmy(
-            jsonDecode(response.body) as Map<String, Object?>);
+        final json = jsonDecode(response.body) as Map<String, Object?>;
+
+        json['next_page'] =
+            lemmyCalcNextIntPage(json['communities'] as List<dynamic>, page);
+
+        return DetailedMagazineListModel.fromLemmy(json);
     }
   }
 

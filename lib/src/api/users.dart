@@ -23,7 +23,7 @@ class APIUsers {
   );
 
   Future<DetailedUserListModel> list({
-    int? page,
+    String? page,
     UsersFilter? filter,
   }) async {
     switch (software) {
@@ -33,7 +33,7 @@ class APIUsers {
             ? '/api/users'
             : '/api/users/${filter.name}';
         final query = queryParams({
-          'p': page?.toString(),
+          'p': page,
         });
 
         final response = await httpClient.get(Uri.https(server, path, query));

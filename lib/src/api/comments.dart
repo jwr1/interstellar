@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:interstellar/src/models/comment.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/utils/models.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/selection_menu.dart';
 
@@ -72,7 +73,7 @@ class APIComments {
   Future<CommentListModel> list(
     PostType postType,
     int postId, {
-    int? page,
+    String? page,
     CommentSort? sort,
     List<String>? langs,
     bool? usePreferredLangs,
@@ -82,7 +83,7 @@ class APIComments {
       case ServerSoftware.mbin:
         final path = '/api/${_postTypeKbin[postType]}/$postId/comments';
         final query = queryParams({
-          'p': page?.toString(),
+          'p': page,
           'sortBy': sort?.name,
           'lang': langs?.join(','),
           'usePreferredLangs': (usePreferredLangs ?? false).toString(),
@@ -99,7 +100,7 @@ class APIComments {
         const path = '/api/v3/comment/list';
         final query = queryParams({
           'post_id': postId.toString(),
-          'page': page?.toString(),
+          'page': page,
           'sort': lemmyCommentSortMap[sort],
           'max_depth': '8',
         });
@@ -152,11 +153,9 @@ class APIComments {
         httpErrorHandler(response, message: "Failed to load user");
 
         final json = jsonDecode(response.body) as Map<String, Object?>;
-        // this is a workaround for lemmy not returning
-        // page info from this request
-        if ((json['comments']  as List<dynamic>).isNotEmpty) {
-          json['next_page'] = (int.parse(page!) + 1).toString();
-        }
+
+        json['next_page'] =
+            lemmyCalcNextIntPage(json['comments'] as List<dynamic>, page);
 
         return CommentListModel.fromLemmy(json);
     }

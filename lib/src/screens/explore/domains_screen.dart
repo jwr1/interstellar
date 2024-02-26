@@ -21,7 +21,7 @@ class _DomainsScreenState extends State<DomainsScreen> {
   String search = "";
 
   final PagingController<String, DomainModel> _pagingController =
-      PagingController(firstPageKey: '1');
+      PagingController(firstPageKey: '');
 
   @override
   void initState() {
@@ -33,9 +33,9 @@ class _DomainsScreenState extends State<DomainsScreen> {
   Future<void> _fetchPage(String pageKey) async {
     try {
       final newPage = await context.read<SettingsController>().api.domains.list(
-            page: int.parse(pageKey),
+            page: nullIfEmpty(pageKey),
             filter: filter,
-            search: search.isEmpty ? null : search,
+            search: nullIfEmpty(search),
           );
 
       // Check BuildContext

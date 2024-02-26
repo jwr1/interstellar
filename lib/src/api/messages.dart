@@ -17,10 +17,10 @@ class KbinAPIMessages {
   );
 
   Future<MessageListModel> list({
-    int? page,
+    String? page,
   }) async {
     const path = '/api/messages';
-    final query = queryParams({'p': page?.toString()});
+    final query = queryParams({'p': page});
 
     final response = await httpClient.get(Uri.https(server, path, query));
 

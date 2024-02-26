@@ -4,6 +4,7 @@ import 'package:interstellar/src/api/notifications.dart';
 import 'package:interstellar/src/models/notification.dart';
 import 'package:interstellar/src/screens/profile/notification_item.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class NotificationsScreen extends StatefulWidget {
@@ -17,7 +18,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   NotificationsFilter filter = NotificationsFilter.all;
 
   final PagingController<String, NotificationModel> _pagingController =
-      PagingController(firstPageKey: '1');
+      PagingController(firstPageKey: '');
 
   @override
   void initState() {
@@ -32,7 +33,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           .read<SettingsController>()
           .api
           .notifications
-          .list(page: int.parse(pageKey), filter: filter);
+          .list(page: nullIfEmpty(pageKey), filter: filter);
 
       // Check BuildContext
       if (!mounted) return;

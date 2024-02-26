@@ -97,3 +97,5 @@ String getNameHost(BuildContext context, String username) {
       ? split[1]
       : context.read<SettingsController>().instanceHost;
 }
+
+String? nullIfEmpty(String value) => value.isEmpty ? null : value;

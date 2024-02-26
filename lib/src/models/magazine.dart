@@ -28,7 +28,7 @@ class DetailedMagazineListModel with _$DetailedMagazineListModel {
             .map((item) =>
                 DetailedMagazineModel.fromLemmy(item as Map<String, Object?>))
             .toList(),
-        nextPage: null,
+        nextPage: json['next_page'] as String?,
       );
 }
 

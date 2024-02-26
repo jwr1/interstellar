@@ -21,7 +21,7 @@ class _UsersScreenState extends State<UsersScreen> {
   api_users.UsersFilter filter = api_users.UsersFilter.all;
 
   final PagingController<String, DetailedUserModel> _pagingController =
-      PagingController(firstPageKey: '1');
+      PagingController(firstPageKey: '');
 
   @override
   void initState() {
@@ -33,7 +33,7 @@ class _UsersScreenState extends State<UsersScreen> {
   Future<void> _fetchPage(String pageKey) async {
     try {
       final newPage = await context.read<SettingsController>().api.users.list(
-            page: int.parse(pageKey),
+            page: nullIfEmpty(pageKey),
             filter: filter,
           );
 

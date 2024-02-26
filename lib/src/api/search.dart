@@ -17,7 +17,7 @@ class KbinAPISearch {
   );
 
   Future<SearchListModel> get({
-    int? page,
+    String? page,
     String? search,
   }) async {
     const path = '/api/search';
@@ -25,7 +25,7 @@ class KbinAPISearch {
     final response = await httpClient.get(Uri.https(
       server,
       path,
-      queryParams({'p': page?.toString(), 'q': search}),
+      queryParams({'p': page, 'q': search}),
     ));
 
     httpErrorHandler(response, message: 'Failed to load search');
