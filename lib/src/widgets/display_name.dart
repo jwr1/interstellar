@@ -10,8 +10,7 @@ class DisplayName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var nameTuple =
-        (name.startsWith('@') ? name.substring(1) : name).split('@');
+    var nameTuple = name.split('@');
     String localName = nameTuple.first;
     String? hostName = nameTuple.length > 1 ? nameTuple[1] : null;
 

@@ -80,7 +80,8 @@ class APIUsers {
     switch (software) {
       case ServerSoftware.kbin:
       case ServerSoftware.mbin:
-        final path = '/api/users/name/$username';
+        final path =
+            '/api/users/name/${username.contains('@') ? '@$username' : username}';
 
         final response = await httpClient.get(Uri.https(server, path));
 

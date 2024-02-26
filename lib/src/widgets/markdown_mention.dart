@@ -151,7 +151,9 @@ class MentionWidgetState extends State<MentionWidget> {
     final split = widget.name.substring(1).split('@');
     final name = split[0];
     final host = (split.length > 1) ? split[1] : widget.originInstance;
-    final cacheKey = '$name@$host';
+    final cacheKey = host == context.read<SettingsController>().instanceHost
+        ? name
+        : '$name@$host';
 
     setState(() {
       _displayName = modifier + name;
@@ -164,7 +166,7 @@ class MentionWidgetState extends State<MentionWidget> {
               await context.read<SettingsController>().api.users.getByName(
                     host == context.read<SettingsController>().instanceHost
                         ? name
-                        : '@$name@$host',
+                        : '$name@$host',
                   );
         }
         final user = userMentionCache[cacheKey]!;

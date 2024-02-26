@@ -91,7 +91,6 @@ T? whenLoggedIn<T>(
         : otherwise;
 
 String getNameHost(BuildContext context, String username) {
-  username = username.startsWith('@') ? username.substring(1) : username;
   final split = username.split('@');
 
   return split.length > 1
