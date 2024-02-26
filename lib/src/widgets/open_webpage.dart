@@ -43,7 +43,7 @@ void openWebpage(BuildContext context, Uri uri) {
                 ),
               );
             },
-            child: const Text('Open in WebView'),
+            child: const Text('WebView'),
           ),
         FilledButton(
           onPressed: () {
@@ -51,7 +51,7 @@ void openWebpage(BuildContext context, Uri uri) {
 
             launchUrl(uri);
           },
-          child: const Text('Open in Browser'),
+          child: const Text('Browser'),
         ),
       ],
       actionsOverflowAlignment: OverflowBarAlignment.center,

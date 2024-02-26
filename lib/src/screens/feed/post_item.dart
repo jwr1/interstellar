@@ -88,10 +88,13 @@ class PostItem extends StatelessWidget {
       numComments: item.numComments,
       openLinkUri: Uri.https(
         context.read<SettingsController>().instanceHost,
-        '/m/${item.magazine.name}/${switch (item.type) {
-          PostType.thread => 't',
-          PostType.microblog => 'p',
-        }}/${item.id}',
+        context.read<SettingsController>().serverSoftware ==
+                ServerSoftware.lemmy
+            ? '/post/${item.id}'
+            : '/m/${item.magazine.name}/${switch (item.type) {
+                PostType.thread => 't',
+                PostType.microblog => 'p',
+              }}/${item.id}',
       ),
     );
   }

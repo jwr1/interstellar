@@ -149,10 +149,13 @@ class _EntryCommentState extends State<PostComment> {
                   : null,
               openLinkUri: Uri.https(
                 context.read<SettingsController>().instanceHost,
-                '/m/${widget.comment.magazine.name}/${switch (widget.comment.postType) {
-                  PostType.thread => 't',
-                  PostType.microblog => 'p',
-                }}/${widget.comment.postId}/-/reply/${widget.comment.id}',
+                context.read<SettingsController>().serverSoftware ==
+                        ServerSoftware.lemmy
+                    ? '/comment/${widget.comment.id}'
+                    : '/m/${widget.comment.magazine.name}/${switch (widget.comment.postType) {
+                        PostType.thread => 't',
+                        PostType.microblog => 'p',
+                      }}/${widget.comment.postId}/-/reply/${widget.comment.id}',
               ),
             ),
           ),
