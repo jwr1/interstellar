@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/widgets/loading_template.dart';
 import 'package:provider/provider.dart';
 
 class SelfFeed extends StatefulWidget {
@@ -32,8 +33,12 @@ class _SelfFeedState extends State<SelfFeed> {
 
   @override
   Widget build(BuildContext context) {
-    return (_meUser == null)
-        ? const Center(child: CircularProgressIndicator())
-        : UserScreen(_meUser!.id);
+    if (_meUser == null) {
+      return const LoadingTemplate();
+    }
+
+    final user = _meUser!;
+
+    return UserScreen(user.id);
   }
 }

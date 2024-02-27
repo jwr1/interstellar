@@ -7,6 +7,7 @@ import 'package:interstellar/src/screens/feed/post_comment.dart';
 import 'package:interstellar/src/screens/feed/post_item.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/loading_template.dart';
 import 'package:provider/provider.dart';
 
 class PostPage extends StatefulWidget {
@@ -103,7 +104,7 @@ class _PostPageState extends State<PostPage> {
     final currentCommentSortOption = commentSortSelect.getOption(commentSort);
 
     if (_data == null) {
-      return const Center(child: CircularProgressIndicator());
+      return const LoadingTemplate();
     }
 
     PostModel post = _data!;

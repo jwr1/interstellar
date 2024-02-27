@@ -19,34 +19,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return whenLoggedIn(
           context,
-          DefaultTabController(
-            length: 3,
-            child: Scaffold(
-              appBar: AppBar(
-                title:
-                    Text(context.watch<SettingsController>().selectedAccount),
-                bottom: const TabBar(tabs: [
-                  Tab(
-                    text: 'Notifications',
-                    icon: NotificationBadge(child: Icon(Icons.notifications)),
+          context.read<SettingsController>().serverSoftware ==
+                  ServerSoftware.lemmy
+              ? const SelfFeed()
+              : DefaultTabController(
+                  length: 3,
+                  child: Scaffold(
+                    appBar: AppBar(
+                      title: Text(
+                          context.watch<SettingsController>().selectedAccount),
+                      bottom: const TabBar(tabs: [
+                        Tab(
+                          text: 'Notifications',
+                          icon: NotificationBadge(
+                              child: Icon(Icons.notifications)),
+                        ),
+                        Tab(
+                          text: 'Overview',
+                          icon: Icon(Icons.person),
+                        ),
+                        Tab(
+                          text: 'Messages',
+                          icon: Icon(Icons.message),
+                        ),
+                      ]),
+                    ),
+                    body: const TabBarView(children: [
+                      NotificationsScreen(),
+                      SelfFeed(),
+                      MessagesScreen(),
+                    ]),
                   ),
-                  Tab(
-                    text: 'Overview',
-                    icon: Icon(Icons.person),
-                  ),
-                  Tab(
-                    text: 'Messages',
-                    icon: Icon(Icons.message),
-                  ),
-                ]),
-              ),
-              body: const TabBarView(children: [
-                NotificationsScreen(),
-                SelfFeed(),
-                MessagesScreen(),
-              ]),
-            ),
-          ),
+                ),
         ) ??
         const Center(
           child: Text('Not logged in'),

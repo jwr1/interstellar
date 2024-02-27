@@ -16,6 +16,7 @@ import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
 import 'package:interstellar/src/widgets/image_selector.dart';
+import 'package:interstellar/src/widgets/loading_template.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
@@ -63,435 +64,409 @@ class _UserScreenState extends State<UserScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_data == null) {
+      return const LoadingTemplate();
+    }
+
+    final user = _data!;
+
     return Scaffold(
         appBar: AppBar(
-          title: Text(_data?.name ?? ''),
+          title: Text(user.name),
         ),
-        body: _data == null
-            ? const Center(child: CircularProgressIndicator())
-            : DefaultTabController(
-                length: context.watch<SettingsController>().serverSoftware ==
-                        ServerSoftware.lemmy
-                    ? 2
-                    : 6,
-                child: NestedScrollView(
-                  headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                    SliverToBoxAdapter(
-                        child: Column(
+        body: DefaultTabController(
+          length: context.watch<SettingsController>().serverSoftware ==
+                  ServerSoftware.lemmy
+              ? 2
+              : 6,
+          child: NestedScrollView(
+            headerSliverBuilder: (context, innerBoxIsScrolled) => [
+              SliverToBoxAdapter(
+                  child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        constraints: BoxConstraints(
+                          maxHeight: MediaQuery.of(context).size.height / 3,
+                        ),
+                        height: user.cover == null ? 100 : null,
+                        child: user.cover != null
+                            ? Image.network(
+                                user.cover!,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              )
+                            : null,
+                      ),
+                      Positioned(
+                        left: 0,
+                        bottom: 0,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Avatar(
+                            user.avatar,
+                            radius: 32,
+                            borderRadius: 4,
+                          ),
+                        ),
+                      ),
+                      if (whenLoggedIn(context, true,
+                              matchesUsername: user.name) !=
+                          null)
+                        Positioned(
+                            right: 0,
+                            top: 0,
+                            child: Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: _aboutTextController == null
+                                  ? TextButton(
+                                      onPressed: () => setState(() {
+                                            _aboutTextController =
+                                                TextEditingController(
+                                                    text: user.about);
+                                          }),
+                                      child: const Text("Edit"))
+                                  : Row(
+                                      children: [
+                                        TextButton(
+                                            onPressed: () async {
+                                              var user = await context
+                                                  .read<SettingsController>()
+                                                  .api
+                                                  .users
+                                                  .updateProfile(
+                                                      _aboutTextController!
+                                                          .text);
+                                              if (!mounted) return;
+                                              if (_avatarFile != null) {
+                                                user = await context
+                                                    .read<SettingsController>()
+                                                    .api
+                                                    .users
+                                                    .updateAvatar(_avatarFile!);
+                                              }
+                                              if (!mounted) return;
+                                              if (_coverFile != null) {
+                                                user = await context
+                                                    .read<SettingsController>()
+                                                    .api
+                                                    .users
+                                                    .updateCover(_coverFile!);
+                                              }
+
+                                              setState(() {
+                                                if (user != null) {
+                                                  _data = user;
+                                                }
+                                                _aboutTextController!.dispose();
+                                                _aboutTextController = null;
+                                                _coverFile = null;
+                                                _avatarFile = null;
+                                              });
+                                            },
+                                            child: const Text("Save")),
+                                        TextButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                _aboutTextController!.dispose();
+                                                _aboutTextController = null;
+                                              });
+                                            },
+                                            child: const Text("Cancel")),
+                                      ],
+                                    ),
+                            ))
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Stack(
-                          alignment: Alignment.center,
+                        Row(
                           children: [
-                            Container(
-                              constraints: BoxConstraints(
-                                maxHeight:
-                                    MediaQuery.of(context).size.height / 3,
-                              ),
-                              height: _data!.cover == null ? 100 : null,
-                              child: _data!.cover != null
-                                  ? Image.network(
-                                      _data!.cover!,
-                                      width: double.infinity,
-                                      fit: BoxFit.cover,
-                                    )
-                                  : null,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  user.name.contains('@')
+                                      ? user.name.split('@')[1]
+                                      : user.name,
+                                  style: Theme.of(context).textTheme.titleLarge,
+                                  softWrap: true,
+                                ),
+                                InkWell(
+                                  onTap: () async {
+                                    await Clipboard.setData(
+                                      ClipboardData(
+                                          text: user.name.contains('@')
+                                              ? user.name
+                                              : '@${user.name}@${context.read<SettingsController>().instanceHost}'),
+                                    );
+
+                                    if (!mounted) return;
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                            content: Text('Copied')));
+                                  },
+                                  child: Text(
+                                    user.name.contains('@')
+                                        ? user.name
+                                        : '@${user.name}@${context.read<SettingsController>().instanceHost}',
+                                    softWrap: true,
+                                  ),
+                                )
+                              ],
                             ),
-                            Positioned(
-                              left: 0,
-                              bottom: 0,
-                              child: Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: Avatar(
-                                  _data!.avatar,
-                                  radius: 32,
-                                  borderRadius: 4,
+                            const Spacer(),
+                            if (user.followersCount != null)
+                              OutlinedButton(
+                                style: ButtonStyle(
+                                  foregroundColor: MaterialStatePropertyAll(
+                                      user.isFollowedByUser == true
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .primaryContainer
+                                          : null),
+                                ),
+                                onPressed: whenLoggedIn(context, () async {
+                                  var newValue = await context
+                                      .read<SettingsController>()
+                                      .api
+                                      .users
+                                      .follow(user.id, !user.isFollowedByUser!);
+                                  setState(() {
+                                    _data = newValue;
+                                  });
+                                  if (widget.onUpdate != null) {
+                                    widget.onUpdate!(newValue);
+                                  }
+                                }),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(Icons.group),
+                                    Text(' ${intFormat(user.followersCount!)}'),
+                                  ],
                                 ),
                               ),
-                            ),
-                            if (whenLoggedIn(context, true,
-                                    matchesUsername: _data!.name) !=
-                                null)
-                              Positioned(
-                                  right: 0,
-                                  top: 0,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(12),
-                                    child: _aboutTextController == null
-                                        ? TextButton(
-                                            onPressed: () => setState(() {
-                                                  _aboutTextController =
-                                                      TextEditingController(
-                                                          text: _data!.about);
-                                                }),
-                                            child: const Text("Edit"))
-                                        : Row(
-                                            children: [
-                                              TextButton(
-                                                  onPressed: () async {
-                                                    var user = await context
-                                                        .read<
-                                                            SettingsController>()
-                                                        .api
-                                                        .users
-                                                        .updateProfile(
-                                                            _aboutTextController!
-                                                                .text);
-                                                    if (!mounted) return;
-                                                    if (_avatarFile != null) {
-                                                      user = await context
-                                                          .read<
-                                                              SettingsController>()
-                                                          .api
-                                                          .users
-                                                          .updateAvatar(
-                                                              _avatarFile!);
-                                                    }
-                                                    if (!mounted) return;
-                                                    if (_coverFile != null) {
-                                                      user = await context
-                                                          .read<
-                                                              SettingsController>()
-                                                          .api
-                                                          .users
-                                                          .updateCover(
-                                                              _coverFile!);
-                                                    }
+                            if (whenLoggedIn(context, true) == true)
+                              IconButton(
+                                onPressed: () async {
+                                  final newValue = await context
+                                      .read<SettingsController>()
+                                      .api
+                                      .users
+                                      .putBlock(
+                                        user.id,
+                                        !user.isBlockedByUser!,
+                                      );
 
-                                                    setState(() {
-                                                      if (user != null) {
-                                                        _data = user;
-                                                      }
-                                                      _aboutTextController!
-                                                          .dispose();
-                                                      _aboutTextController =
-                                                          null;
-                                                      _coverFile = null;
-                                                      _avatarFile = null;
-                                                    });
-                                                  },
-                                                  child: const Text("Save")),
-                                              TextButton(
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      _aboutTextController!
-                                                          .dispose();
-                                                      _aboutTextController =
-                                                          null;
-                                                    });
-                                                  },
-                                                  child: const Text("Cancel")),
-                                            ],
-                                          ),
-                                  ))
+                                  setState(() {
+                                    _data = newValue;
+                                  });
+                                  if (widget.onUpdate != null) {
+                                    widget.onUpdate!(newValue);
+                                  }
+                                },
+                                icon: const Icon(Icons.block),
+                                style: ButtonStyle(
+                                  foregroundColor: MaterialStatePropertyAll(
+                                      user.isBlockedByUser == true
+                                          ? Theme.of(context).colorScheme.error
+                                          : Theme.of(context).disabledColor),
+                                ),
+                              ),
+                            if (!user.name.contains('@'))
+                              IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _messageController =
+                                        TextEditingController();
+                                  });
+                                },
+                                icon: const Icon(Icons.mail),
+                                tooltip: 'Send message',
+                              )
                           ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(12),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        _data!.name.contains('@')
-                                            ? _data!.name.split('@')[1]
-                                            : _data!.name,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleLarge,
-                                        softWrap: true,
-                                      ),
-                                      InkWell(
-                                        onTap: () async {
-                                          await Clipboard.setData(
-                                            ClipboardData(
-                                                text: _data!.name.contains('@')
-                                                    ? _data!.name
-                                                    : '@${_data!.name}@${context.read<SettingsController>().instanceHost}'),
-                                          );
+                        if (_messageController != null)
+                          Column(children: [
+                            TextEditor(
+                              _messageController!,
+                              isMarkdown: true,
+                              label: 'Message',
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                OutlinedButton(
+                                  onPressed: () async {
+                                    setState(() {
+                                      _messageController = null;
+                                    });
+                                  },
+                                  child: const Text('Cancel'),
+                                ),
+                                FilledButton(
+                                  onPressed: () async {
+                                    final newThread = await context
+                                        .read<SettingsController>()
+                                        .api
+                                        .messages
+                                        .create(
+                                          user.id,
+                                          _messageController!.text,
+                                        );
 
-                                          if (!mounted) return;
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(const SnackBar(
-                                                  content: Text('Copied')));
-                                        },
-                                        child: Text(
-                                          _data!.name.contains('@')
-                                              ? _data!.name
-                                              : '@${_data!.name}@${context.read<SettingsController>().instanceHost}',
-                                          softWrap: true,
+                                    setState(() {
+                                      _messageController = null;
+
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              MessageThreadScreen(
+                                            initData: newThread,
+                                          ),
                                         ),
-                                      )
-                                    ],
-                                  ),
-                                  const Spacer(),
-                                  if (_data!.followersCount != null)
-                                    OutlinedButton(
-                                      style: ButtonStyle(
-                                        foregroundColor:
-                                            MaterialStatePropertyAll(
-                                                _data!.isFollowedByUser == true
-                                                    ? Theme.of(context)
-                                                        .colorScheme
-                                                        .primaryContainer
-                                                    : null),
-                                      ),
-                                      onPressed:
-                                          whenLoggedIn(context, () async {
-                                        var newValue = await context
-                                            .read<SettingsController>()
-                                            .api
-                                            .users
-                                            .follow(_data!.id,
-                                                !_data!.isFollowedByUser!);
-                                        setState(() {
-                                          _data = newValue;
-                                        });
-                                        if (widget.onUpdate != null) {
-                                          widget.onUpdate!(newValue);
-                                        }
-                                      }),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          const Icon(Icons.group),
-                                          Text(
-                                              ' ${intFormat(_data!.followersCount!)}'),
-                                        ],
-                                      ),
-                                    ),
-                                  if (whenLoggedIn(context, true) == true)
-                                    IconButton(
-                                      onPressed: () async {
-                                        final newValue = await context
-                                            .read<SettingsController>()
-                                            .api
-                                            .users
-                                            .putBlock(
-                                              _data!.id,
-                                              !_data!.isBlockedByUser!,
-                                            );
-
-                                        setState(() {
-                                          _data = newValue;
-                                        });
-                                        if (widget.onUpdate != null) {
-                                          widget.onUpdate!(newValue);
-                                        }
-                                      },
-                                      icon: const Icon(Icons.block),
-                                      style: ButtonStyle(
-                                        foregroundColor:
-                                            MaterialStatePropertyAll(
-                                                _data!.isBlockedByUser == true
-                                                    ? Theme.of(context)
-                                                        .colorScheme
-                                                        .error
-                                                    : Theme.of(context)
-                                                        .disabledColor),
-                                      ),
-                                    ),
-                                  if (!_data!.name.contains('@'))
-                                    IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          _messageController =
-                                              TextEditingController();
-                                        });
-                                      },
-                                      icon: const Icon(Icons.mail),
-                                      tooltip: 'Send message',
+                                      );
+                                    });
+                                  },
+                                  child: const Text('Send'),
+                                )
+                              ],
+                            )
+                          ]),
+                        if (user.about != null || _aboutTextController != null)
+                          Padding(
+                              padding: const EdgeInsets.only(top: 12),
+                              child: _aboutTextController == null
+                                  ? Markdown(
+                                      user.about!,
+                                      getNameHost(context, user.name),
                                     )
-                                ],
-                              ),
-                              if (_messageController != null)
-                                Column(children: [
-                                  TextEditor(
-                                    _messageController!,
-                                    isMarkdown: true,
-                                    label: 'Message',
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      OutlinedButton(
-                                        onPressed: () async {
-                                          setState(() {
-                                            _messageController = null;
-                                          });
-                                        },
-                                        child: const Text('Cancel'),
-                                      ),
-                                      FilledButton(
-                                        onPressed: () async {
-                                          final newThread = await context
-                                              .read<SettingsController>()
-                                              .api
-                                              .messages
-                                              .create(
-                                                _data!.id,
-                                                _messageController!.text,
-                                              );
-
-                                          setState(() {
-                                            _messageController = null;
-
-                                            Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    MessageThreadScreen(
-                                                  initData: newThread,
-                                                ),
-                                              ),
-                                            );
-                                          });
-                                        },
-                                        child: const Text('Send'),
-                                      )
-                                    ],
-                                  )
-                                ]),
-                              if (_data!.about != null ||
-                                  _aboutTextController != null)
-                                Padding(
-                                    padding: const EdgeInsets.only(top: 12),
-                                    child: _aboutTextController == null
-                                        ? Markdown(
-                                            _data!.about!,
-                                            getNameHost(context, _data!.name),
-                                          )
-                                        : TextEditor(
-                                            _aboutTextController!,
-                                            label: "About",
-                                            isMarkdown: true,
-                                          )),
-                              if (_aboutTextController != null)
-                                Row(
-                                  children: [
-                                    const Text("Select Avatar"),
-                                    Padding(
-                                      padding: const EdgeInsets.all(12),
-                                      child: ImageSelector(
-                                          _avatarFile,
-                                          (file) => setState(() {
-                                                _avatarFile = file;
-                                              })),
-                                    )
-                                  ],
-                                ),
-                              if (_aboutTextController != null)
-                                Row(
-                                  children: [
-                                    const Text("Select Cover"),
-                                    Padding(
-                                      padding: const EdgeInsets.all(12),
-                                      child: ImageSelector(
-                                        _coverFile,
-                                        (file) => setState(() {
-                                          _coverFile = file;
-                                        }),
-                                      ),
-                                    )
-                                  ],
-                                ),
+                                  : TextEditor(
+                                      _aboutTextController!,
+                                      label: "About",
+                                      isMarkdown: true,
+                                    )),
+                        if (_aboutTextController != null)
+                          Row(
+                            children: [
+                              const Text("Select Avatar"),
+                              Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: ImageSelector(
+                                    _avatarFile,
+                                    (file) => setState(() {
+                                          _avatarFile = file;
+                                        })),
+                              )
                             ],
                           ),
-                        ),
+                        if (_aboutTextController != null)
+                          Row(
+                            children: [
+                              const Text("Select Cover"),
+                              Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: ImageSelector(
+                                  _coverFile,
+                                  (file) => setState(() {
+                                    _coverFile = file;
+                                  }),
+                                ),
+                              )
+                            ],
+                          ),
                       ],
-                    )),
-                    SliverAppBar(
-                      automaticallyImplyLeading: false,
-                      title: TabBar(
-                        isScrollable: true,
-                        tabAlignment: TabAlignment.start,
-                        tabs: [
-                          const Tab(
-                            text: 'Threads',
-                            icon: Icon(Icons.feed),
-                          ),
-                          if (context
-                                  .watch<SettingsController>()
-                                  .serverSoftware !=
-                              ServerSoftware.lemmy)
-                            const Tab(
-                              text: 'Microblogs',
-                              icon: Icon(Icons.chat),
-                            ),
-                          const Tab(
-                            text: 'Comments',
-                            icon: Icon(Icons.comment),
-                          ),
-                          if (context
-                                  .watch<SettingsController>()
-                                  .serverSoftware !=
-                              ServerSoftware.lemmy)
-                            const Tab(
-                              text: 'Replies',
-                              icon: Icon(Icons.comment),
-                            ),
-                          if (context
-                                  .watch<SettingsController>()
-                                  .serverSoftware !=
-                              ServerSoftware.lemmy)
-                            const Tab(
-                              text: 'Followers',
-                              icon: Icon(Icons.people),
-                            ),
-                          if (context
-                                  .watch<SettingsController>()
-                                  .serverSoftware !=
-                              ServerSoftware.lemmy)
-                            const Tab(
-                              text: 'Following',
-                              icon: Icon(Icons.groups),
-                            )
-                        ],
+                    ),
+                  ),
+                ],
+              )),
+              SliverAppBar(
+                automaticallyImplyLeading: false,
+                title: TabBar(
+                  isScrollable: true,
+                  tabAlignment: TabAlignment.start,
+                  tabs: [
+                    const Tab(
+                      text: 'Threads',
+                      icon: Icon(Icons.feed),
+                    ),
+                    if (context.watch<SettingsController>().serverSoftware !=
+                        ServerSoftware.lemmy)
+                      const Tab(
+                        text: 'Microblogs',
+                        icon: Icon(Icons.chat),
                       ),
-                      pinned: true,
-                    )
+                    const Tab(
+                      text: 'Comments',
+                      icon: Icon(Icons.comment),
+                    ),
+                    if (context.watch<SettingsController>().serverSoftware !=
+                        ServerSoftware.lemmy)
+                      const Tab(
+                        text: 'Replies',
+                        icon: Icon(Icons.comment),
+                      ),
+                    if (context.watch<SettingsController>().serverSoftware !=
+                        ServerSoftware.lemmy)
+                      const Tab(
+                        text: 'Followers',
+                        icon: Icon(Icons.people),
+                      ),
+                    if (context.watch<SettingsController>().serverSoftware !=
+                        ServerSoftware.lemmy)
+                      const Tab(
+                        text: 'Following',
+                        icon: Icon(Icons.groups),
+                      )
                   ],
-                  body: TabBarView(children: [
-                    UserScreenBody(
-                      mode: UserFeedType.thread,
-                      data: _data,
-                    ),
-                    if (context.watch<SettingsController>().serverSoftware !=
-                        ServerSoftware.lemmy)
-                      UserScreenBody(
-                        mode: UserFeedType.microblog,
-                        data: _data,
-                      ),
-                    UserScreenBody(
-                      mode: UserFeedType.comment,
-                      data: _data,
-                    ),
-                    if (context.watch<SettingsController>().serverSoftware !=
-                        ServerSoftware.lemmy)
-                      UserScreenBody(
-                        mode: UserFeedType.reply,
-                        data: _data,
-                      ),
-                    if (context.watch<SettingsController>().serverSoftware !=
-                        ServerSoftware.lemmy)
-                      UserScreenBody(
-                        mode: UserFeedType.follower,
-                        data: _data,
-                      ),
-                    if (context.watch<SettingsController>().serverSoftware !=
-                        ServerSoftware.lemmy)
-                      UserScreenBody(
-                        mode: UserFeedType.following,
-                        data: _data,
-                      ),
-                  ]),
                 ),
-              ));
+                pinned: true,
+              )
+            ],
+            body: TabBarView(children: [
+              UserScreenBody(
+                mode: UserFeedType.thread,
+                data: _data,
+              ),
+              if (context.watch<SettingsController>().serverSoftware !=
+                  ServerSoftware.lemmy)
+                UserScreenBody(
+                  mode: UserFeedType.microblog,
+                  data: _data,
+                ),
+              UserScreenBody(
+                mode: UserFeedType.comment,
+                data: _data,
+              ),
+              if (context.watch<SettingsController>().serverSoftware !=
+                  ServerSoftware.lemmy)
+                UserScreenBody(
+                  mode: UserFeedType.reply,
+                  data: _data,
+                ),
+              if (context.watch<SettingsController>().serverSoftware !=
+                  ServerSoftware.lemmy)
+                UserScreenBody(
+                  mode: UserFeedType.follower,
+                  data: _data,
+                ),
+              if (context.watch<SettingsController>().serverSoftware !=
+                  ServerSoftware.lemmy)
+                UserScreenBody(
+                  mode: UserFeedType.following,
+                  data: _data,
+                ),
+            ]),
+          ),
+        ));
   }
 }
 

@@ -3,6 +3,7 @@ import 'package:interstellar/src/models/message.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
+import 'package:interstellar/src/widgets/loading_template.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:provider/provider.dart';
@@ -35,9 +36,10 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
   @override
   Widget build(BuildContext context) {
     if (_data == null) {
-      return const Center(child: CircularProgressIndicator());
+      return const LoadingTemplate();
     }
-    MessageThreadModel data = _data!;
+
+    final data = _data!;
 
     final messageUser = data.participants
         .where((user) =>

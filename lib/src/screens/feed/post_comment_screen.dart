@@ -4,6 +4,7 @@ import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/screens/feed/post_comment.dart';
 import 'package:interstellar/src/screens/feed/post_page.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/widgets/loading_template.dart';
 import 'package:provider/provider.dart';
 
 class PostCommentScreen extends StatefulWidget {
@@ -41,95 +42,96 @@ class _PostCommentScreenState extends State<PostCommentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_comment == null) {
+      return const LoadingTemplate();
+    }
+
+    final comment = _comment!;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-            'Comment${_comment != null ? ' by ${_comment!.user.name}' : ''}'),
+        title: Text('Comment by ${comment.user.name}'),
       ),
-      body: _comment != null
-          ? ListView(
+      body: ListView(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 4,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 4,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: OutlinedButton(
-                          onPressed: () async {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(builder: (context) {
-                                return PostPage(
-                                  postType: _comment!.postType,
-                                  postId: _comment!.postId,
-                                );
-                              }),
-                            );
-                          },
-                          child: const Text('Open OP'),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: OutlinedButton(
-                          onPressed: _comment!.rootId != null
-                              ? () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(builder: (context) {
-                                      return PostCommentScreen(
-                                        _comment!.postType,
-                                        _comment!.rootId!,
-                                      );
-                                    }),
-                                  );
-                                }
-                              : null,
-                          child: const Text('Open Root'),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: OutlinedButton(
-                          onPressed: _comment!.parentId != null
-                              ? () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(builder: (context) {
-                                      return PostCommentScreen(
-                                        _comment!.postType,
-                                        _comment!.parentId!,
-                                      );
-                                    }),
-                                  );
-                                }
-                              : null,
-                          child: const Text('Open Parent'),
-                        ),
-                      ),
-                    ],
+                  padding: const EdgeInsets.all(4),
+                  child: OutlinedButton(
+                    onPressed: () async {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) {
+                          return PostPage(
+                            postType: comment.postType,
+                            postId: comment.postId,
+                          );
+                        }),
+                      );
+                    },
+                    child: const Text('Open OP'),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 4,
+                  padding: const EdgeInsets.all(4),
+                  child: OutlinedButton(
+                    onPressed: comment.rootId != null
+                        ? () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context) {
+                                return PostCommentScreen(
+                                  comment.postType,
+                                  comment.rootId!,
+                                );
+                              }),
+                            );
+                          }
+                        : null,
+                    child: const Text('Open Root'),
                   ),
-                  child: PostComment(
-                    _comment!,
-                    (newComment) => setState(() {
-                      _comment = newComment;
-                    }),
-                    opUserId: widget.opUserId,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: OutlinedButton(
+                    onPressed: comment.parentId != null
+                        ? () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context) {
+                                return PostCommentScreen(
+                                  comment.postType,
+                                  comment.parentId!,
+                                );
+                              }),
+                            );
+                          }
+                        : null,
+                    child: const Text('Open Parent'),
                   ),
-                )
+                ),
               ],
-            )
-          : const Center(
-              child: CircularProgressIndicator(),
             ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 4,
+            ),
+            child: PostComment(
+              comment,
+              (newComment) => setState(() {
+                _comment = newComment;
+              }),
+              opUserId: widget.opUserId,
+            ),
+          )
+        ],
+      ),
     );
   }
 }
