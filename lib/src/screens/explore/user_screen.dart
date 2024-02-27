@@ -19,6 +19,7 @@ import 'package:interstellar/src/widgets/avatar.dart';
 import 'package:interstellar/src/widgets/image_selector.dart';
 import 'package:interstellar/src/widgets/loading_template.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
+import 'package:interstellar/src/widgets/subscription_button.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
 import 'package:provider/provider.dart';
@@ -264,16 +265,10 @@ class _UserScreenState extends State<UserScreen> {
                             ),
                             const Spacer(),
                             if (user.followersCount != null)
-                              OutlinedButton(
-                                style: ButtonStyle(
-                                  foregroundColor: MaterialStatePropertyAll(
-                                      user.isFollowedByUser == true
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .primaryContainer
-                                          : null),
-                                ),
-                                onPressed: whenLoggedIn(context, () async {
+                              SubscriptionButton(
+                                subsCount: user.followersCount!,
+                                isSubed: user.isFollowedByUser == true,
+                                onPress: whenLoggedIn(context, () async {
                                   var newValue = await context
                                       .read<SettingsController>()
                                       .api
@@ -286,13 +281,6 @@ class _UserScreenState extends State<UserScreen> {
                                     widget.onUpdate!(newValue);
                                   }
                                 }),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(Icons.group),
-                                    Text(' ${intFormat(user.followersCount!)}'),
-                                  ],
-                                ),
                               ),
                             if (whenLoggedIn(context, true) == true)
                               IconButton(
@@ -764,16 +752,10 @@ class _UserScreenBodyState extends State<UserScreenBody> {
                             child: Text(item.name,
                                 overflow: TextOverflow.ellipsis)),
                         const SizedBox(width: 12),
-                        OutlinedButton(
-                          style: ButtonStyle(
-                            foregroundColor: MaterialStatePropertyAll(
-                                item.isFollowedByUser == true
-                                    ? Theme.of(context)
-                                        .colorScheme
-                                        .primaryContainer
-                                    : null),
-                          ),
-                          onPressed: whenLoggedIn(context, () async {
+                        SubscriptionButton(
+                          subsCount: item.followersCount!,
+                          isSubed: item.isFollowedByUser == true,
+                          onPress: whenLoggedIn(context, () async {
                             var newValue = await context
                                 .read<SettingsController>()
                                 .api
@@ -785,12 +767,6 @@ class _UserScreenBodyState extends State<UserScreenBody> {
                               _pagingController.itemList = newList;
                             });
                           }),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.group),
-                              Text(' ${intFormat(item.followersCount)}'),
-                            ],
-                          ),
                         )
                       ]),
                     ),
@@ -807,16 +783,10 @@ class _UserScreenBodyState extends State<UserScreenBody> {
                             child: Text(item.name,
                                 overflow: TextOverflow.ellipsis)),
                         const SizedBox(width: 12),
-                        OutlinedButton(
-                          style: ButtonStyle(
-                            foregroundColor: MaterialStatePropertyAll(
-                                item.isFollowedByUser == true
-                                    ? Theme.of(context)
-                                        .colorScheme
-                                        .primaryContainer
-                                    : null),
-                          ),
-                          onPressed: whenLoggedIn(context, () async {
+                        SubscriptionButton(
+                          subsCount: item.followersCount!,
+                          isSubed: item.isFollowedByUser == true,
+                          onPress: whenLoggedIn(context, () async {
                             var newValue = await context
                                 .read<SettingsController>()
                                 .api
@@ -828,12 +798,6 @@ class _UserScreenBodyState extends State<UserScreenBody> {
                               _pagingController.itemList = newList;
                             });
                           }),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.group),
-                              Text(' ${intFormat(item.followersCount)}'),
-                            ],
-                          ),
                         )
                       ]),
                     ),

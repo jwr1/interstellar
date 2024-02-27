@@ -5,6 +5,7 @@ import 'package:interstellar/src/models/domain.dart';
 import 'package:interstellar/src/screens/explore/domain_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/subscription_button.dart';
 import 'package:provider/provider.dart';
 
 class DomainsScreen extends StatefulWidget {
@@ -149,14 +150,10 @@ class _DomainsScreenState extends State<DomainsScreen> {
                     ),
                     Text(intFormat(item.entryCount)),
                     const SizedBox(width: 12),
-                    OutlinedButton(
-                      style: ButtonStyle(
-                        foregroundColor: MaterialStatePropertyAll(
-                            item.isUserSubscribed == true
-                                ? Theme.of(context).colorScheme.primaryContainer
-                                : null),
-                      ),
-                      onPressed: whenLoggedIn(context, () async {
+                    SubscriptionButton(
+                      subsCount: item.subscriptionsCount,
+                      isSubed: item.isUserSubscribed == true,
+                      onPress: whenLoggedIn(context, () async {
                         var newValue = await context
                             .read<SettingsController>()
                             .api
@@ -168,13 +165,7 @@ class _DomainsScreenState extends State<DomainsScreen> {
                           _pagingController.itemList = newList;
                         });
                       }),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.group),
-                          Text(' ${intFormat(item.subscriptionsCount)}'),
-                        ],
-                      ),
-                    )
+                    ),
                   ]),
                 ),
               ),

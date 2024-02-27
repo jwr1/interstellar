@@ -7,6 +7,7 @@ import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
 import 'package:interstellar/src/widgets/floating_menu.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
+import 'package:interstellar/src/widgets/subscription_button.dart';
 import 'package:provider/provider.dart';
 
 class MagazineScreen extends StatefulWidget {
@@ -67,16 +68,10 @@ class _MagazineScreenState extends State<MagazineScreen> {
                           softWrap: true,
                         ),
                       ),
-                      OutlinedButton(
-                        style: ButtonStyle(
-                          foregroundColor: MaterialStatePropertyAll(
-                              _data!.isUserSubscribed == true
-                                  ? Theme.of(context)
-                                      .colorScheme
-                                      .primaryContainer
-                                  : null),
-                        ),
-                        onPressed: whenLoggedIn(context, () async {
+                      SubscriptionButton(
+                        subsCount: _data!.subscriptionsCount,
+                        isSubed: _data!.isUserSubscribed == true,
+                        onPress: whenLoggedIn(context, () async {
                           var newValue = await context
                               .read<SettingsController>()
                               .api
@@ -90,12 +85,6 @@ class _MagazineScreenState extends State<MagazineScreen> {
                             widget.onUpdate!(newValue);
                           }
                         }),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.group),
-                            Text(' ${intFormat(_data!.subscriptionsCount)}'),
-                          ],
-                        ),
                       ),
                       if (whenLoggedIn(context, true) == true)
                         IconButton(

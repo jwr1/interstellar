@@ -12,6 +12,7 @@ import 'package:interstellar/src/screens/feed/post_page.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
+import 'package:interstellar/src/widgets/subscription_button.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
 import 'package:provider/provider.dart';
 
@@ -181,16 +182,10 @@ class _SearchScreenState extends State<SearchScreen> {
                         if (item.followersCount != null)
                           Padding(
                             padding: const EdgeInsets.only(left: 12),
-                            child: OutlinedButton(
-                              style: ButtonStyle(
-                                foregroundColor: MaterialStatePropertyAll(
-                                    item.isFollowedByUser == true
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .primaryContainer
-                                        : null),
-                              ),
-                              onPressed: whenLoggedIn(context, () async {
+                            child: SubscriptionButton(
+                              subsCount: item.followersCount!,
+                              isSubed: item.isFollowedByUser == true,
+                              onPress: whenLoggedIn(context, () async {
                                 var newValue = await context
                                     .read<SettingsController>()
                                     .api
@@ -202,12 +197,6 @@ class _SearchScreenState extends State<SearchScreen> {
                                   _pagingController.itemList = newList;
                                 });
                               }),
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.group),
-                                  Text(' ${intFormat(item.followersCount!)}'),
-                                ],
-                              ),
                             ),
                           )
                       ]),
@@ -232,16 +221,10 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                         Text(intFormat(item.threadCommentCount)),
                         const SizedBox(width: 12),
-                        OutlinedButton(
-                          style: ButtonStyle(
-                            foregroundColor: MaterialStatePropertyAll(
-                                item.isUserSubscribed == true
-                                    ? Theme.of(context)
-                                        .colorScheme
-                                        .primaryContainer
-                                    : null),
-                          ),
-                          onPressed: whenLoggedIn(context, () async {
+                        SubscriptionButton(
+                          subsCount: item.subscriptionsCount,
+                          isSubed: item.isUserSubscribed == true,
+                          onPress: whenLoggedIn(context, () async {
                             var newValue = await context
                                 .read<SettingsController>()
                                 .api
@@ -253,13 +236,7 @@ class _SearchScreenState extends State<SearchScreen> {
                               _pagingController.itemList = newList;
                             });
                           }),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.group),
-                              Text(' ${intFormat(item.subscriptionsCount)}'),
-                            ],
-                          ),
-                        )
+                        ),
                       ]),
                     ),
                   _ => const Text("Unknown"),

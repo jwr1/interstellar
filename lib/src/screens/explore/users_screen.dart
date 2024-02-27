@@ -6,6 +6,7 @@ import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
+import 'package:interstellar/src/widgets/subscription_button.dart';
 import 'package:provider/provider.dart';
 
 class UsersScreen extends StatefulWidget {
@@ -139,16 +140,10 @@ class _UsersScreenState extends State<UsersScreen> {
                     if (item.followersCount != null)
                       Padding(
                         padding: const EdgeInsets.only(left: 12),
-                        child: OutlinedButton(
-                          style: ButtonStyle(
-                            foregroundColor: MaterialStatePropertyAll(
-                                item.isFollowedByUser == true
-                                    ? Theme.of(context)
-                                        .colorScheme
-                                        .primaryContainer
-                                    : null),
-                          ),
-                          onPressed: whenLoggedIn(context, () async {
+                        child: SubscriptionButton(
+                          subsCount: item.followersCount!,
+                          isSubed: item.isFollowedByUser == true,
+                          onPress: whenLoggedIn(context, () async {
                             var newValue = await context
                                 .read<SettingsController>()
                                 .api
@@ -160,12 +155,6 @@ class _UsersScreenState extends State<UsersScreen> {
                               _pagingController.itemList = newList;
                             });
                           }),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.group),
-                              Text(' ${intFormat(item.followersCount!)}'),
-                            ],
-                          ),
                         ),
                       )
                   ]),

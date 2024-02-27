@@ -6,6 +6,7 @@ import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
+import 'package:interstellar/src/widgets/subscription_button.dart';
 import 'package:provider/provider.dart';
 
 class MagazinesScreen extends StatefulWidget {
@@ -69,28 +70,28 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
               padding: const EdgeInsets.all(12),
               child: Row(
                 children: [
-                  ...whenLoggedIn(context, [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 12),
-                          child: DropdownButton<APIMagazinesFilter>(
-                            value: filter,
-                            onChanged: (newFilter) {
-                              if (newFilter != null) {
-                                setState(() {
-                                  filter = newFilter;
-                                  _pagingController.refresh();
-                                });
-                              }
-                            },
-                            items: [
-                              const DropdownMenuItem(
-                                value: APIMagazinesFilter.all,
-                                child: Text('All'),
-                              ),
-                              const DropdownMenuItem(
-                                value: APIMagazinesFilter.local,
-                                child: Text('Local'),
-                              ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: DropdownButton<APIMagazinesFilter>(
+                      value: filter,
+                      onChanged: (newFilter) {
+                        if (newFilter != null) {
+                          setState(() {
+                            filter = newFilter;
+                            _pagingController.refresh();
+                          });
+                        }
+                      },
+                      items: [
+                        const DropdownMenuItem(
+                          value: APIMagazinesFilter.all,
+                          child: Text('All'),
+                        ),
+                        const DropdownMenuItem(
+                          value: APIMagazinesFilter.local,
+                          child: Text('Local'),
+                        ),
+                        ...(whenLoggedIn(context, [
                               const DropdownMenuItem(
                                 value: APIMagazinesFilter.subscribed,
                                 child: Text('Subscribed'),
@@ -107,11 +108,11 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                                   value: APIMagazinesFilter.blocked,
                                   child: Text('Blocked'),
                                 ),
-                            ],
-                          ),
-                        )
-                      ]) ??
-                      [],
+                            ]) ??
+                            [])
+                      ],
+                    ),
+                  ),
                   ...(context.read<SettingsController>().serverSoftware ==
                               ServerSoftware.lemmy ||
                           filter == APIMagazinesFilter.all ||
@@ -207,14 +208,10 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                     ),
                     Text(intFormat(item.threadCommentCount)),
                     const SizedBox(width: 12),
-                    OutlinedButton(
-                      style: ButtonStyle(
-                        foregroundColor: MaterialStatePropertyAll(
-                            item.isUserSubscribed == true
-                                ? Theme.of(context).colorScheme.primaryContainer
-                                : null),
-                      ),
-                      onPressed: whenLoggedIn(context, () async {
+                    SubscriptionButton(
+                      subsCount: item.subscriptionsCount,
+                      isSubed: item.isUserSubscribed == true,
+                      onPress: whenLoggedIn(context, () async {
                         var newValue = await context
                             .read<SettingsController>()
                             .api
@@ -226,13 +223,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                           _pagingController.itemList = newList;
                         });
                       }),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.group),
-                          Text(' ${intFormat(item.subscriptionsCount)}'),
-                        ],
-                      ),
-                    )
+                    ),
                   ]),
                 ),
               ),
