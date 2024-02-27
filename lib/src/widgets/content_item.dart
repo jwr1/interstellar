@@ -6,6 +6,7 @@ import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
 import 'package:interstellar/src/widgets/open_webpage.dart';
+import 'package:interstellar/src/widgets/report_content.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:interstellar/src/widgets/video.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
@@ -47,9 +48,11 @@ class ContentItem extends StatefulWidget {
   final bool isDownVoted;
   final void Function()? onDownVote;
 
+  final String contentTypeName;
   final Uri? openLinkUri;
   final int? numComments;
   final Future<void> Function(String)? onReply;
+  final Future<void> Function(String)? onReport;
   final Future<void> Function(String)? onEdit;
   final Future<void> Function()? onDelete;
 
@@ -86,7 +89,9 @@ class ContentItem extends StatefulWidget {
     this.onDownVote,
     this.openLinkUri,
     this.numComments,
+    required this.contentTypeName,
     this.onReply,
+    this.onReport,
     this.onEdit,
     this.onDelete,
     this.isCollapsed = false,
@@ -312,6 +317,7 @@ class _ContentItemState extends State<ContentItem> {
                             : const Icon(Icons.expand_less)),
                   const Spacer(),
                   if (widget.openLinkUri != null ||
+                      widget.onReport != null ||
                       widget.onEdit != null ||
                       widget.onDelete != null)
                     Padding(
@@ -340,6 +346,20 @@ class _ContentItemState extends State<ContentItem> {
                                     padding: EdgeInsets.all(12),
                                     child: Text("Open Link")),
                               ),
+                            if (widget.onReport != null)
+                              MenuItemButton(
+                                onPressed: () async {
+                                  final reportReason = await reportContent(
+                                      context, widget.contentTypeName);
+
+                                  if (reportReason != null) {
+                                    await widget.onReport!(reportReason);
+                                  }
+                                },
+                                child: const Padding(
+                                    padding: EdgeInsets.all(12),
+                                    child: Text("Report")),
+                              ),
                             if (widget.onEdit != null)
                               MenuItemButton(
                                 onPressed: () => setState(() {
@@ -356,7 +376,8 @@ class _ContentItemState extends State<ContentItem> {
                                   context: context,
                                   builder: (BuildContext context) =>
                                       AlertDialog(
-                                    title: const Text('Delete Item'),
+                                    title: Text(
+                                        'Delete ${widget.contentTypeName}'),
                                     actions: <Widget>[
                                       OutlinedButton(
                                         onPressed: () => Navigator.pop(context),

@@ -357,4 +357,35 @@ class APIComments {
         httpErrorHandler(response, message: "Failed to delete comment");
     }
   }
+
+  Future<void> report(PostType postType, int commentId, String reason) async {
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        final path = '/api/${_postTypeKbinComment[postType]}/$commentId/report';
+
+        final response = await httpClient.post(
+          Uri.https(server, path),
+          body: jsonEncode({
+            'reason': reason,
+          }),
+        );
+
+        httpErrorHandler(response, message: "Failed to report comment");
+
+      case ServerSoftware.lemmy:
+        const path = '/api/v3/comment/report';
+
+        final response = await httpClient.post(
+          Uri.https(server, path),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'comment_id': commentId,
+            'reason': reason,
+          }),
+        );
+
+        httpErrorHandler(response, message: "Failed to report comment");
+    }
+  }
 }

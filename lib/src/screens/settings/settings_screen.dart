@@ -276,7 +276,16 @@ class SettingsScreen extends StatelessWidget {
             child: Text('Accounts',
                 style: Theme.of(context).textTheme.titleMedium),
           ),
-          ...(controller.accounts.keys.toList()..sort())
+          ...(controller.accounts.keys.toList()
+                ..sort((a, b) {
+                  final [aLocal, aHost] = a.split('@');
+                  final [bLocal, bHost] = b.split('@');
+
+                  final hostCompare = aHost.compareTo(bHost);
+                  if (hostCompare != 0) return hostCompare;
+
+                  return aLocal.compareTo(bLocal);
+                }))
               .map((account) => ListTile(
                     title: Text(
                       account,

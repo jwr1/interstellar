@@ -91,7 +91,22 @@ class PostItem extends StatelessWidget {
               .putVote(item.id, -1),
         });
       }),
+      contentTypeName: 'Post',
       onReply: onReply,
+      onReport: whenLoggedIn(context, (reason) async {
+        await switch (item.type) {
+          PostType.thread => context
+              .read<SettingsController>()
+              .api
+              .threads
+              .report(item.id, reason),
+          PostType.microblog => context
+              .read<SettingsController>()
+              .api
+              .microblogs
+              .report(item.id, reason),
+        };
+      }),
       onEdit: onEdit,
       onDelete: onDelete,
       numComments: item.numComments,

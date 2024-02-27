@@ -165,4 +165,17 @@ class KbinAPIMicroblogs {
     return PostModel.fromKbinPost(
         jsonDecode(response.body) as Map<String, Object?>);
   }
+
+  Future<void> report(int postId, String reason) async {
+    final path = '/api/post/$postId/report';
+
+    final response = await httpClient.post(
+      Uri.https(server, path),
+      body: jsonEncode({
+        'reason': reason,
+      }),
+    );
+
+    httpErrorHandler(response, message: "Failed to report post");
+  }
 }

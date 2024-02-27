@@ -88,6 +88,7 @@ class _EntryCommentState extends State<PostComment> {
                   children: widget.comment.children,
                 ));
               }),
+              contentTypeName: 'Comment',
               onReply: whenLoggedIn(context, (body) async {
                 var newSubComment = await context
                     .read<SettingsController>()
@@ -104,6 +105,13 @@ class _EntryCommentState extends State<PostComment> {
                   childCount: widget.comment.childCount + 1,
                   children: [newSubComment, ...widget.comment.children!],
                 ));
+              }),
+              onReport: whenLoggedIn(context, (reason) async {
+                await context
+                    .read<SettingsController>()
+                    .api
+                    .comments
+                    .report(widget.comment.postType, widget.comment.id, reason);
               }),
               onEdit: widget.comment.visibility != 'soft_deleted'
                   ? whenLoggedIn(context, (body) async {

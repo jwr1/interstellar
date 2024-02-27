@@ -324,4 +324,35 @@ class APIThreads {
     return PostModel.fromKbinEntry(
         jsonDecode(response.body) as Map<String, Object?>);
   }
+
+  Future<void> report(int postId, String reason) async {
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        final path = '/api/entry/$postId/report';
+
+        final response = await httpClient.post(
+          Uri.https(server, path),
+          body: jsonEncode({
+            'reason': reason,
+          }),
+        );
+
+        httpErrorHandler(response, message: "Failed to report post");
+
+      case ServerSoftware.lemmy:
+        const path = '/api/v3/post/report';
+
+        final response = await httpClient.post(
+          Uri.https(server, path),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'post_id': postId,
+            'reason': reason,
+          }),
+        );
+
+        httpErrorHandler(response, message: "Failed to report post");
+    }
+  }
 }
