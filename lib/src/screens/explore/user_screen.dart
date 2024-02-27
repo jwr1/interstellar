@@ -7,6 +7,7 @@ import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/models/comment.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/models/user.dart';
+import 'package:interstellar/src/screens/feed/feed_screen.dart';
 import 'package:interstellar/src/screens/feed/post_comment.dart';
 import 'package:interstellar/src/screens/feed/post_comment_screen.dart';
 import 'package:interstellar/src/screens/feed/post_item.dart';
@@ -41,12 +42,14 @@ class _UserScreenState extends State<UserScreen> {
   TextEditingController? _aboutTextController;
   XFile? _avatarFile;
   XFile? _coverFile;
+  late FeedSort _sort;
 
   @override
   void initState() {
     super.initState();
 
     _data = widget.initData;
+    _sort = context.read<SettingsController>().defaultExploreFeedSort;
 
     if (_data == null) {
       context
@@ -69,10 +72,48 @@ class _UserScreenState extends State<UserScreen> {
     }
 
     final user = _data!;
+    final currentFeedSortOption = feedSortSelect.getOption(_sort);
 
     return Scaffold(
         appBar: AppBar(
-          title: Text(user.name),
+          title: Row(
+            children: [
+              Text(user.name),
+              DefaultTextStyle(
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    color: Theme.of(context).textTheme.bodySmall!.color),
+                child: Row(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      child: Text('•'),
+                    ),
+                    Icon(currentFeedSortOption.icon, size: 20),
+                    const SizedBox(width: 2),
+                    Text(currentFeedSortOption.title),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: IconButton(
+                onPressed: () async {
+                  final newSort =
+                      await feedSortSelect.inquireSelection(context, _sort);
+
+                  if (newSort != null && newSort != _sort) {
+                    setState(() {
+                      _sort = newSort;
+                    });
+                  }
+                },
+                icon: const Icon(Icons.sort),
+              ),
+            ),
+          ],
         ),
         body: DefaultTabController(
           length: context.watch<SettingsController>().serverSoftware ==
@@ -434,34 +475,40 @@ class _UserScreenState extends State<UserScreen> {
             body: TabBarView(children: [
               UserScreenBody(
                 mode: UserFeedType.thread,
+                sort: _sort,
                 data: _data,
               ),
               if (context.watch<SettingsController>().serverSoftware !=
                   ServerSoftware.lemmy)
                 UserScreenBody(
                   mode: UserFeedType.microblog,
+                  sort: _sort,
                   data: _data,
                 ),
               UserScreenBody(
                 mode: UserFeedType.comment,
+                sort: _sort,
                 data: _data,
               ),
               if (context.watch<SettingsController>().serverSoftware !=
                   ServerSoftware.lemmy)
                 UserScreenBody(
                   mode: UserFeedType.reply,
+                  sort: _sort,
                   data: _data,
                 ),
               if (context.watch<SettingsController>().serverSoftware !=
                   ServerSoftware.lemmy)
                 UserScreenBody(
                   mode: UserFeedType.follower,
+                  sort: _sort,
                   data: _data,
                 ),
               if (context.watch<SettingsController>().serverSoftware !=
                   ServerSoftware.lemmy)
                 UserScreenBody(
                   mode: UserFeedType.following,
+                  sort: _sort,
                   data: _data,
                 ),
             ]),
@@ -472,11 +519,13 @@ class _UserScreenState extends State<UserScreen> {
 
 class UserScreenBody extends StatefulWidget {
   final UserFeedType mode;
+  final FeedSort sort;
   final DetailedUserModel? data;
 
   const UserScreenBody({
     super.key,
     required this.mode,
+    required this.sort,
     this.data,
   });
 
@@ -502,6 +551,15 @@ class _UserScreenBodyState extends State<UserScreenBody> {
   }
 
   Future<void> _fetchPage(String pageKey) async {
+    const Map<FeedSort, CommentSort> feedToCommentSortMap = {
+      FeedSort.active: CommentSort.active,
+      FeedSort.commented: CommentSort.active,
+      FeedSort.hot: CommentSort.hot,
+      FeedSort.newest: CommentSort.newest,
+      FeedSort.oldest: CommentSort.oldest,
+      FeedSort.top: CommentSort.top,
+    };
+
     try {
       final newPage = await (switch (widget.mode) {
         UserFeedType.thread =>
@@ -509,7 +567,7 @@ class _UserScreenBodyState extends State<UserScreenBody> {
                 FeedSource.user,
                 sourceId: widget.data!.id,
                 page: nullIfEmpty(pageKey),
-                sort: FeedSort.newest,
+                sort: widget.sort,
                 usePreferredLangs: whenLoggedIn(context,
                     context.read<SettingsController>().useAccountLangFilter),
                 langs: context.read<SettingsController>().langFilter.toList(),
@@ -519,7 +577,7 @@ class _UserScreenBodyState extends State<UserScreenBody> {
                 FeedSource.user,
                 sourceId: widget.data!.id,
                 page: nullIfEmpty(pageKey),
-                sort: FeedSort.newest,
+                sort: widget.sort,
                 usePreferredLangs: whenLoggedIn(context,
                     context.read<SettingsController>().useAccountLangFilter),
                 langs: context.read<SettingsController>().langFilter.toList(),
@@ -529,7 +587,7 @@ class _UserScreenBodyState extends State<UserScreenBody> {
                 PostType.thread,
                 widget.data!.id,
                 page: nullIfEmpty(pageKey),
-                sort: CommentSort.newest,
+                sort: feedToCommentSortMap[widget.sort],
                 usePreferredLangs: whenLoggedIn(context,
                     context.read<SettingsController>().useAccountLangFilter),
                 langs: context.read<SettingsController>().langFilter.toList(),
@@ -539,7 +597,7 @@ class _UserScreenBodyState extends State<UserScreenBody> {
                 PostType.microblog,
                 widget.data!.id,
                 page: nullIfEmpty(pageKey),
-                sort: CommentSort.newest,
+                sort: feedToCommentSortMap[widget.sort],
                 usePreferredLangs: whenLoggedIn(context,
                     context.read<SettingsController>().useAccountLangFilter),
                 langs: context.read<SettingsController>().langFilter.toList(),

@@ -128,7 +128,7 @@ class APIComments {
         final path = '/api/users/$userId/${_postTypeKbinComment[postType]}';
         final query = queryParams({
           'p': page,
-          'sortBy': sort?.name,
+          'sort': sort?.name,
           'lang': langs?.join(','),
           'usePreferredLangs': (usePreferredLangs ?? false).toString(),
         });
