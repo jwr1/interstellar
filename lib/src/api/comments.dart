@@ -185,7 +185,8 @@ class APIComments {
         httpErrorHandler(response, message: 'Failed to load comment');
 
         return CommentModel.fromLemmy(
-          (jsonDecode(response.body)['comments'] as List<dynamic>).first,
+          (jsonDecode(response.body)['comments'] as List<dynamic>)
+              .firstWhere((item) => item['comment']['id'] == commentId),
           possibleChildren:
               jsonDecode(response.body)['comments'] as List<dynamic>,
         );

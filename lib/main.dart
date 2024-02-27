@@ -14,6 +14,9 @@ void main() async {
   FlutterError.onError = (details) {
     FlutterError.presentError(details);
 
+    // Don't show error for image loading issues
+    if (details.library == 'image resource service') return;
+
     scaffoldMessengerKey.currentState?.showSnackBar(
       SnackBar(content: Text(details.summary.toString())),
     );

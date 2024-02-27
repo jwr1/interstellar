@@ -150,6 +150,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           _pagingController.itemList = newList;
                         });
                       },
+                      isPreview: item.type != PostType.microblog,
                     ),
                   CommentModel item => Padding(
                       padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),

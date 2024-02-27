@@ -111,15 +111,32 @@ class APIThreads {
     }
   }
 
-  Future<PostModel> get(int entryId) async {
-    final path = '/api/entry/$entryId';
+  Future<PostModel> get(int postId) async {
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        final path = '/api/entry/$postId';
 
-    final response = await httpClient.get(Uri.https(server, path));
+        final response = await httpClient.get(Uri.https(server, path));
 
-    httpErrorHandler(response, message: 'Failed to load entries');
+        httpErrorHandler(response, message: 'Failed to load post');
 
-    return PostModel.fromKbinEntry(
-        jsonDecode(response.body) as Map<String, Object?>);
+        return PostModel.fromKbinEntry(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        const path = '/api/v3/post';
+        final query = queryParams({
+          'id': postId.toString(),
+        });
+
+        final response = await httpClient.get(Uri.https(server, path, query));
+
+        httpErrorHandler(response, message: 'Failed to load post');
+
+        return PostModel.fromLemmy(
+            jsonDecode(response.body)['post_view'] as Map<String, Object?>);
+    }
   }
 
   Future<PostModel> vote(int postId, int choice, int newScore) async {
@@ -136,6 +153,7 @@ class APIThreads {
 
         return PostModel.fromKbinEntry(
             jsonDecode(response.body) as Map<String, Object?>);
+
       case ServerSoftware.lemmy:
         const path = '/api/v3/post/like';
 
