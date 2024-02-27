@@ -299,7 +299,7 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
   Future<void> _fetchPage(String pageKey) async {
     try {
       PostListModel newPage = await (switch (widget.mode) {
-        PostType.thread => context.read<SettingsController>().api.entries.list(
+        PostType.thread => context.read<SettingsController>().api.threads.list(
               widget.source,
               sourceId: widget.sourceId,
               page: nullIfEmpty(pageKey),
@@ -308,15 +308,16 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
                   context.read<SettingsController>().useAccountLangFilter),
               langs: context.read<SettingsController>().langFilter.toList(),
             ),
-        PostType.microblog => context.read<SettingsController>().api.posts.list(
-              widget.source,
-              sourceId: widget.sourceId,
-              page: nullIfEmpty(pageKey),
-              sort: widget.sort,
-              usePreferredLangs: whenLoggedIn(context,
-                  context.read<SettingsController>().useAccountLangFilter),
-              langs: context.read<SettingsController>().langFilter.toList(),
-            ),
+        PostType.microblog =>
+          context.read<SettingsController>().api.microblogs.list(
+                widget.source,
+                sourceId: widget.sourceId,
+                page: nullIfEmpty(pageKey),
+                sort: widget.sort,
+                usePreferredLangs: whenLoggedIn(context,
+                    context.read<SettingsController>().useAccountLangFilter),
+                langs: context.read<SettingsController>().langFilter.toList(),
+              ),
       });
 
       // Check BuildContext

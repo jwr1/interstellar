@@ -505,7 +505,7 @@ class _UserScreenBodyState extends State<UserScreenBody> {
     try {
       final newPage = await (switch (widget.mode) {
         UserFeedType.thread =>
-          context.read<SettingsController>().api.entries.list(
+          context.read<SettingsController>().api.threads.list(
                 FeedSource.user,
                 sourceId: widget.data!.id,
                 page: nullIfEmpty(pageKey),
@@ -515,7 +515,7 @@ class _UserScreenBodyState extends State<UserScreenBody> {
                 langs: context.read<SettingsController>().langFilter.toList(),
               ),
         UserFeedType.microblog =>
-          context.read<SettingsController>().api.posts.list(
+          context.read<SettingsController>().api.microblogs.list(
                 FeedSource.user,
                 sourceId: widget.data!.id,
                 page: nullIfEmpty(pageKey),

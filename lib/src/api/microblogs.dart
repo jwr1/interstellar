@@ -10,12 +10,12 @@ import 'package:interstellar/src/utils/utils.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart';
 
-class APIPosts {
+class KbinAPIMicroblogs {
   final ServerSoftware software;
   final http.Client httpClient;
   final String server;
 
-  APIPosts(
+  KbinAPIMicroblogs(
     this.software,
     this.httpClient,
     this.server,

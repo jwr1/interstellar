@@ -6,9 +6,9 @@ import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/models.dart';
 import 'package:interstellar/src/utils/utils.dart';
 
-enum KbinAPIMagazinesFilter { all, subscribed, moderated, blocked }
+enum APIMagazinesFilter { all, local, subscribed, moderated, blocked }
 
-enum KbinAPIMagazinesSort { active, hot, newest }
+enum APIMagazinesSort { active, hot, newest }
 
 class APIMagazines {
   final ServerSoftware software;
@@ -23,19 +23,29 @@ class APIMagazines {
 
   Future<DetailedMagazineListModel> list({
     String? page,
-    KbinAPIMagazinesFilter? filter,
-    KbinAPIMagazinesSort? sort,
+    APIMagazinesFilter? filter,
+    APIMagazinesSort? sort,
     String? search,
   }) async {
     switch (software) {
       case ServerSoftware.kbin:
       case ServerSoftware.mbin:
-        final path = (filter == null || filter == KbinAPIMagazinesFilter.all)
+        final path = (filter == null ||
+                filter == APIMagazinesFilter.all ||
+                filter == APIMagazinesFilter.local)
             ? '/api/magazines'
             : '/api/magazines/${filter.name}';
         final query = queryParams(
-          (filter == null || filter == KbinAPIMagazinesFilter.all)
-              ? {'p': page, 'sort': sort?.name, 'q': search}
+          (filter == null ||
+                  filter == APIMagazinesFilter.all ||
+                  filter == APIMagazinesFilter.local)
+              ? {
+                  'p': page,
+                  'sort': sort?.name,
+                  'q': search,
+                  'federation':
+                      filter == APIMagazinesFilter.local ? 'local' : null,
+                }
               : {'p': page},
         );
 
@@ -47,24 +57,73 @@ class APIMagazines {
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
-        const path = '/api/v3/community/list';
-        final query = queryParams({
-          'limit': '50',
-          'listingType': 'All',
-          'sort': 'TopAll',
-          'page': page,
-        });
+        if (search == null) {
+          const path = '/api/v3/community/list';
+          final query = queryParams({
+            'type_': switch (filter) {
+              APIMagazinesFilter.all => 'All',
+              APIMagazinesFilter.local => 'Local',
+              APIMagazinesFilter.moderated => 'ModeratorView',
+              APIMagazinesFilter.subscribed => 'Subscribed',
+              APIMagazinesFilter.blocked =>
+                throw Exception('Can not filter magazines by blocked on Lemmy'),
+              null => 'All'
+            },
+            'limit': '50',
+            'sort': switch (sort) {
+              APIMagazinesSort.active => 'Active',
+              APIMagazinesSort.hot => 'TopAll',
+              APIMagazinesSort.newest => 'New',
+              _ => 'All'
+            },
+            'page': page,
+          });
 
-        final response = await httpClient.get(Uri.https(server, path, query));
+          final response = await httpClient.get(Uri.https(server, path, query));
 
-        httpErrorHandler(response, message: 'Failed to load magazines');
+          httpErrorHandler(response, message: 'Failed to load magazines');
 
-        final json = jsonDecode(response.body) as Map<String, Object?>;
+          final json = jsonDecode(response.body) as Map<String, Object?>;
 
-        json['next_page'] =
-            lemmyCalcNextIntPage(json['communities'] as List<dynamic>, page);
+          json['next_page'] =
+              lemmyCalcNextIntPage(json['communities'] as List<dynamic>, page);
 
-        return DetailedMagazineListModel.fromLemmy(json);
+          return DetailedMagazineListModel.fromLemmy(json);
+        } else {
+          const path = '/api/v3/search';
+          final query = queryParams({
+            'type_': 'Communities',
+            'listing_type': switch (filter) {
+              APIMagazinesFilter.all => 'All',
+              APIMagazinesFilter.local => 'Local',
+              APIMagazinesFilter.moderated => 'ModeratorView',
+              APIMagazinesFilter.subscribed => 'Subscribed',
+              APIMagazinesFilter.blocked =>
+                throw Exception('Can not filter magazines by blocked on Lemmy'),
+              null => 'All'
+            },
+            'limit': '50',
+            'sort': switch (sort) {
+              APIMagazinesSort.active => 'Active',
+              APIMagazinesSort.hot => 'TopAll',
+              APIMagazinesSort.newest => 'New',
+              _ => 'All'
+            },
+            'page': page,
+            'q': search,
+          });
+
+          final response = await httpClient.get(Uri.https(server, path, query));
+
+          httpErrorHandler(response, message: 'Failed to load magazines');
+
+          final json = jsonDecode(response.body) as Map<String, Object?>;
+
+          json['next_page'] =
+              lemmyCalcNextIntPage(json['communities'] as List<dynamic>, page);
+
+          return DetailedMagazineListModel.fromLemmy(json);
+        }
     }
   }
 

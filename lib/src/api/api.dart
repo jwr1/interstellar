@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:interstellar/src/api/comments.dart';
 import 'package:interstellar/src/api/domains.dart';
-import 'package:interstellar/src/api/entries.dart';
 import 'package:interstellar/src/api/magazines.dart';
 import 'package:interstellar/src/api/messages.dart';
+import 'package:interstellar/src/api/microblogs.dart';
 import 'package:interstellar/src/api/notifications.dart';
-import 'package:interstellar/src/api/posts.dart';
 import 'package:interstellar/src/api/search.dart';
+import 'package:interstellar/src/api/threads.dart';
 import 'package:interstellar/src/api/users.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
@@ -20,11 +20,11 @@ class API {
 
   final APIComments comments;
   final KbinAPIDomains domains;
-  final APIThreads entries;
+  final APIThreads threads;
   final APIMagazines magazines;
   final KbinAPIMessages messages;
   final KbinAPINotifications notifications;
-  final APIPosts posts;
+  final KbinAPIMicroblogs microblogs;
   final APISearch search;
   final APIUsers users;
 
@@ -34,11 +34,11 @@ class API {
     this.server,
   )   : comments = APIComments(software, httpClient, server),
         domains = KbinAPIDomains(software, httpClient, server),
-        entries = APIThreads(software, httpClient, server),
+        threads = APIThreads(software, httpClient, server),
         magazines = APIMagazines(software, httpClient, server),
         messages = KbinAPIMessages(software, httpClient, server),
         notifications = KbinAPINotifications(software, httpClient, server),
-        posts = APIPosts(software, httpClient, server),
+        microblogs = KbinAPIMicroblogs(software, httpClient, server),
         search = APISearch(software, httpClient, server),
         users = APIUsers(software, httpClient, server);
 }

@@ -18,8 +18,8 @@ class MagazinesScreen extends StatefulWidget {
 }
 
 class _MagazinesScreenState extends State<MagazinesScreen> {
-  KbinAPIMagazinesFilter filter = KbinAPIMagazinesFilter.all;
-  KbinAPIMagazinesSort sort = KbinAPIMagazinesSort.hot;
+  APIMagazinesFilter filter = APIMagazinesFilter.all;
+  APIMagazinesSort sort = APIMagazinesSort.hot;
   String search = "";
 
   final PagingController<String, DetailedMagazineModel> _pagingController =
@@ -72,7 +72,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                   ...whenLoggedIn(context, [
                         Padding(
                           padding: const EdgeInsets.only(right: 12),
-                          child: DropdownButton<KbinAPIMagazinesFilter>(
+                          child: DropdownButton<APIMagazinesFilter>(
                             value: filter,
                             onChanged: (newFilter) {
                               if (newFilter != null) {
@@ -82,33 +82,44 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                                 });
                               }
                             },
-                            items: const [
-                              DropdownMenuItem(
-                                value: KbinAPIMagazinesFilter.all,
+                            items: [
+                              const DropdownMenuItem(
+                                value: APIMagazinesFilter.all,
                                 child: Text('All'),
                               ),
-                              DropdownMenuItem(
-                                value: KbinAPIMagazinesFilter.subscribed,
+                              const DropdownMenuItem(
+                                value: APIMagazinesFilter.local,
+                                child: Text('Local'),
+                              ),
+                              const DropdownMenuItem(
+                                value: APIMagazinesFilter.subscribed,
                                 child: Text('Subscribed'),
                               ),
-                              DropdownMenuItem(
-                                value: KbinAPIMagazinesFilter.moderated,
+                              const DropdownMenuItem(
+                                value: APIMagazinesFilter.moderated,
                                 child: Text('Moderated'),
                               ),
-                              DropdownMenuItem(
-                                value: KbinAPIMagazinesFilter.blocked,
-                                child: Text('Blocked'),
-                              ),
+                              if (context
+                                      .read<SettingsController>()
+                                      .serverSoftware !=
+                                  ServerSoftware.lemmy)
+                                const DropdownMenuItem(
+                                  value: APIMagazinesFilter.blocked,
+                                  child: Text('Blocked'),
+                                ),
                             ],
                           ),
                         )
                       ]) ??
                       [],
-                  ...(filter == KbinAPIMagazinesFilter.all
+                  ...(context.read<SettingsController>().serverSoftware ==
+                              ServerSoftware.lemmy ||
+                          filter == APIMagazinesFilter.all ||
+                          filter == APIMagazinesFilter.local
                       ? [
                           Padding(
                             padding: const EdgeInsets.only(right: 12),
-                            child: DropdownButton<KbinAPIMagazinesSort>(
+                            child: DropdownButton<APIMagazinesSort>(
                               value: sort,
                               onChanged: (newSort) {
                                 if (newSort != null) {
@@ -120,15 +131,15 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                               },
                               items: const [
                                 DropdownMenuItem(
-                                  value: KbinAPIMagazinesSort.hot,
-                                  child: Text('Hot'),
+                                  value: APIMagazinesSort.hot,
+                                  child: Text('Top'),
                                 ),
                                 DropdownMenuItem(
-                                  value: KbinAPIMagazinesSort.active,
+                                  value: APIMagazinesSort.active,
                                   child: Text('Active'),
                                 ),
                                 DropdownMenuItem(
-                                  value: KbinAPIMagazinesSort.newest,
+                                  value: APIMagazinesSort.newest,
                                   child: Text('Newest'),
                                 ),
                               ],

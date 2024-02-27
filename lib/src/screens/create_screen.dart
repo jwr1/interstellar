@@ -72,7 +72,7 @@ class _CreateScreenState extends State<CreateScreen> {
                   case CreateType.entry:
                     if (_urlTextController.text.isEmpty) {
                       if (_imageFile == null) {
-                        await api.entries.createArticle(
+                        await api.threads.createArticle(
                           magazineId,
                           title: _titleTextController.text,
                           isOc: _isOc,
@@ -82,7 +82,7 @@ class _CreateScreenState extends State<CreateScreen> {
                           tags: tags,
                         );
                       } else {
-                        await api.entries.createImage(
+                        await api.threads.createImage(
                           magazineId,
                           title: _titleTextController.text,
                           image: _imageFile!,
@@ -95,7 +95,7 @@ class _CreateScreenState extends State<CreateScreen> {
                         );
                       }
                     } else {
-                      await api.entries.createLink(
+                      await api.threads.createLink(
                         magazineId,
                         title: _titleTextController.text,
                         url: _urlTextController.text,
@@ -108,14 +108,14 @@ class _CreateScreenState extends State<CreateScreen> {
                     }
                   case CreateType.post:
                     if (_imageFile == null) {
-                      await api.posts.create(
+                      await api.microblogs.create(
                         magazineId,
                         body: _bodyTextController.text,
                         lang: _lang,
                         isAdult: _isAdult,
                       );
                     } else {
-                      await api.posts.createImage(
+                      await api.microblogs.createImage(
                         magazineId,
                         image: _imageFile!,
                         alt: "",

@@ -51,9 +51,12 @@ class PostItem extends StatelessWidget {
       onBoost: whenLoggedIn(context, () async {
         onUpdate(await switch (item.type) {
           PostType.thread =>
-            context.read<SettingsController>().api.entries.boost(item.id),
-          PostType.microblog =>
-            context.read<SettingsController>().api.posts.putVote(item.id, 1),
+            context.read<SettingsController>().api.threads.boost(item.id),
+          PostType.microblog => context
+              .read<SettingsController>()
+              .api
+              .microblogs
+              .putVote(item.id, 1),
         });
       }),
       upVotes: item.upvotes,
@@ -63,10 +66,13 @@ class PostItem extends StatelessWidget {
           PostType.thread => context
               .read<SettingsController>()
               .api
-              .entries
+              .threads
               .vote(item.id, 1, item.myVote == 1 ? 0 : 1),
-          PostType.microblog =>
-            context.read<SettingsController>().api.posts.putFavorite(item.id),
+          PostType.microblog => context
+              .read<SettingsController>()
+              .api
+              .microblogs
+              .putFavorite(item.id),
         });
       }),
       downVotes: item.downvotes,
@@ -76,10 +82,13 @@ class PostItem extends StatelessWidget {
           PostType.thread => context
               .read<SettingsController>()
               .api
-              .entries
+              .threads
               .vote(item.id, -1, item.myVote == -1 ? 0 : -1),
-          PostType.microblog =>
-            context.read<SettingsController>().api.posts.putVote(item.id, -1),
+          PostType.microblog => context
+              .read<SettingsController>()
+              .api
+              .microblogs
+              .putVote(item.id, -1),
         });
       }),
       onReply: onReply,

@@ -51,9 +51,9 @@ class _PostPageState extends State<PostPage> {
     } else if (widget.postType != null && widget.postId != null) {
       final newPost = await switch (widget.postType!) {
         PostType.thread =>
-          context.read<SettingsController>().api.entries.get(widget.postId!),
+          context.read<SettingsController>().api.threads.get(widget.postId!),
         PostType.microblog =>
-          context.read<SettingsController>().api.posts.get(widget.postId!),
+          context.read<SettingsController>().api.microblogs.get(widget.postId!),
       };
       setState(() {
         _data = newPost;
@@ -182,7 +182,7 @@ class _PostPageState extends State<PostPage> {
                             PostType.thread => context
                                 .read<SettingsController>()
                                 .api
-                                .entries
+                                .threads
                                 .edit(
                                   post.id,
                                   post.title!,
@@ -191,13 +191,16 @@ class _PostPageState extends State<PostPage> {
                                   post.lang!,
                                   post.isAdult,
                                 ),
-                            PostType.microblog =>
-                              context.read<SettingsController>().api.posts.edit(
-                                    post.id,
-                                    body,
-                                    post.lang!,
-                                    post.isAdult,
-                                  ),
+                            PostType.microblog => context
+                                .read<SettingsController>()
+                                .api
+                                .microblogs
+                                .edit(
+                                  post.id,
+                                  body,
+                                  post.lang!,
+                                  post.isAdult,
+                                ),
                           };
                           _onUpdate(newPost);
                         },
@@ -212,12 +215,12 @@ class _PostPageState extends State<PostPage> {
                             PostType.thread => context
                                 .read<SettingsController>()
                                 .api
-                                .entries
+                                .threads
                                 .delete(post.id),
                             PostType.microblog => context
                                 .read<SettingsController>()
                                 .api
-                                .posts
+                                .microblogs
                                 .delete(post.id),
                           };
                           _onUpdate(post.copyWith(
