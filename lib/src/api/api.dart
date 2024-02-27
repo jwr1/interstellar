@@ -25,7 +25,7 @@ class API {
   final KbinAPIMessages messages;
   final KbinAPINotifications notifications;
   final APIPosts posts;
-  final KbinAPISearch search;
+  final APISearch search;
   final APIUsers users;
 
   API(
@@ -39,7 +39,7 @@ class API {
         messages = KbinAPIMessages(software, httpClient, server),
         notifications = KbinAPINotifications(software, httpClient, server),
         posts = APIPosts(software, httpClient, server),
-        search = KbinAPISearch(software, httpClient, server),
+        search = APISearch(software, httpClient, server),
         users = APIUsers(software, httpClient, server);
 }
 

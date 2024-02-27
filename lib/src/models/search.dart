@@ -44,4 +44,29 @@ class SearchListModel with _$SearchListModel {
           json['pagination'] as Map<String, Object?>),
     );
   }
+
+  factory SearchListModel.fromLemmy(Map<String, dynamic> json) {
+    List<Object> items = [];
+
+    for (var actor in json['users']) {
+      items.add(DetailedUserModel.fromLemmy({'person_view': actor}));
+    }
+
+    for (var community in json['communities']) {
+      items.add(DetailedMagazineModel.fromLemmy(community as Map<String, Object?>));
+    }
+
+    for (var post in json['posts']) {
+      items.add(PostModel.fromLemmy(post as Map<String, Object?>));
+    }
+
+    for (var comment in json['comments']) {
+      items.add(CommentModel.fromLemmy(comment as Map<String, Object?>));
+    }
+
+    return SearchListModel(
+      items: items,
+      nextPage: json['next_page'] as String?
+    );
+  }
 }
