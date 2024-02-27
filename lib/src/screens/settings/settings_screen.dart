@@ -28,6 +28,10 @@ class SettingsScreen extends StatelessWidget {
     final currentDefaultCommentSort =
         commentSortSelect.getOption(controller.defaultCommentSort);
 
+    final isLemmy = controller.serverSoftware == ServerSoftware.lemmy;
+    final customLanguageFilterEnabled =
+        !controller.useAccountLangFilter && !isLemmy;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
@@ -99,7 +103,7 @@ class SettingsScreen extends StatelessWidget {
           ListTile(
             title: const Text('Default Feed Type'),
             leading: const Icon(Icons.tab),
-            enabled: controller.serverSoftware != ServerSoftware.lemmy,
+            enabled: !isLemmy,
             onTap: () async {
               controller.updateDefaultFeedType(
                 await feedTypeSelect.inquireSelection(
@@ -140,7 +144,7 @@ class SettingsScreen extends StatelessWidget {
           ListTile(
             title: const Text('Default Microblog Feed Sort'),
             leading: const Icon(Icons.sort),
-            enabled: controller.serverSoftware != ServerSoftware.lemmy,
+            enabled: !isLemmy,
             onTap: () async {
               controller.updateDefaultPostsFeedSort(
                 await feedSortSelect.inquireSelection(
@@ -208,7 +212,7 @@ class SettingsScreen extends StatelessWidget {
             subtitle: const Text(
                 'Please note: language filters only apply to "All" and explore feeds'),
             value: controller.useAccountLangFilter,
-            onChanged: controller.updateUseAccountLangFilter,
+            onChanged: !isLemmy ? controller.updateUseAccountLangFilter : null,
           ),
           Row(
             children: [
@@ -217,9 +221,9 @@ class SettingsScreen extends StatelessWidget {
                 child: Text(
                   'Custom Language Filter',
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      color: controller.useAccountLangFilter
-                          ? Theme.of(context).disabledColor
-                          : null),
+                      color: customLanguageFilterEnabled
+                          ? null
+                          : Theme.of(context).disabledColor),
                 ),
               ),
               Flexible(
@@ -229,7 +233,7 @@ class SettingsScreen extends StatelessWidget {
                       (langCode) => Padding(
                         padding: const EdgeInsets.all(2),
                         child: InputChip(
-                          isEnabled: !controller.useAccountLangFilter,
+                          isEnabled: customLanguageFilterEnabled,
                           label: Text(getLangName(langCode)),
                           onDeleted: () async {
                             controller.removeLangFilter(langCode);
@@ -258,6 +262,7 @@ class SettingsScreen extends StatelessWidget {
           ),
           ListTile(
             title: const Text('Default Create Language'),
+            enabled: !isLemmy,
             onTap: () async {
               controller.updateDefaultCreateLang(
                 await languageSelectionMenu.inquireSelection(

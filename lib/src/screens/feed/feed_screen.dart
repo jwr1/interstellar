@@ -205,7 +205,9 @@ class _FeedScreenState extends State<FeedScreen> {
                 ),
               ),
         floatingActionButton: widget.floatingActionButton ??
-            (widget.source == null
+            (widget.source == null &&
+                    context.read<SettingsController>().serverSoftware !=
+                        ServerSoftware.lemmy
                 ? whenLoggedIn(context, const FloatingMenu())
                 : null),
       ),

@@ -321,7 +321,11 @@ class _UserScreenState extends State<UserScreen> {
                                           : Theme.of(context).disabledColor),
                                 ),
                               ),
-                            if (!user.name.contains('@'))
+                            if (!user.name.contains('@') &&
+                                context
+                                        .read<SettingsController>()
+                                        .serverSoftware !=
+                                    ServerSoftware.lemmy)
                               IconButton(
                                 onPressed: () {
                                   setState(() {
