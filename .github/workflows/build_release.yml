@@ -104,6 +104,15 @@ jobs:
           dart run build_runner build
           flutter build -v ${{ matrix.build_target }} ${{ matrix.build_flags }}
 
+      - name: Configure Android Keystore for AppBundle
+        if: matrix.target == 'android'
+        run: echo "includeNDK=true" >> key.properties
+        working-directory: android
+
+      - name: Build additional Flutter app for AppBundle
+        if: matrix.target == 'android'
+        run: flutter build -v appbundle
+
       - name: Create dist directory
         if: matrix.target != 'windows'
         run: mkdir dist
@@ -117,6 +126,7 @@ jobs:
           mv app-armeabi-v7a-release.apk $GITHUB_WORKSPACE/dist/interstellar-android-armeabi-v7a.apk
           mv app-arm64-v8a-release.apk $GITHUB_WORKSPACE/dist/interstellar-android-arm64-v8a.apk
           mv app-x86_64-release.apk $GITHUB_WORKSPACE/dist/interstellar-android-x86_64.apk
+          mv $GITHUB_WORKSPACE/build/app/outputs/bundle/release/app-release.aab $GITHUB_WORKSPACE/dist/interstellar-android-googleplay.aab
         working-directory: ${{ matrix.build_path }}
 
       - name: Compress build for iOS
