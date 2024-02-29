@@ -35,6 +35,7 @@ class _EntryCommentState extends State<PostComment> {
       children: [
         Card(
           margin: const EdgeInsets.only(top: 8),
+          clipBehavior: Clip.antiAlias,
           child: Wrapper(
             shouldWrap: widget.onClick != null,
             parentBuilder: (child) =>

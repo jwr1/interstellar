@@ -79,7 +79,7 @@ class _UserScreenState extends State<UserScreen> {
         appBar: AppBar(
           title: Row(
             children: [
-              Text(user.name),
+              Flexible(child: Text(user.name)),
               DefaultTextStyle(
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                     color: Theme.of(context).textTheme.bodySmall!.color),
@@ -230,40 +230,43 @@ class _UserScreenState extends State<UserScreen> {
                       children: [
                         Row(
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  user.name.contains('@')
-                                      ? user.name.split('@')[1]
-                                      : user.name,
-                                  style: Theme.of(context).textTheme.titleLarge,
-                                  softWrap: true,
-                                ),
-                                InkWell(
-                                  onTap: () async {
-                                    await Clipboard.setData(
-                                      ClipboardData(
-                                          text: user.name.contains('@')
-                                              ? user.name
-                                              : '@${user.name}@${context.read<SettingsController>().instanceHost}'),
-                                    );
-
-                                    if (!mounted) return;
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                            content: Text('Copied')));
-                                  },
-                                  child: Text(
-                                    user.name.contains('@')
-                                        ? user.name
-                                        : '@${user.name}@${context.read<SettingsController>().instanceHost}',
-                                    softWrap: true,
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    user.displayName ??
+                                        user.name.split('@').first,
+                                    style:
+                                        Theme.of(context).textTheme.titleLarge,
                                   ),
-                                )
-                              ],
+                                  InkWell(
+                                    onTap: () async {
+                                      await Clipboard.setData(
+                                        ClipboardData(
+                                            text: user.name.contains('@')
+                                                ? '@${user.name}'
+                                                : '@${user.name}@${context.read<SettingsController>().instanceHost}'),
+                                      );
+
+                                      if (!mounted) return;
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Copied'),
+                                          duration: Duration(seconds: 2),
+                                        ),
+                                      );
+                                    },
+                                    child: Text(
+                                      user.name.contains('@')
+                                          ? '@${user.name}'
+                                          : '@${user.name}@${context.read<SettingsController>().instanceHost}',
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
-                            const Spacer(),
                             if (user.followersCount != null)
                               SubscriptionButton(
                                 subsCount: user.followersCount!,

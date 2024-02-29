@@ -27,6 +27,7 @@ class DetailedUserModel with _$DetailedUserModel {
   const factory DetailedUserModel({
     required int id,
     required String name,
+    required String? displayName,
     required String? avatar,
     required String? cover,
     required DateTime createdAt,
@@ -42,6 +43,7 @@ class DetailedUserModel with _$DetailedUserModel {
     final user = DetailedUserModel(
       id: json['userId'] as int,
       name: kbinNormalizeUsername(json['username'] as String),
+      displayName: null,
       avatar: kbinGetImageUrl(json['avatar'] as Map<String, Object?>?),
       cover: kbinGetImageUrl(json['cover'] as Map<String, Object?>?),
       createdAt: DateTime.parse(json['createdAt'] as String),
@@ -65,6 +67,7 @@ class DetailedUserModel with _$DetailedUserModel {
     return DetailedUserModel(
       id: lemmyPerson['id'] as int,
       name: lemmyGetActorName(lemmyPerson),
+      displayName: lemmyPerson['display_name'] as String?,
       avatar: lemmyPerson['avatar'] as String?,
       cover: lemmyPerson['banner'] as String?,
       createdAt: DateTime.parse(lemmyPerson['published'] as String),

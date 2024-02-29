@@ -14,6 +14,8 @@ void main() async {
   FlutterError.onError = (details) {
     FlutterError.presentError(details);
 
+    // Don't show error for rendering issues
+    if (details.library == 'rendering library') return;
     // Don't show error for image loading issues
     if (details.library == 'image resource service') return;
 

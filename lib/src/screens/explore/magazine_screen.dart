@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/screens/feed/feed_screen.dart';
@@ -62,10 +63,37 @@ class _MagazineScreenState extends State<MagazineScreen> {
                             padding: const EdgeInsets.only(right: 12),
                             child: Avatar(_data!.icon, radius: 32)),
                       Expanded(
-                        child: Text(
-                          _data!.title,
-                          style: Theme.of(context).textTheme.titleLarge,
-                          softWrap: true,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _data!.title,
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
+                            InkWell(
+                              onTap: () async {
+                                await Clipboard.setData(
+                                  ClipboardData(
+                                      text: _data!.name.contains('@')
+                                          ? '!${_data!.name}'
+                                          : '!${_data!.name}@${context.read<SettingsController>().instanceHost}'),
+                                );
+
+                                if (!mounted) return;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Copied'),
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                _data!.name.contains('@')
+                                    ? '!${_data!.name}'
+                                    : '!${_data!.name}@${context.read<SettingsController>().instanceHost}',
+                              ),
+                            )
+                          ],
                         ),
                       ),
                       SubscriptionButton(
