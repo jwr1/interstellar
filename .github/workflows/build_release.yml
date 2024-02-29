@@ -11,10 +11,14 @@ on:
         required: true
         default: 'X.X.X'
         type: string
+      build-number:
+        description: 'Build number to use (e.g. 123)'
+        required: true
+        type: number
 
 jobs:
   draft-release:
-    name: Draft release v${{ inputs.version }}
+    name: Draft release v${{ inputs.version }} with build number ${{ inputs.build-number }}
     runs-on: ubuntu-latest
     outputs:
       upload_url: ${{ steps.draft_release.outputs.upload_url }}
@@ -84,7 +88,7 @@ jobs:
       - name: Set version
         run: |
           dart pub global activate cider
-          cider version ${{ github.event.inputs.version }}
+          cider version ${{ github.event.inputs.version }}+${{ github.event.inputs.build-number }}
 
       - name: Configure Android Keystore
         if: matrix.target == 'android'
