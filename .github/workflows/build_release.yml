@@ -18,7 +18,7 @@ on:
 
 jobs:
   draft-release:
-    name: Draft release v${{ inputs.version }} with build number ${{ inputs.build-number }}
+    name: Draft v${{ inputs.version }}; build num ${{ inputs.build-number }}
     runs-on: ubuntu-latest
     outputs:
       upload_url: ${{ steps.draft_release.outputs.upload_url }}

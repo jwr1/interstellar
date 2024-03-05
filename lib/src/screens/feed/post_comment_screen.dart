@@ -59,8 +59,9 @@ class _PostCommentScreenState extends State<PostCommentScreen> {
               horizontal: 12,
               vertical: 4,
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: OverflowBar(
+              alignment: MainAxisAlignment.center,
+              overflowAlignment: OverflowBarAlignment.center,
               children: [
                 Padding(
                   padding: const EdgeInsets.all(4),
