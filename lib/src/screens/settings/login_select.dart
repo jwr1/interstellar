@@ -11,6 +11,7 @@ final List<String> _recommendedInstances = [
   'kbin.melroy.org',
   'lemm.ee',
   'lemmy.ml',
+  'lemmy.world',
   'programming.dev',
 ];
 
@@ -22,8 +23,39 @@ class LoginSelectScreen extends StatefulWidget {
 }
 
 class _LoginSelectScreenState extends State<LoginSelectScreen> {
-  final TextEditingController _instanceHostController =
-      TextEditingController(text: _recommendedInstances.first);
+  final TextEditingController _instanceHostController = TextEditingController();
+
+  Future<void> _initiateLogin(String host) async {
+    final software = await getServerSoftware(host);
+    if (software == null) {
+      throw Exception('$host is using unsupported software');
+    }
+
+    // Check BuildContext
+    if (!mounted) return;
+
+    await context.read<SettingsController>().saveServer(software, host);
+
+    // Check BuildContext
+    if (!mounted) return;
+
+    final shouldPop = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoginConfirmScreen(
+          software,
+          host,
+        ),
+      ),
+    );
+
+    if (shouldPop == true) {
+      // Check BuildContext
+      if (!mounted) return;
+
+      Navigator.pop(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,44 +70,16 @@ class _LoginSelectScreenState extends State<LoginSelectScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                TextEditor(_instanceHostController, label: 'Instance Host'),
+                TextEditor(
+                  _instanceHostController,
+                  label: 'Instance Host',
+                  onChanged: (_) => setState(() {}),
+                ),
                 const SizedBox(height: 12),
-                OutlinedButton(
-                  onPressed: () async {
-                    final software =
-                        await getServerSoftware(_instanceHostController.text);
-                    if (software == null) {
-                      throw Exception(
-                          '${_instanceHostController.text} is using unsupported software');
-                    }
-
-                    // Check BuildContext
-                    if (!mounted) return;
-
-                    await context
-                        .read<SettingsController>()
-                        .saveServer(software, _instanceHostController.text);
-
-                    // Check BuildContext
-                    if (!mounted) return;
-
-                    final shouldPop = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => LoginConfirmScreen(
-                          software,
-                          _instanceHostController.text,
-                        ),
-                      ),
-                    );
-
-                    if (shouldPop == true) {
-                      // Check BuildContext
-                      if (!mounted) return;
-
-                      Navigator.pop(context);
-                    }
-                  },
+                FilledButton(
+                  onPressed: _instanceHostController.text.isEmpty
+                      ? null
+                      : () => _initiateLogin(_instanceHostController.text),
                   child: const Text('Continue'),
                 ),
               ],
@@ -91,9 +95,7 @@ class _LoginSelectScreenState extends State<LoginSelectScreen> {
               const SizedBox(height: 4),
               ..._recommendedInstances.map((v) => ListTile(
                     title: Text(v),
-                    onTap: () => setState(() {
-                      _instanceHostController.text = v;
-                    }),
+                    onTap: () => _initiateLogin(v),
                   ))
             ]),
           ),

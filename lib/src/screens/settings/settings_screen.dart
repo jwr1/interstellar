@@ -304,29 +304,33 @@ class SettingsScreen extends StatelessWidget {
                         .servers[account.split('@').last]!.software.name),
                     onTap: () => controller.setSelectedAccount(account),
                     trailing: IconButton(
-                        onPressed: () {
-                          showDialog<String>(
-                            context: context,
-                            builder: (BuildContext context) => AlertDialog(
-                              title: const Text('Remove account'),
-                              content: Text(account),
-                              actions: <Widget>[
-                                OutlinedButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: const Text('Cancel'),
+                      onPressed: controller.selectedAccount == account
+                          ? null
+                          : () {
+                              showDialog<String>(
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                  title: const Text('Remove account'),
+                                  content: Text(account),
+                                  actions: <Widget>[
+                                    OutlinedButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text('Cancel'),
+                                    ),
+                                    FilledButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        controller
+                                            .removeOAuthCredentials(account);
+                                      },
+                                      child: const Text('Remove'),
+                                    ),
+                                  ],
                                 ),
-                                FilledButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    controller.removeOAuthCredentials(account);
-                                  },
-                                  child: const Text('Remove'),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.delete_outline)),
+                              );
+                            },
+                      icon: const Icon(Icons.delete_outline),
+                    ),
                   )),
           Padding(
             padding: const EdgeInsets.all(12),
