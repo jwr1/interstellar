@@ -235,24 +235,46 @@ class APIThreads {
     required bool isAdult,
     required List<String> tags,
   }) async {
-    final path = '/api/magazine/$magazineID/article';
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        final path = '/api/magazine/$magazineID/article';
 
-    final response = await httpClient.post(
-      Uri.https(server, path),
-      body: jsonEncode({
-        'title': title,
-        'tags': tags,
-        'isOc': isOc,
-        'body': body,
-        'lang': lang,
-        'isAdult': isAdult
-      }),
-    );
+        final response = await httpClient.post(
+          Uri.https(server, path),
+          body: jsonEncode({
+            'title': title,
+            'tags': tags,
+            'isOc': isOc,
+            'body': body,
+            'lang': lang,
+            'isAdult': isAdult
+          }),
+        );
 
-    httpErrorHandler(response, message: "Failed to create entry");
+        httpErrorHandler(response, message: "Failed to create entry");
 
-    return PostModel.fromKbinEntry(
-        jsonDecode(response.body) as Map<String, Object?>);
+        return PostModel.fromKbinEntry(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        const path = '/api/v3/post';
+        final response = await httpClient.post(
+            Uri.https(server, path),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'name': title,
+            'community_id': magazineID,
+            'body': body,
+            'nsfw': isAdult
+          })
+        );
+
+        httpErrorHandler(response, message: 'Failed to create entry');
+
+        return PostModel.fromLemmy(
+            jsonDecode(response.body)['post_view'] as Map<String, Object?>);
+    }
   }
 
   Future<PostModel> createLink(
@@ -265,25 +287,49 @@ class APIThreads {
     required bool isAdult,
     required List<String> tags,
   }) async {
-    final path = '/api/magazine/$magazineID/link';
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        final path = '/api/magazine/$magazineID/link';
 
-    final response = await httpClient.post(
-      Uri.https(server, path),
-      body: jsonEncode({
-        'title': title,
-        'url': url,
-        'tags': tags,
-        'isOc': isOc,
-        'body': body,
-        'lang': lang,
-        'isAdult': isAdult
-      }),
-    );
+        final response = await httpClient.post(
+          Uri.https(server, path),
+          body: jsonEncode({
+            'title': title,
+            'url': url,
+            'tags': tags,
+            'isOc': isOc,
+            'body': body,
+            'lang': lang,
+            'isAdult': isAdult
+          }),
+        );
 
-    httpErrorHandler(response, message: "Failed to create entry");
+        httpErrorHandler(response, message: "Failed to create entry");
 
-    return PostModel.fromKbinEntry(
-        jsonDecode(response.body) as Map<String, Object?>);
+        return PostModel.fromKbinEntry(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        const path = '/api/v3/post';
+        final response = await httpClient.post(
+            Uri.https(server, path),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'name': title,
+              'community_id': magazineID,
+              'url': url,
+              'body': body,
+              'nsfw': isAdult
+            })
+        );
+
+        httpErrorHandler(response, message: 'Failed to create entry');
+
+        return PostModel.fromLemmy(
+            jsonDecode(response.body)['post_view'] as Map<String, Object?>);
+    }
+
   }
 
   Future<PostModel> createImage(
@@ -297,32 +343,76 @@ class APIThreads {
     required bool isAdult,
     required List<String> tags,
   }) async {
-    final path = '/api/magazine/$magazineID/image';
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        final path = '/api/magazine/$magazineID/image';
 
-    var request = http.MultipartRequest('POST', Uri.https(server, path));
-    var multipartFile = http.MultipartFile.fromBytes(
-      'uploadImage',
-      await image.readAsBytes(),
-      filename: basename(image.path),
-      contentType: MediaType.parse(lookupMimeType(image.path)!),
-    );
-    request.files.add(multipartFile);
-    request.fields['title'] = title;
-    for (int i = 0; i < tags.length; i++) {
-      request.fields['tags[$i]'] = tags[i];
-    }
-    request.fields['isOc'] = isOc.toString();
-    request.fields['body'] = body;
-    request.fields['lang'] = lang;
-    request.fields['isAdult'] = isAdult.toString();
-    request.fields['alt'] = alt;
-    var response =
+        var request = http.MultipartRequest('POST', Uri.https(server, path));
+        var multipartFile = http.MultipartFile.fromBytes(
+          'uploadImage',
+          await image.readAsBytes(),
+          filename: basename(image.path),
+          contentType: MediaType.parse(lookupMimeType(image.path)!),
+        );
+        request.files.add(multipartFile);
+        request.fields['title'] = title;
+        for (int i = 0; i < tags.length; i++) {
+          request.fields['tags[$i]'] = tags[i];
+        }
+        request.fields['isOc'] = isOc.toString();
+        request.fields['body'] = body;
+        request.fields['lang'] = lang;
+        request.fields['isAdult'] = isAdult.toString();
+        request.fields['alt'] = alt;
+        var response =
         await http.Response.fromStream(await httpClient.send(request));
 
-    httpErrorHandler(response, message: "Failed to create entry");
+        httpErrorHandler(response, message: "Failed to create entry");
 
-    return PostModel.fromKbinEntry(
-        jsonDecode(response.body) as Map<String, Object?>);
+        return PostModel.fromKbinEntry(
+            jsonDecode(response.body) as Map<String, Object?>);
+      case ServerSoftware.lemmy:
+        const pictrsPath = '/pictrs/image';
+
+        var request =
+            http.MultipartRequest('POST', Uri.https(server, pictrsPath));
+        var multipartFile = http.MultipartFile.fromBytes(
+          'images[]',
+          await image.readAsBytes(),
+          filename: basename(image.path),
+          contentType: MediaType.parse(lookupMimeType(image.path)!),
+        );
+        request.files.add(multipartFile);
+        var pictrsResponse =
+            await http.Response.fromStream(await httpClient.send(request));
+
+        httpErrorHandler(pictrsResponse, message: "Failed to upload image");
+
+        final json = jsonDecode(pictrsResponse.body) as Map<String, Object?>;
+
+        final imageName = ((json['files'] as List<Object?>).first
+            as Map<String, Object?>)['file'] as String?;
+
+        const path = '/api/v3/post';
+        final response = await httpClient.post(
+            Uri.https(server, path),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'name': title,
+              'community_id': magazineID,
+              'url': 'https://$server/pictrs/image/$imageName',
+              'body': body,
+              'nsfw': isAdult
+            })
+        );
+
+        httpErrorHandler(response, message: 'Failed to create entry');
+
+        return PostModel.fromLemmy(
+          jsonDecode(response.body)['post_view'] as Map<String, Object?>);
+    }
+
   }
 
   Future<void> report(int postId, String reason) async {
