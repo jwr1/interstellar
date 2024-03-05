@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/screens/create_screen.dart';
+import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:provider/provider.dart';
 
 class FloatingMenu extends StatefulWidget {
   final int? magazineId;
@@ -62,30 +64,31 @@ class _FloatingMenuState extends State<FloatingMenu>
             ),
           ),
         ),
-        SlideTransition(
-          position: _slideAnimationPosts,
-          child: Container(
-            width: 45,
-            padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: FloatingActionButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => CreateScreen(
-                            CreateType.post,
-                            magazineId: widget.magazineId,
-                            magazineName: widget.magazineName,
-                          )));
-                  _animationController.reverse();
-                },
-                heroTag: null,
-                tooltip: 'Create post',
-                child: const Icon(Icons.chat),
+        if (context.read<SettingsController>().serverSoftware != ServerSoftware.lemmy)
+          SlideTransition(
+            position: _slideAnimationPosts,
+            child: Container(
+              width: 45,
+              padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: FloatingActionButton(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => CreateScreen(
+                              CreateType.post,
+                              magazineId: widget.magazineId,
+                              magazineName: widget.magazineName,
+                            )));
+                    _animationController.reverse();
+                  },
+                  heroTag: null,
+                  tooltip: 'Create post',
+                  child: const Icon(Icons.chat),
+                ),
               ),
             ),
           ),
-        ),
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
           child: FloatingActionButton(
