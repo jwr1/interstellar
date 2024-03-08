@@ -16,7 +16,7 @@ You can ask questions, report bugs, or make suggestions either here on [GitHub](
 ## Screenshots
 
 <div align="center">
-<img src="assets/screenshots/desktop-2.png"  width="800"></img>
+<img src="assets/screenshots/desktop-3.png"  width="800"></img>
 <br>
 <img src="assets/screenshots/mobile-1.png" width="300"></img>
 <img src="assets/screenshots/mobile-2.png"  width="300"></img>
