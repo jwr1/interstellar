@@ -1,14 +1,26 @@
 # Interstellar
 
-An app for Kbin or Mbin; connecting you to the fediverse.
+An app for Kbin, Mbin, and Lemmy; connecting you to the fediverse.
 
-## Installation
+## Downloads
 
-At the moment, Interstellar can be tested on both Linux and Android (you could also build from source for other platforms). You'll find the latest build files [here](https://github.com/jwr1/interstellar/releases/latest).
+[![](assets/readme/google-play-badge.png)](https://play.google.com/store/apps/details?id=one.jwr.interstellar)
+[![](assets/readme/flathub-badge.png)](https://flathub.org/apps/one.jwr.interstellar)
+
+See the [latest release](https://github.com/jwr1/interstellar/releases/latest) for direct APK files, an AppImage, and more platforms.
 
 ## Discussion
 
 You can ask questions, report bugs, or make suggestions either here on [GitHub](https://github.com/jwr1/interstellar/issues), or in the [interstellar magazine](https://kbin.earth/m/interstellar). You can also join the [matrix room](https://matrix.to/#/#kbin-interstellar:matrix.org) for real time discussion.
+
+## Screenshots
+
+<div align="center">
+<img src="assets/screenshots/desktop-2.png"  width="800"></img>
+<br>
+<img src="assets/screenshots/mobile-1.png" width="300"></img>
+<img src="assets/screenshots/mobile-2.png"  width="300"></img>
+</div>
 
 ## Contributing
 
