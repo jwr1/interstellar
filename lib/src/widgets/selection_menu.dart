@@ -20,7 +20,7 @@ class SelectionMenu<T> {
 
   const SelectionMenu(this.title, this.options);
 
-  Future<T?> inquireSelection(
+  Future<T?> askSelection(
     BuildContext context,
     T? oldSelection,
   ) async =>

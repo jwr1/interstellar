@@ -49,7 +49,7 @@ class SettingsScreen extends StatelessWidget {
             leading: const Icon(Icons.brightness_medium),
             onTap: () async {
               controller.updateThemeMode(
-                await themeModeSelect.inquireSelection(
+                await themeModeSelect.askSelection(
                   context,
                   controller.themeMode,
                 ),
@@ -80,7 +80,7 @@ class SettingsScreen extends StatelessWidget {
             leading: const Icon(Icons.palette),
             onTap: () async {
               controller.updateAccentColor(
-                await themeSelect.inquireSelection(
+                await themeSelect.askSelection(
                   context,
                   currentTheme.value,
                 ),
@@ -106,7 +106,7 @@ class SettingsScreen extends StatelessWidget {
             enabled: !isLemmy,
             onTap: () async {
               controller.updateDefaultFeedType(
-                await feedTypeSelect.inquireSelection(
+                await feedTypeSelect.askSelection(
                   context,
                   currentDefaultFeedMode.value,
                 ),
@@ -126,7 +126,7 @@ class SettingsScreen extends StatelessWidget {
             leading: const Icon(Icons.sort),
             onTap: () async {
               controller.updateDefaultEntriesFeedSort(
-                await feedSortSelect.inquireSelection(
+                await feedSortSelect.askSelection(
                   context,
                   currentDefaultEntriesFeedSort.value,
                 ),
@@ -147,7 +147,7 @@ class SettingsScreen extends StatelessWidget {
             enabled: !isLemmy,
             onTap: () async {
               controller.updateDefaultPostsFeedSort(
-                await feedSortSelect.inquireSelection(
+                await feedSortSelect.askSelection(
                   context,
                   currentDefaultPostsFeedSort.value,
                 ),
@@ -167,7 +167,7 @@ class SettingsScreen extends StatelessWidget {
             leading: const Icon(Icons.explore),
             onTap: () async {
               controller.updateDefaultExploreFeedSort(
-                await feedSortSelect.inquireSelection(
+                await feedSortSelect.askSelection(
                   context,
                   currentDefaultExploreFeedSort.value,
                 ),
@@ -187,7 +187,7 @@ class SettingsScreen extends StatelessWidget {
             leading: const Icon(Icons.comment),
             onTap: () async {
               controller.updateDefaultCommentSort(
-                await commentSortSelect.inquireSelection(
+                await commentSortSelect.askSelection(
                   context,
                   currentDefaultCommentSort.value,
                 ),
@@ -248,7 +248,7 @@ class SettingsScreen extends StatelessWidget {
                             ? null
                             : () async {
                                 controller.addLangFilter(
-                                  await languageSelectionMenu.inquireSelection(
+                                  await languageSelectionMenu.askSelection(
                                       context, null),
                                 );
                               },
@@ -265,7 +265,7 @@ class SettingsScreen extends StatelessWidget {
             enabled: !isLemmy,
             onTap: () async {
               controller.updateDefaultCreateLang(
-                await languageSelectionMenu.inquireSelection(
+                await languageSelectionMenu.askSelection(
                   context,
                   controller.defaultCreateLang,
                 ),

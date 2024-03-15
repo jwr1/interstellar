@@ -7,13 +7,17 @@ import 'package:interstellar/src/api/comments.dart';
 import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/api/oauth.dart';
 import 'package:interstellar/src/models/post.dart';
+import 'package:interstellar/src/utils/actions.dart';
 import 'package:interstellar/src/utils/jwt_http_client.dart';
 import 'package:interstellar/src/utils/themes.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/markdown_mention.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum ServerSoftware { kbin, mbin, lemmy }
+
+enum NameInstanceDisplay { hide, button, show }
 
 class Server {
   final ServerSoftware software;
@@ -61,6 +65,27 @@ class SettingsController with ChangeNotifier {
   ThemeInfo get theme =>
       themes.firstWhere((theme) => theme.name == _accentColor);
 
+  late NameInstanceDisplay _usernameInstanceDisplay;
+  NameInstanceDisplay get usernameInstanceDisplay => _usernameInstanceDisplay;
+  late NameInstanceDisplay _magazineNameInstanceDisplay;
+  NameInstanceDisplay get magazineNameInstanceDisplay =>
+      _magazineNameInstanceDisplay;
+
+  late ActionLocation _feedActionBackToTop;
+  ActionLocation get feedActionBackToTop => _feedActionBackToTop;
+  late ActionLocation _feedActionCreatePost;
+  ActionLocation get feedActionCreatePost => _feedActionCreatePost;
+  late ActionLocation _feedActionExpandFab;
+  ActionLocation get feedActionExpandFab => _feedActionExpandFab;
+  late ActionLocation _feedActionRefresh;
+  ActionLocation get feedActionRefresh => _feedActionRefresh;
+  late ActionLocationWithTabs _feedActionSetFilter;
+  ActionLocationWithTabs get feedActionSetFilter => _feedActionSetFilter;
+  late ActionLocation _feedActionSetSort;
+  ActionLocation get feedActionSetSort => _feedActionSetSort;
+  late ActionLocationWithTabs _feedActionSetType;
+  ActionLocationWithTabs get feedActionSetType => _feedActionSetType;
+
   late PostType _defaultFeedType;
   PostType get defaultFeedType => _defaultFeedType;
   late FeedSort _defaultEntriesFeedSort;
@@ -95,9 +120,11 @@ class SettingsController with ChangeNotifier {
   Future<void> loadSettings() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    _themeMode = prefs.getString('themeMode') != null
-        ? ThemeMode.values.byName(prefs.getString("themeMode")!)
-        : ThemeMode.system;
+    _themeMode = parseEnum(
+      ThemeMode.values,
+      ThemeMode.system,
+      prefs.getString("themeMode"),
+    );
     _useDynamicColor = prefs.getBool("useDynamicColor") != null
         ? prefs.getBool("useDynamicColor")!
         : true;
@@ -105,21 +132,67 @@ class SettingsController with ChangeNotifier {
         ? prefs.getString("accentColor")!
         : "Default";
 
-    _defaultFeedType = prefs.getString('defaultFeedType') != null
-        ? PostType.values.byName(prefs.getString("defaultFeedType")!)
-        : PostType.thread;
-    _defaultEntriesFeedSort = prefs.getString('defaultEntriesFeedSort') != null
-        ? FeedSort.values.byName(prefs.getString("defaultEntriesFeedSort")!)
-        : FeedSort.hot;
-    _defaultPostsFeedSort = prefs.getString('defaultPostsFeedSort') != null
-        ? FeedSort.values.byName(prefs.getString("defaultPostsFeedSort")!)
-        : FeedSort.hot;
-    _defaultExploreFeedSort = prefs.getString('defaultExploreFeedSort') != null
-        ? FeedSort.values.byName(prefs.getString("defaultExploreFeedSort")!)
-        : FeedSort.newest;
-    _defaultCommentSort = prefs.getString('defaultCommentSort') != null
-        ? CommentSort.values.byName(prefs.getString("defaultCommentSort")!)
-        : CommentSort.hot;
+    _feedActionBackToTop = parseEnum(
+      ActionLocation.values,
+      ActionLocation.fabMenu,
+      prefs.getString("feedActionBackToTop"),
+    );
+    _feedActionCreatePost = parseEnum(
+      ActionLocation.values,
+      ActionLocation.fabMenu,
+      prefs.getString("feedActionCreatePost"),
+    );
+    _feedActionExpandFab = parseEnum(
+      ActionLocation.values,
+      ActionLocation.fabTap,
+      prefs.getString("feedActionExpandFab"),
+    );
+    _feedActionRefresh = parseEnum(
+      ActionLocation.values,
+      ActionLocation.fabMenu,
+      prefs.getString("feedActionRefresh"),
+    );
+    _feedActionSetFilter = parseEnum(
+      ActionLocationWithTabs.values,
+      ActionLocationWithTabs.tabs,
+      prefs.getString("feedActionSetFilter"),
+    );
+    _feedActionSetSort = parseEnum(
+      ActionLocation.values,
+      ActionLocation.appBar,
+      prefs.getString("feedActionSetSort"),
+    );
+    _feedActionSetType = parseEnum(
+      ActionLocationWithTabs.values,
+      ActionLocationWithTabs.appBar,
+      prefs.getString("feedActionSetType"),
+    );
+
+    _defaultFeedType = parseEnum(
+      PostType.values,
+      PostType.thread,
+      prefs.getString("defaultFeedType"),
+    );
+    _defaultEntriesFeedSort = parseEnum(
+      FeedSort.values,
+      FeedSort.hot,
+      prefs.getString('defaultEntriesFeedSort'),
+    );
+    _defaultPostsFeedSort = parseEnum(
+      FeedSort.values,
+      FeedSort.hot,
+      prefs.getString('defaultPostsFeedSort'),
+    );
+    _defaultExploreFeedSort = parseEnum(
+      FeedSort.values,
+      FeedSort.hot,
+      prefs.getString('defaultExploreFeedSort'),
+    );
+    _defaultCommentSort = parseEnum(
+      CommentSort.values,
+      CommentSort.hot,
+      prefs.getString("defaultCommentSort"),
+    );
 
     _useAccountLangFilter = prefs.getBool("useAccountLangFilter") != null
         ? prefs.getBool("useAccountLangFilter")!

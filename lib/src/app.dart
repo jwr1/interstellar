@@ -78,6 +78,9 @@ class _MyAppState extends State<MyApp> {
                     return Scaffold(
                       bottomNavigationBar: orientation == Orientation.portrait
                           ? NavigationBar(
+                              height: 56,
+                              labelBehavior:
+                                  NavigationDestinationLabelBehavior.alwaysHide,
                               destinations: [
                                 const NavigationDestination(
                                     label: 'Feed',
@@ -166,7 +169,7 @@ class _MyAppState extends State<MyApp> {
                           const ExploreScreen(),
                           const ProfileScreen(),
                           SettingsScreen(controller: widget.settingsController)
-                        ][_navIndex])
+                        ][_navIndex]),
                       ]),
                     );
                   },

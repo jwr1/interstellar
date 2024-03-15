@@ -133,8 +133,8 @@ class _PostPageState extends State<PostPage> {
             padding: const EdgeInsets.only(right: 8),
             child: IconButton(
               onPressed: () async {
-                final newSort = await commentSortSelect.inquireSelection(
-                    context, commentSort);
+                final newSort =
+                    await commentSortSelect.askSelection(context, commentSort);
 
                 if (newSort != null && newSort != commentSort) {
                   setState(() {

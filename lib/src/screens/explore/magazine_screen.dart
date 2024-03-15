@@ -6,7 +6,6 @@ import 'package:interstellar/src/screens/feed/feed_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
-import 'package:interstellar/src/widgets/floating_menu.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
 import 'package:interstellar/src/widgets/subscription_button.dart';
 import 'package:provider/provider.dart';
@@ -50,6 +49,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
       source: FeedSource.magazine,
       sourceId: widget.magazineId,
       title: _data?.name ?? '',
+      createPostMagazine: _data,
       details: _data != null
           ? Padding(
               padding: const EdgeInsets.all(12),
@@ -155,13 +155,6 @@ class _MagazineScreenState extends State<MagazineScreen> {
               ),
             )
           : null,
-      floatingActionButton: whenLoggedIn(
-        context,
-        FloatingMenu(
-          magazineId: widget.magazineId,
-          magazineName: _data?.name,
-        ),
-      ),
     );
   }
 }
