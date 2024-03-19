@@ -158,6 +158,25 @@ class GeneralScreen extends StatelessWidget {
               children: [Text(getLangName(controller.defaultCreateLang))],
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child:
+                Text('Other', style: Theme.of(context).textTheme.titleMedium),
+          ),
+          ListTile(
+            title: const Text('Always Show Instance'),
+            leading: const Icon(Icons.public),
+            onTap: () {
+              controller
+                  .updateAlwaysShowInstance(!controller.alwaysShowInstance);
+            },
+            trailing: Switch(
+              value: controller.alwaysShowInstance,
+              onChanged: controller.updateAlwaysShowInstance,
+            ),
+            subtitle: const Text(
+                'When enabled, the instance of a user/magazine will always display instead of an @ button'),
+          ),
         ],
       ),
     );

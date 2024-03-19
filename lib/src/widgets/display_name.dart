@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
+import 'package:provider/provider.dart';
 
 class DisplayName extends StatelessWidget {
   const DisplayName(this.name, {super.key, this.icon, this.onTap});
@@ -25,12 +27,16 @@ class DisplayName extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(3.0),
             child: Text(
-              localName,
+              localName +
+                  (context.watch<SettingsController>().alwaysShowInstance
+                      ? '@${hostName ?? context.watch<SettingsController>().instanceHost}'
+                      : ''),
               style: Theme.of(context).textTheme.labelLarge,
             ),
           ),
         ),
-        if (hostName != null)
+        if (!context.watch<SettingsController>().alwaysShowInstance &&
+            hostName != null)
           Tooltip(
             message: hostName,
             triggerMode: TooltipTriggerMode.tap,

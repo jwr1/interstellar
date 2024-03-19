@@ -17,8 +17,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 enum ServerSoftware { kbin, mbin, lemmy }
 
-enum NameInstanceDisplay { hide, button, show }
-
 class Server {
   final ServerSoftware software;
   final String? oauthIdentifier;
@@ -65,11 +63,8 @@ class SettingsController with ChangeNotifier {
   ThemeInfo get theme =>
       themes.firstWhere((theme) => theme.name == _accentColor);
 
-  late NameInstanceDisplay _usernameInstanceDisplay;
-  NameInstanceDisplay get usernameInstanceDisplay => _usernameInstanceDisplay;
-  late NameInstanceDisplay _magazineNameInstanceDisplay;
-  NameInstanceDisplay get magazineNameInstanceDisplay =>
-      _magazineNameInstanceDisplay;
+  late bool _alwaysShowInstance;
+  bool get alwaysShowInstance => _alwaysShowInstance;
 
   late ActionLocation _feedActionBackToTop;
   ActionLocation get feedActionBackToTop => _feedActionBackToTop;
@@ -131,6 +126,10 @@ class SettingsController with ChangeNotifier {
     _accentColor = prefs.getString("accentColor") != null
         ? prefs.getString("accentColor")!
         : "Default";
+
+    _alwaysShowInstance = prefs.getBool("alwaysShowInstance") != null
+        ? prefs.getBool("alwaysShowInstance")!
+        : false;
 
     _feedActionBackToTop = parseEnum(
       ActionLocation.values,
@@ -250,6 +249,18 @@ class SettingsController with ChangeNotifier {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('accentColor', newThemeAccent);
+  }
+
+  Future<void> updateAlwaysShowInstance(bool? newShowDisplayInstance) async {
+    if (newShowDisplayInstance == null) return;
+    if (newShowDisplayInstance == _alwaysShowInstance) return;
+
+    _alwaysShowInstance = newShowDisplayInstance;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('alwaysShowInstance', newShowDisplayInstance);
   }
 
   Future<void> updateDefaultFeedType(PostType? newDefaultFeedMode) async {
