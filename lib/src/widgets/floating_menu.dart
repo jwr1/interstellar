@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/utils/actions.dart';
+import 'package:interstellar/src/widgets/actions.dart';
 
 class FloatingMenu extends StatefulWidget {
   final ActionItem? tapAction;

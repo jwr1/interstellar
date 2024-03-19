@@ -7,10 +7,10 @@ import 'package:interstellar/src/api/comments.dart';
 import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/api/oauth.dart';
 import 'package:interstellar/src/models/post.dart';
-import 'package:interstellar/src/utils/actions.dart';
 import 'package:interstellar/src/utils/jwt_http_client.dart';
 import 'package:interstellar/src/utils/themes.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/actions.dart';
 import 'package:interstellar/src/widgets/markdown_mention.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -488,5 +488,135 @@ class SettingsController with ChangeNotifier {
     }
 
     _api = API(serverSoftware, httpClient, instanceHost);
+  }
+
+  Future<void> updateFeedActionBackToTop(ActionLocation? newLocation) async {
+    if (newLocation == null) return;
+    if (newLocation == _feedActionBackToTop) return;
+
+    removeDuplicateFeedAction(newLocation.name);
+
+    _feedActionBackToTop = newLocation;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('feedActionBackToTop', newLocation.name);
+  }
+
+  Future<void> updateFeedActionCreatePost(ActionLocation? newLocation) async {
+    if (newLocation == null) return;
+    if (newLocation == _feedActionCreatePost) return;
+
+    removeDuplicateFeedAction(newLocation.name);
+
+    _feedActionCreatePost = newLocation;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('feedActionCreatePost', newLocation.name);
+  }
+
+  Future<void> updateFeedActionExpandFab(ActionLocation? newLocation) async {
+    if (newLocation == null) return;
+    if (newLocation == _feedActionExpandFab) return;
+
+    removeDuplicateFeedAction(newLocation.name);
+
+    _feedActionExpandFab = newLocation;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('feedActionExpandFab', newLocation.name);
+  }
+
+  Future<void> updateFeedActionRefresh(ActionLocation? newLocation) async {
+    if (newLocation == null) return;
+    if (newLocation == _feedActionRefresh) return;
+
+    removeDuplicateFeedAction(newLocation.name);
+
+    _feedActionRefresh = newLocation;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('feedActionRefresh', newLocation.name);
+  }
+
+  Future<void> updateFeedActionSetFilter(
+      ActionLocationWithTabs? newLocation) async {
+    if (newLocation == null) return;
+    if (newLocation == _feedActionSetFilter) return;
+
+    removeDuplicateFeedAction(newLocation.name);
+
+    _feedActionSetFilter = newLocation;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('feedActionSetFilter', newLocation.name);
+  }
+
+  Future<void> updateFeedActionSetSort(ActionLocation? newLocation) async {
+    if (newLocation == null) return;
+    if (newLocation == _feedActionSetSort) return;
+
+    removeDuplicateFeedAction(newLocation.name);
+
+    _feedActionSetSort = newLocation;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('feedActionSetSort', newLocation.name);
+  }
+
+  Future<void> updateFeedActionSetType(
+      ActionLocationWithTabs? newLocation) async {
+    if (newLocation == null) return;
+    if (newLocation == _feedActionSetType) return;
+
+    removeDuplicateFeedAction(newLocation.name);
+
+    _feedActionSetType = newLocation;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('feedActionSetType', newLocation.name);
+  }
+
+  Future<void> removeDuplicateFeedAction(String checkLocation) async {
+    if ([
+      ActionLocation.hide.name,
+      ActionLocation.appBar.name,
+      ActionLocation.fabMenu.name,
+    ].contains(checkLocation)) return;
+
+    if (_feedActionBackToTop.name == checkLocation) {
+      updateFeedActionBackToTop(ActionLocation.hide);
+    }
+    if (_feedActionCreatePost.name == checkLocation) {
+      updateFeedActionCreatePost(ActionLocation.hide);
+    }
+    if (_feedActionExpandFab.name == checkLocation) {
+      updateFeedActionExpandFab(ActionLocation.hide);
+    }
+    if (_feedActionRefresh.name == checkLocation) {
+      updateFeedActionRefresh(ActionLocation.hide);
+    }
+    if (_feedActionSetFilter.name == checkLocation) {
+      updateFeedActionSetFilter(ActionLocationWithTabs.hide);
+    }
+    if (_feedActionSetSort.name == checkLocation) {
+      updateFeedActionSetSort(ActionLocation.hide);
+    }
+    if (_feedActionSetType.name == checkLocation) {
+      updateFeedActionSetType(ActionLocationWithTabs.hide);
+    }
   }
 }

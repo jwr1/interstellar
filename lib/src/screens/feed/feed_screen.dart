@@ -7,8 +7,8 @@ import 'package:interstellar/src/screens/create_screen.dart';
 import 'package:interstellar/src/screens/feed/post_item.dart';
 import 'package:interstellar/src/screens/feed/post_page.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
-import 'package:interstellar/src/utils/actions.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/actions.dart';
 import 'package:interstellar/src/widgets/floating_menu.dart';
 import 'package:interstellar/src/widgets/selection_menu.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
@@ -92,7 +92,16 @@ class _FeedScreenState extends State<FeedScreen> {
                 ActionLocation.hide,
                 context.read<SettingsController>().feedActionSetFilter.name,
               ),
-        () {},
+        () async {
+          final newFilter =
+              await feedFilterSelect.askSelection(context, _filter);
+
+          if (newFilter != null && newFilter != _filter) {
+            setState(() {
+              _filter = newFilter;
+            });
+          }
+        },
       ),
       feedActionSetSort.withProps(
         parseEnum(
@@ -274,7 +283,7 @@ class _FeedScreenState extends State<FeedScreen> {
         body: tabsAction == null
             ? FeedScreenBody(
                 key: _getFeedKey(0),
-                source: widget.source!,
+                source: widget.source ?? _filter,
                 sourceId: widget.sourceId,
                 sort: _sort,
                 mode: _mode,
@@ -402,6 +411,32 @@ const SelectionMenu<FeedSort> feedSortSelect = SelectionMenu(
       value: FeedSort.oldest,
       title: 'Oldest',
       icon: Icons.access_time_outlined,
+    ),
+  ],
+);
+
+const SelectionMenu<FeedSource> feedFilterSelect = SelectionMenu(
+  'Filter by',
+  [
+    SelectionMenuItem(
+      value: FeedSource.subscribed,
+      title: 'Subscribed',
+      icon: Icons.group,
+    ),
+    SelectionMenuItem(
+      value: FeedSource.moderated,
+      title: 'Moderated',
+      icon: Icons.lock,
+    ),
+    SelectionMenuItem(
+      value: FeedSource.favorited,
+      title: 'Favorited',
+      icon: Icons.favorite,
+    ),
+    SelectionMenuItem(
+      value: FeedSource.all,
+      title: 'All',
+      icon: Icons.newspaper,
     ),
   ],
 );
