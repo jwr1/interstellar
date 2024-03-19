@@ -78,7 +78,7 @@ class ActionSettings extends StatelessWidget {
                 style: Theme.of(context).textTheme.titleMedium),
           ),
           ListTile(
-            title: const Text('Default Feed Type'),
+            title: const Text('Feed Type'),
             leading: const Icon(Icons.tab),
             enabled: !isLemmy,
             onTap: () async {
@@ -99,7 +99,7 @@ class ActionSettings extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text('Default Threads Feed Sort'),
+            title: const Text('Threads Feed Sort'),
             leading: const Icon(Icons.sort),
             onTap: () async {
               controller.updateDefaultEntriesFeedSort(
@@ -119,7 +119,7 @@ class ActionSettings extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text('Default Microblog Feed Sort'),
+            title: const Text('Microblog Feed Sort'),
             leading: const Icon(Icons.sort),
             enabled: !isLemmy,
             onTap: () async {
@@ -140,7 +140,7 @@ class ActionSettings extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text('Default Explore Feed Sort'),
+            title: const Text('Explore Feed Sort'),
             leading: const Icon(Icons.explore),
             onTap: () async {
               controller.updateDefaultExploreFeedSort(
@@ -160,7 +160,7 @@ class ActionSettings extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text('Default Comment Sort'),
+            title: const Text('Comment Sort'),
             leading: const Icon(Icons.comment),
             onTap: () async {
               controller.updateDefaultCommentSort(

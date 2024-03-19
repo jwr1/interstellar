@@ -114,7 +114,7 @@ class _PostPageState extends State<PostPage> {
         title: ListTile(
           contentPadding: EdgeInsets.zero,
           title: Text(
-            post.title ?? '',
+            post.title ?? post.body ?? '',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),

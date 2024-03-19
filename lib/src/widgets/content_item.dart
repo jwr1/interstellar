@@ -172,7 +172,6 @@ class _ContentItemState extends State<ContentItem> {
         : null;
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         if (widget.image != null || (!widget.isPreview && widget.video != null))
           Wrapper(
