@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/language_codes.dart';
 import 'package:interstellar/src/widgets/image_selector.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:provider/provider.dart';
-
-enum CreateType { entry, post }
 
 class CreateScreen extends StatefulWidget {
   const CreateScreen(
@@ -16,7 +15,7 @@ class CreateScreen extends StatefulWidget {
     super.key,
   });
 
-  final CreateType type;
+  final PostType type;
   final int? magazineId;
   final String? magazineName;
 
@@ -48,8 +47,8 @@ class _CreateScreenState extends State<CreateScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Create ${switch (widget.type) {
-          CreateType.entry => 'thread',
-          CreateType.post => 'post',
+          PostType.thread => 'thread',
+          PostType.microblog => 'microblog',
         }}"),
         actions: [
           IconButton(
@@ -69,7 +68,7 @@ class _CreateScreenState extends State<CreateScreen> {
                     : <String>[];
 
                 switch (widget.type) {
-                  case CreateType.entry:
+                  case PostType.thread:
                     if (_urlTextController.text.isEmpty) {
                       if (_imageFile == null) {
                         await api.threads.createArticle(
@@ -106,7 +105,7 @@ class _CreateScreenState extends State<CreateScreen> {
                         tags: tags,
                       );
                     }
-                  case CreateType.post:
+                  case PostType.microblog:
                     if (_imageFile == null) {
                       await api.microblogs.create(
                         magazineId,
@@ -140,7 +139,7 @@ class _CreateScreenState extends State<CreateScreen> {
             padding: const EdgeInsets.all(12),
             child: Column(
               children: [
-                if (widget.type != CreateType.post)
+                if (widget.type != PostType.microblog)
                   Padding(
                     padding: const EdgeInsets.all(5),
                     child: TextEditor(
@@ -148,7 +147,7 @@ class _CreateScreenState extends State<CreateScreen> {
                       label: "Title",
                     ),
                   ),
-                if (_imageFile == null || widget.type == CreateType.post)
+                if (_imageFile == null || widget.type == PostType.microblog)
                   Padding(
                     padding: const EdgeInsets.all(5),
                     child: TextEditor(
@@ -158,7 +157,7 @@ class _CreateScreenState extends State<CreateScreen> {
                       onChanged: (_) => setState(() {}),
                     ),
                   ),
-                if (widget.type != CreateType.post)
+                if (widget.type != PostType.microblog)
                   Padding(
                     padding: const EdgeInsets.all(5),
                     child: Row(
@@ -183,14 +182,14 @@ class _CreateScreenState extends State<CreateScreen> {
                       ],
                     ),
                   ),
-                if (widget.type == CreateType.post)
+                if (widget.type == PostType.microblog)
                   ImageSelector(
                     _imageFile,
                     (file) => setState(() {
                       _imageFile = file;
                     }),
                   ),
-                if (widget.type != CreateType.post)
+                if (widget.type != PostType.microblog)
                   Padding(
                     padding: const EdgeInsets.all(5),
                     child: TextEditor(
@@ -206,7 +205,7 @@ class _CreateScreenState extends State<CreateScreen> {
                     label: 'Magazine',
                   ),
                 ),
-                if (widget.type != CreateType.post)
+                if (widget.type != PostType.microblog)
                   CheckboxListTile(
                     title: const Text('Original Content'),
                     value: _isOc,
@@ -226,8 +225,7 @@ class _CreateScreenState extends State<CreateScreen> {
                 ListTile(
                   title: const Text('Language'),
                   onTap: () async {
-                    final newLang =
-                        await languageSelectionMenu.inquireSelection(
+                    final newLang = await languageSelectionMenu.askSelection(
                       context,
                       _lang,
                     );

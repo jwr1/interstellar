@@ -103,7 +103,7 @@ class _UserScreenState extends State<UserScreen> {
               child: IconButton(
                 onPressed: () async {
                   final newSort =
-                      await feedSortSelect.inquireSelection(context, _sort);
+                      await feedSortSelect.askSelection(context, _sort);
 
                   if (newSort != null && newSort != _sort) {
                     setState(() {

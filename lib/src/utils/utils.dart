@@ -99,3 +99,16 @@ String getNameHost(BuildContext context, String username) {
 }
 
 String? nullIfEmpty(String value) => value.isEmpty ? null : value;
+
+T parseEnum<T extends Enum>(
+  List<T> enumValues,
+  T defaultValue,
+  String? name,
+) {
+  if (name == null) return defaultValue;
+
+  return enumValues.firstWhere(
+    (v) => v.name == name,
+    orElse: () => defaultValue,
+  );
+}

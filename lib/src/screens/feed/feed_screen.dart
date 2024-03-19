@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/feed_source.dart';
+import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/models/post.dart';
+import 'package:interstellar/src/screens/create_screen.dart';
 import 'package:interstellar/src/screens/feed/post_item.dart';
 import 'package:interstellar/src/screens/feed/post_page.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/actions.dart';
 import 'package:interstellar/src/widgets/floating_menu.dart';
 import 'package:interstellar/src/widgets/selection_menu.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
@@ -16,7 +19,7 @@ class FeedScreen extends StatefulWidget {
   final int? sourceId;
   final String? title;
   final Widget? details;
-  final Widget? floatingActionButton;
+  final DetailedMagazineModel? createPostMagazine;
 
   const FeedScreen({
     super.key,
@@ -24,7 +27,7 @@ class FeedScreen extends StatefulWidget {
     this.sourceId,
     this.title,
     this.details,
-    this.floatingActionButton,
+    this.createPostMagazine,
   });
 
   @override
@@ -32,13 +35,24 @@ class FeedScreen extends StatefulWidget {
 }
 
 class _FeedScreenState extends State<FeedScreen> {
-  PostType _mode = PostType.thread;
-  FeedSort _sort = FeedSort.hot;
+  final _fabKey = GlobalKey<FloatingMenuState>();
+  final List<GlobalKey<_FeedScreenBodyState>> _feedKeyList = [];
+  late FeedSource _filter;
+  late PostType _mode;
+  late FeedSort _sort;
+
+  _getFeedKey(int index) {
+    while (index >= _feedKeyList.length) {
+      _feedKeyList.add(GlobalKey());
+    }
+    return _feedKeyList[index];
+  }
 
   @override
   void initState() {
     super.initState();
 
+    _filter = whenLoggedIn(context, FeedSource.subscribed) ?? FeedSource.all;
     _mode = context.read<SettingsController>().serverSoftware !=
             ServerSoftware.lemmy
         ? context.read<SettingsController>().defaultFeedType
@@ -55,9 +69,143 @@ class _FeedScreenState extends State<FeedScreen> {
     final currentFeedModeOption = feedTypeSelect.getOption(_mode);
     final currentFeedSortOption = feedSortSelect.getOption(_sort);
 
+    final actions = [
+      feedActionCreatePost.withProps(
+        context.read<SettingsController>().feedActionCreatePost,
+        () async {
+          await Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => CreateScreen(
+                _mode,
+                magazineId: widget.createPostMagazine?.id,
+                magazineName: widget.createPostMagazine?.name,
+              ),
+            ),
+          );
+        },
+      ),
+      feedActionSetFilter.withProps(
+        whenLoggedIn(context, widget.source != null) ?? true
+            ? ActionLocation.hide
+            : parseEnum(
+                ActionLocation.values,
+                ActionLocation.hide,
+                context.read<SettingsController>().feedActionSetFilter.name,
+              ),
+        () async {
+          final newFilter =
+              await feedFilterSelect.askSelection(context, _filter);
+
+          if (newFilter != null && newFilter != _filter) {
+            setState(() {
+              _filter = newFilter;
+            });
+          }
+        },
+      ),
+      feedActionSetSort.withProps(
+        parseEnum(
+          ActionLocation.values,
+          ActionLocation.hide,
+          context.read<SettingsController>().feedActionSetSort.name,
+        ),
+        () async {
+          final newSort = await feedSortSelect.askSelection(context, _sort);
+
+          if (newSort != null && newSort != _sort) {
+            setState(() {
+              _sort = newSort;
+            });
+          }
+        },
+      ),
+      feedActionSetType.withProps(
+        widget.source == FeedSource.domain &&
+                context.read<SettingsController>().serverSoftware ==
+                    ServerSoftware.lemmy
+            ? ActionLocation.hide
+            : parseEnum(
+                ActionLocation.values,
+                ActionLocation.hide,
+                context.read<SettingsController>().feedActionSetType.name,
+              ),
+        () async {
+          final newMode = await feedTypeSelect.askSelection(context, _mode);
+
+          if (newMode != null && newMode != _mode) {
+            setState(() {
+              _mode = newMode;
+              _sort = widget.source == null
+                  ? _mode == PostType.thread
+                      ? context
+                          .read<SettingsController>()
+                          .defaultEntriesFeedSort
+                      : context.read<SettingsController>().defaultPostsFeedSort
+                  : context.read<SettingsController>().defaultExploreFeedSort;
+            });
+          }
+        },
+      ),
+      feedActionRefresh.withProps(
+        context.read<SettingsController>().feedActionRefresh,
+        () {
+          for (var key in _feedKeyList) {
+            key.currentState?.refresh();
+          }
+        },
+      ),
+      feedActionBackToTop.withProps(
+        context.read<SettingsController>().feedActionBackToTop,
+        () {
+          for (var key in _feedKeyList) {
+            key.currentState?.backToTop();
+          }
+        },
+      ),
+      feedActionExpandFab.withProps(
+        context.read<SettingsController>().feedActionExpandFab,
+        () {
+          _fabKey.currentState?.toggle();
+        },
+      ),
+    ];
+
+    final tabsAction = [
+      if (context.read<SettingsController>().feedActionSetFilter ==
+              ActionLocationWithTabs.tabs &&
+          widget.source == null)
+        actions.firstWhere((action) => action.name == feedActionSetFilter.name),
+      if (context.read<SettingsController>().feedActionSetType ==
+          ActionLocationWithTabs.tabs)
+        actions.firstWhere((action) => action.name == feedActionSetType.name),
+    ].firstOrNull;
+
     return Wrapper(
-      shouldWrap: widget.source == null,
-      parentBuilder: (child) => DefaultTabController(length: 4, child: child),
+      shouldWrap: tabsAction != null,
+      parentBuilder: (child) => DefaultTabController(
+        initialIndex: switch (tabsAction?.name) {
+          String name when name == feedActionSetFilter.name => 0,
+          String name when name == feedActionSetType.name => feedTypeSelect
+              .options
+              .asMap()
+              .entries
+              .firstWhere((entry) =>
+                  entry.value.value ==
+                  (context.read<SettingsController>().serverSoftware !=
+                          ServerSoftware.lemmy
+                      ? context.read<SettingsController>().defaultFeedType
+                      : PostType.thread))
+              .key,
+          _ => 0
+        },
+        length: switch (tabsAction?.name) {
+          String name when name == feedActionSetFilter.name => 4,
+          String name when name == feedActionSetType.name =>
+            feedTypeSelect.options.length,
+          _ => 0
+        },
+        child: child,
+      ),
       child: Scaffold(
         appBar: AppBar(
           title: ListTile(
@@ -84,130 +232,132 @@ class _FeedScreenState extends State<FeedScreen> {
               ],
             ),
           ),
-          actions: [
-            // Domain FeedSource is not available for microblogs
-            if (widget.source != FeedSource.domain &&
-                context.read<SettingsController>().serverSoftware !=
-                    ServerSoftware.lemmy)
-              Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: IconButton(
-                  onPressed: () async {
-                    final newMode =
-                        await feedTypeSelect.inquireSelection(context, _mode);
-
-                    if (newMode != null && newMode != _mode) {
-                      setState(() {
-                        _mode = newMode;
-                        _sort = widget.source == null
-                            ? _mode == PostType.thread
-                                ? context
-                                    .read<SettingsController>()
-                                    .defaultEntriesFeedSort
-                                : context
-                                    .read<SettingsController>()
-                                    .defaultPostsFeedSort
-                            : context
-                                .read<SettingsController>()
-                                .defaultExploreFeedSort;
-                      });
-                    }
-                  },
-                  icon: _mode == PostType.thread
-                      ? const Icon(Icons.feed)
-                      : const Icon(Icons.chat),
+          actions: actions
+              .where((action) => action.location == ActionLocation.appBar)
+              .map(
+                (action) => Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: IconButton(
+                    tooltip: action.name,
+                    icon: Icon(action.icon),
+                    onPressed: action.callback,
+                  ),
                 ),
-              ),
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: IconButton(
-                onPressed: () async {
-                  final newSort =
-                      await feedSortSelect.inquireSelection(context, _sort);
-
-                  if (newSort != null && newSort != _sort) {
-                    setState(() {
-                      _sort = newSort;
-                    });
-                  }
-                },
-                icon: const Icon(Icons.sort),
-              ),
-            ),
-          ],
-          bottom: widget.source == null
-              ? whenLoggedIn(
-                  context,
-                  const TabBar(tabs: [
-                    Tab(
-                      text: 'Sub',
-                      icon: Icon(Icons.group),
-                    ),
-                    Tab(
-                      text: 'Mod',
-                      icon: Icon(Icons.lock),
-                    ),
-                    Tab(
-                      text: 'Fav',
-                      icon: Icon(Icons.favorite),
-                    ),
-                    Tab(
-                      text: 'All',
-                      icon: Icon(Icons.newspaper),
-                    ),
-                  ]),
-                )
-              : null,
+              )
+              .toList(),
+          bottom: tabsAction == null
+              ? null
+              : TabBar(
+                  tabs: switch (tabsAction.name) {
+                    String name when name == feedActionSetFilter.name => [
+                        const Tab(
+                          text: 'Sub',
+                          icon: Icon(Icons.group),
+                        ),
+                        const Tab(
+                          text: 'Mod',
+                          icon: Icon(Icons.lock),
+                        ),
+                        const Tab(
+                          text: 'Fav',
+                          icon: Icon(Icons.favorite),
+                        ),
+                        const Tab(
+                          text: 'All',
+                          icon: Icon(Icons.newspaper),
+                        ),
+                      ],
+                    String name when name == feedActionSetType.name =>
+                      feedTypeSelect.options
+                          .map(
+                            (option) => Tab(
+                              text: option.title,
+                              icon: Icon(option.icon),
+                            ),
+                          )
+                          .toList(),
+                    _ => []
+                  },
+                ),
         ),
-        body: widget.source != null
+        body: tabsAction == null
             ? FeedScreenBody(
-                source: widget.source!,
+                key: _getFeedKey(0),
+                source: widget.source ?? _filter,
                 sourceId: widget.sourceId,
                 sort: _sort,
                 mode: _mode,
                 details: widget.details,
               )
-            : whenLoggedIn(
-                context,
-                TabBarView(
-                  children: [
-                    FeedScreenBody(
-                      source: FeedSource.subscribed,
-                      sort: _sort,
-                      mode: _mode,
-                      details: widget.details,
-                    ),
-                    FeedScreenBody(
-                      source: FeedSource.moderated,
-                      sort: _sort,
-                      mode: _mode,
-                      details: widget.details,
-                    ),
-                    FeedScreenBody(
-                      source: FeedSource.favorited,
-                      sort: _sort,
-                      mode: _mode,
-                      details: widget.details,
-                    ),
-                    FeedScreenBody(
-                      source: FeedSource.all,
-                      sort: _sort,
-                      mode: _mode,
-                      details: widget.details,
-                    ),
-                  ],
-                ),
-                otherwise: FeedScreenBody(
-                  source: FeedSource.all,
-                  sort: _sort,
-                  mode: _mode,
-                  details: widget.details,
-                ),
+            : TabBarView(
+                children: switch (tabsAction.name) {
+                  String name when name == feedActionSetFilter.name => [
+                      FeedScreenBody(
+                        key: _getFeedKey(0),
+                        source: FeedSource.subscribed,
+                        sort: _sort,
+                        mode: _mode,
+                        details: widget.details,
+                      ),
+                      FeedScreenBody(
+                        key: _getFeedKey(1),
+                        source: FeedSource.moderated,
+                        sort: _sort,
+                        mode: _mode,
+                        details: widget.details,
+                      ),
+                      FeedScreenBody(
+                        key: _getFeedKey(2),
+                        source: FeedSource.favorited,
+                        sort: _sort,
+                        mode: _mode,
+                        details: widget.details,
+                      ),
+                      FeedScreenBody(
+                        key: _getFeedKey(3),
+                        source: FeedSource.all,
+                        sort: _sort,
+                        mode: _mode,
+                        details: widget.details,
+                      ),
+                    ],
+                  String name when name == feedActionSetType.name => [
+                      FeedScreenBody(
+                        key: _getFeedKey(0),
+                        source: _filter,
+                        sort: _sort,
+                        mode: PostType.thread,
+                        details: widget.details,
+                      ),
+                      FeedScreenBody(
+                        key: _getFeedKey(1),
+                        source: _filter,
+                        sort: _sort,
+                        mode: PostType.microblog,
+                        details: widget.details,
+                      ),
+                    ],
+                  _ => [],
+                },
               ),
-        floatingActionButton: widget.floatingActionButton ??
-            (widget.source == null
-                ? whenLoggedIn(context, const FloatingMenu())
-                : null),
+        floatingActionButton: FloatingMenu(
+          key: _fabKey,
+          tapAction: actions
+              .where(
+                (action) => action.location == ActionLocation.fabTap,
+              )
+              .firstOrNull,
+          holdAction: actions
+              .where(
+                (action) => action.location == ActionLocation.fabHold,
+              )
+              .firstOrNull,
+          menuActions: actions
+              .where(
+                (action) => action.location == ActionLocation.fabMenu,
+              )
+              .toList(),
+        ),
       ),
     );
   }
@@ -265,6 +415,32 @@ const SelectionMenu<FeedSort> feedSortSelect = SelectionMenu(
   ],
 );
 
+const SelectionMenu<FeedSource> feedFilterSelect = SelectionMenu(
+  'Filter by',
+  [
+    SelectionMenuItem(
+      value: FeedSource.subscribed,
+      title: 'Subscribed',
+      icon: Icons.group,
+    ),
+    SelectionMenuItem(
+      value: FeedSource.moderated,
+      title: 'Moderated',
+      icon: Icons.lock,
+    ),
+    SelectionMenuItem(
+      value: FeedSource.favorited,
+      title: 'Favorited',
+      icon: Icons.favorite,
+    ),
+    SelectionMenuItem(
+      value: FeedSource.all,
+      title: 'All',
+      icon: Icons.newspaper,
+    ),
+  ],
+);
+
 class FeedScreenBody extends StatefulWidget {
   final FeedSource source;
   final int? sourceId;
@@ -286,8 +462,9 @@ class FeedScreenBody extends StatefulWidget {
 }
 
 class _FeedScreenBodyState extends State<FeedScreenBody> {
-  final PagingController<String, PostModel> _pagingController =
-      PagingController(firstPageKey: '');
+  final _pagingController =
+      PagingController<String, PostModel>(firstPageKey: '');
+  final _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -339,6 +516,18 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
     }
   }
 
+  void backToTop() {
+    _scrollController.animateTo(
+      _scrollController.position.minScrollExtent,
+      duration: Durations.long1,
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void refresh() {
+    _pagingController.refresh();
+  }
+
   @override
   void didUpdateWidget(covariant FeedScreenBody oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -352,6 +541,7 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
         () => _pagingController.refresh(),
       ),
       child: CustomScrollView(
+        controller: _scrollController,
         slivers: [
           if (widget.details != null)
             SliverToBoxAdapter(
