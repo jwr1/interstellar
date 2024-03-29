@@ -11,7 +11,7 @@ See the [latest release](https://github.com/jwr1/interstellar/releases/latest) f
 
 ## Discussion
 
-You can ask questions, report bugs, or make suggestions either here on [GitHub](https://github.com/jwr1/interstellar/issues), or in the [interstellar magazine](https://kbin.earth/m/interstellar). You can also join the [matrix room](https://matrix.to/#/#kbin-interstellar:matrix.org) for real time discussion.
+You can ask questions, report bugs, or make suggestions either here on [GitHub](https://github.com/jwr1/interstellar/issues), or in the [Interstellar magazine](https://kbin.earth/m/interstellar). You can also join the [Matrix room](https://matrix.to/#/#interstellar-app:matrix.org) for real-time discussion.
 
 ## Screenshots
 
