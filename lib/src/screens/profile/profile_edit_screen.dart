@@ -25,7 +25,9 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
 
   TextEditingController? _aboutTextController;
   XFile? _avatarFile;
+  bool _deleteAvatar = false;
   XFile? _coverFile;
+  bool _deleteCover = false;
 
   @override
   void initState() {
@@ -43,6 +45,17 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
               onPressed: () async {
                 var user = await context.read<SettingsController>().api.users
                     .updateProfile(_aboutTextController!.text);
+
+                if (!context.mounted) return;
+                if (_deleteAvatar) {
+                  user = await context.read<SettingsController>().api.users
+                      .deleteAvatar();
+                }
+                if (!context.mounted) return;
+                if (_deleteCover) {
+                  user = await context.read<SettingsController>().api.users
+                      .deleteCover();
+                }
 
                 if (!context.mounted) return;
                 if (_avatarFile != null) {
@@ -134,6 +147,12 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                             (file) => setState(() {
                           _avatarFile = file;
                         })),
+                    ),
+                    TextButton(
+                        onPressed: () {
+                          _deleteAvatar = true;
+                        },
+                        child: const Text("Delete")
                     )
                   ],
                 ),
@@ -148,6 +167,12 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                           _coverFile = file;
                         }),
                       ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        _deleteCover = true;
+                      },
+                      child: const Text("Delete"),
                     )
                   ],
                 ),

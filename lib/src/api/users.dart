@@ -273,6 +273,23 @@ class APIUsers {
     }
   }
 
+  Future<DetailedUserModel> deleteAvatar() async {
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        const path = '/api/users/avatar';
+        var response = await httpClient.delete(Uri.https(server, path));
+
+        httpErrorHandler(response, message: 'Failed to delete avatar');
+
+        return DetailedUserModel.fromKbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        throw Exception('Not yet implemented for lemmy');
+    }
+  }
+
   Future<DetailedUserModel?> updateCover(XFile image) async {
     switch (software) {
       case ServerSoftware.kbin:
@@ -328,6 +345,23 @@ class APIUsers {
         httpErrorHandler(response, message: "Failed to update cover");
 
         return null;
+    }
+  }
+
+  Future<DetailedUserModel> deleteCover() async {
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        const path = '/api/users/cover';
+        var response = await httpClient.delete(Uri.https(server, path));
+
+        httpErrorHandler(response, message: 'Failed to delete cover');
+
+        return DetailedUserModel.fromKbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        throw Exception('Not yet implemented for lemmy');
     }
   }
 
