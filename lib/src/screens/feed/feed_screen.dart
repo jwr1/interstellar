@@ -173,7 +173,8 @@ class _FeedScreenState extends State<FeedScreen> {
     final tabsAction = [
       if (context.read<SettingsController>().feedActionSetFilter ==
               ActionLocationWithTabs.tabs &&
-          widget.source == null)
+          widget.source == null &&
+          context.read<SettingsController>().isLoggedIn)
         actions.firstWhere((action) => action.name == feedActionSetFilter.name),
       if (context.read<SettingsController>().feedActionSetType ==
           ActionLocationWithTabs.tabs)
