@@ -28,12 +28,21 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
   bool _deleteAvatar = false;
   XFile? _coverFile;
   bool _deleteCover = false;
+  UserSettings? _settings;
 
   @override
   void initState() {
     super.initState();
 
     _aboutTextController = TextEditingController(text: widget.user.about);
+    _initSettings();
+  }
+
+  void _initSettings() async {
+    final settings = await context.read<SettingsController>().api.users.getUserSettings();
+    setState(() {
+      _settings = settings;
+    });
   }
 
   @override
@@ -183,6 +192,144 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                     label: "About",
                     isMarkdown: true,
                   ),
+                ),
+                if (_settings != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Settings",
+                        style: Theme.of(context).textTheme.titleLarge
+                      ),
+                      Row(
+                        children: [
+                          const Text("Show NSFW"),
+                          Checkbox(
+                            value: _settings!.showNSFW,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _settings!.showNSFW = value!;
+                              });
+                            }
+                          )
+                        ],
+                      ),
+                      if (_settings!.blurNSFW != null)
+                        Row(
+                          children: [
+                            const Text("Blur NSFW"),
+                            Checkbox(
+                                value: _settings!.blurNSFW,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    _settings!.blurNSFW = value!;
+                                  });
+                                }
+                            )
+                          ],
+                        ),
+                      if (_settings!.showReadPosts != null)
+                        Row(
+                          children: [
+                            const Text("Show read posts"),
+                            Checkbox(
+                                value: _settings!.showReadPosts,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    _settings!.showReadPosts = value!;
+                                  });
+                                }
+                            )
+                          ],
+                        ),
+                      if (_settings!.showSubscribedUsers != null)
+                        Row(
+                          children: [
+                            const Text("Show subscribed users"),
+                            Checkbox(
+                                value: _settings!.showSubscribedUsers,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    _settings!.showSubscribedUsers = value!;
+                                  });
+                                }
+                            )
+                          ],
+                        ),
+                      if (_settings!.showSubscribedUsers != null)
+                        Row(
+                          children: [
+                            const Text("Show subscribed users"),
+                            Checkbox(
+                                value: _settings!.showSubscribedUsers,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    _settings!.showSubscribedUsers = value!;
+                                  });
+                                }
+                            )
+                          ],
+                        ),
+                      if (_settings!.showSubscribedMagazines != null)
+                        Row(
+                          children: [
+                            const Text("Show subscribed magazines"),
+                            Checkbox(
+                                value: _settings!.showSubscribedMagazines,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    _settings!.showSubscribedMagazines = value!;
+                                  });
+                                }
+                            )
+                          ],
+                        ),
+                      if (_settings!.showSubscribedDomains != null)
+                        Row(
+                          children: [
+                            const Text("Show subscribed domains"),
+                            Checkbox(
+                                value: _settings!.showSubscribedDomains,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    _settings!.showSubscribedDomains = value!;
+                                  });
+                                }
+                            )
+                          ],
+                        ),
+                      if (_settings!.showProfileSubscriptions != null)
+                        Row(
+                          children: [
+                            const Text("Show profile subscriptions"),
+                            Checkbox(
+                                value: _settings!.showProfileSubscriptions,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    _settings!.showProfileSubscriptions = value!;
+                                  });
+                                }
+                            )
+                          ],
+                        ),
+                      if (_settings!.showProfileFollowings != null)
+                        Row(
+                          children: [
+                            const Text("Show profile followings"),
+                            Checkbox(
+                                value: _settings!.showProfileFollowings,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    _settings!.showProfileFollowings = value!;
+                                  });
+                                }
+                            )
+                          ],
+                        ),
+                    ],
+                  )
                 )
               ],
             ),
