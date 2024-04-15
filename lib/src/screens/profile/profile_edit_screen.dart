@@ -29,6 +29,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
   XFile? _coverFile;
   bool _deleteCover = false;
   UserSettings? _settings;
+  bool _settingsChanged = false;
 
   @override
   void initState() {
@@ -52,6 +53,11 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
         actions: [
           IconButton(
               onPressed: () async {
+                if (_settingsChanged) {
+                  _settings = await context.read<SettingsController>().api.users.saveUserSettings(_settings!);
+                }
+                if (!context.mounted) return;
+
                 var user = await context.read<SettingsController>().api.users
                     .updateProfile(_aboutTextController!.text);
 
@@ -195,7 +201,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                 ),
                 if (_settings != null)
                 Padding(
-                  padding: const EdgeInsets.only(top: 12),
+                  padding: const EdgeInsets.only(top: 30),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -206,11 +212,13 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                       Row(
                         children: [
                           const Text("Show NSFW"),
-                          Checkbox(
+                          const Spacer(),
+                          Switch(
                             value: _settings!.showNSFW,
                             onChanged: (bool? value) {
                               setState(() {
                                 _settings!.showNSFW = value!;
+                                _settingsChanged = true;
                               });
                             }
                           )
@@ -220,11 +228,13 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                         Row(
                           children: [
                             const Text("Blur NSFW"),
-                            Checkbox(
-                                value: _settings!.blurNSFW,
+                            const Spacer(),
+                            Switch(
+                                value: _settings!.blurNSFW!,
                                 onChanged: (bool? value) {
                                   setState(() {
                                     _settings!.blurNSFW = value!;
+                                    _settingsChanged = true;
                                   });
                                 }
                             )
@@ -234,11 +244,13 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                         Row(
                           children: [
                             const Text("Show read posts"),
-                            Checkbox(
-                                value: _settings!.showReadPosts,
+                            const Spacer(),
+                            Switch(
+                                value: _settings!.showReadPosts!,
                                 onChanged: (bool? value) {
                                   setState(() {
                                     _settings!.showReadPosts = value!;
+                                    _settingsChanged = true;
                                   });
                                 }
                             )
@@ -248,11 +260,13 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                         Row(
                           children: [
                             const Text("Show subscribed users"),
-                            Checkbox(
-                                value: _settings!.showSubscribedUsers,
+                            const Spacer(),
+                            Switch(
+                                value: _settings!.showSubscribedUsers!,
                                 onChanged: (bool? value) {
                                   setState(() {
                                     _settings!.showSubscribedUsers = value!;
+                                    _settingsChanged = true;
                                   });
                                 }
                             )
@@ -262,11 +276,13 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                         Row(
                           children: [
                             const Text("Show subscribed users"),
-                            Checkbox(
-                                value: _settings!.showSubscribedUsers,
+                            const Spacer(),
+                            Switch(
+                                value: _settings!.showSubscribedUsers!,
                                 onChanged: (bool? value) {
                                   setState(() {
                                     _settings!.showSubscribedUsers = value!;
+                                    _settingsChanged = true;
                                   });
                                 }
                             )
@@ -276,11 +292,13 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                         Row(
                           children: [
                             const Text("Show subscribed magazines"),
-                            Checkbox(
-                                value: _settings!.showSubscribedMagazines,
+                            const Spacer(),
+                            Switch(
+                                value: _settings!.showSubscribedMagazines!,
                                 onChanged: (bool? value) {
                                   setState(() {
                                     _settings!.showSubscribedMagazines = value!;
+                                    _settingsChanged = true;
                                   });
                                 }
                             )
@@ -290,11 +308,13 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                         Row(
                           children: [
                             const Text("Show subscribed domains"),
-                            Checkbox(
-                                value: _settings!.showSubscribedDomains,
+                            const Spacer(),
+                            Switch(
+                                value: _settings!.showSubscribedDomains!,
                                 onChanged: (bool? value) {
                                   setState(() {
                                     _settings!.showSubscribedDomains = value!;
+                                    _settingsChanged = true;
                                   });
                                 }
                             )
@@ -304,11 +324,13 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                         Row(
                           children: [
                             const Text("Show profile subscriptions"),
-                            Checkbox(
-                                value: _settings!.showProfileSubscriptions,
+                            const Spacer(),
+                            Switch(
+                                value: _settings!.showProfileSubscriptions!,
                                 onChanged: (bool? value) {
                                   setState(() {
                                     _settings!.showProfileSubscriptions = value!;
+                                    _settingsChanged = true;
                                   });
                                 }
                             )
@@ -318,11 +340,109 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                         Row(
                           children: [
                             const Text("Show profile followings"),
-                            Checkbox(
-                                value: _settings!.showProfileFollowings,
+                            const Spacer(),
+                            Switch(
+                                value: _settings!.showProfileFollowings!,
                                 onChanged: (bool? value) {
                                   setState(() {
                                     _settings!.showProfileFollowings = value!;
+                                    _settingsChanged = true;
+                                  });
+                                }
+                            )
+                          ],
+                        ),
+                      if (_settings!.notifyOnNewEntry != null)
+                        Row(
+                          children: [
+                            const Text("Notify on new threads in subscribed magazines"),
+                            const Spacer(),
+                            Switch(
+                                value: _settings!.notifyOnNewEntry!,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    _settings!.notifyOnNewEntry = value!;
+                                    _settingsChanged = true;
+                                  });
+                                }
+                            )
+                          ],
+                        ),
+                      if (_settings!.notifyOnNewPost != null)
+                        Row(
+                          children: [
+                            const Text("Notify on new micropost in subscribed magazines"),
+                            const Spacer(),
+                            Switch(
+                                value: _settings!.notifyOnNewPost!,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    _settings!.notifyOnNewPost = value!;
+                                    _settingsChanged = true;
+                                  });
+                                }
+                            )
+                          ],
+                        ),
+                      if (_settings!.notifyOnNewEntryReply != null)
+                        Row(
+                          children: [
+                            const Text("Notify on comments in authored threads"),
+                            const Spacer(),
+                            Switch(
+                                value: _settings!.notifyOnNewEntryReply!,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    _settings!.notifyOnNewEntryReply = value!;
+                                    _settingsChanged = true;
+                                  });
+                                }
+                            )
+                          ],
+                        ),
+                      if (_settings!.notifyOnNewEntryCommentReply != null)
+                        Row(
+                          children: [
+                            const Text("Notify on thread comment reply"),
+                            const Spacer(),
+                            Switch(
+                                value: _settings!.notifyOnNewEntryCommentReply!,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    _settings!.notifyOnNewEntryCommentReply = value!;
+                                    _settingsChanged = true;
+                                  });
+                                }
+                            )
+                          ],
+                        ),
+                      if (_settings!.notifyOnNewPostReply != null)
+                        Row(
+                          children: [
+                            const Text("Notify on comments in authored microposts"),
+                            const Spacer(),
+                            Switch(
+                                value: _settings!.notifyOnNewPostReply!,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    _settings!.notifyOnNewPostReply = value!;
+                                    _settingsChanged = true;
+                                  });
+                                }
+                            )
+                          ],
+                        ),
+                      if (_settings!.notifyOnNewPostCommentReply != null)
+                        Row(
+                          children: [
+                            const Text("Notify on micropost comment reply"),
+                            const Spacer(),
+                            Switch(
+                                value: _settings!.notifyOnNewPostCommentReply!,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    _settings!.notifyOnNewPostCommentReply = value!;
+                                    _settingsChanged = true;
                                   });
                                 }
                             )

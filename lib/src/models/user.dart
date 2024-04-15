@@ -114,6 +114,13 @@ class UserSettings with _$UserSettings {
     required bool? showSubscribedDomains,
     required bool? showProfileSubscriptions,
     required bool? showProfileFollowings,
+
+    required bool? notifyOnNewEntry,
+    required bool? notifyOnNewEntryReply,
+    required bool? notifyOnNewEntryCommentReply,
+    required bool? notifyOnNewPost,
+    required bool? notifyOnNewPostReply,
+    required bool? notifyOnNewPostCommentReply,
   }) = _UserSettings;
 
   factory UserSettings.fromKbin(Map<String, Object?> json) => UserSettings(
@@ -124,7 +131,13 @@ class UserSettings with _$UserSettings {
     showSubscribedMagazines: json['showSubscribedMagazines'] as bool?,
     showSubscribedDomains: json['showSubscribedDomains'] as bool?,
     showProfileSubscriptions: json['showProfileSubscriptions'] as bool?,
-    showProfileFollowings: json['showProfileFollowings'] as bool?
+    showProfileFollowings: json['showProfileFollowings'] as bool?,
+    notifyOnNewEntry: json['notifyOnNewEntry'] as bool?,
+    notifyOnNewEntryReply: json['notifyOnNewEntryReply'] as bool?,
+    notifyOnNewEntryCommentReply: json['notifyOnNewEntryCommentReply'] as bool?,
+    notifyOnNewPost: json['notifyOnNewPost'] as bool?,
+    notifyOnNewPostReply: json['notifyOnNewPostReply'] as bool?,
+    notifyOnNewPostCommentReply: json['notifyOnNewPostCommentReply'] as bool?,
   );
 
   factory UserSettings.fromLemmy(Map<String, Object?> json) => UserSettings(
@@ -135,6 +148,12 @@ class UserSettings with _$UserSettings {
     showSubscribedMagazines: null,
     showSubscribedDomains: null,
     showProfileSubscriptions: null,
-    showProfileFollowings: null
+    showProfileFollowings: null,
+    notifyOnNewEntry: null,
+    notifyOnNewEntryReply: null,
+    notifyOnNewEntryCommentReply: null,
+    notifyOnNewPost: null,
+    notifyOnNewPostReply: null,
+    notifyOnNewPostCommentReply: null,
   );
 }

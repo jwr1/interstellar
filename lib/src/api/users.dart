@@ -433,7 +433,44 @@ class APIUsers {
         httpErrorHandler(response, message: 'Failed to load site info');
 
         return UserSettings.fromLemmy((jsonDecode(response.body)['my_user']
-        ['local_user_view']['local_user']) as Map<String, Object?>);
+            ['local_user_view']['local_user']) as Map<String, Object?>);
+    }
+  }
+
+  Future<UserSettings> saveUserSettings(UserSettings settings) async {
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        const path = '/api/users/settings';
+        final response = await httpClient.put(Uri.https(server, path),
+            body: jsonEncode({
+              'hideAdult': !settings.showNSFW,
+              'showSubscribedUsers': settings.showSubscribedUsers,
+              'showSubscribedMagazines': settings.showSubscribedMagazines,
+              'showSubscribedDomains': settings.showSubscribedDomains,
+              'showProfileSubscriptions': settings.showProfileSubscriptions,
+              'showProfileFollowings': settings.showProfileFollowings
+            }));
+
+        httpErrorHandler(response, message: 'Failed to save user settings');
+
+        return UserSettings.fromKbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        const path = '/api/v3/user/save_user_settings';
+
+        final response = await httpClient.put(Uri.https(server, path),
+            body: jsonEncode({
+              'show_nsfw': settings.showNSFW,
+              'blur_nsfw': settings.blurNSFW,
+              'show_read_posts': settings.showReadPosts
+            }));
+
+        httpErrorHandler(response, message: 'Failed to load site info');
+
+        return UserSettings.fromLemmy((jsonDecode(response.body)['my_user']
+            ['local_user_view']['local_user']) as Map<String, Object?>);
     }
   }
 }
