@@ -5,7 +5,7 @@ import 'package:youtube_explode_dart/youtube_explode_dart.dart'
     as youtube_explode_dart;
 
 bool isSupportedVideo(String link) {
-  return ['www.youtube.com', 'youtube.com', 'youtu.be']
+  return ['www.youtube.com', 'youtube.com', 'youtu.be', 'm.youtube.com']
       .contains(Uri.parse(link).host);
 }
 
