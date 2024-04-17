@@ -87,7 +87,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                 widget.onUpdate(user);
                 Navigator.of(context).pop();
               },
-              icon: const Icon(Icons.start)
+              icon: const Icon(Icons.send)
           )
         ],
       ),
@@ -105,11 +105,13 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                   child: _coverFile != null
                       ? Image.file(File(_coverFile!.path))
                       : widget.user.cover != null
-                        ? Image.network(
-                          widget.user.cover!,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        )
+                        ? _deleteCover
+                          ? null
+                          : Image.network(
+                            widget.user.cover!,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          )
                         : null,
                 ),
                 Positioned(
@@ -118,7 +120,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(12),
                     child: Avatar(
-                      widget.user.avatar,
+                      _deleteAvatar ? null : widget.user.avatar,
                       radius: 32,
                       borderRadius: 4,
                     ),
@@ -166,7 +168,9 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                       ),
                       TextButton(
                           onPressed: () {
-                            _deleteAvatar = true;
+                            setState(() {
+                              _deleteAvatar = true;
+                            });
                           },
                           child: const Text("Delete")
                       )
@@ -186,7 +190,9 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                       ),
                       TextButton(
                         onPressed: () {
-                          _deleteCover = true;
+                          setState(() {
+                            _deleteCover = true;
+                          });
                         },
                         child: const Text("Delete"),
                       )
@@ -210,244 +216,158 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                           "Settings",
                           style: Theme.of(context).textTheme.titleLarge
                         ),
-                        Row(
-                          children: [
-                            const Text("Show NSFW"),
-                            const Spacer(),
-                            Switch(
-                              value: _settings!.showNSFW,
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  _settings!.showNSFW = value!;
-                                  _settingsChanged = true;
-                                });
-                              }
-                            )
-                          ],
+                        SwitchListTile(
+                          title: const Text("Show NSFW"),
+                          value: _settings!.showNSFW,
+                          onChanged: (bool value) {
+                            setState(() {
+                              _settings!.showNSFW = value;
+                              _settingsChanged = true;
+                            });
+                          },
                         ),
                         if (_settings!.blurNSFW != null)
-                          Row(
-                            children: [
-                              const Text("Blur NSFW"),
-                              const Spacer(),
-                              Switch(
-                                  value: _settings!.blurNSFW!,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      _settings!.blurNSFW = value!;
-                                      _settingsChanged = true;
-                                    });
-                                  }
-                              )
-                            ],
+                          SwitchListTile(
+                            title: const Text("Blur NSFW"),
+                            value: _settings!.blurNSFW!,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _settings!.blurNSFW = value!;
+                                _settingsChanged = true;
+                              });
+                            }
                           ),
                         if (_settings!.showReadPosts != null)
-                          Row(
-                            children: [
-                              const Text("Show read posts"),
-                              const Spacer(),
-                              Switch(
-                                  value: _settings!.showReadPosts!,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      _settings!.showReadPosts = value!;
-                                      _settingsChanged = true;
-                                    });
-                                  }
-                              )
-                            ],
+                          SwitchListTile(
+                            title: const Text("Show read posts"),
+                            value: _settings!.showReadPosts!,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _settings!.showReadPosts = value!;
+                                _settingsChanged = true;
+                              });
+                            }
                           ),
                         if (_settings!.showSubscribedUsers != null)
-                          Row(
-                            children: [
-                              const Text("Show subscribed users"),
-                              const Spacer(),
-                              Switch(
-                                  value: _settings!.showSubscribedUsers!,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      _settings!.showSubscribedUsers = value!;
-                                      _settingsChanged = true;
-                                    });
-                                  }
-                              )
-                            ],
-                          ),
-                        if (_settings!.showSubscribedUsers != null)
-                          Row(
-                            children: [
-                              const Text("Show subscribed users"),
-                              const Spacer(),
-                              Switch(
-                                  value: _settings!.showSubscribedUsers!,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      _settings!.showSubscribedUsers = value!;
-                                      _settingsChanged = true;
-                                    });
-                                  }
-                              )
-                            ],
+                          SwitchListTile(
+                            title: const Text("Show subscribed users"),
+                            value: _settings!.showSubscribedUsers!,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _settings!.showSubscribedUsers = value!;
+                                _settingsChanged = true;
+                              });
+                            }
                           ),
                         if (_settings!.showSubscribedMagazines != null)
-                          Row(
-                            children: [
-                              const Text("Show subscribed magazines"),
-                              const Spacer(),
-                              Switch(
-                                  value: _settings!.showSubscribedMagazines!,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      _settings!.showSubscribedMagazines = value!;
-                                      _settingsChanged = true;
-                                    });
-                                  }
-                              )
-                            ],
+                          SwitchListTile(
+                            title: const Text("Show subscribed magazines"),
+                            value: _settings!.showSubscribedMagazines!,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _settings!.showSubscribedMagazines = value!;
+                                _settingsChanged = true;
+                              });
+                            }
                           ),
                         if (_settings!.showSubscribedDomains != null)
-                          Row(
-                            children: [
-                              const Text("Show subscribed domains"),
-                              const Spacer(),
-                              Switch(
-                                  value: _settings!.showSubscribedDomains!,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      _settings!.showSubscribedDomains = value!;
-                                      _settingsChanged = true;
-                                    });
-                                  }
-                              )
-                            ],
+                          SwitchListTile(
+                            title: const Text("Show subscribed domains"),
+                            value: _settings!.showSubscribedDomains!,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _settings!.showSubscribedDomains = value!;
+                                _settingsChanged = true;
+                              });
+                            }
                           ),
                         if (_settings!.showProfileSubscriptions != null)
-                          Row(
-                            children: [
-                              const Text("Show profile subscriptions"),
-                              const Spacer(),
-                              Switch(
-                                  value: _settings!.showProfileSubscriptions!,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      _settings!.showProfileSubscriptions = value!;
-                                      _settingsChanged = true;
-                                    });
-                                  }
-                              )
-                            ],
+                          SwitchListTile(
+                            title: const Text("Show profile subscriptions"),
+                            value: _settings!.showProfileSubscriptions!,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _settings!.showProfileSubscriptions = value!;
+                                _settingsChanged = true;
+                              });
+                            }
                           ),
                         if (_settings!.showProfileFollowings != null)
-                          Row(
-                            children: [
-                              const Text("Show profile followings"),
-                              const Spacer(),
-                              Switch(
-                                  value: _settings!.showProfileFollowings!,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      _settings!.showProfileFollowings = value!;
-                                      _settingsChanged = true;
-                                    });
-                                  }
-                              )
-                            ],
+                          SwitchListTile(
+                            title: const Text("Show profile followings"),
+                            value: _settings!.showProfileFollowings!,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _settings!.showProfileFollowings = value!;
+                                _settingsChanged = true;
+                              });
+                            }
                           ),
                         if (_settings!.notifyOnNewEntry != null)
-                          Row(
-                            children: [
-                              const Text("Notify on new threads in subscribed magazines"),
-                              const Spacer(),
-                              Switch(
-                                  value: _settings!.notifyOnNewEntry!,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      _settings!.notifyOnNewEntry = value!;
-                                      _settingsChanged = true;
-                                    });
-                                  }
-                              )
-                            ],
+                          SwitchListTile(
+                            title: const Text("Notify on new threads in subscribed magazines"),
+                            value: _settings!.notifyOnNewEntry!,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _settings!.notifyOnNewEntry = value!;
+                                _settingsChanged = true;
+                              });
+                            }
                           ),
                         if (_settings!.notifyOnNewPost != null)
-                          Row(
-                            children: [
-                              const Text("Notify on new micropost in subscribed magazines"),
-                              const Spacer(),
-                              Switch(
-                                  value: _settings!.notifyOnNewPost!,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      _settings!.notifyOnNewPost = value!;
-                                      _settingsChanged = true;
-                                    });
-                                  }
-                              )
-                            ],
+                          SwitchListTile(
+                            title: const Text("Notify on new micropost in subscribed magazines"),
+                            value: _settings!.notifyOnNewPost!,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _settings!.notifyOnNewPost = value!;
+                                _settingsChanged = true;
+                              });
+                            }
                           ),
                         if (_settings!.notifyOnNewEntryReply != null)
-                          Row(
-                            children: [
-                              const Text("Notify on comments in authored threads"),
-                              const Spacer(),
-                              Switch(
-                                  value: _settings!.notifyOnNewEntryReply!,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      _settings!.notifyOnNewEntryReply = value!;
-                                      _settingsChanged = true;
-                                    });
-                                  }
-                              )
-                            ],
+                          SwitchListTile(
+                            title: const Text("Notify on comments in authored threads"),
+                            value: _settings!.notifyOnNewEntryReply!,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _settings!.notifyOnNewEntryReply = value!;
+                                _settingsChanged = true;
+                              });
+                            }
                           ),
                         if (_settings!.notifyOnNewEntryCommentReply != null)
-                          Row(
-                            children: [
-                              const Text("Notify on thread comment reply"),
-                              const Spacer(),
-                              Switch(
-                                  value: _settings!.notifyOnNewEntryCommentReply!,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      _settings!.notifyOnNewEntryCommentReply = value!;
-                                      _settingsChanged = true;
-                                    });
-                                  }
-                              )
-                            ],
+                          SwitchListTile(
+                            title: const Text("Notify on thread comment reply"),
+                            value: _settings!.notifyOnNewEntryCommentReply!,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _settings!.notifyOnNewEntryCommentReply = value!;
+                                _settingsChanged = true;
+                              });
+                            }
                           ),
                         if (_settings!.notifyOnNewPostReply != null)
-                          Row(
-                            children: [
-                              const Text("Notify on comments in authored microposts"),
-                              const Spacer(),
-                              Switch(
-                                  value: _settings!.notifyOnNewPostReply!,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      _settings!.notifyOnNewPostReply = value!;
-                                      _settingsChanged = true;
-                                    });
-                                  }
-                              )
-                            ],
+                          SwitchListTile(
+                            title: const Text("Notify on comments in authored microposts"),
+                            value: _settings!.notifyOnNewPostReply!,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _settings!.notifyOnNewPostReply = value!;
+                                _settingsChanged = true;
+                              });
+                            }
                           ),
                         if (_settings!.notifyOnNewPostCommentReply != null)
-                          Row(
-                            children: [
-                              const Text("Notify on micropost comment reply"),
-                              const Spacer(),
-                              Switch(
-                                  value: _settings!.notifyOnNewPostCommentReply!,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      _settings!.notifyOnNewPostCommentReply = value!;
-                                      _settingsChanged = true;
-                                    });
-                                  }
-                              )
-                            ],
+                          SwitchListTile(
+                            title: const Text("Notify on micropost comment reply"),
+                            value: _settings!.notifyOnNewPostCommentReply!,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _settings!.notifyOnNewPostCommentReply = value!;
+                                _settingsChanged = true;
+                              });
+                            }
                           ),
                       ],
                     )

@@ -449,7 +449,13 @@ class APIUsers {
               'showSubscribedMagazines': settings.showSubscribedMagazines,
               'showSubscribedDomains': settings.showSubscribedDomains,
               'showProfileSubscriptions': settings.showProfileSubscriptions,
-              'showProfileFollowings': settings.showProfileFollowings
+              'showProfileFollowings': settings.showProfileFollowings,
+              'notifyOnNewEntry': settings.notifyOnNewEntry,
+              'notifyOnNewEntryReply': settings.notifyOnNewEntryReply,
+              'notifyOnNewEntryCommentReply': settings.notifyOnNewEntryCommentReply,
+              'notifyOnNewPost': settings.notifyOnNewPost,
+              'notifyOnNewPostReply': settings.notifyOnNewPostReply,
+              'notifyOnNewPostCommentReply': settings.notifyOnNewPostCommentReply,
             }));
 
         httpErrorHandler(response, message: 'Failed to save user settings');
