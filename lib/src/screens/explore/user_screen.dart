@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/comments.dart';
 import 'package:interstellar/src/api/feed_source.dart';
@@ -13,10 +12,10 @@ import 'package:interstellar/src/screens/feed/post_comment_screen.dart';
 import 'package:interstellar/src/screens/feed/post_item.dart';
 import 'package:interstellar/src/screens/feed/post_page.dart';
 import 'package:interstellar/src/screens/profile/message_thread_screen.dart';
+import 'package:interstellar/src/screens/profile/profile_edit_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
-import 'package:interstellar/src/widgets/image_selector.dart';
 import 'package:interstellar/src/widgets/loading_template.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
 import 'package:interstellar/src/widgets/subscription_button.dart';
@@ -40,9 +39,6 @@ class UserScreen extends StatefulWidget {
 class _UserScreenState extends State<UserScreen> {
   DetailedUserModel? _data;
   TextEditingController? _messageController;
-  TextEditingController? _aboutTextController;
-  XFile? _avatarFile;
-  XFile? _coverFile;
   late FeedSort _sort;
 
   @override
@@ -163,64 +159,19 @@ class _UserScreenState extends State<UserScreen> {
                             top: 0,
                             child: Padding(
                               padding: const EdgeInsets.all(12),
-                              child: _aboutTextController == null
-                                  ? TextButton(
-                                      onPressed: () => setState(() {
-                                            _aboutTextController =
-                                                TextEditingController(
-                                                    text: user.about);
-                                          }),
-                                      child: const Text("Edit"))
-                                  : Row(
-                                      children: [
-                                        TextButton(
-                                            onPressed: () async {
-                                              var user = await context
-                                                  .read<SettingsController>()
-                                                  .api
-                                                  .users
-                                                  .updateProfile(
-                                                      _aboutTextController!
-                                                          .text);
-                                              if (!mounted) return;
-                                              if (_avatarFile != null) {
-                                                user = await context
-                                                    .read<SettingsController>()
-                                                    .api
-                                                    .users
-                                                    .updateAvatar(_avatarFile!);
-                                              }
-                                              if (!mounted) return;
-                                              if (_coverFile != null) {
-                                                user = await context
-                                                    .read<SettingsController>()
-                                                    .api
-                                                    .users
-                                                    .updateCover(_coverFile!);
-                                              }
-
-                                              setState(() {
-                                                if (user != null) {
-                                                  _data = user;
-                                                }
-                                                _aboutTextController!.dispose();
-                                                _aboutTextController = null;
-                                                _coverFile = null;
-                                                _avatarFile = null;
-                                              });
-                                            },
-                                            child: const Text("Save")),
-                                        TextButton(
-                                            onPressed: () {
-                                              setState(() {
-                                                _aboutTextController!.dispose();
-                                                _aboutTextController = null;
-                                              });
-                                            },
-                                            child: const Text("Cancel")),
-                                      ],
-                                    ),
-                            ))
+                              child: TextButton(
+                                onPressed: () => Navigator.of(context).push(
+                                  MaterialPageRoute(builder: (context) {
+                                    return ProfileEditScreen(_data!, (DetailedUserModel? user) {
+                                      setState(() {
+                                        _data = user;
+                                      });
+                                    });
+                                  })
+                                ),
+                                child: const Text("Edit"))
+                            )
+                        )
                     ],
                   ),
                   Padding(
@@ -377,47 +328,13 @@ class _UserScreenState extends State<UserScreen> {
                               ],
                             )
                           ]),
-                        if (user.about != null || _aboutTextController != null)
+                        if (user.about != null)
                           Padding(
                               padding: const EdgeInsets.only(top: 12),
-                              child: _aboutTextController == null
-                                  ? Markdown(
-                                      user.about!,
-                                      getNameHost(context, user.name),
-                                    )
-                                  : TextEditor(
-                                      _aboutTextController!,
-                                      label: "About",
-                                      isMarkdown: true,
-                                    )),
-                        if (_aboutTextController != null)
-                          Row(
-                            children: [
-                              const Text("Select Avatar"),
-                              Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: ImageSelector(
-                                    _avatarFile,
-                                    (file) => setState(() {
-                                          _avatarFile = file;
-                                        })),
+                              child: Markdown(
+                                  user.about!,
+                                  getNameHost(context, user.name),
                               )
-                            ],
-                          ),
-                        if (_aboutTextController != null)
-                          Row(
-                            children: [
-                              const Text("Select Cover"),
-                              Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: ImageSelector(
-                                  _coverFile,
-                                  (file) => setState(() {
-                                    _coverFile = file;
-                                  }),
-                                ),
-                              )
-                            ],
                           ),
                       ],
                     ),

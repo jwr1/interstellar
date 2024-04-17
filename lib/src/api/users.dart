@@ -273,6 +273,23 @@ class APIUsers {
     }
   }
 
+  Future<DetailedUserModel> deleteAvatar() async {
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        const path = '/api/users/avatar';
+        var response = await httpClient.delete(Uri.https(server, path));
+
+        httpErrorHandler(response, message: 'Failed to delete avatar');
+
+        return DetailedUserModel.fromKbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        throw Exception('Not yet implemented for lemmy');
+    }
+  }
+
   Future<DetailedUserModel?> updateCover(XFile image) async {
     switch (software) {
       case ServerSoftware.kbin:
@@ -331,6 +348,23 @@ class APIUsers {
     }
   }
 
+  Future<DetailedUserModel> deleteCover() async {
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        const path = '/api/users/cover';
+        var response = await httpClient.delete(Uri.https(server, path));
+
+        httpErrorHandler(response, message: 'Failed to delete cover');
+
+        return DetailedUserModel.fromKbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        throw Exception('Not yet implemented for lemmy');
+    }
+  }
+
   Future<DetailedUserListModel> listFollowers(
     int userId, {
     String? page,
@@ -376,6 +410,73 @@ class APIUsers {
 
       case ServerSoftware.lemmy:
         throw Exception('List following not allowed on lemmy');
+    }
+  }
+
+  Future<UserSettings> getUserSettings() async {
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        const path = '/api/users/settings';
+        final response = await httpClient.get(Uri.https(server, path));
+
+        httpErrorHandler(response, message: 'Failed to get user settings');
+
+        return UserSettings.fromKbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        const path = '/api/v3/site';
+
+        final response = await httpClient.get(Uri.https(server, path));
+
+        httpErrorHandler(response, message: 'Failed to load site info');
+
+        return UserSettings.fromLemmy((jsonDecode(response.body)['my_user']
+            ['local_user_view']['local_user']) as Map<String, Object?>);
+    }
+  }
+
+  Future<UserSettings> saveUserSettings(UserSettings settings) async {
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        const path = '/api/users/settings';
+        final response = await httpClient.put(Uri.https(server, path),
+            body: jsonEncode({
+              'hideAdult': !settings.showNSFW,
+              'showSubscribedUsers': settings.showSubscribedUsers,
+              'showSubscribedMagazines': settings.showSubscribedMagazines,
+              'showSubscribedDomains': settings.showSubscribedDomains,
+              'showProfileSubscriptions': settings.showProfileSubscriptions,
+              'showProfileFollowings': settings.showProfileFollowings,
+              'notifyOnNewEntry': settings.notifyOnNewEntry,
+              'notifyOnNewEntryReply': settings.notifyOnNewEntryReply,
+              'notifyOnNewEntryCommentReply': settings.notifyOnNewEntryCommentReply,
+              'notifyOnNewPost': settings.notifyOnNewPost,
+              'notifyOnNewPostReply': settings.notifyOnNewPostReply,
+              'notifyOnNewPostCommentReply': settings.notifyOnNewPostCommentReply,
+            }));
+
+        httpErrorHandler(response, message: 'Failed to save user settings');
+
+        return UserSettings.fromKbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        const path = '/api/v3/user/save_user_settings';
+
+        final response = await httpClient.put(Uri.https(server, path),
+            body: jsonEncode({
+              'show_nsfw': settings.showNSFW,
+              'blur_nsfw': settings.blurNSFW,
+              'show_read_posts': settings.showReadPosts
+            }));
+
+        httpErrorHandler(response, message: 'Failed to load site info');
+
+        return UserSettings.fromLemmy((jsonDecode(response.body)['my_user']
+            ['local_user_view']['local_user']) as Map<String, Object?>);
     }
   }
 }

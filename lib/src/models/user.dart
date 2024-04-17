@@ -101,3 +101,59 @@ class UserModel with _$UserModel {
         avatar: json['avatar'] as String?,
       );
 }
+
+@unfreezed
+class UserSettings with _$UserSettings {
+  factory UserSettings({
+    required bool showNSFW,
+    required bool? blurNSFW,
+    required bool? showReadPosts,
+
+    required bool? showSubscribedUsers,
+    required bool? showSubscribedMagazines,
+    required bool? showSubscribedDomains,
+    required bool? showProfileSubscriptions,
+    required bool? showProfileFollowings,
+
+    required bool? notifyOnNewEntry,
+    required bool? notifyOnNewEntryReply,
+    required bool? notifyOnNewEntryCommentReply,
+    required bool? notifyOnNewPost,
+    required bool? notifyOnNewPostReply,
+    required bool? notifyOnNewPostCommentReply,
+  }) = _UserSettings;
+
+  factory UserSettings.fromKbin(Map<String, Object?> json) => UserSettings(
+    showNSFW: !(json['hideAdult'] as bool),
+    blurNSFW: null,
+    showReadPosts: null,
+    showSubscribedUsers: json['showSubscribedUsers'] as bool?,
+    showSubscribedMagazines: json['showSubscribedMagazines'] as bool?,
+    showSubscribedDomains: json['showSubscribedDomains'] as bool?,
+    showProfileSubscriptions: json['showProfileSubscriptions'] as bool?,
+    showProfileFollowings: json['showProfileFollowings'] as bool?,
+    notifyOnNewEntry: json['notifyOnNewEntry'] as bool?,
+    notifyOnNewEntryReply: json['notifyOnNewEntryReply'] as bool?,
+    notifyOnNewEntryCommentReply: json['notifyOnNewEntryCommentReply'] as bool?,
+    notifyOnNewPost: json['notifyOnNewPost'] as bool?,
+    notifyOnNewPostReply: json['notifyOnNewPostReply'] as bool?,
+    notifyOnNewPostCommentReply: json['notifyOnNewPostCommentReply'] as bool?,
+  );
+
+  factory UserSettings.fromLemmy(Map<String, Object?> json) => UserSettings(
+    showNSFW: json['show_nsfw'] as bool,
+    blurNSFW: json['blur_nsfw'] as bool?,
+    showReadPosts: json['show_read_posts'] as bool?,
+    showSubscribedUsers: null,
+    showSubscribedMagazines: null,
+    showSubscribedDomains: null,
+    showProfileSubscriptions: null,
+    showProfileFollowings: null,
+    notifyOnNewEntry: null,
+    notifyOnNewEntryReply: null,
+    notifyOnNewEntryCommentReply: null,
+    notifyOnNewPost: null,
+    notifyOnNewPostReply: null,
+    notifyOnNewPostCommentReply: null,
+  );
+}
