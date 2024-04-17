@@ -17,6 +17,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 enum ServerSoftware { kbin, mbin, lemmy }
 
+enum PostLayout { auto, narrow, wide }
+
 class Server {
   final ServerSoftware software;
   final String? oauthIdentifier;
@@ -65,6 +67,8 @@ class SettingsController with ChangeNotifier {
 
   late bool _alwaysShowInstance;
   bool get alwaysShowInstance => _alwaysShowInstance;
+  late PostLayout _postLayout;
+  PostLayout get postLayout => _postLayout;
 
   late ActionLocation _feedActionBackToTop;
   ActionLocation get feedActionBackToTop => _feedActionBackToTop;
@@ -130,6 +134,11 @@ class SettingsController with ChangeNotifier {
     _alwaysShowInstance = prefs.getBool("alwaysShowInstance") != null
         ? prefs.getBool("alwaysShowInstance")!
         : false;
+    _postLayout = parseEnum(
+      PostLayout.values,
+      PostLayout.auto,
+      prefs.getString("postLayout"),
+    );
 
     _feedActionBackToTop = parseEnum(
       ActionLocation.values,
@@ -261,6 +270,18 @@ class SettingsController with ChangeNotifier {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('alwaysShowInstance', newShowDisplayInstance);
+  }
+
+  Future<void> updatePostLayout(PostLayout? newPostLayout) async {
+    if (newPostLayout == null) return;
+    if (newPostLayout == _postLayout) return;
+
+    _postLayout = newPostLayout;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('postLayout', newPostLayout.name);
   }
 
   Future<void> updateDefaultFeedType(PostType? newDefaultFeedMode) async {

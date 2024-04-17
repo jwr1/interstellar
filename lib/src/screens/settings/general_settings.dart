@@ -17,6 +17,8 @@ class GeneralScreen extends StatelessWidget {
     final currentThemeMode = themeModeSelect.getOption(controller.themeMode);
     final currentTheme = themeSelect.getOption(controller.accentColor);
 
+    final currentPostLayout = postLayoutSelect.getOption(controller.postLayout);
+
     final customLanguageFilterEnabled =
         !controller.useAccountLangFilter && !isLemmy;
 
@@ -177,6 +179,26 @@ class GeneralScreen extends StatelessWidget {
             subtitle: const Text(
                 'When enabled, the instance of a user/magazine will always display instead of an @ button'),
           ),
+          ListTile(
+            title: const Text('Post Layout'),
+            leading: const Icon(Icons.view_list),
+            onTap: () async {
+              controller.updatePostLayout(
+                await postLayoutSelect.askSelection(
+                  context,
+                  controller.postLayout,
+                ),
+              );
+            },
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(currentPostLayout.icon),
+                const SizedBox(width: 4),
+                Text(currentPostLayout.title),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -214,4 +236,25 @@ SelectionMenu<String> themeSelect = SelectionMenu(
             iconColor: themeInfo.lightMode?.primary,
           ))
       .toList(),
+);
+
+const SelectionMenu<PostLayout> postLayoutSelect = SelectionMenu(
+  'Post Layout',
+  [
+    SelectionMenuItem(
+      value: PostLayout.auto,
+      title: 'Auto',
+      icon: Icons.auto_mode,
+    ),
+    SelectionMenuItem(
+      value: PostLayout.narrow,
+      title: 'Narrow',
+      icon: Icons.smartphone,
+    ),
+    SelectionMenuItem(
+      value: PostLayout.wide,
+      title: 'Wide',
+      icon: Icons.tablet,
+    ),
+  ],
 );
