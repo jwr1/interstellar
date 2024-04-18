@@ -71,7 +71,9 @@ class _FeedScreenState extends State<FeedScreen> {
 
     final actions = [
       feedActionCreatePost.withProps(
-        context.read<SettingsController>().feedActionCreatePost,
+        context.read<SettingsController>().isLoggedIn
+            ? context.read<SettingsController>().feedActionCreatePost
+            : ActionLocation.hide,
         () async {
           await Navigator.of(context).push(
             MaterialPageRoute(
