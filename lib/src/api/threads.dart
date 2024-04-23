@@ -49,7 +49,7 @@ class APIThreads {
           FeedSource.favorited => '/api/entries/favourited',
           FeedSource.magazine => '/api/magazine/${sourceId!}/entries',
           FeedSource.user => '/api/users/${sourceId!}/entries',
-          FeedSource.domain => '/api/users/${sourceId!}/entries',
+          FeedSource.domain => '/api/domain/${sourceId!}/entries',
         };
         final query = queryParams({
           'p': page,
@@ -260,14 +260,14 @@ class APIThreads {
       case ServerSoftware.lemmy:
         const path = '/api/v3/post';
         final response = await httpClient.post(
-            Uri.https(server, path),
+          Uri.https(server, path),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
             'name': title,
             'community_id': magazineID,
             'body': body,
             'nsfw': isAdult
-          })
+          }),
         );
 
         httpErrorHandler(response, message: 'Failed to create entry');
@@ -313,15 +313,15 @@ class APIThreads {
       case ServerSoftware.lemmy:
         const path = '/api/v3/post';
         final response = await httpClient.post(
-            Uri.https(server, path),
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({
-              'name': title,
-              'community_id': magazineID,
-              'url': url,
-              'body': body,
-              'nsfw': isAdult
-            })
+          Uri.https(server, path),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'name': title,
+            'community_id': magazineID,
+            'url': url,
+            'body': body,
+            'nsfw': isAdult
+          }),
         );
 
         httpErrorHandler(response, message: 'Failed to create entry');
@@ -329,7 +329,6 @@ class APIThreads {
         return PostModel.fromLemmy(
             jsonDecode(response.body)['post_view'] as Map<String, Object?>);
     }
-
   }
 
   Future<PostModel> createImage(
@@ -366,7 +365,7 @@ class APIThreads {
         request.fields['isAdult'] = isAdult.toString();
         request.fields['alt'] = alt;
         var response =
-        await http.Response.fromStream(await httpClient.send(request));
+            await http.Response.fromStream(await httpClient.send(request));
 
         httpErrorHandler(response, message: "Failed to create entry");
 
@@ -396,23 +395,22 @@ class APIThreads {
 
         const path = '/api/v3/post';
         final response = await httpClient.post(
-            Uri.https(server, path),
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({
-              'name': title,
-              'community_id': magazineID,
-              'url': 'https://$server/pictrs/image/$imageName',
-              'body': body,
-              'nsfw': isAdult
-            })
+          Uri.https(server, path),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'name': title,
+            'community_id': magazineID,
+            'url': 'https://$server/pictrs/image/$imageName',
+            'body': body,
+            'nsfw': isAdult
+          }),
         );
 
         httpErrorHandler(response, message: 'Failed to create entry');
 
         return PostModel.fromLemmy(
-          jsonDecode(response.body)['post_view'] as Map<String, Object?>);
+            jsonDecode(response.body)['post_view'] as Map<String, Object?>);
     }
-
   }
 
   Future<void> report(int postId, String reason) async {

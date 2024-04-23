@@ -407,7 +407,10 @@ class SettingsController with ChangeNotifier {
   }
 
   Future<void> saveServer(ServerSoftware software, String server) async {
-    if (_servers.containsKey(server)) return;
+    if (_servers.containsKey(server) &&
+        _servers[server]!.software == software) {
+      return;
+    }
 
     _servers[server] = Server(software);
 
