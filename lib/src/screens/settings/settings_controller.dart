@@ -213,7 +213,7 @@ class SettingsController with ChangeNotifier {
         : 'en';
 
     _servers = (jsonDecode(prefs.getString('servers') ??
-            '{"kbin.earth":{"software":"kbin"}}') as Map<String, dynamic>)
+            '{"kbin.earth":{"software":"mbin"}}') as Map<String, dynamic>)
         .map((key, value) => MapEntry(key, Server.fromJson(value)));
     _accounts = (jsonDecode(prefs.getString('accounts') ?? '{"@kbin.earth":{}}')
             as Map<String, dynamic>)
