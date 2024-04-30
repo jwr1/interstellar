@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/utils/variables.dart';
 import 'package:media_kit/media_kit.dart';
+import 'package:provider/provider.dart';
 
 import 'src/app.dart';
 import 'src/screens/settings/settings_controller.dart';
@@ -30,9 +31,11 @@ void main() async {
     return false;
   };
 
-  // Load user settings
   final settingsController = SettingsController();
   await settingsController.loadSettings();
 
-  runApp(MyApp(settingsController: settingsController));
+  runApp(ChangeNotifierProvider.value(
+    value: settingsController,
+    child: const App(),
+  ));
 }

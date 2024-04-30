@@ -1,8 +1,9 @@
 import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
 import 'package:provider/provider.dart';
+
+import './notification_count_controller.dart';
 
 class NotificationBadge extends StatefulWidget {
   final Widget child;
@@ -14,28 +15,14 @@ class NotificationBadge extends StatefulWidget {
 }
 
 class _NotificationBadgeState extends State<NotificationBadge> {
-  int _count = 0;
-
-  @override
-  void initState() {
-    super.initState();
-
-    context
-        .read<SettingsController>()
-        .api
-        .notifications
-        .getCount()
-        .then((value) => setState(() {
-              _count = value;
-            }));
-  }
-
   @override
   Widget build(BuildContext context) {
+    final count = context.watch<NotificationCountController>().value;
+
     return Wrapper(
-      shouldWrap: _count != 0,
+      shouldWrap: count != 0,
       parentBuilder: (child) => badges.Badge(
-        badgeContent: Text('$_count'),
+        badgeContent: Text(count.toString()),
         child: child,
       ),
       child: widget.child,

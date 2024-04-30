@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:interstellar/src/screens/settings/action_settings.dart';
 import 'package:interstellar/src/screens/settings/general_settings.dart';
 import 'package:interstellar/src/screens/settings/login_select.dart';
+import 'package:provider/provider.dart';
 
 import 'settings_controller.dart';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key, required this.controller});
-
-  final SettingsController controller;
+  const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = context.watch<SettingsController>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),

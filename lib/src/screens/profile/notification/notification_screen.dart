@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/notifications.dart';
 import 'package:interstellar/src/models/notification.dart';
-import 'package:interstellar/src/screens/profile/notification_item.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:provider/provider.dart';
+
+import './notification_count_controller.dart';
+import './notification_item.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -28,6 +30,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   Future<void> _fetchPage(String pageKey) async {
+    // Reload notification count on screen load or when screen is refreshed
+    if (pageKey.isEmpty) {
+      context.read<NotificationCountController>().reload();
+    }
+
     try {
       final newPage = await context
           .read<SettingsController>()
@@ -98,6 +105,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             .notifications
                             .putReadAll();
                         _pagingController.refresh();
+
+                        if (!mounted) return;
+                        context.read<NotificationCountController>().reload();
                       },
                       child: const Text('Mark all as read'))
                 ],

@@ -12,6 +12,8 @@ import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
 import 'package:provider/provider.dart';
 
+import './notification_count_controller.dart';
+
 const notificationTitle = {
   NotificationType.entryCreatedNotification: 'created a thread',
   NotificationType.entryEditedNotification: 'edited your thread',
@@ -35,42 +37,48 @@ const notificationTitle = {
   NotificationType.banNotification: 'banned you from',
 };
 
-class NotificationItem extends StatelessWidget {
+class NotificationItem extends StatefulWidget {
   const NotificationItem(this.item, this.onUpdate, {super.key});
 
   final NotificationModel item;
   final void Function(NotificationModel) onUpdate;
 
   @override
+  State<NotificationItem> createState() => _NotificationItemState();
+}
+
+class _NotificationItemState extends State<NotificationItem> {
+  @override
   Widget build(BuildContext context) {
-    Map<String, Object?> rawUser = (item.subject['user'] ??
-        item.subject['sender'] ??
-        item.subject['bannedBy']) as Map<String, Object?>;
+    Map<String, Object?> rawUser = (widget.item.subject['user'] ??
+        widget.item.subject['sender'] ??
+        widget.item.subject['bannedBy']) as Map<String, Object?>;
     UserModel user = UserModel.fromKbin(rawUser);
     MagazineModel? bannedMagazine =
-        item.type == NotificationType.banNotification &&
-                item.subject['magazine'] != null
+        widget.item.type == NotificationType.banNotification &&
+                widget.item.subject['magazine'] != null
             ? MagazineModel.fromKbin(
-                item.subject['magazine'] as Map<String, Object?>)
+                widget.item.subject['magazine'] as Map<String, Object?>)
             : null;
 
-    String body =
-        (item.subject['body'] ?? item.subject['reason'] ?? '') as String;
+    String body = (widget.item.subject['body'] ??
+        widget.item.subject['reason'] ??
+        '') as String;
 
     return Card(
       clipBehavior: Clip.antiAlias,
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      surfaceTintColor: item.status == 'new' ? Colors.amber : null,
+      surfaceTintColor: widget.item.status == 'new' ? Colors.amber : null,
       child: InkWell(
-        onTap: item.subject.containsKey('commentId')
+        onTap: widget.item.subject.containsKey('commentId')
             ? () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => PostCommentScreen(
-                        item.subject.containsKey('postId')
+                        widget.item.subject.containsKey('postId')
                             ? PostType.microblog
                             : PostType.thread,
-                        item.subject['commentId'] as int),
+                        widget.item.subject['commentId'] as int),
                   ),
                 );
               }
@@ -94,7 +102,7 @@ class NotificationItem extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Text(notificationTitle[item.type]!),
+                  Text(notificationTitle[widget.item.type]!),
                   if (bannedMagazine != null)
                     Padding(
                       padding: const EdgeInsets.only(left: 10),
@@ -117,16 +125,19 @@ class NotificationItem extends StatelessWidget {
                           .api
                           .notifications
                           .putRead(
-                            item.id,
-                            item.status == 'new',
+                            widget.item.id,
+                            widget.item.status == 'new',
                           );
 
-                      onUpdate(newNotification);
+                      widget.onUpdate(newNotification);
+
+                      if (!mounted) return;
+                      context.read<NotificationCountController>().reload();
                     },
-                    icon: Icon(item.status == 'new'
+                    icon: Icon(widget.item.status == 'new'
                         ? Icons.mark_email_read
                         : Icons.mark_email_unread),
-                    tooltip: item.status == 'new'
+                    tooltip: widget.item.status == 'new'
                         ? 'Mark as read'
                         : 'Mark as unread',
                   ),
