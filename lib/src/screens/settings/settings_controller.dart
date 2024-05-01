@@ -67,6 +67,8 @@ class SettingsController with ChangeNotifier {
 
   late bool _alwaysShowInstance;
   bool get alwaysShowInstance => _alwaysShowInstance;
+  late bool _compactMode;
+  bool get compactMode => _compactMode;
   late PostLayout _postLayout;
   PostLayout get postLayout => _postLayout;
 
@@ -124,16 +126,11 @@ class SettingsController with ChangeNotifier {
       ThemeMode.system,
       prefs.getString("themeMode"),
     );
-    _useDynamicColor = prefs.getBool("useDynamicColor") != null
-        ? prefs.getBool("useDynamicColor")!
-        : true;
-    _accentColor = prefs.getString("accentColor") != null
-        ? prefs.getString("accentColor")!
-        : "Default";
+    _useDynamicColor = prefs.getBool("useDynamicColor") ?? true;
+    _accentColor = prefs.getString("accentColor") ?? "Default";
 
-    _alwaysShowInstance = prefs.getBool("alwaysShowInstance") != null
-        ? prefs.getBool("alwaysShowInstance")!
-        : false;
+    _alwaysShowInstance = prefs.getBool("alwaysShowInstance") ?? false;
+    _compactMode = prefs.getBool("compactMode") ?? false;
     _postLayout = parseEnum(
       PostLayout.values,
       PostLayout.auto,
@@ -202,15 +199,9 @@ class SettingsController with ChangeNotifier {
       prefs.getString("defaultCommentSort"),
     );
 
-    _useAccountLangFilter = prefs.getBool("useAccountLangFilter") != null
-        ? prefs.getBool("useAccountLangFilter")!
-        : true;
-    _langFilter = prefs.getStringList("langFilter") != null
-        ? prefs.getStringList("langFilter")!.toSet()
-        : {};
-    _defaultCreateLang = prefs.getString("defaultCreateLang") != null
-        ? prefs.getString("defaultCreateLang")!
-        : 'en';
+    _useAccountLangFilter = prefs.getBool("useAccountLangFilter") ?? true;
+    _langFilter = prefs.getStringList("langFilter")?.toSet() ?? {};
+    _defaultCreateLang = prefs.getString("defaultCreateLang") ?? 'en';
 
     _servers = (jsonDecode(prefs.getString('servers') ??
             '{"kbin.earth":{"software":"mbin"}}') as Map<String, dynamic>)
@@ -270,6 +261,18 @@ class SettingsController with ChangeNotifier {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('alwaysShowInstance', newShowDisplayInstance);
+  }
+
+  Future<void> updateCompactMode(bool? newCompactMode) async {
+    if (newCompactMode == null) return;
+    if (newCompactMode == _compactMode) return;
+
+    _compactMode = newCompactMode;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('compactMode', newCompactMode);
   }
 
   Future<void> updatePostLayout(PostLayout? newPostLayout) async {

@@ -113,7 +113,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                       ],
                     ),
                   ),
-                  ...(context.read<SettingsController>().serverSoftware ==
+                  ...(context.watch<SettingsController>().serverSoftware ==
                               ServerSoftware.lemmy ||
                           filter == APIMagazinesFilter.all ||
                           filter == APIMagazinesFilter.local

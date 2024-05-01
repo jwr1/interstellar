@@ -36,8 +36,11 @@ class PostItem extends StatelessWidget {
       video: isVideo ? Uri.parse(item.url!) : null,
       body: item.body,
       createdAt: item.createdAt,
+      editedAt: item.editedAt,
       isPreview: isPreview,
       showMagazineFirst: item.type == PostType.thread,
+      isNSFW: item.isNSFW,
+      isOC: item.isOC == true,
       user: item.user.name,
       userIcon: item.user.avatar,
       userIdOnClick: item.user.id,
@@ -111,8 +114,8 @@ class PostItem extends StatelessWidget {
       onDelete: onDelete,
       numComments: item.numComments,
       openLinkUri: Uri.https(
-        context.read<SettingsController>().instanceHost,
-        context.read<SettingsController>().serverSoftware ==
+        context.watch<SettingsController>().instanceHost,
+        context.watch<SettingsController>().serverSoftware ==
                 ServerSoftware.lemmy
             ? '/post/${item.id}'
             : '/m/${item.magazine.name}/${switch (item.type) {

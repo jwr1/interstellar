@@ -146,6 +146,16 @@ class _PostPageState extends State<PostPage> {
               icon: const Icon(Icons.sort),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: IconButton(
+              onPressed: () async {
+                context.read<SettingsController>().updateCompactMode(
+                    !context.read<SettingsController>().compactMode);
+              },
+              icon: const Icon(Icons.view_agenda),
+            ),
+          ),
         ],
       ),
       body: RefreshIndicator(
@@ -186,10 +196,10 @@ class _PostPageState extends State<PostPage> {
                                 .edit(
                                   post.id,
                                   post.title!,
-                                  post.isOc!,
+                                  post.isOC!,
                                   body,
                                   post.lang!,
-                                  post.isAdult,
+                                  post.isNSFW,
                                 ),
                             PostType.microblog => context
                                 .read<SettingsController>()
@@ -199,7 +209,7 @@ class _PostPageState extends State<PostPage> {
                                   post.id,
                                   body,
                                   post.lang!,
-                                  post.isAdult,
+                                  post.isNSFW,
                                 ),
                           };
                           _onUpdate(newPost);

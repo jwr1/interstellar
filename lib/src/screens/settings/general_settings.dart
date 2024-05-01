@@ -180,6 +180,17 @@ class GeneralScreen extends StatelessWidget {
                 'When enabled, the instance of a user/magazine will always display instead of an @ button'),
           ),
           ListTile(
+            title: const Text('Enable Compact Mode'),
+            leading: const Icon(Icons.view_agenda),
+            onTap: () {
+              controller.updateCompactMode(!controller.compactMode);
+            },
+            trailing: Switch(
+              value: controller.compactMode,
+              onChanged: controller.updateCompactMode,
+            ),
+          ),
+          ListTile(
             title: const Text('Post Layout'),
             leading: const Icon(Icons.view_list),
             onTap: () async {

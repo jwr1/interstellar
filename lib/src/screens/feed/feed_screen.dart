@@ -71,8 +71,8 @@ class _FeedScreenState extends State<FeedScreen> {
 
     final actions = [
       feedActionCreatePost.withProps(
-        context.read<SettingsController>().isLoggedIn
-            ? context.read<SettingsController>().feedActionCreatePost
+        context.watch<SettingsController>().isLoggedIn
+            ? context.watch<SettingsController>().feedActionCreatePost
             : ActionLocation.hide,
         () async {
           await Navigator.of(context).push(
@@ -92,7 +92,7 @@ class _FeedScreenState extends State<FeedScreen> {
             : parseEnum(
                 ActionLocation.values,
                 ActionLocation.hide,
-                context.read<SettingsController>().feedActionSetFilter.name,
+                context.watch<SettingsController>().feedActionSetFilter.name,
               ),
         () async {
           final newFilter =
@@ -109,7 +109,7 @@ class _FeedScreenState extends State<FeedScreen> {
         parseEnum(
           ActionLocation.values,
           ActionLocation.hide,
-          context.read<SettingsController>().feedActionSetSort.name,
+          context.watch<SettingsController>().feedActionSetSort.name,
         ),
         () async {
           final newSort = await feedSortSelect.askSelection(context, _sort);
@@ -123,13 +123,13 @@ class _FeedScreenState extends State<FeedScreen> {
       ),
       feedActionSetType.withProps(
         widget.source == FeedSource.domain &&
-                context.read<SettingsController>().serverSoftware ==
+                context.watch<SettingsController>().serverSoftware ==
                     ServerSoftware.lemmy
             ? ActionLocation.hide
             : parseEnum(
                 ActionLocation.values,
                 ActionLocation.hide,
-                context.read<SettingsController>().feedActionSetType.name,
+                context.watch<SettingsController>().feedActionSetType.name,
               ),
         () async {
           final newMode = await feedTypeSelect.askSelection(context, _mode);
@@ -149,7 +149,7 @@ class _FeedScreenState extends State<FeedScreen> {
         },
       ),
       feedActionRefresh.withProps(
-        context.read<SettingsController>().feedActionRefresh,
+        context.watch<SettingsController>().feedActionRefresh,
         () {
           for (var key in _feedKeyList) {
             key.currentState?.refresh();
@@ -157,7 +157,7 @@ class _FeedScreenState extends State<FeedScreen> {
         },
       ),
       feedActionBackToTop.withProps(
-        context.read<SettingsController>().feedActionBackToTop,
+        context.watch<SettingsController>().feedActionBackToTop,
         () {
           for (var key in _feedKeyList) {
             key.currentState?.backToTop();
@@ -165,7 +165,7 @@ class _FeedScreenState extends State<FeedScreen> {
         },
       ),
       feedActionExpandFab.withProps(
-        context.read<SettingsController>().feedActionExpandFab,
+        context.watch<SettingsController>().feedActionExpandFab,
         () {
           _fabKey.currentState?.toggle();
         },
@@ -173,12 +173,12 @@ class _FeedScreenState extends State<FeedScreen> {
     ];
 
     final tabsAction = [
-      if (context.read<SettingsController>().feedActionSetFilter ==
+      if (context.watch<SettingsController>().feedActionSetFilter ==
               ActionLocationWithTabs.tabs &&
           widget.source == null &&
-          context.read<SettingsController>().isLoggedIn)
+          context.watch<SettingsController>().isLoggedIn)
         actions.firstWhere((action) => action.name == feedActionSetFilter.name),
-      if (context.read<SettingsController>().feedActionSetType ==
+      if (context.watch<SettingsController>().feedActionSetType ==
           ActionLocationWithTabs.tabs)
         actions.firstWhere((action) => action.name == feedActionSetType.name),
     ].firstOrNull;
@@ -194,9 +194,9 @@ class _FeedScreenState extends State<FeedScreen> {
               .entries
               .firstWhere((entry) =>
                   entry.value.value ==
-                  (context.read<SettingsController>().serverSoftware !=
+                  (context.watch<SettingsController>().serverSoftware !=
                           ServerSoftware.lemmy
-                      ? context.read<SettingsController>().defaultFeedType
+                      ? context.watch<SettingsController>().defaultFeedType
                       : PostType.thread))
               .key,
           _ => 0
@@ -215,8 +215,8 @@ class _FeedScreenState extends State<FeedScreen> {
             contentPadding: EdgeInsets.zero,
             title: Text(
               widget.title ??
-                  context.read<SettingsController>().selectedAccount +
-                      (context.read<SettingsController>().isLoggedIn
+                  context.watch<SettingsController>().selectedAccount +
+                      (context.watch<SettingsController>().isLoggedIn
                           ? ''
                           : ' (Guest)'),
               maxLines: 1,
@@ -235,19 +235,30 @@ class _FeedScreenState extends State<FeedScreen> {
               ],
             ),
           ),
-          actions: actions
-              .where((action) => action.location == ActionLocation.appBar)
-              .map(
-                (action) => Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: IconButton(
-                    tooltip: action.name,
-                    icon: Icon(action.icon),
-                    onPressed: action.callback,
+          actions: [
+            ...actions
+                .where((action) => action.location == ActionLocation.appBar)
+                .map(
+                  (action) => Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: IconButton(
+                      tooltip: action.name,
+                      icon: Icon(action.icon),
+                      onPressed: action.callback,
+                    ),
                   ),
                 ),
-              )
-              .toList(),
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: IconButton(
+                onPressed: () async {
+                  context.read<SettingsController>().updateCompactMode(
+                      !context.read<SettingsController>().compactMode);
+                },
+                icon: const Icon(Icons.view_agenda),
+              ),
+            ),
+          ],
           bottom: tabsAction == null
               ? null
               : TabBar(
@@ -534,7 +545,12 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
   @override
   void didUpdateWidget(covariant FeedScreenBody oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _pagingController.refresh();
+    if (widget.mode != oldWidget.mode ||
+        widget.sort != oldWidget.sort ||
+        widget.source != oldWidget.source ||
+        widget.sourceId != oldWidget.sourceId) {
+      _pagingController.refresh();
+    }
   }
 
   @override
@@ -553,10 +569,8 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
           PagedSliverList(
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<PostModel>(
-              itemBuilder: (context, item, index) => Card(
-                margin: const EdgeInsets.all(12),
-                clipBehavior: Clip.antiAlias,
-                child: InkWell(
+              itemBuilder: (context, item, index) {
+                final inner = InkWell(
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
@@ -584,8 +598,21 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
                     },
                     isPreview: item.type == PostType.thread,
                   ),
-                ),
-              ),
+                );
+
+                return context.watch<SettingsController>().compactMode
+                    ? Column(
+                        children: [
+                          inner,
+                          const Divider(height: 1),
+                        ],
+                      )
+                    : Card(
+                        margin: const EdgeInsets.all(12),
+                        clipBehavior: Clip.antiAlias,
+                        child: inner,
+                      );
+              },
             ),
           )
         ],
