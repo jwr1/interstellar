@@ -244,9 +244,9 @@ class _ContentItemState extends State<ContentItem> {
               ),
             );
 
-      final titleStyle = context.watch<SettingsController>().compactMode
-          ? Theme.of(context).textTheme.titleMedium!
-          : Theme.of(context).textTheme.titleLarge!;
+      final titleStyle = hasWideSize
+          ? Theme.of(context).textTheme.titleLarge!
+          : Theme.of(context).textTheme.titleMedium!;
 
       return Column(
         children: <Widget>[
