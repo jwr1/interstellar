@@ -146,16 +146,6 @@ class _PostPageState extends State<PostPage> {
               icon: const Icon(Icons.sort),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: IconButton(
-              onPressed: () async {
-                context.read<SettingsController>().updateCompactMode(
-                    !context.read<SettingsController>().compactMode);
-              },
-              icon: const Icon(Icons.view_agenda),
-            ),
-          ),
         ],
       ),
       body: RefreshIndicator(

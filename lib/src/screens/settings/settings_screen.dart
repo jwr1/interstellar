@@ -46,6 +46,31 @@ class SettingsScreen extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
+            child:
+                Text('Presets', style: Theme.of(context).textTheme.titleMedium),
+          ),
+          ListTile(
+            title: const Text('Classic Layout'),
+            onTap: () async {
+              controller.presetClassic();
+
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('Preset enabled'),
+              ));
+            },
+          ),
+          ListTile(
+            title: const Text('Compact Layout'),
+            onTap: () async {
+              controller.presetCompact();
+
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('Preset enabled'),
+              ));
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
             child: Text('Accounts',
                 style: Theme.of(context).textTheme.titleMedium),
           ),

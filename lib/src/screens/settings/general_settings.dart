@@ -17,7 +17,8 @@ class GeneralScreen extends StatelessWidget {
     final currentThemeMode = themeModeSelect.getOption(controller.themeMode);
     final currentTheme = themeSelect.getOption(controller.accentColor);
 
-    final currentPostLayout = postLayoutSelect.getOption(controller.postLayout);
+    final currentPostImagePosition =
+        postLayoutSelect.getOption(controller.postImagePosition);
 
     final customLanguageFilterEnabled =
         !controller.useAccountLangFilter && !isLemmy;
@@ -85,6 +86,54 @@ class GeneralScreen extends StatelessWidget {
               ],
             ),
             enabled: !controller.useDynamicColor,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Text('Post Appearance',
+                style: Theme.of(context).textTheme.titleMedium),
+          ),
+          ListTile(
+            title: const Text('Image Position'),
+            leading: const Icon(Icons.image),
+            onTap: () async {
+              controller.updatePostImagePosition(
+                await postLayoutSelect.askSelection(
+                  context,
+                  controller.postImagePosition,
+                ),
+              );
+            },
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(currentPostImagePosition.icon),
+                const SizedBox(width: 4),
+                Text(currentPostImagePosition.title),
+              ],
+            ),
+          ),
+          ListTile(
+            title: const Text('Show Text Preview'),
+            leading: const Icon(Icons.description),
+            onTap: () {
+              controller.updateShowTextPreview(!controller.postShowTextPreview);
+            },
+            trailing: Switch(
+              value: controller.postShowTextPreview,
+              onChanged: controller.updateShowTextPreview,
+            ),
+          ),
+          ListTile(
+            title: const Text('Use Card Preview'),
+            leading: const Icon(Icons.view_agenda),
+            onTap: () {
+              controller
+                  .updatePostUseCardPreview(!controller.postUseCardPreview);
+            },
+            trailing: Switch(
+              value: controller.postUseCardPreview,
+              onChanged: controller.updatePostUseCardPreview,
+            ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
@@ -179,37 +228,6 @@ class GeneralScreen extends StatelessWidget {
             subtitle: const Text(
                 'When enabled, the instance of a user/magazine will always display instead of an @ button'),
           ),
-          ListTile(
-            title: const Text('Enable Compact Mode'),
-            leading: const Icon(Icons.view_agenda),
-            onTap: () {
-              controller.updateCompactMode(!controller.compactMode);
-            },
-            trailing: Switch(
-              value: controller.compactMode,
-              onChanged: controller.updateCompactMode,
-            ),
-          ),
-          ListTile(
-            title: const Text('Post Layout'),
-            leading: const Icon(Icons.view_list),
-            onTap: () async {
-              controller.updatePostLayout(
-                await postLayoutSelect.askSelection(
-                  context,
-                  controller.postLayout,
-                ),
-              );
-            },
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(currentPostLayout.icon),
-                const SizedBox(width: 4),
-                Text(currentPostLayout.title),
-              ],
-            ),
-          ),
         ],
       ),
     );
@@ -249,22 +267,22 @@ SelectionMenu<String> themeSelect = SelectionMenu(
       .toList(),
 );
 
-const SelectionMenu<PostLayout> postLayoutSelect = SelectionMenu(
-  'Post Layout',
+const SelectionMenu<PostImagePosition> postLayoutSelect = SelectionMenu(
+  'Post Image Position',
   [
     SelectionMenuItem(
-      value: PostLayout.auto,
+      value: PostImagePosition.auto,
       title: 'Auto',
       icon: Icons.auto_mode,
     ),
     SelectionMenuItem(
-      value: PostLayout.narrow,
-      title: 'Narrow',
+      value: PostImagePosition.top,
+      title: 'Top',
       icon: Icons.smartphone,
     ),
     SelectionMenuItem(
-      value: PostLayout.wide,
-      title: 'Wide',
+      value: PostImagePosition.right,
+      title: 'Right',
       icon: Icons.tablet,
     ),
   ],

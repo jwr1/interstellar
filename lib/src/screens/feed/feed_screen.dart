@@ -235,30 +235,19 @@ class _FeedScreenState extends State<FeedScreen> {
               ],
             ),
           ),
-          actions: [
-            ...actions
-                .where((action) => action.location == ActionLocation.appBar)
-                .map(
-                  (action) => Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: IconButton(
-                      tooltip: action.name,
-                      icon: Icon(action.icon),
-                      onPressed: action.callback,
-                    ),
+          actions: actions
+              .where((action) => action.location == ActionLocation.appBar)
+              .map(
+                (action) => Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: IconButton(
+                    tooltip: action.name,
+                    icon: Icon(action.icon),
+                    onPressed: action.callback,
                   ),
                 ),
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: IconButton(
-                onPressed: () async {
-                  context.read<SettingsController>().updateCompactMode(
-                      !context.read<SettingsController>().compactMode);
-                },
-                icon: const Icon(Icons.view_agenda),
-              ),
-            ),
-          ],
+              )
+              .toList(),
           bottom: tabsAction == null
               ? null
               : TabBar(
@@ -600,17 +589,20 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
                   ),
                 );
 
-                return context.watch<SettingsController>().compactMode
-                    ? Column(
+                return context.watch<SettingsController>().postUseCardPreview
+                    ? Card(
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        child: inner,
+                      )
+                    : Column(
                         children: [
                           inner,
                           const Divider(height: 1),
                         ],
-                      )
-                    : Card(
-                        margin: const EdgeInsets.all(12),
-                        clipBehavior: Clip.antiAlias,
-                        child: inner,
                       );
               },
             ),

@@ -203,17 +203,14 @@ class _ContentItemState extends State<ContentItem> {
 
     return LayoutBuilder(builder: (context, constrains) {
       final hasWideSize = constrains.maxWidth > 800;
-      final isWideEnabled = context.watch<SettingsController>().compactMode ||
-          switch (context.watch<SettingsController>().postLayout) {
-            PostLayout.auto => hasWideSize,
-            PostLayout.narrow => false,
-            PostLayout.wide => true,
-          };
+      final isRightImage =
+          switch (context.watch<SettingsController>().postImagePosition) {
+        PostImagePosition.auto => hasWideSize,
+        PostImagePosition.top => false,
+        PostImagePosition.right => true,
+      };
 
-      final double wideImageSize =
-          hasWideSize && !context.watch<SettingsController>().compactMode
-              ? 128
-              : 64;
+      final double rightImageSize = hasWideSize ? 128 : 64;
 
       final imageWidget = widget.image == null
           ? null
@@ -226,11 +223,11 @@ class _ContentItemState extends State<ContentItem> {
               child: Wrapper(
                 shouldWrap: widget.isNSFW,
                 parentBuilder: (child) => Blur(child),
-                child: isWideEnabled
+                child: isRightImage
                     ? Image.network(
                         widget.image!,
-                        height: wideImageSize,
-                        width: wideImageSize,
+                        height: rightImageSize,
+                        width: rightImageSize,
                         fit: BoxFit.cover,
                       )
                     : (widget.isPreview
@@ -250,7 +247,7 @@ class _ContentItemState extends State<ContentItem> {
 
       return Column(
         children: <Widget>[
-          if ((!isWideEnabled && imageWidget != null) ||
+          if ((!isRightImage && imageWidget != null) ||
               (!widget.isPreview && widget.video != null))
             Wrapper(
               shouldWrap: !widget.isPreview,
@@ -371,8 +368,11 @@ class _ContentItemState extends State<ContentItem> {
                         ],
                       ),
                       if (widget.body != null &&
-                          !(widget.isPreview &&
-                              context.watch<SettingsController>().compactMode))
+                          widget.body!.isNotEmpty &&
+                          (!widget.isPreview ||
+                              context
+                                  .watch<SettingsController>()
+                                  .postShowTextPreview))
                         Padding(
                             padding: const EdgeInsets.only(top: 10),
                             child: widget.isPreview
@@ -383,210 +383,206 @@ class _ContentItemState extends State<ContentItem> {
                                   )
                                 : Markdown(
                                     widget.body!, widget.originInstance)),
-                      if (!(widget.isPreview &&
-                          context.watch<SettingsController>().compactMode))
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: LayoutBuilder(builder: (context, constrains) {
-                            final votingWidgets = [
-                              if (widget.boosts != null)
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 8),
-                                  child: Row(
-                                    children: [
-                                      IconButton(
-                                        icon: const Icon(Icons.rocket_launch),
-                                        color: widget.isBoosted
-                                            ? Colors.purple.shade400
-                                            : null,
-                                        onPressed: widget.onBoost,
-                                      ),
-                                      Text(intFormat(widget.boosts!))
-                                    ],
-                                  ),
-                                ),
-                              if (widget.upVotes != null ||
-                                  widget.downVotes != null)
-                                Row(
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: LayoutBuilder(builder: (context, constrains) {
+                          final votingWidgets = [
+                            if (widget.boosts != null)
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8),
+                                child: Row(
                                   children: [
-                                    if (widget.upVotes != null)
-                                      IconButton(
-                                        icon: const Icon(Icons.arrow_upward),
-                                        color: widget.isUpVoted
-                                            ? Colors.green.shade400
-                                            : null,
-                                        onPressed: widget.onUpVote,
-                                      ),
-                                    Text(intFormat((widget.upVotes ?? 0) -
-                                        (widget.downVotes ?? 0))),
-                                    if (widget.downVotes != null)
-                                      IconButton(
-                                        icon: const Icon(Icons.arrow_downward),
-                                        color: widget.isDownVoted
-                                            ? Colors.red.shade400
-                                            : null,
-                                        onPressed: widget.onDownVote,
-                                      ),
+                                    IconButton(
+                                      icon: const Icon(Icons.rocket_launch),
+                                      color: widget.isBoosted
+                                          ? Colors.purple.shade400
+                                          : null,
+                                      onPressed: widget.onBoost,
+                                    ),
+                                    Text(intFormat(widget.boosts!))
                                   ],
                                 ),
-                            ];
-                            final commentWidgets = [
-                              if (widget.numComments != null)
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 8),
-                                  child: Row(
-                                    children: [
-                                      const Icon(Icons.comment),
-                                      const SizedBox(width: 4),
-                                      Text(intFormat(widget.numComments!))
-                                    ],
-                                  ),
+                              ),
+                            if (widget.upVotes != null ||
+                                widget.downVotes != null)
+                              Row(
+                                children: [
+                                  if (widget.upVotes != null)
+                                    IconButton(
+                                      icon: const Icon(Icons.arrow_upward),
+                                      color: widget.isUpVoted
+                                          ? Colors.green.shade400
+                                          : null,
+                                      onPressed: widget.onUpVote,
+                                    ),
+                                  Text(intFormat((widget.upVotes ?? 0) -
+                                      (widget.downVotes ?? 0))),
+                                  if (widget.downVotes != null)
+                                    IconButton(
+                                      icon: const Icon(Icons.arrow_downward),
+                                      color: widget.isDownVoted
+                                          ? Colors.red.shade400
+                                          : null,
+                                      onPressed: widget.onDownVote,
+                                    ),
+                                ],
+                              ),
+                          ];
+                          final commentWidgets = [
+                            if (widget.numComments != null)
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.comment),
+                                    const SizedBox(width: 4),
+                                    Text(intFormat(widget.numComments!))
+                                  ],
                                 ),
-                              if (widget.onReply != null)
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 8),
-                                  child: IconButton(
-                                    icon: const Icon(Icons.reply),
-                                    onPressed: () => setState(() {
-                                      _replyTextController =
-                                          TextEditingController();
-                                    }),
-                                  ),
+                              ),
+                            if (widget.onReply != null)
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8),
+                                child: IconButton(
+                                  icon: const Icon(Icons.reply),
+                                  onPressed: () => setState(() {
+                                    _replyTextController =
+                                        TextEditingController();
+                                  }),
                                 ),
-                              if (widget.onCollapse != null)
-                                IconButton(
-                                    tooltip: widget.isCollapsed
-                                        ? 'Expand'
-                                        : 'Collapse',
-                                    onPressed: widget.onCollapse,
-                                    icon: widget.isCollapsed
-                                        ? const Icon(Icons.expand_more)
-                                        : const Icon(Icons.expand_less)),
-                            ];
-                            final menuWidgets = [
-                              if (widget.openLinkUri != null ||
-                                  widget.onReport != null ||
-                                  widget.onEdit != null ||
-                                  widget.onDelete != null)
-                                MenuAnchor(
-                                  builder: (BuildContext context,
-                                      MenuController controller,
-                                      Widget? child) {
-                                    return IconButton(
-                                      icon: const Icon(Icons.more_vert),
-                                      onPressed: () {
-                                        if (_menuController.isOpen) {
-                                          _menuController.close();
-                                        } else {
-                                          _menuController.open();
+                              ),
+                            if (widget.onCollapse != null)
+                              IconButton(
+                                  tooltip: widget.isCollapsed
+                                      ? 'Expand'
+                                      : 'Collapse',
+                                  onPressed: widget.onCollapse,
+                                  icon: widget.isCollapsed
+                                      ? const Icon(Icons.expand_more)
+                                      : const Icon(Icons.expand_less)),
+                          ];
+                          final menuWidgets = [
+                            if (widget.openLinkUri != null ||
+                                widget.onReport != null ||
+                                widget.onEdit != null ||
+                                widget.onDelete != null)
+                              MenuAnchor(
+                                builder: (BuildContext context,
+                                    MenuController controller, Widget? child) {
+                                  return IconButton(
+                                    icon: const Icon(Icons.more_vert),
+                                    onPressed: () {
+                                      if (_menuController.isOpen) {
+                                        _menuController.close();
+                                      } else {
+                                        _menuController.open();
+                                      }
+                                    },
+                                  );
+                                },
+                                controller: _menuController,
+                                menuChildren: [
+                                  if (widget.openLinkUri != null)
+                                    MenuItemButton(
+                                      onPressed: () => openWebpage(
+                                          context, widget.openLinkUri!),
+                                      child: const Padding(
+                                          padding: EdgeInsets.all(12),
+                                          child: Text("Open Link")),
+                                    ),
+                                  if (widget.onReport != null)
+                                    MenuItemButton(
+                                      onPressed: () async {
+                                        final reportReason =
+                                            await reportContent(context,
+                                                widget.contentTypeName);
+
+                                        if (reportReason != null) {
+                                          await widget.onReport!(reportReason);
                                         }
                                       },
-                                    );
-                                  },
-                                  controller: _menuController,
-                                  menuChildren: [
-                                    if (widget.openLinkUri != null)
-                                      MenuItemButton(
-                                        onPressed: () => openWebpage(
-                                            context, widget.openLinkUri!),
-                                        child: const Padding(
-                                            padding: EdgeInsets.all(12),
-                                            child: Text("Open Link")),
-                                      ),
-                                    if (widget.onReport != null)
-                                      MenuItemButton(
-                                        onPressed: () async {
-                                          final reportReason =
-                                              await reportContent(context,
-                                                  widget.contentTypeName);
+                                      child: const Padding(
+                                          padding: EdgeInsets.all(12),
+                                          child: Text("Report")),
+                                    ),
+                                  if (widget.onEdit != null)
+                                    MenuItemButton(
+                                      onPressed: () => setState(() {
+                                        _editTextController =
+                                            TextEditingController(
+                                                text: widget.body);
+                                      }),
+                                      child: const Padding(
+                                          padding: EdgeInsets.all(12),
+                                          child: Text("Edit")),
+                                    ),
+                                  if (widget.onDelete != null)
+                                    MenuItemButton(
+                                      onPressed: () => showDialog<String>(
+                                        context: context,
+                                        builder: (BuildContext context) =>
+                                            AlertDialog(
+                                          title: Text(
+                                              'Delete ${widget.contentTypeName}'),
+                                          actions: <Widget>[
+                                            OutlinedButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: const Text('Cancel'),
+                                            ),
+                                            FilledButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
 
-                                          if (reportReason != null) {
-                                            await widget
-                                                .onReport!(reportReason);
-                                          }
-                                        },
-                                        child: const Padding(
-                                            padding: EdgeInsets.all(12),
-                                            child: Text("Report")),
-                                      ),
-                                    if (widget.onEdit != null)
-                                      MenuItemButton(
-                                        onPressed: () => setState(() {
-                                          _editTextController =
-                                              TextEditingController(
-                                                  text: widget.body);
-                                        }),
-                                        child: const Padding(
-                                            padding: EdgeInsets.all(12),
-                                            child: Text("Edit")),
-                                      ),
-                                    if (widget.onDelete != null)
-                                      MenuItemButton(
-                                        onPressed: () => showDialog<String>(
-                                          context: context,
-                                          builder: (BuildContext context) =>
-                                              AlertDialog(
-                                            title: Text(
-                                                'Delete ${widget.contentTypeName}'),
-                                            actions: <Widget>[
-                                              OutlinedButton(
-                                                onPressed: () =>
-                                                    Navigator.pop(context),
-                                                child: const Text('Cancel'),
-                                              ),
-                                              FilledButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-
-                                                  widget.onDelete!();
-                                                },
-                                                child: const Text('Delete'),
-                                              ),
-                                            ],
-                                            actionsOverflowAlignment:
-                                                OverflowBarAlignment.center,
-                                            actionsOverflowButtonSpacing: 8,
-                                            actionsOverflowDirection:
-                                                VerticalDirection.up,
-                                          ),
+                                                widget.onDelete!();
+                                              },
+                                              child: const Text('Delete'),
+                                            ),
+                                          ],
+                                          actionsOverflowAlignment:
+                                              OverflowBarAlignment.center,
+                                          actionsOverflowButtonSpacing: 8,
+                                          actionsOverflowDirection:
+                                              VerticalDirection.up,
                                         ),
-                                        child: const Padding(
-                                            padding: EdgeInsets.all(12),
-                                            child: Text("Delete")),
                                       ),
-                                  ],
-                                ),
-                            ];
+                                      child: const Padding(
+                                          padding: EdgeInsets.all(12),
+                                          child: Text("Delete")),
+                                    ),
+                                ],
+                              ),
+                          ];
 
-                            return constrains.maxWidth < 300
-                                ? Column(
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: votingWidgets,
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Row(
-                                        children: <Widget>[
-                                          ...commentWidgets,
-                                          const Spacer(),
-                                          ...menuWidgets,
-                                        ],
-                                      ),
-                                    ],
-                                  )
-                                : Row(
-                                    children: <Widget>[
-                                      ...commentWidgets,
-                                      const Spacer(),
-                                      ...menuWidgets,
-                                      const SizedBox(width: 8),
-                                      ...votingWidgets,
-                                    ],
-                                  );
-                          }),
-                        ),
+                          return constrains.maxWidth < 300
+                              ? Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: votingWidgets,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Row(
+                                      children: <Widget>[
+                                        ...commentWidgets,
+                                        const Spacer(),
+                                        ...menuWidgets,
+                                      ],
+                                    ),
+                                  ],
+                                )
+                              : Row(
+                                  children: <Widget>[
+                                    ...commentWidgets,
+                                    const Spacer(),
+                                    ...menuWidgets,
+                                    const SizedBox(width: 8),
+                                    ...votingWidgets,
+                                  ],
+                                );
+                        }),
+                      ),
                       if (widget.onReply != null &&
                           _replyTextController != null)
                         Padding(
@@ -662,7 +658,7 @@ class _ContentItemState extends State<ContentItem> {
                     ],
                   ),
                 ),
-                if (isWideEnabled && imageWidget != null)
+                if (isRightImage && imageWidget != null)
                   Padding(
                     padding: const EdgeInsets.only(left: 16),
                     child: ClipRRect(

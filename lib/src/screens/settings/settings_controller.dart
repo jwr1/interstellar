@@ -17,7 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 enum ServerSoftware { kbin, mbin, lemmy }
 
-enum PostLayout { auto, narrow, wide }
+enum PostImagePosition { auto, top, right }
 
 class Server {
   final ServerSoftware software;
@@ -65,12 +65,15 @@ class SettingsController with ChangeNotifier {
   ThemeInfo get theme =>
       themes.firstWhere((theme) => theme.name == _accentColor);
 
+  late PostImagePosition _postImagePosition;
+  PostImagePosition get postImagePosition => _postImagePosition;
+  late bool _postShowTextPreview;
+  bool get postShowTextPreview => _postShowTextPreview;
+  late bool _postUseCardPreview;
+  bool get postUseCardPreview => _postUseCardPreview;
+
   late bool _alwaysShowInstance;
   bool get alwaysShowInstance => _alwaysShowInstance;
-  late bool _compactMode;
-  bool get compactMode => _compactMode;
-  late PostLayout _postLayout;
-  PostLayout get postLayout => _postLayout;
 
   late ActionLocation _feedActionBackToTop;
   ActionLocation get feedActionBackToTop => _feedActionBackToTop;
@@ -130,12 +133,14 @@ class SettingsController with ChangeNotifier {
     _accentColor = prefs.getString("accentColor") ?? "Default";
 
     _alwaysShowInstance = prefs.getBool("alwaysShowInstance") ?? false;
-    _compactMode = prefs.getBool("compactMode") ?? false;
-    _postLayout = parseEnum(
-      PostLayout.values,
-      PostLayout.auto,
-      prefs.getString("postLayout"),
+
+    _postImagePosition = parseEnum(
+      PostImagePosition.values,
+      PostImagePosition.auto,
+      prefs.getString("postImagePosition"),
     );
+    _postShowTextPreview = prefs.getBool("postShowTextPreview") ?? true;
+    _postUseCardPreview = prefs.getBool("postUseCardPreview") ?? false;
 
     _feedActionBackToTop = parseEnum(
       ActionLocation.values,
@@ -215,6 +220,32 @@ class SettingsController with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> presetClassic() async {
+    _postImagePosition = PostImagePosition.auto;
+    _postShowTextPreview = true;
+    _postUseCardPreview = true;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('postImagePosition', _postImagePosition.name);
+    await prefs.setBool('postShowTextPreview', _postShowTextPreview);
+    await prefs.setBool('postUseCardPreview', _postUseCardPreview);
+  }
+
+  Future<void> presetCompact() async {
+    _postImagePosition = PostImagePosition.right;
+    _postShowTextPreview = false;
+    _postUseCardPreview = false;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('postImagePosition', _postImagePosition.name);
+    await prefs.setBool('postShowTextPreview', _postShowTextPreview);
+    await prefs.setBool('postUseCardPreview', _postUseCardPreview);
+  }
+
   Future<void> updateThemeMode(ThemeMode? newThemeMode) async {
     if (newThemeMode == null) return;
     if (newThemeMode == _themeMode) return;
@@ -251,6 +282,43 @@ class SettingsController with ChangeNotifier {
     await prefs.setString('accentColor', newThemeAccent);
   }
 
+  Future<void> updatePostImagePosition(
+      PostImagePosition? newPostImagePosition) async {
+    if (newPostImagePosition == null) return;
+    if (newPostImagePosition == _postImagePosition) return;
+
+    _postImagePosition = newPostImagePosition;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('postImagePosition', newPostImagePosition.name);
+  }
+
+  Future<void> updateShowTextPreview(bool? newShowTextPreview) async {
+    if (newShowTextPreview == null) return;
+    if (newShowTextPreview == _postShowTextPreview) return;
+
+    _postShowTextPreview = newShowTextPreview;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('postShowTextPreview', newShowTextPreview);
+  }
+
+  Future<void> updatePostUseCardPreview(bool? newPostUseCardPreview) async {
+    if (newPostUseCardPreview == null) return;
+    if (newPostUseCardPreview == _postUseCardPreview) return;
+
+    _postUseCardPreview = newPostUseCardPreview;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('postUseCardPreview', newPostUseCardPreview);
+  }
+
   Future<void> updateAlwaysShowInstance(bool? newShowDisplayInstance) async {
     if (newShowDisplayInstance == null) return;
     if (newShowDisplayInstance == _alwaysShowInstance) return;
@@ -261,30 +329,6 @@ class SettingsController with ChangeNotifier {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('alwaysShowInstance', newShowDisplayInstance);
-  }
-
-  Future<void> updateCompactMode(bool? newCompactMode) async {
-    if (newCompactMode == null) return;
-    if (newCompactMode == _compactMode) return;
-
-    _compactMode = newCompactMode;
-
-    notifyListeners();
-
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('compactMode', newCompactMode);
-  }
-
-  Future<void> updatePostLayout(PostLayout? newPostLayout) async {
-    if (newPostLayout == null) return;
-    if (newPostLayout == _postLayout) return;
-
-    _postLayout = newPostLayout;
-
-    notifyListeners();
-
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('postLayout', newPostLayout.name);
   }
 
   Future<void> updateDefaultFeedType(PostType? newDefaultFeedMode) async {
