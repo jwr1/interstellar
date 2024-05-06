@@ -55,7 +55,7 @@ class SettingsScreen extends StatelessWidget {
               controller.presetClassic();
 
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text('Preset enabled'),
+                content: Text('Preset applied'),
               ));
             },
           ),
@@ -65,7 +65,7 @@ class SettingsScreen extends StatelessWidget {
               controller.presetCompact();
 
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text('Preset enabled'),
+                content: Text('Preset applied'),
               ));
             },
           ),
