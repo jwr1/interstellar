@@ -186,10 +186,10 @@ class _PostPageState extends State<PostPage> {
                                 .edit(
                                   post.id,
                                   post.title!,
-                                  post.isOc!,
+                                  post.isOC!,
                                   body,
                                   post.lang!,
-                                  post.isAdult,
+                                  post.isNSFW,
                                 ),
                             PostType.microblog => context
                                 .read<SettingsController>()
@@ -199,7 +199,7 @@ class _PostPageState extends State<PostPage> {
                                   post.id,
                                   body,
                                   post.lang!,
-                                  post.isAdult,
+                                  post.isNSFW,
                                 ),
                           };
                           _onUpdate(newPost);

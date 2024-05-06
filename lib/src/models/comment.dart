@@ -54,7 +54,6 @@ class CommentModel with _$CommentModel {
     required int? boosts,
     required int? myVote,
     required bool? myBoost,
-    required bool? isAdult,
     required DateTime createdAt,
     required DateTime? editedAt,
     required List<CommentModel>? children,
@@ -82,7 +81,6 @@ class CommentModel with _$CommentModel {
             ? 1
             : ((json['userVote'] as int?) == -1 ? -1 : 0),
         myBoost: (json['userVote'] as int?) == 1,
-        isAdult: json['isAdult'] as bool,
         createdAt: DateTime.parse(json['createdAt'] as String),
         editedAt: optionalDateTime(json['editedAt'] as String?),
         children: (json['children'] as List<dynamic>)
@@ -136,7 +134,6 @@ class CommentModel with _$CommentModel {
       boosts: null,
       myVote: json['my_vote'] as int?,
       myBoost: null,
-      isAdult: null,
       createdAt: DateTime.parse(lemmyComment['published'] as String),
       editedAt: optionalDateTime(json['updated'] as String?),
       children: children,

@@ -44,6 +44,7 @@ class _EntryCommentState extends State<PostComment> {
               originInstance: getNameHost(context, widget.comment.user.name),
               body: widget.comment.body ?? '_comment deleted_',
               createdAt: widget.comment.createdAt,
+              editedAt: widget.comment.editedAt,
               user: widget.comment.user.name,
               userIcon: widget.comment.user.avatar,
               userIdOnClick: widget.comment.user.id,
@@ -155,8 +156,8 @@ class _EntryCommentState extends State<PostComment> {
                       })
                   : null,
               openLinkUri: Uri.https(
-                context.read<SettingsController>().instanceHost,
-                context.read<SettingsController>().serverSoftware ==
+                context.watch<SettingsController>().instanceHost,
+                context.watch<SettingsController>().serverSoftware ==
                         ServerSoftware.lemmy
                     ? '/comment/${widget.comment.id}'
                     : '/m/${widget.comment.magazine.name}/${switch (widget.comment.postType) {
@@ -186,12 +187,12 @@ class _EntryCommentState extends State<PostComment> {
         if (widget.comment.childCount > 0 && !_isCollapsed)
           Container(
             margin: const EdgeInsets.only(left: 1),
-            padding: const EdgeInsets.only(left: 10),
+            padding: const EdgeInsets.only(left: 9),
             decoration: BoxDecoration(
               border: Border(
                 left: BorderSide(
                   color: Theme.of(context).colorScheme.outlineVariant,
-                  width: 1,
+                  width: 2,
                 ),
               ),
             ),
