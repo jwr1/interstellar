@@ -244,6 +244,10 @@ class _ContentItemState extends State<ContentItem> {
       final titleStyle = hasWideSize
           ? Theme.of(context).textTheme.titleLarge!
           : Theme.of(context).textTheme.titleMedium!;
+      final titleOverflow = widget.isPreview &&
+              context.watch<SettingsController>().postLimitTitlePreview
+          ? TextOverflow.ellipsis
+          : null;
 
       return Column(
         children: <Widget>[
@@ -278,6 +282,7 @@ class _ContentItemState extends State<ContentItem> {
                                     widget.title!,
                                     style: titleStyle.apply(
                                         decoration: TextDecoration.underline),
+                                    overflow: titleOverflow,
                                   ),
                                   onTap: () {
                                     openWebpage(context, widget.link!);
@@ -286,6 +291,7 @@ class _ContentItemState extends State<ContentItem> {
                               : Text(
                                   widget.title!,
                                   style: titleStyle,
+                                  overflow: titleOverflow,
                                 ),
                         ),
                       Row(

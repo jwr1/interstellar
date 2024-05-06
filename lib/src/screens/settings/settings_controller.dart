@@ -67,6 +67,8 @@ class SettingsController with ChangeNotifier {
 
   late PostImagePosition _postImagePosition;
   PostImagePosition get postImagePosition => _postImagePosition;
+  late bool _postLimitTitlePreview;
+  bool get postLimitTitlePreview => _postLimitTitlePreview;
   late bool _postShowTextPreview;
   bool get postShowTextPreview => _postShowTextPreview;
   late bool _postUseCardPreview;
@@ -139,8 +141,9 @@ class SettingsController with ChangeNotifier {
       PostImagePosition.auto,
       prefs.getString("postImagePosition"),
     );
+    _postLimitTitlePreview = prefs.getBool("postLimitTitlePreview") ?? false;
     _postShowTextPreview = prefs.getBool("postShowTextPreview") ?? true;
-    _postUseCardPreview = prefs.getBool("postUseCardPreview") ?? false;
+    _postUseCardPreview = prefs.getBool("postUseCardPreview") ?? true;
 
     _feedActionBackToTop = parseEnum(
       ActionLocation.values,
@@ -222,6 +225,7 @@ class SettingsController with ChangeNotifier {
 
   Future<void> presetClassic() async {
     _postImagePosition = PostImagePosition.auto;
+    _postLimitTitlePreview = false;
     _postShowTextPreview = true;
     _postUseCardPreview = true;
 
@@ -229,12 +233,14 @@ class SettingsController with ChangeNotifier {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('postImagePosition', _postImagePosition.name);
+    await prefs.setBool('postLimitTitlePreview', _postLimitTitlePreview);
     await prefs.setBool('postShowTextPreview', _postShowTextPreview);
     await prefs.setBool('postUseCardPreview', _postUseCardPreview);
   }
 
   Future<void> presetCompact() async {
     _postImagePosition = PostImagePosition.right;
+    _postLimitTitlePreview = true;
     _postShowTextPreview = false;
     _postUseCardPreview = false;
 
@@ -242,173 +248,183 @@ class SettingsController with ChangeNotifier {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('postImagePosition', _postImagePosition.name);
+    await prefs.setBool('postLimitTitlePreview', _postLimitTitlePreview);
     await prefs.setBool('postShowTextPreview', _postShowTextPreview);
     await prefs.setBool('postUseCardPreview', _postUseCardPreview);
   }
 
-  Future<void> updateThemeMode(ThemeMode? newThemeMode) async {
-    if (newThemeMode == null) return;
-    if (newThemeMode == _themeMode) return;
+  Future<void> updateThemeMode(ThemeMode? newValue) async {
+    if (newValue == null) return;
+    if (newValue == _themeMode) return;
 
-    _themeMode = newThemeMode;
+    _themeMode = newValue;
 
     notifyListeners();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('themeMode', newThemeMode.name);
+    await prefs.setString('themeMode', newValue.name);
   }
 
-  Future<void> updateUseDynamicColor(bool? newUseDynamicColor) async {
-    if (newUseDynamicColor == null) return;
-    if (newUseDynamicColor == _useDynamicColor) return;
+  Future<void> updateUseDynamicColor(bool? newValue) async {
+    if (newValue == null) return;
+    if (newValue == _useDynamicColor) return;
 
-    _useDynamicColor = newUseDynamicColor;
+    _useDynamicColor = newValue;
 
     notifyListeners();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('useDynamicColor', newUseDynamicColor);
+    await prefs.setBool('useDynamicColor', newValue);
   }
 
-  Future<void> updateAccentColor(String? newThemeAccent) async {
-    if (newThemeAccent == null) return;
-    if (newThemeAccent == _accentColor) return;
+  Future<void> updateAccentColor(String? newValue) async {
+    if (newValue == null) return;
+    if (newValue == _accentColor) return;
 
-    _accentColor = newThemeAccent;
+    _accentColor = newValue;
 
     notifyListeners();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('accentColor', newThemeAccent);
+    await prefs.setString('accentColor', newValue);
   }
 
-  Future<void> updatePostImagePosition(
-      PostImagePosition? newPostImagePosition) async {
-    if (newPostImagePosition == null) return;
-    if (newPostImagePosition == _postImagePosition) return;
+  Future<void> updatePostImagePosition(PostImagePosition? newValue) async {
+    if (newValue == null) return;
+    if (newValue == _postImagePosition) return;
 
-    _postImagePosition = newPostImagePosition;
+    _postImagePosition = newValue;
 
     notifyListeners();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('postImagePosition', newPostImagePosition.name);
+    await prefs.setString('postImagePosition', newValue.name);
   }
 
-  Future<void> updateShowTextPreview(bool? newShowTextPreview) async {
-    if (newShowTextPreview == null) return;
-    if (newShowTextPreview == _postShowTextPreview) return;
+  Future<void> updatePostLimitTitlePreview(bool? newValue) async {
+    if (newValue == null) return;
+    if (newValue == _postLimitTitlePreview) return;
 
-    _postShowTextPreview = newShowTextPreview;
+    _postLimitTitlePreview = newValue;
 
     notifyListeners();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('postShowTextPreview', newShowTextPreview);
+    await prefs.setBool('postLimitTitlePreview', newValue);
   }
 
-  Future<void> updatePostUseCardPreview(bool? newPostUseCardPreview) async {
-    if (newPostUseCardPreview == null) return;
-    if (newPostUseCardPreview == _postUseCardPreview) return;
+  Future<void> updatePostShowTextPreview(bool? newValue) async {
+    if (newValue == null) return;
+    if (newValue == _postShowTextPreview) return;
 
-    _postUseCardPreview = newPostUseCardPreview;
+    _postShowTextPreview = newValue;
 
     notifyListeners();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('postUseCardPreview', newPostUseCardPreview);
+    await prefs.setBool('postShowTextPreview', newValue);
   }
 
-  Future<void> updateAlwaysShowInstance(bool? newShowDisplayInstance) async {
-    if (newShowDisplayInstance == null) return;
-    if (newShowDisplayInstance == _alwaysShowInstance) return;
+  Future<void> updatePostUseCardPreview(bool? newValue) async {
+    if (newValue == null) return;
+    if (newValue == _postUseCardPreview) return;
 
-    _alwaysShowInstance = newShowDisplayInstance;
+    _postUseCardPreview = newValue;
 
     notifyListeners();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('alwaysShowInstance', newShowDisplayInstance);
+    await prefs.setBool('postUseCardPreview', newValue);
   }
 
-  Future<void> updateDefaultFeedType(PostType? newDefaultFeedMode) async {
-    if (newDefaultFeedMode == null) return;
-    if (newDefaultFeedMode == _defaultFeedType) return;
+  Future<void> updateAlwaysShowInstance(bool? newValue) async {
+    if (newValue == null) return;
+    if (newValue == _alwaysShowInstance) return;
 
-    _defaultFeedType = newDefaultFeedMode;
+    _alwaysShowInstance = newValue;
 
     notifyListeners();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('defaultFeedType', newDefaultFeedMode.name);
+    await prefs.setBool('alwaysShowInstance', newValue);
   }
 
-  Future<void> updateDefaultEntriesFeedSort(
-      FeedSort? newDefaultFeedSort) async {
-    if (newDefaultFeedSort == null) return;
-    if (newDefaultFeedSort == _defaultEntriesFeedSort) return;
+  Future<void> updateDefaultFeedType(PostType? newValue) async {
+    if (newValue == null) return;
+    if (newValue == _defaultFeedType) return;
 
-    _defaultEntriesFeedSort = newDefaultFeedSort;
+    _defaultFeedType = newValue;
 
     notifyListeners();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('defaultFeedSortEntries', newDefaultFeedSort.name);
+    await prefs.setString('defaultFeedType', newValue.name);
   }
 
-  Future<void> updateDefaultPostsFeedSort(FeedSort? newDefaultFeedSort) async {
-    if (newDefaultFeedSort == null) return;
-    if (newDefaultFeedSort == _defaultPostsFeedSort) return;
+  Future<void> updateDefaultEntriesFeedSort(FeedSort? newValue) async {
+    if (newValue == null) return;
+    if (newValue == _defaultEntriesFeedSort) return;
 
-    _defaultPostsFeedSort = newDefaultFeedSort;
+    _defaultEntriesFeedSort = newValue;
 
     notifyListeners();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('defaultPostsFeedSort', newDefaultFeedSort.name);
+    await prefs.setString('defaultFeedSortEntries', newValue.name);
+  }
+
+  Future<void> updateDefaultPostsFeedSort(FeedSort? newValue) async {
+    if (newValue == null) return;
+    if (newValue == _defaultPostsFeedSort) return;
+
+    _defaultPostsFeedSort = newValue;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('defaultPostsFeedSort', newValue.name);
   }
 
   Future<void> updateDefaultExploreFeedSort(
-    FeedSort? newDefaultExploreFeedSort,
+    FeedSort? newValue,
   ) async {
-    if (newDefaultExploreFeedSort == null) return;
-    if (newDefaultExploreFeedSort == _defaultExploreFeedSort) return;
+    if (newValue == null) return;
+    if (newValue == _defaultExploreFeedSort) return;
 
-    _defaultExploreFeedSort = newDefaultExploreFeedSort;
+    _defaultExploreFeedSort = newValue;
 
     notifyListeners();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(
-        'defaultExploreFeedSort', newDefaultExploreFeedSort.name);
+    await prefs.setString('defaultExploreFeedSort', newValue.name);
   }
 
   Future<void> updateDefaultCommentSort(
-    CommentSort? newDefaultCommentSort,
+    CommentSort? newValue,
   ) async {
-    if (newDefaultCommentSort == null) return;
-    if (newDefaultCommentSort == _defaultCommentSort) return;
+    if (newValue == null) return;
+    if (newValue == _defaultCommentSort) return;
 
-    _defaultCommentSort = newDefaultCommentSort;
+    _defaultCommentSort = newValue;
 
     notifyListeners();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('defaultCommentSort', newDefaultCommentSort.name);
+    await prefs.setString('defaultCommentSort', newValue.name);
   }
 
   Future<void> updateUseAccountLangFilter(
-    bool? newUseAccountLangFilter,
+    bool? newValue,
   ) async {
-    if (newUseAccountLangFilter == null) return;
-    if (newUseAccountLangFilter == _useAccountLangFilter) return;
+    if (newValue == null) return;
+    if (newValue == _useAccountLangFilter) return;
 
-    _useAccountLangFilter = newUseAccountLangFilter;
+    _useAccountLangFilter = newValue;
 
     notifyListeners();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('useAccountLangFilter', newUseAccountLangFilter);
+    await prefs.setBool('useAccountLangFilter', newValue);
   }
 
   Future<void> addLangFilter(
@@ -440,17 +456,17 @@ class SettingsController with ChangeNotifier {
   }
 
   Future<void> updateDefaultCreateLang(
-    String? newDefaultCreateLang,
+    String? newValue,
   ) async {
-    if (newDefaultCreateLang == null) return;
-    if (newDefaultCreateLang == _defaultCreateLang) return;
+    if (newValue == null) return;
+    if (newValue == _defaultCreateLang) return;
 
-    _defaultCreateLang = newDefaultCreateLang;
+    _defaultCreateLang = newValue;
 
     notifyListeners();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('defaultCreateLang', newDefaultCreateLang);
+    await prefs.setString('defaultCreateLang', newValue);
   }
 
   Future<void> saveServer(ServerSoftware software, String server) async {
