@@ -110,6 +110,9 @@ class SettingsController with ChangeNotifier {
   late String _defaultCreateLang;
   String get defaultCreateLang => _defaultCreateLang;
 
+  late Set<String> _stars;
+  Set<String> get stars => _stars;
+
   late Map<String, Server> _servers;
   late Map<String, Account> _accounts;
   late String _selectedAccount;
@@ -210,6 +213,8 @@ class SettingsController with ChangeNotifier {
     _useAccountLangFilter = prefs.getBool("useAccountLangFilter") ?? true;
     _langFilter = prefs.getStringList("langFilter")?.toSet() ?? {};
     _defaultCreateLang = prefs.getString("defaultCreateLang") ?? 'en';
+
+    _stars = prefs.getStringList("stars")?.toSet() ?? {};
 
     _servers = (jsonDecode(prefs.getString('servers') ??
             '{"kbin.earth":{"software":"mbin"}}') as Map<String, dynamic>)
@@ -467,6 +472,34 @@ class SettingsController with ChangeNotifier {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('defaultCreateLang', newValue);
+  }
+
+  Future<void> addStar(
+    String? newStar,
+  ) async {
+    if (newStar == null) return;
+    if (_stars.contains(newStar)) return;
+
+    _stars.add(newStar);
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('stars', _stars.toList());
+  }
+
+  Future<void> removeStar(
+    String? oldStar,
+  ) async {
+    if (oldStar == null) return;
+    if (!_stars.contains(oldStar)) return;
+
+    _stars.remove(oldStar);
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('stars', _stars.toList());
   }
 
   Future<void> saveServer(ServerSoftware software, String server) async {

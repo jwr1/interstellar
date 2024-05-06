@@ -10,8 +10,11 @@ import 'package:interstellar/src/widgets/subscription_button.dart';
 import 'package:provider/provider.dart';
 
 class UsersScreen extends StatefulWidget {
+  final bool onlySubbed;
+
   const UsersScreen({
     super.key,
+    this.onlySubbed = false,
   });
 
   @override
@@ -27,6 +30,10 @@ class _UsersScreenState extends State<UsersScreen> {
   @override
   void initState() {
     super.initState();
+
+    if (widget.onlySubbed) {
+      filter = api_users.UsersFilter.followed;
+    }
 
     _pagingController.addPageRequestListener(_fetchPage);
   }
@@ -60,50 +67,51 @@ class _UsersScreenState extends State<UsersScreen> {
       ),
       child: CustomScrollView(
         slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Row(
-                children: [
-                  ...whenLoggedIn(context, [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 12),
-                          child: DropdownButton<api_users.UsersFilter>(
-                            value: filter,
-                            onChanged: (newFilter) {
-                              if (newFilter != null) {
-                                setState(() {
-                                  filter = newFilter;
-                                  _pagingController.refresh();
-                                });
-                              }
-                            },
-                            items: const [
-                              DropdownMenuItem(
-                                value: api_users.UsersFilter.all,
-                                child: Text('All'),
-                              ),
-                              DropdownMenuItem(
-                                value: api_users.UsersFilter.followed,
-                                child: Text('Followed'),
-                              ),
-                              DropdownMenuItem(
-                                value: api_users.UsersFilter.followers,
-                                child: Text('Followers'),
-                              ),
-                              DropdownMenuItem(
-                                value: api_users.UsersFilter.blocked,
-                                child: Text('Blocked'),
-                              ),
-                            ],
-                          ),
-                        )
-                      ]) ??
-                      [],
-                ],
+          if (!widget.onlySubbed)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Row(
+                  children: [
+                    ...whenLoggedIn(context, [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 12),
+                            child: DropdownButton<api_users.UsersFilter>(
+                              value: filter,
+                              onChanged: (newFilter) {
+                                if (newFilter != null) {
+                                  setState(() {
+                                    filter = newFilter;
+                                    _pagingController.refresh();
+                                  });
+                                }
+                              },
+                              items: const [
+                                DropdownMenuItem(
+                                  value: api_users.UsersFilter.all,
+                                  child: Text('All'),
+                                ),
+                                DropdownMenuItem(
+                                  value: api_users.UsersFilter.followed,
+                                  child: Text('Followed'),
+                                ),
+                                DropdownMenuItem(
+                                  value: api_users.UsersFilter.followers,
+                                  child: Text('Followers'),
+                                ),
+                                DropdownMenuItem(
+                                  value: api_users.UsersFilter.blocked,
+                                  child: Text('Blocked'),
+                                ),
+                              ],
+                            ),
+                          )
+                        ]) ??
+                        [],
+                  ],
+                ),
               ),
             ),
-          ),
           PagedSliverList(
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<DetailedUserModel>(

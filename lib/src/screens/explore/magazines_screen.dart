@@ -10,8 +10,11 @@ import 'package:interstellar/src/widgets/subscription_button.dart';
 import 'package:provider/provider.dart';
 
 class MagazinesScreen extends StatefulWidget {
+  final bool onlySubbed;
+
   const MagazinesScreen({
     super.key,
+    this.onlySubbed = false,
   });
 
   @override
@@ -29,6 +32,10 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
   @override
   void initState() {
     super.initState();
+
+    if (widget.onlySubbed) {
+      filter = APIMagazinesFilter.subscribed;
+    }
 
     _pagingController.addPageRequestListener(_fetchPage);
   }
@@ -65,108 +72,109 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
       ),
       child: CustomScrollView(
         slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 12),
-                    child: DropdownButton<APIMagazinesFilter>(
-                      value: filter,
-                      onChanged: (newFilter) {
-                        if (newFilter != null) {
-                          setState(() {
-                            filter = newFilter;
-                            _pagingController.refresh();
-                          });
-                        }
-                      },
-                      items: [
-                        const DropdownMenuItem(
-                          value: APIMagazinesFilter.all,
-                          child: Text('All'),
-                        ),
-                        const DropdownMenuItem(
-                          value: APIMagazinesFilter.local,
-                          child: Text('Local'),
-                        ),
-                        ...(whenLoggedIn(context, [
-                              const DropdownMenuItem(
-                                value: APIMagazinesFilter.subscribed,
-                                child: Text('Subscribed'),
-                              ),
-                              const DropdownMenuItem(
-                                value: APIMagazinesFilter.moderated,
-                                child: Text('Moderated'),
-                              ),
-                              if (context
-                                      .read<SettingsController>()
-                                      .serverSoftware !=
-                                  ServerSoftware.lemmy)
+          if (!widget.onlySubbed)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: DropdownButton<APIMagazinesFilter>(
+                        value: filter,
+                        onChanged: (newFilter) {
+                          if (newFilter != null) {
+                            setState(() {
+                              filter = newFilter;
+                              _pagingController.refresh();
+                            });
+                          }
+                        },
+                        items: [
+                          const DropdownMenuItem(
+                            value: APIMagazinesFilter.all,
+                            child: Text('All'),
+                          ),
+                          const DropdownMenuItem(
+                            value: APIMagazinesFilter.local,
+                            child: Text('Local'),
+                          ),
+                          ...(whenLoggedIn(context, [
                                 const DropdownMenuItem(
-                                  value: APIMagazinesFilter.blocked,
-                                  child: Text('Blocked'),
+                                  value: APIMagazinesFilter.subscribed,
+                                  child: Text('Subscribed'),
                                 ),
-                            ]) ??
-                            [])
-                      ],
+                                const DropdownMenuItem(
+                                  value: APIMagazinesFilter.moderated,
+                                  child: Text('Moderated'),
+                                ),
+                                if (context
+                                        .read<SettingsController>()
+                                        .serverSoftware !=
+                                    ServerSoftware.lemmy)
+                                  const DropdownMenuItem(
+                                    value: APIMagazinesFilter.blocked,
+                                    child: Text('Blocked'),
+                                  ),
+                              ]) ??
+                              [])
+                        ],
+                      ),
                     ),
-                  ),
-                  ...(context.watch<SettingsController>().serverSoftware ==
-                              ServerSoftware.lemmy ||
-                          filter == APIMagazinesFilter.all ||
-                          filter == APIMagazinesFilter.local
-                      ? [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 12),
-                            child: DropdownButton<APIMagazinesSort>(
-                              value: sort,
-                              onChanged: (newSort) {
-                                if (newSort != null) {
+                    ...(context.watch<SettingsController>().serverSoftware ==
+                                ServerSoftware.lemmy ||
+                            filter == APIMagazinesFilter.all ||
+                            filter == APIMagazinesFilter.local
+                        ? [
+                            Padding(
+                              padding: const EdgeInsets.only(right: 12),
+                              child: DropdownButton<APIMagazinesSort>(
+                                value: sort,
+                                onChanged: (newSort) {
+                                  if (newSort != null) {
+                                    setState(() {
+                                      sort = newSort;
+                                      _pagingController.refresh();
+                                    });
+                                  }
+                                },
+                                items: const [
+                                  DropdownMenuItem(
+                                    value: APIMagazinesSort.hot,
+                                    child: Text('Top'),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: APIMagazinesSort.active,
+                                    child: Text('Active'),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: APIMagazinesSort.newest,
+                                    child: Text('Newest'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              width: 128,
+                              child: TextFormField(
+                                initialValue: search,
+                                onChanged: (newSearch) {
                                   setState(() {
-                                    sort = newSort;
+                                    search = newSearch;
                                     _pagingController.refresh();
                                   });
-                                }
-                              },
-                              items: const [
-                                DropdownMenuItem(
-                                  value: APIMagazinesSort.hot,
-                                  child: Text('Top'),
-                                ),
-                                DropdownMenuItem(
-                                  value: APIMagazinesSort.active,
-                                  child: Text('Active'),
-                                ),
-                                DropdownMenuItem(
-                                  value: APIMagazinesSort.newest,
-                                  child: Text('Newest'),
-                                ),
-                              ],
+                                },
+                                decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    label: Text('Search')),
+                              ),
                             ),
-                          ),
-                          SizedBox(
-                            width: 128,
-                            child: TextFormField(
-                              initialValue: search,
-                              onChanged: (newSearch) {
-                                setState(() {
-                                  search = newSearch;
-                                  _pagingController.refresh();
-                                });
-                              },
-                              decoration: const InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  label: Text('Search')),
-                            ),
-                          ),
-                        ]
-                      : []),
-                ],
+                          ]
+                        : []),
+                  ],
+                ),
               ),
             ),
-          ),
           PagedSliverList(
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<DetailedMagazineModel>(

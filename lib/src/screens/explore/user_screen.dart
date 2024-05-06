@@ -18,6 +18,7 @@ import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
 import 'package:interstellar/src/widgets/loading_template.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
+import 'package:interstellar/src/widgets/star_button.dart';
 import 'package:interstellar/src/widgets/subscription_button.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
@@ -70,6 +71,10 @@ class _UserScreenState extends State<UserScreen> {
 
     final user = _data!;
     final currentFeedSortOption = feedSortSelect.getOption(_sort);
+
+    final globalName = user.name.contains('@')
+        ? '@${user.name}'
+        : '@${user.name}@${context.watch<SettingsController>().instanceHost}';
 
     return Scaffold(
         appBar: AppBar(
@@ -155,22 +160,23 @@ class _UserScreenState extends State<UserScreen> {
                               matchesUsername: user.name) !=
                           null)
                         Positioned(
-                            right: 0,
-                            top: 0,
-                            child: Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: TextButton(
-                                onPressed: () => Navigator.of(context).push(
-                                  MaterialPageRoute(builder: (context) {
-                                    return ProfileEditScreen(_data!, (DetailedUserModel? user) {
-                                      setState(() {
-                                        _data = user;
-                                      });
-                                    });
-                                  })
-                                ),
-                                child: const Text("Edit"))
-                            )
+                          right: 0,
+                          top: 0,
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: TextButton(
+                              onPressed: () => Navigator.of(context)
+                                  .push(MaterialPageRoute(builder: (context) {
+                                return ProfileEditScreen(_data!,
+                                    (DetailedUserModel? user) {
+                                  setState(() {
+                                    _data = user;
+                                  });
+                                });
+                              })),
+                              child: const Text("Edit"),
+                            ),
+                          ),
                         )
                     ],
                   ),
@@ -209,11 +215,7 @@ class _UserScreenState extends State<UserScreen> {
                                         ),
                                       );
                                     },
-                                    child: Text(
-                                      user.name.contains('@')
-                                          ? '@${user.name}'
-                                          : '@${user.name}@${context.read<SettingsController>().instanceHost}',
-                                    ),
+                                    child: Text(globalName),
                                   )
                                 ],
                               ),
@@ -236,6 +238,7 @@ class _UserScreenState extends State<UserScreen> {
                                   }
                                 }),
                               ),
+                            StarButton(globalName),
                             if (whenLoggedIn(context, true) == true)
                               IconButton(
                                 onPressed: () async {
@@ -332,10 +335,9 @@ class _UserScreenState extends State<UserScreen> {
                           Padding(
                               padding: const EdgeInsets.only(top: 12),
                               child: Markdown(
-                                  user.about!,
-                                  getNameHost(context, user.name),
-                              )
-                          ),
+                                user.about!,
+                                getNameHost(context, user.name),
+                              )),
                       ],
                     ),
                   ),
@@ -452,7 +454,9 @@ class _UserScreenBodyState extends State<UserScreenBody> {
   @override
   void didUpdateWidget(covariant oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _pagingController.refresh();
+    if (widget.mode != oldWidget.mode || widget.sort != oldWidget.sort) {
+      _pagingController.refresh();
+    }
   }
 
   @override

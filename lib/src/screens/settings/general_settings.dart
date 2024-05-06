@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:interstellar/src/utils/language_codes.dart';
 import 'package:interstellar/src/utils/themes.dart';
 import 'package:interstellar/src/widgets/selection_menu.dart';
+import 'package:interstellar/src/widgets/settings_header.dart';
 
 import 'settings_controller.dart';
 
@@ -30,11 +31,7 @@ class GeneralScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child:
-                Text('Theme', style: Theme.of(context).textTheme.titleMedium),
-          ),
+          const SettingsHeader('Theme'),
           ListTile(
             title: const Text('Theme Mode'),
             leading: const Icon(Icons.brightness_medium),
@@ -87,11 +84,7 @@ class GeneralScreen extends StatelessWidget {
             ),
             enabled: !controller.useDynamicColor,
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Text('Post Appearance',
-                style: Theme.of(context).textTheme.titleMedium),
-          ),
+          const SettingsHeader('Post Appearance'),
           ListTile(
             title: const Text('Image Position'),
             leading: const Icon(Icons.image),
@@ -148,11 +141,7 @@ class GeneralScreen extends StatelessWidget {
               onChanged: controller.updatePostUseCardPreview,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Text('Language',
-                style: Theme.of(context).textTheme.titleMedium),
-          ),
+          const SettingsHeader('Language'),
           SwitchListTile(
             title: const Text('Use Account Language Filter'),
             subtitle: const Text(
@@ -222,11 +211,7 @@ class GeneralScreen extends StatelessWidget {
               children: [Text(getLangName(controller.defaultCreateLang))],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child:
-                Text('Other', style: Theme.of(context).textTheme.titleMedium),
-          ),
+          const SettingsHeader('Other'),
           ListTile(
             title: const Text('Always Show Instance'),
             leading: const Icon(Icons.public),

@@ -9,8 +9,11 @@ import 'package:interstellar/src/widgets/subscription_button.dart';
 import 'package:provider/provider.dart';
 
 class DomainsScreen extends StatefulWidget {
+  final bool onlySubbed;
+
   const DomainsScreen({
     super.key,
+    this.onlySubbed = false,
   });
 
   @override
@@ -27,6 +30,10 @@ class _DomainsScreenState extends State<DomainsScreen> {
   @override
   void initState() {
     super.initState();
+
+    if (widget.onlySubbed) {
+      filter = KbinAPIDomainsFilter.subscribed;
+    }
 
     _pagingController.addPageRequestListener(_fetchPage);
   }
@@ -61,62 +68,63 @@ class _DomainsScreenState extends State<DomainsScreen> {
       ),
       child: CustomScrollView(
         slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Row(
-                children: [
-                  ...whenLoggedIn(context, [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 12),
-                          child: DropdownButton<KbinAPIDomainsFilter>(
-                            value: filter,
-                            onChanged: (newFilter) {
-                              if (newFilter != null) {
-                                setState(() {
-                                  filter = newFilter;
-                                  _pagingController.refresh();
-                                });
-                              }
-                            },
-                            items: const [
-                              DropdownMenuItem(
-                                value: KbinAPIDomainsFilter.all,
-                                child: Text('All'),
-                              ),
-                              DropdownMenuItem(
-                                value: KbinAPIDomainsFilter.subscribed,
-                                child: Text('Subscribed'),
-                              ),
-                              DropdownMenuItem(
-                                value: KbinAPIDomainsFilter.blocked,
-                                child: Text('Blocked'),
-                              ),
-                            ],
-                          ),
-                        )
-                      ]) ??
-                      [],
-                  if (filter == KbinAPIDomainsFilter.all)
-                    SizedBox(
-                      width: 128,
-                      child: TextFormField(
-                        initialValue: search,
-                        onChanged: (newSearch) {
-                          setState(() {
-                            search = newSearch;
-                            _pagingController.refresh();
-                          });
-                        },
-                        decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            label: Text('Search')),
-                      ),
-                    )
-                ],
+          if (!widget.onlySubbed)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Row(
+                  children: [
+                    ...whenLoggedIn(context, [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 12),
+                            child: DropdownButton<KbinAPIDomainsFilter>(
+                              value: filter,
+                              onChanged: (newFilter) {
+                                if (newFilter != null) {
+                                  setState(() {
+                                    filter = newFilter;
+                                    _pagingController.refresh();
+                                  });
+                                }
+                              },
+                              items: const [
+                                DropdownMenuItem(
+                                  value: KbinAPIDomainsFilter.all,
+                                  child: Text('All'),
+                                ),
+                                DropdownMenuItem(
+                                  value: KbinAPIDomainsFilter.subscribed,
+                                  child: Text('Subscribed'),
+                                ),
+                                DropdownMenuItem(
+                                  value: KbinAPIDomainsFilter.blocked,
+                                  child: Text('Blocked'),
+                                ),
+                              ],
+                            ),
+                          )
+                        ]) ??
+                        [],
+                    if (filter == KbinAPIDomainsFilter.all)
+                      SizedBox(
+                        width: 128,
+                        child: TextFormField(
+                          initialValue: search,
+                          onChanged: (newSearch) {
+                            setState(() {
+                              search = newSearch;
+                              _pagingController.refresh();
+                            });
+                          },
+                          decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              label: Text('Search')),
+                        ),
+                      )
+                  ],
+                ),
               ),
             ),
-          ),
           PagedSliverList(
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<DomainModel>(

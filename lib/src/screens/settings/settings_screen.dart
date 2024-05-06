@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:interstellar/src/screens/settings/action_settings.dart';
 import 'package:interstellar/src/screens/settings/general_settings.dart';
 import 'package:interstellar/src/screens/settings/login_select.dart';
+import 'package:interstellar/src/widgets/settings_header.dart';
 import 'package:provider/provider.dart';
 
 import 'settings_controller.dart';
@@ -44,11 +45,7 @@ class SettingsScreen extends StatelessWidget {
               );
             },
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child:
-                Text('Presets', style: Theme.of(context).textTheme.titleMedium),
-          ),
+          const SettingsHeader('Presets'),
           ListTile(
             title: const Text('Classic Layout'),
             onTap: () async {
@@ -69,11 +66,7 @@ class SettingsScreen extends StatelessWidget {
               ));
             },
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Text('Accounts',
-                style: Theme.of(context).textTheme.titleMedium),
-          ),
+          const SettingsHeader('Accounts'),
           ...(controller.accounts.keys.toList()
                 ..sort((a, b) {
                   final [aLocal, aHost] = a.split('@');

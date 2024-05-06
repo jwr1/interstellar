@@ -4,6 +4,7 @@ import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/screens/create_screen.dart';
+import 'package:interstellar/src/screens/feed/nav_drawer.dart';
 import 'package:interstellar/src/screens/feed/post_item.dart';
 import 'package:interstellar/src/screens/feed/post_page.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
@@ -361,6 +362,7 @@ class _FeedScreenState extends State<FeedScreen> {
               )
               .toList(),
         ),
+        drawer: widget.sourceId != null ? null : const NavDrawer(),
       ),
     );
   }

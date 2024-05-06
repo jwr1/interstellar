@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/comments.dart';
 import 'package:interstellar/src/screens/feed/feed_screen.dart';
 import 'package:interstellar/src/widgets/actions.dart';
+import 'package:interstellar/src/widgets/settings_header.dart';
 
 import 'settings_controller.dart';
 
@@ -32,11 +33,7 @@ class ActionSettings extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Text('Feed Actions',
-                style: Theme.of(context).textTheme.titleMedium),
-          ),
+          const SettingsHeader('Feed Actions'),
           ActionSettingsItem(
             metadata: feedActionExpandFab,
             location: controller.feedActionExpandFab,
@@ -72,11 +69,7 @@ class ActionSettings extends StatelessWidget {
             location: controller.feedActionSetType,
             setLocation: controller.updateFeedActionSetType,
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Text('Defaults',
-                style: Theme.of(context).textTheme.titleMedium),
-          ),
+          const SettingsHeader('Defaults'),
           ListTile(
             title: const Text('Feed Type'),
             leading: const Icon(Icons.tab),

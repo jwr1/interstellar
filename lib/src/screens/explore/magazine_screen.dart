@@ -7,6 +7,7 @@ import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
+import 'package:interstellar/src/widgets/star_button.dart';
 import 'package:interstellar/src/widgets/subscription_button.dart';
 import 'package:provider/provider.dart';
 
@@ -45,6 +46,12 @@ class _MagazineScreenState extends State<MagazineScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final globalName = _data == null
+        ? null
+        : _data!.name.contains('@')
+            ? '!${_data!.name}'
+            : '!${_data!.name}@${context.watch<SettingsController>().instanceHost}';
+
     return FeedScreen(
       source: FeedSource.magazine,
       sourceId: widget.magazineId,
@@ -87,11 +94,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                                   ),
                                 );
                               },
-                              child: Text(
-                                _data!.name.contains('@')
-                                    ? '!${_data!.name}'
-                                    : '!${_data!.name}@${context.read<SettingsController>().instanceHost}',
-                              ),
+                              child: Text(globalName!),
                             )
                           ],
                         ),
@@ -114,6 +117,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                           }
                         }),
                       ),
+                      StarButton(globalName),
                       if (whenLoggedIn(context, true) == true)
                         IconButton(
                           onPressed: () async {
