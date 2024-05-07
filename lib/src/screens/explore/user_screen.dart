@@ -18,9 +18,9 @@ import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
 import 'package:interstellar/src/widgets/loading_template.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
+import 'package:interstellar/src/widgets/markdown_editor.dart';
 import 'package:interstellar/src/widgets/star_button.dart';
 import 'package:interstellar/src/widgets/subscription_button.dart';
-import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
 import 'package:provider/provider.dart';
 
@@ -285,9 +285,8 @@ class _UserScreenState extends State<UserScreen> {
                         ),
                         if (_messageController != null)
                           Column(children: [
-                            TextEditor(
+                            MarkdownEditor(
                               _messageController!,
-                              isMarkdown: true,
                               label: 'Message',
                             ),
                             const SizedBox(height: 8),
