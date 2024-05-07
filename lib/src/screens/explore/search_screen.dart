@@ -10,6 +10,7 @@ import 'package:interstellar/src/screens/feed/post_comment_screen.dart';
 import 'package:interstellar/src/screens/feed/post_item.dart';
 import 'package:interstellar/src/screens/feed/post_page.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/utils/debouncer.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
 import 'package:interstellar/src/widgets/subscription_button.dart';
@@ -29,6 +30,7 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   String search = "";
+  final searchDebounce = Debouncer(duration: const Duration(milliseconds: 500));
 
   final PagingController<String, dynamic> _pagingController =
       PagingController(firstPageKey: '');
@@ -41,7 +43,10 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Future<void> _fetchPage(String pageKey) async {
-    if (search.isEmpty) _pagingController.appendLastPage([]);
+    if (search.isEmpty) {
+      _pagingController.appendLastPage([]);
+      return;
+    }
 
     try {
       final newPage = await context.read<SettingsController>().api.search.get(
@@ -49,7 +54,6 @@ class _SearchScreenState extends State<SearchScreen> {
             search: search,
           );
 
-      // Check BuildContext
       if (!mounted) return;
 
       _pagingController.appendPage(newPage.items, newPage.nextPage);
@@ -64,11 +68,11 @@ class _SearchScreenState extends State<SearchScreen> {
       appBar: AppBar(
         title: TextFormField(
           initialValue: search,
-          onFieldSubmitted: (newSearch) {
-            setState(() {
+          onChanged: (newSearch) {
+            searchDebounce.run(() {
               search = newSearch;
+              _pagingController.refresh();
             });
-            _pagingController.refresh();
           },
           decoration: const InputDecoration(
             contentPadding: EdgeInsets.all(12),

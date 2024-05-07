@@ -4,6 +4,7 @@ import 'package:interstellar/src/api/magazines.dart';
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/utils/debouncer.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
 import 'package:interstellar/src/widgets/subscription_button.dart';
@@ -25,6 +26,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
   APIMagazinesFilter filter = APIMagazinesFilter.all;
   APIMagazinesSort sort = APIMagazinesSort.hot;
   String search = "";
+  final searchDebounce = Debouncer(duration: const Duration(milliseconds: 500));
 
   final PagingController<String, DetailedMagazineModel> _pagingController =
       PagingController(firstPageKey: '');
@@ -159,7 +161,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                               child: TextFormField(
                                 initialValue: search,
                                 onChanged: (newSearch) {
-                                  setState(() {
+                                  searchDebounce.run(() {
                                     search = newSearch;
                                     _pagingController.refresh();
                                   });
