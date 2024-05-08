@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/markdown.dart';
 import 'package:provider/provider.dart';
 
@@ -27,11 +28,15 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
   final _buttonStyle = TextButton.styleFrom(
     shape: const LinearBorder(),
   );
+  final _textButtonStyle = TextButton.styleFrom(
+    shape: const LinearBorder(),
+    padding: const EdgeInsets.all(16),
+  );
   final _textFocusNode = FocusNode();
 
   bool enablePreview = false;
 
-  void execAction(_MarkdownEditorActionAbstract action) {
+  void execAction(_MarkdownEditorActionBase action) {
     _textFocusNode.requestFocus();
 
     final input = _MarkdownEditorData(
@@ -80,7 +85,7 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
                         enablePreview = !enablePreview;
                       });
                     },
-                    style: _buttonStyle,
+                    style: _textButtonStyle,
                   ),
                   if (!enablePreview) ...[
                     IconButton(
@@ -101,14 +106,25 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
                       style: _buttonStyle,
                     ),
                     IconButton(
+                      icon: const Icon(Icons.format_quote),
+                      onPressed: () => execAction(_MarkdownEditorActions.quote),
+                      style: _buttonStyle,
+                    ),
+                    IconButton(
                       icon: const Icon(Icons.code),
                       onPressed: () =>
                           execAction(_MarkdownEditorActions.inlineCode),
                       style: _buttonStyle,
                     ),
                     IconButton(
-                      icon: const Icon(Icons.format_quote),
-                      onPressed: () => execAction(_MarkdownEditorActions.quote),
+                      icon: const Icon(Icons.link),
+                      onPressed: () => execAction(_MarkdownEditorActions.link),
+                      style: _buttonStyle,
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.horizontal_rule),
+                      onPressed: () =>
+                          execAction(_MarkdownEditorActions.divider),
                       style: _buttonStyle,
                     ),
                   ]
@@ -144,7 +160,17 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
   }
 }
 
-abstract class _MarkdownEditorActionAbstract {
+class _MarkdownEditorActions {
+  static final heading = _MarkdownEditorActionBlock('### ');
+  static final bold = _MarkdownEditorActionInline('**');
+  static final italic = _MarkdownEditorActionInline('_');
+  static final quote = _MarkdownEditorActionBlock('> ');
+  static final inlineCode = _MarkdownEditorActionInline('`');
+  static final link = _MarkdownEditorActionLink();
+  static final divider = _MarkdownEditorActionDivider();
+}
+
+abstract class _MarkdownEditorActionBase {
   _MarkdownEditorData run(_MarkdownEditorData input);
 
   _MarkdownEditorData getCurrentLine(_MarkdownEditorData input) {
@@ -182,11 +208,12 @@ class _MarkdownEditorData {
   }
 }
 
-class _MarkdownEditorActionInline extends _MarkdownEditorActionAbstract {
+class _MarkdownEditorActionInline extends _MarkdownEditorActionBase {
   final String startChars;
   final String endChars;
 
-  _MarkdownEditorActionInline(this.startChars, this.endChars);
+  _MarkdownEditorActionInline(this.startChars, [String? endChars])
+      : endChars = endChars ?? startChars;
 
   @override
   _MarkdownEditorData run(_MarkdownEditorData input) {
@@ -219,11 +246,12 @@ class _MarkdownEditorActionInline extends _MarkdownEditorActionAbstract {
   }
 }
 
-class _MarkdownEditorActionBlock extends _MarkdownEditorActionAbstract {
+class _MarkdownEditorActionBlock extends _MarkdownEditorActionBase {
   final String startChars;
   final String endChars;
 
-  _MarkdownEditorActionBlock(this.startChars, this.endChars);
+  // ignore: unused_element
+  _MarkdownEditorActionBlock(this.startChars, [this.endChars = '']);
 
   @override
   _MarkdownEditorData run(_MarkdownEditorData input) {
@@ -255,10 +283,86 @@ class _MarkdownEditorActionBlock extends _MarkdownEditorActionAbstract {
   }
 }
 
-class _MarkdownEditorActions {
-  static final heading = _MarkdownEditorActionBlock('### ', '');
-  static final bold = _MarkdownEditorActionInline('**', '**');
-  static final italic = _MarkdownEditorActionInline('_', '_');
-  static final inlineCode = _MarkdownEditorActionInline('`', '`');
-  static final quote = _MarkdownEditorActionBlock('> ', '');
+class _MarkdownEditorActionLink extends _MarkdownEditorActionBase {
+  _MarkdownEditorActionLink();
+
+  @override
+  _MarkdownEditorData run(_MarkdownEditorData input) {
+    var text = input.text;
+
+    if (input.selectionText.isEmpty) {
+      text = text.replaceRange(
+          input.selectionStart, input.selectionStart, '[text](url)');
+
+      return _MarkdownEditorData(
+        text: text,
+        selectionStart: input.selectionStart + 7,
+        selectionEnd: input.selectionStart + 10,
+      );
+    }
+
+    if (isValidUrl(input.selectionText)) {
+      text = text.replaceRange(input.selectionEnd, input.selectionEnd, ')');
+      text = text.replaceRange(
+          input.selectionStart, input.selectionStart, '[text](');
+
+      return _MarkdownEditorData(
+        text: text,
+        selectionStart: input.selectionStart + 1,
+        selectionEnd: input.selectionStart + 5,
+      );
+    } else {
+      text =
+          text.replaceRange(input.selectionEnd, input.selectionEnd, '](url)');
+      text = text.replaceRange(input.selectionStart, input.selectionStart, '[');
+
+      return _MarkdownEditorData(
+        text: text,
+        selectionStart: input.selectionEnd + 3,
+        selectionEnd: input.selectionEnd + 6,
+      );
+    }
+  }
+}
+
+class _MarkdownEditorActionDivider extends _MarkdownEditorActionBase {
+  _MarkdownEditorActionDivider();
+
+  @override
+  _MarkdownEditorData run(_MarkdownEditorData input) {
+    var text = input.text;
+
+    int prefixNewlines = 2;
+    if (input.selectionStart - 1 >= 0 &&
+        text[input.selectionStart - 1] == '\n') {
+      prefixNewlines--;
+
+      if (input.selectionStart - 2 >= 0 &&
+          text[input.selectionStart - 2] == '\n') {
+        prefixNewlines--;
+      }
+    }
+
+    int suffixNewlines = 2;
+    if (input.selectionStart < text.length &&
+        text[input.selectionStart] == '\n') {
+      suffixNewlines--;
+
+      if (input.selectionStart + 1 < text.length &&
+          text[input.selectionStart + 1] == '\n') {
+        suffixNewlines--;
+      }
+    }
+
+    final newText = '${'\n' * prefixNewlines}---${'\n' * suffixNewlines}';
+
+    text =
+        text.replaceRange(input.selectionStart, input.selectionStart, newText);
+
+    return _MarkdownEditorData(
+      text: text,
+      selectionStart: input.selectionStart + newText.length,
+      selectionEnd: input.selectionEnd + newText.length,
+    );
+  }
 }

@@ -112,3 +112,5 @@ T parseEnum<T extends Enum>(
     orElse: () => defaultValue,
   );
 }
+
+bool isValidUrl(String url) => Uri.tryParse(url)?.host.isNotEmpty ?? false;
