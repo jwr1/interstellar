@@ -33,13 +33,12 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
     shape: const LinearBorder(),
     padding: const EdgeInsets.all(16),
   );
-  final _keyFocusNode = FocusNode();
-  final _textFocusNode = FocusNode();
+  final _focusNode = FocusNode();
 
   bool enablePreview = false;
 
   void execAction(_MarkdownEditorActionBase action) {
-    _textFocusNode.requestFocus();
+    _focusNode.requestFocus();
 
     final input = _MarkdownEditorData(
       text: widget.controller.text,
@@ -77,28 +76,51 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
             children: [
               Wrap(
                 children: [
-                  TextButton.icon(
-                    label: Text(enablePreview ? 'Edit' : 'Preview'),
-                    icon: Icon(enablePreview ? Icons.edit : Icons.preview),
-                    onPressed: () {
-                      _textFocusNode.requestFocus();
+                  DecoratedBox(
+                      decoration: BoxDecoration(
+                        border: enablePreview
+                            ? null
+                            : Border(
+                                right: BorderSide(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .outlineVariant),
+                              ),
+                      ),
+                      child: TextButton.icon(
+                        label: Text(enablePreview ? 'Edit' : 'Preview'),
+                        icon: Icon(enablePreview ? Icons.edit : Icons.preview),
+                        onPressed: () {
+                          _focusNode.requestFocus();
 
-                      setState(() {
-                        enablePreview = !enablePreview;
-                      });
-                    },
-                    style: _textButtonStyle,
-                  ),
+                          setState(() {
+                            enablePreview = !enablePreview;
+                          });
+                        },
+                        style: _textButtonStyle,
+                      )),
                   if (!enablePreview)
                     ..._actions.map(
-                      (action) => IconButton(
-                        onPressed: () => execAction(action.action),
-                        icon: Icon(action.icon),
-                        tooltip: action.tooltip +
-                            (action.shortcut == null
-                                ? ''
-                                : ' (${readableShortcut(action.shortcut!)})'),
-                        style: _buttonStyle,
+                      (action) => DecoratedBox(
+                        decoration: BoxDecoration(
+                          border: action.showDivider
+                              ? Border(
+                                  right: BorderSide(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .outlineVariant),
+                                )
+                              : null,
+                        ),
+                        child: IconButton(
+                          onPressed: () => execAction(action.action),
+                          icon: Icon(action.icon),
+                          tooltip: action.tooltip +
+                              (action.shortcut == null
+                                  ? ''
+                                  : ' (${readableShortcut(action.shortcut!)})'),
+                          style: _buttonStyle,
+                        ),
                       ),
                     ),
                 ],
@@ -114,6 +136,8 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
                     )
                   : CallbackShortcuts(
                       bindings: <ShortcutActivator, VoidCallback>{
+                        const SingleActivator(LogicalKeyboardKey.enter): () =>
+                            execAction(const _MarkdownEditorActionEnter()),
                         for (var action in _actions
                             .where((action) => action.shortcut != null))
                           action.shortcut!: () => execAction(action.action)
@@ -129,7 +153,7 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
                         ),
                         onChanged: widget.onChanged,
                         enabled: widget.enabled,
-                        focusNode: _textFocusNode,
+                        focusNode: _focusNode,
                       ),
                     ),
             ],
@@ -145,6 +169,8 @@ const List<_MarkdownEditorActionInfo> _actions = [
     action: _MarkdownEditorActionBlock('### '),
     icon: Icons.title,
     tooltip: 'Heading',
+    shortcut: SingleActivator(LogicalKeyboardKey.keyH, control: true),
+    showDivider: true,
   ),
   _MarkdownEditorActionInfo(
     action: _MarkdownEditorActionInline('**'),
@@ -162,17 +188,22 @@ const List<_MarkdownEditorActionInfo> _actions = [
     action: _MarkdownEditorActionInline('~~'),
     icon: Icons.strikethrough_s,
     tooltip: 'Strikethrough',
-  ),
-  _MarkdownEditorActionInfo(
-    action: _MarkdownEditorActionBlock('> '),
-    icon: Icons.format_quote,
-    tooltip: 'Quote',
+    shortcut: SingleActivator(LogicalKeyboardKey.keyS, control: true),
+    showDivider: true,
   ),
   _MarkdownEditorActionInfo(
     action: _MarkdownEditorActionInline('`'),
     icon: Icons.code,
     tooltip: 'Inline Code',
     shortcut: SingleActivator(LogicalKeyboardKey.keyE, control: true),
+  ),
+  _MarkdownEditorActionInfo(
+    action: _MarkdownEditorActionInline('\n```\n'),
+    icon: Icons.segment,
+    tooltip: 'Code Block',
+    shortcut:
+        SingleActivator(LogicalKeyboardKey.keyE, control: true, shift: true),
+    showDivider: true,
   ),
   _MarkdownEditorActionInfo(
     action: _MarkdownEditorActionLink(),
@@ -184,21 +215,34 @@ const List<_MarkdownEditorActionInfo> _actions = [
     action: _MarkdownEditorActionLink(isImage: true),
     icon: Icons.image,
     tooltip: 'Image',
+    shortcut:
+        SingleActivator(LogicalKeyboardKey.keyK, control: true, shift: true),
+    showDivider: true,
+  ),
+  _MarkdownEditorActionInfo(
+    action: _MarkdownEditorActionBlock('> '),
+    icon: Icons.format_quote,
+    tooltip: 'Quote',
   ),
   _MarkdownEditorActionInfo(
     action: _MarkdownEditorActionDivider(),
     icon: Icons.horizontal_rule,
     tooltip: 'Divider',
+    showDivider: true,
   ),
   _MarkdownEditorActionInfo(
     action: _MarkdownEditorActionBlock('- '),
     icon: Icons.format_list_bulleted,
     tooltip: 'Bulleted List',
+    shortcut: SingleActivator(LogicalKeyboardKey.keyL, control: true),
   ),
   _MarkdownEditorActionInfo(
     action: _MarkdownEditorActionBlock('1. '),
     icon: Icons.format_list_numbered,
     tooltip: 'Numbered List',
+    shortcut:
+        SingleActivator(LogicalKeyboardKey.keyL, control: true, shift: true),
+    showDivider: true,
   ),
 ];
 
@@ -207,12 +251,14 @@ class _MarkdownEditorActionInfo {
   final IconData icon;
   final String tooltip;
   final SingleActivator? shortcut;
+  final bool showDivider;
 
   const _MarkdownEditorActionInfo({
     required this.action,
     required this.icon,
     required this.tooltip,
     this.shortcut,
+    this.showDivider = false,
   });
 }
 
@@ -222,18 +268,20 @@ abstract class _MarkdownEditorActionBase {
   _MarkdownEditorData run(_MarkdownEditorData input);
 
   _MarkdownEditorData getCurrentLine(_MarkdownEditorData input) {
-    final lineEnd = input.text.indexOf('\n', input.selectionStart);
-    final lineStart = input.text.lastIndexOf('\n', input.selectionStart);
+    final endIndex = input.text.indexOf('\n', input.selectionStart);
+    final startIndex = input.selectionStart == 0
+        ? -1
+        : input.text.lastIndexOf('\n', input.selectionStart - 1);
 
-    final selectionEnd = lineEnd == -1 ? input.text.length : lineEnd;
-    final selectionStart = lineStart == -1
+    final lineEnd = endIndex == -1 ? input.text.length : endIndex;
+    final lineStart = startIndex == -1
         ? 0
-        : (selectionEnd >= lineStart + 1 ? lineStart + 1 : lineStart);
+        : (lineEnd >= startIndex + 1 ? startIndex + 1 : startIndex);
 
     return _MarkdownEditorData(
       text: input.text,
-      selectionStart: selectionStart,
-      selectionEnd: selectionEnd,
+      selectionStart: lineStart,
+      selectionEnd: lineEnd,
     );
   }
 }
@@ -340,11 +388,13 @@ class _MarkdownEditorActionLink extends _MarkdownEditorActionBase {
   _MarkdownEditorData run(_MarkdownEditorData input) {
     final imageStartChar = isImage ? '!' : '';
 
+    final helpMessage = isImage ? 'altr' : 'text';
+
     var text = input.text;
 
     if (input.selectionText.isEmpty) {
       text = text.replaceRange(input.selectionStart, input.selectionStart,
-          '$imageStartChar[text](url)');
+          '$imageStartChar[$helpMessage](url)');
 
       return _MarkdownEditorData(
         text: text,
@@ -355,8 +405,8 @@ class _MarkdownEditorActionLink extends _MarkdownEditorActionBase {
 
     if (isValidUrl(input.selectionText)) {
       text = text.replaceRange(input.selectionEnd, input.selectionEnd, ')');
-      text = text.replaceRange(
-          input.selectionStart, input.selectionStart, '$imageStartChar[text](');
+      text = text.replaceRange(input.selectionStart, input.selectionStart,
+          '$imageStartChar[$helpMessage](');
 
       return _MarkdownEditorData(
         text: text,
@@ -416,6 +466,74 @@ class _MarkdownEditorActionDivider extends _MarkdownEditorActionBase {
       text: text,
       selectionStart: input.selectionStart + newText.length,
       selectionEnd: input.selectionEnd + newText.length,
+    );
+  }
+}
+
+class _MarkdownEditorActionEnter extends _MarkdownEditorActionBase {
+  const _MarkdownEditorActionEnter();
+
+  @override
+  _MarkdownEditorData run(_MarkdownEditorData input) {
+    var text = input.text;
+
+    final line = getCurrentLine(input);
+
+    // Bulleted list
+    if (line.selectionText.startsWith('- ') ||
+        line.selectionText.startsWith('* ')) {
+      final style = line.selectionText[0];
+
+      // Empty item
+      if (line.selectionText.length == 2) {
+        return _MarkdownEditorData(
+          text: text.replaceRange(
+              line.selectionStart, line.selectionStart + 2, ''),
+          selectionStart: input.selectionStart - 2,
+          selectionEnd: input.selectionEnd - 2,
+        );
+      }
+
+      return _MarkdownEditorData(
+        text: text.replaceRange(
+            input.selectionStart, input.selectionStart, '\n$style '),
+        selectionStart: input.selectionStart + 3,
+        selectionEnd: input.selectionEnd + 3,
+      );
+    }
+
+    // Numbered List
+    final numberedListMatch =
+        RegExp(r'(\d)+([.)]) ').matchAsPrefix(line.selectionText);
+    if (numberedListMatch != null) {
+      final currentNumber = numberedListMatch[1]!;
+      final nextNumber = (int.parse(currentNumber) + 1).toString();
+      final style = numberedListMatch[2];
+
+      // Empty item
+      final currentPrefixLength = currentNumber.length + 2;
+      if (line.selectionText.length == currentPrefixLength) {
+        return _MarkdownEditorData(
+          text: text.replaceRange(line.selectionStart,
+              line.selectionStart + currentPrefixLength, ''),
+          selectionStart: input.selectionStart - currentPrefixLength,
+          selectionEnd: input.selectionEnd - currentPrefixLength,
+        );
+      }
+
+      final nextPrefixLength = nextNumber.length + 2;
+      return _MarkdownEditorData(
+        text: text.replaceRange(
+            input.selectionStart, input.selectionStart, '\n$nextNumber$style '),
+        selectionStart: input.selectionStart + 1 + nextPrefixLength,
+        selectionEnd: input.selectionEnd + 1 + nextPrefixLength,
+      );
+    }
+
+    return _MarkdownEditorData(
+      text: text.replaceRange(input.selectionStart, input.selectionEnd, '\n'),
+      selectionStart: input.selectionStart + 1,
+      selectionEnd: input.selectionStart + 1,
     );
   }
 }
