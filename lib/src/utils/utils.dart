@@ -112,3 +112,20 @@ T parseEnum<T extends Enum>(
     orElse: () => defaultValue,
   );
 }
+
+bool isValidUrl(String url) => Uri.tryParse(url)?.host.isNotEmpty ?? false;
+
+String readableShortcut(SingleActivator shortcut) {
+  var text = '';
+
+  if (shortcut.control) text += 'Ctrl+';
+  if (shortcut.alt) text += 'Alt+';
+  if (shortcut.shift) text += 'Shift+';
+  if (shortcut.meta) text += 'Meta+';
+  text += switch (shortcut.trigger.keyLabel) {
+    ' ' => 'Space',
+    String key => key,
+  };
+
+  return text;
+}

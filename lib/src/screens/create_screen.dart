@@ -4,6 +4,7 @@ import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/language_codes.dart';
 import 'package:interstellar/src/widgets/image_selector.dart';
+import 'package:interstellar/src/widgets/markdown_editor.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:provider/provider.dart';
 
@@ -150,11 +151,10 @@ class _CreateScreenState extends State<CreateScreen> {
                 if (_imageFile == null || widget.type == PostType.microblog)
                   Padding(
                     padding: const EdgeInsets.all(5),
-                    child: TextEditor(
+                    child: MarkdownEditor(
                       _bodyTextController,
-                      isMarkdown: true,
-                      label: "Body",
                       onChanged: (_) => setState(() {}),
+                      label: 'Body',
                     ),
                   ),
                 if (widget.type != PostType.microblog)

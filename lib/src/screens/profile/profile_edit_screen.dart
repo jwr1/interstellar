@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:interstellar/src/models/user.dart';
-import 'package:interstellar/src/widgets/text_editor.dart';
+import 'package:interstellar/src/widgets/markdown_editor.dart';
 import 'package:provider/provider.dart';
 
 import '../../widgets/avatar.dart';
@@ -215,10 +215,9 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 12),
-                  child: TextEditor(
+                  child: MarkdownEditor(
                     _aboutTextController!,
                     label: "About",
-                    isMarkdown: true,
                   ),
                 ),
                 if (_settings != null)
