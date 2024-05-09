@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart' as flutter_markdown;
+import 'package:flutter_markdown/flutter_markdown.dart' as mdf;
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
-import 'package:markdown/markdown.dart' as markdown;
+import 'package:markdown/markdown.dart' as md;
 import 'package:provider/provider.dart';
 
-class MentionMarkdownSyntax extends markdown.InlineSyntax {
+class MentionMarkdownSyntax extends md.InlineSyntax {
   /*
     Should match the following patterns:
 
@@ -53,7 +53,7 @@ class MentionMarkdownSyntax extends markdown.InlineSyntax {
   MentionMarkdownSyntax() : super(_mentionPattern);
 
   @override
-  bool tryMatch(markdown.InlineParser parser, [int? startMatchPos]) {
+  bool tryMatch(md.InlineParser parser, [int? startMatchPos]) {
     startMatchPos ??= parser.pos;
 
     final isMarkdownLink =
@@ -85,7 +85,7 @@ class MentionMarkdownSyntax extends markdown.InlineSyntax {
   }
 
   @override
-  bool onMatch(markdown.InlineParser parser, Match match) {
+  bool onMatch(md.InlineParser parser, Match match) {
     final urlDomain = match.group(1);
     final urlModifier = match.group(2);
     final modifier = match.group(3) ?? (urlModifier == 'u' ? '@' : '!');
@@ -94,7 +94,7 @@ class MentionMarkdownSyntax extends markdown.InlineSyntax {
 
     final result = '$modifier$name${host != null ? '@$host' : ''}';
 
-    final node = markdown.Element.text('mention', result);
+    final node = md.Element.text('mention', result);
 
     parser.addNode(node);
 
@@ -102,14 +102,13 @@ class MentionMarkdownSyntax extends markdown.InlineSyntax {
   }
 }
 
-class MentionMarkdownBuilder extends flutter_markdown.MarkdownElementBuilder {
+class MentionMarkdownBuilder extends mdf.MarkdownElementBuilder {
   final String originInstance;
 
   MentionMarkdownBuilder({required this.originInstance});
 
   @override
-  Widget? visitElementAfter(
-      markdown.Element element, TextStyle? preferredStyle) {
+  Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) {
     return RichText(
       text: TextSpan(children: [
         WidgetSpan(

@@ -241,6 +241,19 @@ const List<_MarkdownEditorActionInfo> _actions = [
     showDivider: true,
   ),
   _MarkdownEditorActionInfo(
+    action: _MarkdownEditorActionInline('~'),
+    icon: Icons.subscript,
+    tooltip: 'Subscript',
+    shortcut: SingleActivator(LogicalKeyboardKey.comma, control: true),
+  ),
+  _MarkdownEditorActionInfo(
+    action: _MarkdownEditorActionInline('^'),
+    icon: Icons.superscript,
+    tooltip: 'Superscript',
+    shortcut: SingleActivator(LogicalKeyboardKey.period, control: true),
+    showDivider: true,
+  ),
+  _MarkdownEditorActionInfo(
     action: _MarkdownEditorActionBlock('> '),
     icon: Icons.format_quote,
     tooltip: 'Quote',

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart' as flutter_markdown;
 import 'package:interstellar/src/widgets/markdown_mention.dart';
+import 'package:interstellar/src/widgets/markdown_subscript_superscript.dart';
 import 'package:interstellar/src/widgets/open_webpage.dart';
 
 class Markdown extends StatelessWidget {
@@ -23,8 +24,14 @@ class Markdown extends StatelessWidget {
           openWebpage(context, Uri.parse(href));
         }
       },
-      inlineSyntaxes: [MentionMarkdownSyntax()],
+      inlineSyntaxes: [
+        SubscriptMarkdownSyntax(),
+        SuperscriptMarkdownSyntax(),
+        MentionMarkdownSyntax()
+      ],
       builders: {
+        'sub': SubscriptMarkdownBuilder(),
+        'sup': SuperscriptMarkdownBuilder(),
         'mention': MentionMarkdownBuilder(originInstance: originInstance),
       },
     );
