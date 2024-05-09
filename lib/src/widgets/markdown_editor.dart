@@ -33,13 +33,24 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
     shape: const LinearBorder(),
     padding: const EdgeInsets.all(16),
   );
-  final _focusNode = FocusNode();
+
+  final _focusNodeTextField = FocusNode();
+  final _focusNodePreviewButton = FocusNode();
 
   bool enablePreview = false;
 
-  void execAction(_MarkdownEditorActionBase action) {
-    _focusNode.requestFocus();
+  final togglePreviewShortcut =
+      const SingleActivator(LogicalKeyboardKey.space, control: true);
+  void togglePreview() {
+    setState(() {
+      enablePreview = !enablePreview;
 
+      (enablePreview ? _focusNodePreviewButton : _focusNodeTextField)
+          .requestFocus();
+    });
+  }
+
+  void execAction(_MarkdownEditorActionBase action) {
     final input = _MarkdownEditorData(
       text: widget.controller.text,
       selectionStart: widget.controller.selection.start,
@@ -87,17 +98,21 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
                                         .outlineVariant),
                               ),
                       ),
-                      child: TextButton.icon(
-                        label: Text(enablePreview ? 'Edit' : 'Preview'),
-                        icon: Icon(enablePreview ? Icons.edit : Icons.preview),
-                        onPressed: () {
-                          _focusNode.requestFocus();
-
-                          setState(() {
-                            enablePreview = !enablePreview;
-                          });
-                        },
-                        style: _textButtonStyle,
+                      child: Tooltip(
+                        message: readableShortcut(togglePreviewShortcut),
+                        child: CallbackShortcuts(
+                          bindings: <ShortcutActivator, VoidCallback>{
+                            togglePreviewShortcut: togglePreview,
+                          },
+                          child: TextButton.icon(
+                            label: Text(enablePreview ? 'Edit' : 'Preview'),
+                            icon: Icon(
+                                enablePreview ? Icons.edit : Icons.preview),
+                            onPressed: togglePreview,
+                            style: _textButtonStyle,
+                            focusNode: _focusNodePreviewButton,
+                          ),
+                        ),
                       )),
                   if (!enablePreview)
                     ..._actions.map(
@@ -113,7 +128,11 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
                               : null,
                         ),
                         child: IconButton(
-                          onPressed: () => execAction(action.action),
+                          onPressed: () {
+                            _focusNodeTextField.requestFocus();
+
+                            execAction(action.action);
+                          },
                           icon: Icon(action.icon),
                           tooltip: action.tooltip +
                               (action.shortcut == null
@@ -136,6 +155,7 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
                     )
                   : CallbackShortcuts(
                       bindings: <ShortcutActivator, VoidCallback>{
+                        togglePreviewShortcut: togglePreview,
                         const SingleActivator(LogicalKeyboardKey.enter): () =>
                             execAction(const _MarkdownEditorActionEnter()),
                         for (var action in _actions
@@ -153,7 +173,7 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
                         ),
                         onChanged: widget.onChanged,
                         enabled: widget.enabled,
-                        focusNode: _focusNode,
+                        focusNode: _focusNodeTextField,
                       ),
                     ),
             ],
@@ -188,7 +208,8 @@ const List<_MarkdownEditorActionInfo> _actions = [
     action: _MarkdownEditorActionInline('~~'),
     icon: Icons.strikethrough_s,
     tooltip: 'Strikethrough',
-    shortcut: SingleActivator(LogicalKeyboardKey.keyS, control: true),
+    shortcut:
+        SingleActivator(LogicalKeyboardKey.keyX, control: true, alt: true),
     showDivider: true,
   ),
   _MarkdownEditorActionInfo(
@@ -202,7 +223,7 @@ const List<_MarkdownEditorActionInfo> _actions = [
     icon: Icons.segment,
     tooltip: 'Code Block',
     shortcut:
-        SingleActivator(LogicalKeyboardKey.keyE, control: true, shift: true),
+        SingleActivator(LogicalKeyboardKey.keyE, control: true, alt: true),
     showDivider: true,
   ),
   _MarkdownEditorActionInfo(
@@ -216,18 +237,22 @@ const List<_MarkdownEditorActionInfo> _actions = [
     icon: Icons.image,
     tooltip: 'Image',
     shortcut:
-        SingleActivator(LogicalKeyboardKey.keyK, control: true, shift: true),
+        SingleActivator(LogicalKeyboardKey.keyK, control: true, alt: true),
     showDivider: true,
   ),
   _MarkdownEditorActionInfo(
     action: _MarkdownEditorActionBlock('> '),
     icon: Icons.format_quote,
     tooltip: 'Quote',
+    shortcut:
+        SingleActivator(LogicalKeyboardKey.keyQ, control: true, alt: true),
   ),
   _MarkdownEditorActionInfo(
-    action: _MarkdownEditorActionDivider(),
+    action: _MarkdownEditorActionHorizontalRule(),
     icon: Icons.horizontal_rule,
-    tooltip: 'Divider',
+    tooltip: 'Horizontal Rule',
+    shortcut:
+        SingleActivator(LogicalKeyboardKey.keyH, control: true, alt: true),
     showDivider: true,
   ),
   _MarkdownEditorActionInfo(
@@ -241,7 +266,7 @@ const List<_MarkdownEditorActionInfo> _actions = [
     icon: Icons.format_list_numbered,
     tooltip: 'Numbered List',
     shortcut:
-        SingleActivator(LogicalKeyboardKey.keyL, control: true, shift: true),
+        SingleActivator(LogicalKeyboardKey.keyL, control: true, alt: true),
     showDivider: true,
   ),
 ];
@@ -428,8 +453,8 @@ class _MarkdownEditorActionLink extends _MarkdownEditorActionBase {
   }
 }
 
-class _MarkdownEditorActionDivider extends _MarkdownEditorActionBase {
-  const _MarkdownEditorActionDivider();
+class _MarkdownEditorActionHorizontalRule extends _MarkdownEditorActionBase {
+  const _MarkdownEditorActionHorizontalRule();
 
   @override
   _MarkdownEditorData run(_MarkdownEditorData input) {
@@ -481,7 +506,8 @@ class _MarkdownEditorActionEnter extends _MarkdownEditorActionBase {
 
     // Bulleted list
     if (line.selectionText.startsWith('- ') ||
-        line.selectionText.startsWith('* ')) {
+        line.selectionText.startsWith('* ') ||
+        line.selectionText.startsWith('+ ')) {
       final style = line.selectionText[0];
 
       // Empty item

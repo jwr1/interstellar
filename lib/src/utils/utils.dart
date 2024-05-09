@@ -122,7 +122,10 @@ String readableShortcut(SingleActivator shortcut) {
   if (shortcut.alt) text += 'Alt+';
   if (shortcut.shift) text += 'Shift+';
   if (shortcut.meta) text += 'Meta+';
-  text += shortcut.trigger.keyLabel;
+  text += switch (shortcut.trigger.keyLabel) {
+    ' ' => 'Space',
+    String key => key,
+  };
 
   return text;
 }
