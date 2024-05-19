@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
-import 'package:interstellar/src/widgets/markdown.dart';
 import 'package:provider/provider.dart';
+
+import './markdown.dart';
 
 class MarkdownEditor extends StatefulWidget {
   final TextEditingController controller;
@@ -280,6 +281,15 @@ const List<_MarkdownEditorActionInfo> _actions = [
     tooltip: 'Numbered List',
     shortcut:
         SingleActivator(LogicalKeyboardKey.keyL, control: true, alt: true),
+    showDivider: true,
+  ),
+  _MarkdownEditorActionInfo(
+    action:
+        _MarkdownEditorActionBlock('\n::: spoiler PREVIEW_HERE\n', '\n:::\n'),
+    icon: Icons.warning,
+    tooltip: 'Spoiler',
+    shortcut:
+        SingleActivator(LogicalKeyboardKey.keyS, control: true, alt: true),
     showDivider: true,
   ),
 ];
