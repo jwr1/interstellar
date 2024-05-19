@@ -4,8 +4,8 @@ import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/loading_template.dart';
-import 'package:interstellar/src/widgets/markdown.dart';
-import 'package:interstellar/src/widgets/markdown_editor.dart';
+import 'package:interstellar/src/widgets/markdown/markdown.dart';
+import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:provider/provider.dart';
 
 class MessageThreadScreen extends StatefulWidget {

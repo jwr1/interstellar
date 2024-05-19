@@ -9,7 +9,7 @@ import 'package:interstellar/src/screens/feed/post_comment_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
-import 'package:interstellar/src/widgets/markdown.dart';
+import 'package:interstellar/src/widgets/markdown/markdown.dart';
 import 'package:provider/provider.dart';
 
 import './notification_count_controller.dart';

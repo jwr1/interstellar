@@ -1,3 +1,4 @@
+import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/models/comment.dart';
 import 'package:interstellar/src/models/post.dart';
@@ -23,11 +24,12 @@ class PostComment extends StatefulWidget {
   final void Function()? onClick;
 
   @override
-  State<PostComment> createState() => _EntryCommentState();
+  State<PostComment> createState() => _PostCommentState();
 }
 
-class _EntryCommentState extends State<PostComment> {
-  bool _isCollapsed = false;
+class _PostCommentState extends State<PostComment> {
+  final ExpandableController _expandableController =
+      ExpandableController(initialExpanded: true);
 
   @override
   Widget build(BuildContext context) {
@@ -149,10 +151,10 @@ class _EntryCommentState extends State<PostComment> {
                       ));
                     }, matchesUsername: widget.comment.user.name)
                   : null,
-              isCollapsed: _isCollapsed,
+              isCollapsed: !_expandableController.expanded,
               onCollapse: widget.comment.childCount > 0
                   ? () => setState(() {
-                        _isCollapsed = !_isCollapsed;
+                        _expandableController.toggle();
                       })
                   : null,
               openLinkUri: Uri.https(
@@ -169,7 +171,7 @@ class _EntryCommentState extends State<PostComment> {
           ),
         ),
         if (widget.comment.childCount > 0 &&
-            !_isCollapsed &&
+            _expandableController.expanded &&
             (widget.comment.children?.isEmpty ?? false))
           TextButton(
             onPressed: () => Navigator.of(context).push(
@@ -184,36 +186,40 @@ class _EntryCommentState extends State<PostComment> {
             child: Text(
                 'Open ${widget.comment.childCount} reply${widget.comment.childCount == 1 ? '' : 's'}'),
           ),
-        if (widget.comment.childCount > 0 && !_isCollapsed)
-          Container(
-            margin: const EdgeInsets.only(left: 1),
-            padding: const EdgeInsets.only(left: 9),
-            decoration: BoxDecoration(
-              border: Border(
-                left: BorderSide(
-                  color: Theme.of(context).colorScheme.outlineVariant,
-                  width: 2,
+        if (widget.comment.childCount > 0)
+          Expandable(
+            controller: _expandableController,
+            collapsed: Container(),
+            expanded: Container(
+              margin: const EdgeInsets.only(left: 1),
+              padding: const EdgeInsets.only(left: 9),
+              decoration: BoxDecoration(
+                border: Border(
+                  left: BorderSide(
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                    width: 2,
+                  ),
                 ),
               ),
-            ),
-            child: Column(
-              children: widget.comment.children!
-                  .asMap()
-                  .entries
-                  .map((item) => PostComment(
-                        item.value,
-                        (newValue) {
-                          var newChildren = [...widget.comment.children!];
-                          newChildren[item.key] = newValue;
-                          widget.onUpdate(widget.comment.copyWith(
-                            childCount: widget.comment.childCount + 1,
-                            children: newChildren,
-                          ));
-                        },
-                        opUserId: widget.opUserId,
-                        onClick: widget.onClick,
-                      ))
-                  .toList(),
+              child: Column(
+                children: widget.comment.children!
+                    .asMap()
+                    .entries
+                    .map((item) => PostComment(
+                          item.value,
+                          (newValue) {
+                            var newChildren = [...widget.comment.children!];
+                            newChildren[item.key] = newValue;
+                            widget.onUpdate(widget.comment.copyWith(
+                              childCount: widget.comment.childCount + 1,
+                              children: newChildren,
+                            ));
+                          },
+                          opUserId: widget.opUserId,
+                          onClick: widget.onClick,
+                        ))
+                    .toList(),
+              ),
             ),
           ),
       ],

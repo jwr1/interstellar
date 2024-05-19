@@ -3,7 +3,7 @@ import 'package:interstellar/src/models/message.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
-import 'package:interstellar/src/widgets/markdown.dart';
+import 'package:interstellar/src/widgets/markdown/markdown.dart';
 import 'package:provider/provider.dart';
 
 class MessageItem extends StatelessWidget {

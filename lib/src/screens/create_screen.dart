@@ -4,7 +4,7 @@ import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/language_codes.dart';
 import 'package:interstellar/src/widgets/image_selector.dart';
-import 'package:interstellar/src/widgets/markdown_editor.dart';
+import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:provider/provider.dart';
 

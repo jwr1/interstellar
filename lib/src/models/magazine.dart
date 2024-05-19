@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/utils/models.dart';
-import 'package:interstellar/src/widgets/markdown_mention.dart';
+import 'package:interstellar/src/widgets/markdown/markdown_mention.dart';
 
 part 'magazine.freezed.dart';
 

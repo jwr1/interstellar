@@ -11,7 +11,7 @@ import 'package:interstellar/src/utils/jwt_http_client.dart';
 import 'package:interstellar/src/utils/themes.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/actions.dart';
-import 'package:interstellar/src/widgets/markdown_mention.dart';
+import 'package:interstellar/src/widgets/markdown/markdown_mention.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:shared_preferences/shared_preferences.dart';
 
