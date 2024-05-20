@@ -18,6 +18,19 @@ const Map<FeedSort, String> lemmyFeedSortMap = {
   FeedSort.oldest: 'Old',
   FeedSort.top: 'TopAll',
   FeedSort.commented: 'MostComments',
+  FeedSort.topDay: 'TopDay',
+  FeedSort.topWeek: 'TopWeek',
+  FeedSort.topMonth: 'TopMonth',
+  FeedSort.topYear: 'TopYear',
+  FeedSort.newComments: 'NewComments',
+  FeedSort.topHour: 'TopHour',
+  FeedSort.topSixHour: 'TopSixHour',
+  FeedSort.topTwelveHour: 'TopTwelveHour',
+  FeedSort.topThreeMonths: 'TopThreeMonths',
+  FeedSort.topSixMonths: 'TopSixMonths',
+  FeedSort.topNineMonths: 'TopNineMonths',
+  FeedSort.controversial: 'Controversial',
+  FeedSort.scaled: 'Scaled',
 };
 
 class APIThreads {
