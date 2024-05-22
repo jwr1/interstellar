@@ -8,7 +8,31 @@ import 'package:interstellar/src/utils/utils.dart';
 
 enum APIMagazinesFilter { all, local, subscribed, moderated, blocked }
 
-enum APIMagazinesSort { active, hot, newest }
+enum APIMagazinesSort {
+  active,
+  hot,
+  newest,
+
+  //lemmy specific
+  top,
+  oldest,
+  commented,
+  newComments,
+  topDay,
+  topWeek,
+  topMonth,
+  topYear,
+  topHour,
+  topSixHour,
+  topTwelveHour,
+  topThreeMonths,
+  topSixMonths,
+  topNineMonths,
+  controversial,
+  scaled,
+}
+
+
 
 class APIMagazines {
   final ServerSoftware software;
@@ -72,8 +96,24 @@ class APIMagazines {
             'limit': '50',
             'sort': switch (sort) {
               APIMagazinesSort.active => 'Active',
-              APIMagazinesSort.hot => 'TopAll',
+              APIMagazinesSort.hot => 'Hot',
               APIMagazinesSort.newest => 'New',
+              APIMagazinesSort.top => 'TopAll',
+              APIMagazinesSort.oldest => 'Old',
+              APIMagazinesSort.commented => 'MostComments',
+              APIMagazinesSort.newComments => 'NewComments',
+              APIMagazinesSort.topDay => 'TopDay',
+              APIMagazinesSort.topWeek => 'TopWeek',
+              APIMagazinesSort.topMonth => 'TopMonth',
+              APIMagazinesSort.topYear => 'TopYear',
+              APIMagazinesSort.topHour => 'TopHour',
+              APIMagazinesSort.topSixHour => 'TopSixHour',
+              APIMagazinesSort.topTwelveHour => 'TopTwelveHour',
+              APIMagazinesSort.topThreeMonths => 'TopThreeMonths',
+              APIMagazinesSort.topSixMonths => 'TopSixMonths',
+              APIMagazinesSort.topNineMonths => 'TopNineMonths',
+              APIMagazinesSort.controversial => 'Controversial',
+              APIMagazinesSort.scaled => 'Scaled',
               _ => 'All'
             },
             'page': page,

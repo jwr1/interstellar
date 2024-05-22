@@ -140,19 +140,109 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                                     });
                                   }
                                 },
-                                items: const [
-                                  DropdownMenuItem(
+                                items: [
+                                  const DropdownMenuItem(
                                     value: APIMagazinesSort.hot,
-                                    child: Text('Top'),
+                                    child: Text('Hot'),
                                   ),
-                                  DropdownMenuItem(
+                                  if (context.watch<SettingsController>().serverSoftware ==
+                                      ServerSoftware.lemmy)
+                                    const DropdownMenuItem(
+                                      value: APIMagazinesSort.top,
+                                      child: Text('Top'),
+                                    ),
+                                  const DropdownMenuItem(
                                     value: APIMagazinesSort.active,
                                     child: Text('Active'),
                                   ),
-                                  DropdownMenuItem(
+                                  const DropdownMenuItem(
                                     value: APIMagazinesSort.newest,
                                     child: Text('Newest'),
                                   ),
+                                  if (context.watch<SettingsController>().serverSoftware ==
+                                      ServerSoftware.lemmy)
+                                    const DropdownMenuItem(
+                                      value: APIMagazinesSort.oldest,
+                                      child: Text('Oldest'),
+                                    ),
+                                  if (context.watch<SettingsController>().serverSoftware ==
+                                      ServerSoftware.lemmy)
+                                    const DropdownMenuItem(
+                                      value: APIMagazinesSort.scaled,
+                                      child: Text('Scaled'),
+                                    ),
+                                  if (context.watch<SettingsController>().serverSoftware ==
+                                      ServerSoftware.lemmy)
+                                    const DropdownMenuItem(
+                                      value: APIMagazinesSort.controversial,
+                                      child: Text('Controversial'),
+                                    ),
+                                  if (context.watch<SettingsController>().serverSoftware ==
+                                      ServerSoftware.lemmy)
+                                    const DropdownMenuItem(
+                                      value: APIMagazinesSort.commented,
+                                      child: Text('Most Comments'),
+                                    ),
+                                  if (context.watch<SettingsController>().serverSoftware ==
+                                      ServerSoftware.lemmy)
+                                    const DropdownMenuItem(
+                                      value: APIMagazinesSort.newComments,
+                                      child: Text('Newest Comments'),
+                                    ),
+                                  if (context.watch<SettingsController>().serverSoftware ==
+                                      ServerSoftware.lemmy)
+                                    const DropdownMenuItem(
+                                      value: APIMagazinesSort.topHour,
+                                      child: Text('Top Hour'),
+                                    ),
+                                  if (context.watch<SettingsController>().serverSoftware ==
+                                      ServerSoftware.lemmy)
+                                    const DropdownMenuItem(
+                                      value: APIMagazinesSort.topSixHour,
+                                      child: Text('Top Six Hours'),
+                                    ),
+                                  if (context.watch<SettingsController>().serverSoftware ==
+                                      ServerSoftware.lemmy)
+                                    const DropdownMenuItem(
+                                      value: APIMagazinesSort.topTwelveHour,
+                                      child: Text('Top Twelve Hours'),
+                                    ),
+                                  if (context.watch<SettingsController>().serverSoftware ==
+                                      ServerSoftware.lemmy)
+                                    const DropdownMenuItem(
+                                      value: APIMagazinesSort.topDay,
+                                      child: Text('Top Day'),
+                                    ),
+                                  if (context.watch<SettingsController>().serverSoftware ==
+                                      ServerSoftware.lemmy)
+                                    const DropdownMenuItem(
+                                      value: APIMagazinesSort.topWeek,
+                                      child: Text('Top Week'),
+                                    ),
+                                  if (context.watch<SettingsController>().serverSoftware ==
+                                      ServerSoftware.lemmy)
+                                    const DropdownMenuItem(
+                                      value: APIMagazinesSort.topMonth,
+                                      child: Text('Top Month'),
+                                    ),
+                                  if (context.watch<SettingsController>().serverSoftware ==
+                                      ServerSoftware.lemmy)
+                                    const DropdownMenuItem(
+                                      value: APIMagazinesSort.topThreeMonths,
+                                      child: Text('Top Three Months'),
+                                    ),
+                                  if (context.watch<SettingsController>().serverSoftware ==
+                                      ServerSoftware.lemmy)
+                                    const DropdownMenuItem(
+                                      value: APIMagazinesSort.topSixMonths,
+                                      child: Text('Top Six Months'),
+                                    ),
+                                  if (context.watch<SettingsController>().serverSoftware ==
+                                      ServerSoftware.lemmy)
+                                    const DropdownMenuItem(
+                                      value: APIMagazinesSort.topNineMonths,
+                                      child: Text('Top Nine Months'),
+                                    ),
                                 ],
                               ),
                             ),
