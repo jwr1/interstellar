@@ -137,6 +137,16 @@ class _NavDrawerState extends State<NavDrawer> {
               trailing: StarButton(star),
             ),
           ),
+          if (context.read<SettingsController>().isLoggedIn &&
+              subbedMagazines == null &&
+              subbedUsers == null &&
+              subbedDomains == null)
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(),
+              ],
+            ),
           if (context.watch<SettingsController>().isLoggedIn &&
               (subbedMagazines != null ||
                   subbedUsers != null ||
