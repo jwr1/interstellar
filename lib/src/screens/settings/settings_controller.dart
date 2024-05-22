@@ -113,6 +113,9 @@ class SettingsController with ChangeNotifier {
   late Set<String> _stars;
   Set<String> get stars => _stars;
 
+  late Set<RegExp> _filters;
+  Set<RegExp> get filters => _filters;
+
   late Map<String, Server> _servers;
   late Map<String, Account> _accounts;
   late String _selectedAccount;
@@ -215,6 +218,7 @@ class SettingsController with ChangeNotifier {
     _defaultCreateLang = prefs.getString("defaultCreateLang") ?? 'en';
 
     _stars = prefs.getStringList("stars")?.toSet() ?? {};
+    _filters = prefs.getStringList('filters')?.map((filter) => RegExp(filter)).toSet() ?? {};
 
     _servers = (jsonDecode(prefs.getString('servers') ??
             '{"kbin.earth":{"software":"mbin"}}') as Map<String, dynamic>)
@@ -500,6 +504,34 @@ class SettingsController with ChangeNotifier {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setStringList('stars', _stars.toList());
+  }
+
+  Future<void> addFilter(
+    String? newFilter,
+  ) async {
+    if (newFilter == null) return;
+    if (_filters.contains(RegExp(newFilter))) return;
+
+    _filters.add(RegExp(newFilter));
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('filters', _filters.map((filter) => filter.pattern).toList());
+  }
+
+  Future<void> removeFilter(
+    String? oldFilter
+  ) async {
+    if (oldFilter == null) return;
+    if (!_filters.contains(RegExp(oldFilter))) return;
+
+    _filters.remove(RegExp(oldFilter));
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('filters', _filters.map((filter) => filter.pattern).toList());
   }
 
   Future<void> saveServer(ServerSoftware software, String server) async {

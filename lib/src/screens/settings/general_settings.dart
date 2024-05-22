@@ -226,6 +226,55 @@ class GeneralScreen extends StatelessWidget {
             subtitle: const Text(
                 'When enabled, the instance of a user/magazine will always display instead of an @ button'),
           ),
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  'Custom Filter',
+                  style: Theme.of(context).textTheme.bodyLarge!
+                ),
+              ),
+              Flexible(
+                child: Wrap(
+                  children: [
+                    ...(controller.filters.map(
+                          (filter) => Padding(
+                        padding: const EdgeInsets.all(2),
+                        child: InputChip(
+                          label: Text(filter.pattern),
+                          onDeleted: () async {
+                            controller.removeFilter(filter.pattern);
+                          },
+                        ),
+                      ),
+                    )),
+                    Padding(
+                      padding: const EdgeInsets.all(2),
+                      child: IconButton(
+                        onPressed: () async {
+                          showModalBottomSheet(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(12),
+                                  child: TextFormField(
+                                    onFieldSubmitted: (String? filter) {
+                                      controller.addFilter(filter);
+                                    },
+                                  )
+                                );
+                              }
+                          );
+                        },
+                        icon: const Icon(Icons.add),
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
         ],
       ),
     );
