@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:provider/provider.dart';
 
 class SelectionMenuItem<T> {
   final T value;
   final String title;
   final IconData? icon;
   final Color? iconColor;
+  final ServerSoftware? validSoftware;
 
   const SelectionMenuItem({
     required this.value,
     required this.title,
     this.icon,
     this.iconColor,
+    this.validSoftware,
   });
 }
 
@@ -41,7 +45,7 @@ class SelectionMenu<T> {
               ),
               Flexible(
                 child: ListView(shrinkWrap: true, children: [
-                  ...options.map(
+                  ...options.where((element) => element.validSoftware == null || element.validSoftware == context.watch<SettingsController>().serverSoftware).map(
                     (option) => ListTile(
                       title: Text(option.title),
                       onTap: () => Navigator.pop(context, option.value),

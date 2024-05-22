@@ -15,4 +15,19 @@ enum FeedSort {
   oldest,
   top,
   commented,
+
+  //lemmy specific
+  topDay,
+  topWeek,
+  topMonth,
+  topYear,
+  newComments,
+  topHour,
+  topSixHour,
+  topTwelveHour,
+  topThreeMonths,
+  topSixMonths,
+  topNineMonths,
+  controversial,
+  scaled,
 }

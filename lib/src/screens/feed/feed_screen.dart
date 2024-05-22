@@ -417,6 +417,86 @@ const SelectionMenu<FeedSort> feedSortSelect = SelectionMenu(
       title: 'Oldest',
       icon: Icons.access_time_outlined,
     ),
+
+    //lemmy specific
+    SelectionMenuItem(
+      value: FeedSort.newComments,
+      title: 'NewComments',
+      icon: Icons.mark_chat_unread,
+      validSoftware: ServerSoftware.lemmy,
+    ),
+    SelectionMenuItem(
+      value: FeedSort.controversial,
+      title: 'Controversial',
+      icon: Icons.thumbs_up_down,
+      validSoftware: ServerSoftware.lemmy,
+    ),
+    SelectionMenuItem(
+      value: FeedSort.scaled,
+      title: 'Scaled',
+      icon: Icons.scale,
+      validSoftware: ServerSoftware.lemmy,
+    ),
+    SelectionMenuItem(
+      value: FeedSort.topDay,
+      title: 'TopDay',
+      icon: Icons.trending_up,
+      validSoftware: ServerSoftware.lemmy,
+    ),
+    SelectionMenuItem(
+      value: FeedSort.topWeek,
+      title: 'TopWeek',
+      icon: Icons.trending_up,
+      validSoftware: ServerSoftware.lemmy,
+    ),
+    SelectionMenuItem(
+      value: FeedSort.topMonth,
+      title: 'TopMonth',
+      icon: Icons.trending_up,
+      validSoftware: ServerSoftware.lemmy,
+    ),
+    SelectionMenuItem(
+      value: FeedSort.topYear,
+      title: 'TopYear',
+      icon: Icons.trending_up,
+      validSoftware: ServerSoftware.lemmy,
+    ),
+    SelectionMenuItem(
+      value: FeedSort.topHour,
+      title: 'TopHour',
+      icon: Icons.trending_up,
+      validSoftware: ServerSoftware.lemmy,
+    ),
+    SelectionMenuItem(
+      value: FeedSort.topSixHour,
+      title: 'TopSixHour',
+      icon: Icons.trending_up,
+      validSoftware: ServerSoftware.lemmy,
+    ),
+    SelectionMenuItem(
+      value: FeedSort.topTwelveHour,
+      title: 'TopTwelveHour',
+      icon: Icons.trending_up,
+      validSoftware: ServerSoftware.lemmy,
+    ),
+    SelectionMenuItem(
+      value: FeedSort.topThreeMonths,
+      title: 'TopThreeMonths',
+      icon: Icons.trending_up,
+      validSoftware: ServerSoftware.lemmy,
+    ),
+    SelectionMenuItem(
+      value: FeedSort.topSixMonths,
+      title: 'TopSixMonths',
+      icon: Icons.trending_up,
+      validSoftware: ServerSoftware.lemmy,
+    ),
+    SelectionMenuItem(
+      value: FeedSort.topNineMonths,
+      title: 'TopNineMonths',
+      icon: Icons.trending_up,
+      validSoftware: ServerSoftware.lemmy,
+    ),
   ],
 );
 
