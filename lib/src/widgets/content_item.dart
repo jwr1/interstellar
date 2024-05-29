@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/models/image.dart';
 import 'package:interstellar/src/screens/explore/domain_screen.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
@@ -6,6 +7,7 @@ import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/blur.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
+import 'package:interstellar/src/widgets/image.dart';
 import 'package:interstellar/src/widgets/markdown/markdown.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:interstellar/src/widgets/open_webpage.dart';
@@ -18,7 +20,7 @@ class ContentItem extends StatefulWidget {
   final String originInstance;
 
   final String? title;
-  final String? image;
+  final ImageModel? image;
   final Uri? link;
   final Uri? video;
   final String? body;
@@ -32,12 +34,12 @@ class ContentItem extends StatefulWidget {
   final bool isOC;
 
   final String? user;
-  final String? userIcon;
+  final ImageModel? userIcon;
   final int? userIdOnClick;
   final int? opUserId;
 
   final String? magazine;
-  final String? magazineIcon;
+  final ImageModel? magazineIcon;
   final int? magazineIdOnClick;
 
   final String? domain;
@@ -118,30 +120,6 @@ class _ContentItemState extends State<ContentItem> {
   TextEditingController? _editTextController;
   final MenuController _menuController = MenuController();
 
-  _onImageClick(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => Scaffold(
-          extendBodyBehindAppBar: true,
-          appBar: AppBar(
-            title: widget.title != null ? Text(widget.title!) : null,
-            backgroundColor: const Color(0x66000000),
-          ),
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: InteractiveViewer(
-                  child: Image.network(widget.image!),
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final Widget? userWidget = widget.user != null
@@ -212,33 +190,37 @@ class _ContentItemState extends State<ContentItem> {
 
       final double rightImageSize = hasWideSize ? 128 : 64;
 
+      final imageOpenTitle = widget.title ?? widget.body ?? '';
+
       final imageWidget = widget.image == null
           ? null
           : Wrapper(
-              shouldWrap: widget.video == null,
-              parentBuilder: (child) => InkWell(
-                onTap: () => _onImageClick(context),
-                child: child,
-              ),
-              child: Wrapper(
-                shouldWrap: widget.isNSFW,
-                parentBuilder: (child) => Blur(child),
-                child: isRightImage
-                    ? Image.network(
+              shouldWrap: widget.isNSFW,
+              parentBuilder: (child) => Blur(child),
+              child: isRightImage
+                  ? SizedBox(
+                      height: rightImageSize,
+                      width: rightImageSize,
+                      child: AdvancedImage(
                         widget.image!,
-                        height: rightImageSize,
-                        width: rightImageSize,
                         fit: BoxFit.cover,
-                      )
-                    : (widget.isPreview
-                        ? Image.network(
+                        openTitle: imageOpenTitle,
+                      ),
+                    )
+                  : (widget.isPreview
+                      ? SizedBox(
+                          height: 160,
+                          width: double.infinity,
+                          child: AdvancedImage(
                             widget.image!,
-                            height: 160,
-                            width: double.infinity,
                             fit: BoxFit.cover,
-                          )
-                        : Image.network(widget.image!)),
-              ),
+                            openTitle: imageOpenTitle,
+                          ),
+                        )
+                      : AdvancedImage(
+                          widget.image!,
+                          openTitle: imageOpenTitle,
+                        )),
             );
 
       final titleStyle = hasWideSize

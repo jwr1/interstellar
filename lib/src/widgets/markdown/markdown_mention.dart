@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart' as mdf;
+import 'package:interstellar/src/models/image.dart';
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
@@ -135,7 +136,7 @@ Map<String, DetailedMagazineModel> magazineMentionCache = {};
 
 class MentionWidgetState extends State<MentionWidget> {
   late String _displayName;
-  String? _icon;
+  ImageModel? _icon;
   void Function()? _onClick;
 
   @override

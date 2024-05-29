@@ -1,23 +1,32 @@
+import 'package:blurhash_ffi/blurhash_ffi.dart';
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/models/image.dart';
 
 class Avatar extends StatelessWidget {
-  final String? url;
+  final ImageModel? image;
   final double? radius;
   final double? borderRadius;
 
-  const Avatar(this.url, {super.key, this.radius, this.borderRadius});
+  const Avatar(this.image, {super.key, this.radius, this.borderRadius});
 
   @override
   Widget build(BuildContext context) {
     return CircleAvatar(
-        radius: radius != null && borderRadius != null ? radius! + borderRadius! : radius,
-        backgroundColor: radius == null || borderRadius == null ? Colors.transparent : null,
-        child: CircleAvatar(
-          backgroundColor: Colors.transparent,
-          foregroundImage: url != null ? NetworkImage(url!) : null,
-          backgroundImage: url == null ? const AssetImage('assets/icons/logo.png') : null,
-          radius: radius,
-        )
+      radius: radius != null && borderRadius != null
+          ? radius! + borderRadius!
+          : radius,
+      backgroundColor:
+          radius == null || borderRadius == null ? Colors.transparent : null,
+      child: CircleAvatar(
+        backgroundColor: Colors.transparent,
+        foregroundImage: image == null ? null : NetworkImage(image!.src),
+        backgroundImage: image == null
+            ? const AssetImage('assets/icons/logo.png')
+            : (image!.blurHash != null
+                ? BlurhashFfiImage(image!.blurHash!) as ImageProvider<Object>
+                : null),
+        radius: radius,
+      ),
     );
   }
 }

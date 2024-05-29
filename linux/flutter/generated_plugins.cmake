@@ -11,6 +11,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
+  blurhash_ffi
   media_kit_native_event_loop
 )
 

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:interstellar/src/models/user.dart';
+import 'package:interstellar/src/widgets/image.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:provider/provider.dart';
 
@@ -125,10 +126,9 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                     : widget.user.cover != null
                         ? _deleteCover
                             ? null
-                            : Image.network(
+                            : AdvancedImage(
                                 widget.user.cover!,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
+                                fit: BoxFit.fitWidth,
                               )
                         : null,
               ),

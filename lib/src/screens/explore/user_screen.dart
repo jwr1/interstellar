@@ -16,6 +16,7 @@ import 'package:interstellar/src/screens/profile/profile_edit_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
+import 'package:interstellar/src/widgets/image.dart';
 import 'package:interstellar/src/widgets/loading_template.dart';
 import 'package:interstellar/src/widgets/markdown/markdown.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
@@ -137,10 +138,9 @@ class _UserScreenState extends State<UserScreen> {
                         ),
                         height: user.cover == null ? 100 : null,
                         child: user.cover != null
-                            ? Image.network(
+                            ? AdvancedImage(
                                 user.cover!,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
+                                fit: BoxFit.fitWidth,
                               )
                             : null,
                       ),

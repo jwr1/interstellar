@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:interstellar/src/models/image.dart';
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/models/user.dart';
@@ -46,7 +47,7 @@ class CommentModel with _$CommentModel {
     required int postId,
     required int? rootId,
     required int? parentId,
-    required String? image,
+    required ImageModel? image,
     required String? body,
     required String? lang,
     required int? upvotes,
@@ -71,7 +72,7 @@ class CommentModel with _$CommentModel {
         postId: (json['entryId'] ?? json['postId']) as int,
         rootId: json['rootId'] as int?,
         parentId: json['parentId'] as int?,
-        image: kbinGetImageUrl(json['image'] as Map<String, Object?>?),
+        image: kbinGetImage(json['image'] as Map<String, Object?>?),
         body: json['body'] as String?,
         lang: json['lang'] as String,
         upvotes: json['favourites'] as int?,

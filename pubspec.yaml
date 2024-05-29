@@ -35,6 +35,7 @@ dependencies:
   dynamic_color: ^1.7.0
   markdown: ^7.2.2
   expandable: ^5.0.1
+  blurhash_ffi: ^1.2.6
 
 dev_dependencies:
   flutter_lints: ^3.0.2

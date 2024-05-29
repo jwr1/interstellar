@@ -49,6 +49,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.2"
+  blurhash_ffi:
+    dependency: "direct main"
+    description:
+      name: blurhash_ffi
+      sha256: "941868602bb3bc34b0a7d630e4bf0e88e4c93af36090fe1cc0d63021c9a46cb3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.6"
   boolean_selector:
     dependency: transitive
     description:

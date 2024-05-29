@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:interstellar/src/models/domain.dart';
+import 'package:interstellar/src/models/image.dart';
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/utils/models.dart';
@@ -52,7 +53,7 @@ class PostModel with _$PostModel {
     required DomainModel? domain,
     required String? title,
     required String? url,
-    required String? image,
+    required ImageModel? image,
     required String? body,
     required String? lang,
     required int numComments,
@@ -79,7 +80,7 @@ class PostModel with _$PostModel {
         domain: DomainModel.fromKbin(json['domain'] as Map<String, Object?>),
         title: json['title'] as String,
         url: json['url'] as String?,
-        image: kbinGetImageUrl(json['image'] as Map<String, Object?>?),
+        image: kbinGetImage(json['image'] as Map<String, Object?>?),
         body: json['body'] as String?,
         lang: json['lang'] as String,
         numComments: json['numComments'] as int,
@@ -108,7 +109,7 @@ class PostModel with _$PostModel {
         domain: null,
         title: null,
         url: null,
-        image: kbinGetImageUrl(json['image'] as Map<String, Object?>?),
+        image: kbinGetImage(json['image'] as Map<String, Object?>?),
         body: json['body'] as String,
         lang: json['lang'] as String,
         numComments: json['comments'] as int,
@@ -141,7 +142,7 @@ class PostModel with _$PostModel {
       domain: null,
       title: lemmyPost['name'] as String,
       url: lemmyPost['url'] as String?,
-      image: lemmyPost['thumbnail_url'] as String?,
+      image: lemmyGetImage(lemmyPost['thumbnail_url'] as String?),
       body: lemmyPost['body'] as String?,
       lang: null,
       numComments: lemmyCounts['comments'] as int,

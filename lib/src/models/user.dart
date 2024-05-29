@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:interstellar/src/models/image.dart';
 import 'package:interstellar/src/utils/models.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_mention.dart';
 
@@ -28,8 +29,8 @@ class DetailedUserModel with _$DetailedUserModel {
     required int id,
     required String name,
     required String? displayName,
-    required String? avatar,
-    required String? cover,
+    required ImageModel? avatar,
+    required ImageModel? cover,
     required DateTime createdAt,
     required bool isBot,
     required String? about,
@@ -44,8 +45,8 @@ class DetailedUserModel with _$DetailedUserModel {
       id: json['userId'] as int,
       name: kbinNormalizeUsername(json['username'] as String),
       displayName: null,
-      avatar: kbinGetImageUrl(json['avatar'] as Map<String, Object?>?),
-      cover: kbinGetImageUrl(json['cover'] as Map<String, Object?>?),
+      avatar: kbinGetImage(json['avatar'] as Map<String, Object?>?),
+      cover: kbinGetImage(json['cover'] as Map<String, Object?>?),
       createdAt: DateTime.parse(json['createdAt'] as String),
       isBot: json['isBot'] as bool,
       about: json['about'] as String?,
@@ -68,8 +69,8 @@ class DetailedUserModel with _$DetailedUserModel {
       id: lemmyPerson['id'] as int,
       name: lemmyGetActorName(lemmyPerson),
       displayName: lemmyPerson['display_name'] as String?,
-      avatar: lemmyPerson['avatar'] as String?,
-      cover: lemmyPerson['banner'] as String?,
+      avatar: lemmyGetImage(lemmyPerson['avatar'] as String?),
+      cover: lemmyGetImage(lemmyPerson['banner'] as String?),
       createdAt: DateTime.parse(lemmyPerson['published'] as String),
       isBot: lemmyPerson['bot_account'] as bool,
       about: lemmyPerson['bio'] as String?,
@@ -86,19 +87,19 @@ class UserModel with _$UserModel {
   const factory UserModel({
     required int id,
     required String name,
-    required String? avatar,
+    required ImageModel? avatar,
   }) = _UserModel;
 
   factory UserModel.fromKbin(Map<String, Object?> json) => UserModel(
         id: json['userId'] as int,
         name: kbinNormalizeUsername(json['username'] as String),
-        avatar: kbinGetImageUrl(json['avatar'] as Map<String, Object?>?),
+        avatar: kbinGetImage(json['avatar'] as Map<String, Object?>?),
       );
 
   factory UserModel.fromLemmy(Map<String, Object?> json) => UserModel(
         id: json['id'] as int,
         name: lemmyGetActorName(json),
-        avatar: json['avatar'] as String?,
+        avatar: lemmyGetImage(json['avatar'] as String?),
       );
 }
 

@@ -1,3 +1,5 @@
+import 'package:interstellar/src/models/image.dart';
+
 DateTime? optionalDateTime(String? value) =>
     value == null ? null : DateTime.parse(value);
 
@@ -7,8 +9,12 @@ String? kbinCalcNextPaginationPage(Map<String, Object?> pagination) {
       : null;
 }
 
-String? kbinGetImageUrl(Map<String, Object?>? image) {
-  return image == null ? null : image['storageUrl'] as String;
+ImageModel? kbinGetImage(Map<String, Object?>? json) {
+  return json == null ? null : ImageModel.fromKbin(json);
+}
+
+ImageModel? lemmyGetImage(String? json) {
+  return json == null ? null : ImageModel.fromLemmy(json);
 }
 
 String kbinNormalizeUsername(String username) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/models/image.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
 import 'package:provider/provider.dart';
@@ -7,7 +8,7 @@ class DisplayName extends StatelessWidget {
   const DisplayName(this.name, {super.key, this.icon, this.onTap});
 
   final String name;
-  final String? icon;
+  final ImageModel? icon;
   final void Function()? onTap;
 
   @override

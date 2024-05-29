@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:interstellar/src/models/image.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/utils/models.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_mention.dart';
@@ -38,7 +39,7 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
     required int id,
     required String name,
     required String title,
-    required String? icon,
+    required ImageModel? icon,
     required String? description,
     required String? rules,
     required List<UserModel> moderators,
@@ -57,7 +58,7 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
       id: json['magazineId'] as int,
       name: json['name'] as String,
       title: json['title'] as String,
-      icon: kbinGetImageUrl(json['icon'] as Map<String, Object?>?),
+      icon: kbinGetImage(json['icon'] as Map<String, Object?>?),
       description: json['description'] as String?,
       rules: json['rules'] as String?,
       moderators: ((json['moderators'] ?? []) as List<dynamic>)
@@ -86,7 +87,7 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
       id: lemmyCommunity['id'] as int,
       name: lemmyGetActorName(lemmyCommunity),
       title: lemmyCommunity['title'] as String,
-      icon: lemmyCommunity['icon'] as String?,
+      icon: lemmyGetImage(lemmyCommunity['icon'] as String?),
       description: lemmyCommunity['description'] as String?,
       rules: null,
       moderators: [],
@@ -111,18 +112,18 @@ class MagazineModel with _$MagazineModel {
   const factory MagazineModel({
     required int id,
     required String name,
-    required String? icon,
+    required ImageModel? icon,
   }) = _MagazineModel;
 
   factory MagazineModel.fromKbin(Map<String, Object?> json) => MagazineModel(
         id: json['magazineId'] as int,
         name: json['name'] as String,
-        icon: kbinGetImageUrl(json['icon'] as Map<String, Object?>?),
+        icon: kbinGetImage(json['icon'] as Map<String, Object?>?),
       );
 
   factory MagazineModel.fromLemmy(Map<String, Object?> json) => MagazineModel(
         id: json['id'] as int,
         name: lemmyGetActorName(json),
-        icon: json['icon'] as String?,
+        icon: lemmyGetImage(json['icon'] as String?),
       );
 }
