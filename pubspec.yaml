@@ -11,15 +11,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_localizations:
-    sdk: flutter
   flutter_markdown: ^0.6.23
   http: ^1.2.1
   http_parser: ^4.0.2
   path: ^1.9.0
   mime: ^1.0.5
   infinite_scroll_pagination: ^4.0.0
-  intl: ^0.18.1
+  intl: ^0.19.0
   media_kit: ^1.1.10+1
   media_kit_video: ^1.2.4
   media_kit_libs_video: ^1.0.4
