@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart' as mdf;
+import 'package:interstellar/src/models/image.dart';
+import 'package:interstellar/src/widgets/image.dart';
 import 'package:interstellar/src/widgets/open_webpage.dart';
 
 import './markdown_mention.dart';
@@ -25,6 +27,18 @@ class Markdown extends StatelessWidget {
         if (href != null) {
           openWebpage(context, Uri.parse(href));
         }
+      },
+      imageBuilder: (uri, title, alt) {
+        return AdvancedImage(
+          ImageModel(
+            src: uri.toString(),
+            altText: alt,
+            blurHash: null,
+            blurHashWidth: null,
+            blurHashHeight: null,
+          ),
+          openTitle: title ?? '',
+        );
       },
       inlineSyntaxes: [
         SubscriptMarkdownSyntax(),
