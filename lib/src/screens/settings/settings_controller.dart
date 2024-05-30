@@ -113,6 +113,17 @@ class SettingsController with ChangeNotifier {
   late Set<String> _stars;
   Set<String> get stars => _stars;
 
+  late Set<String> _feedFilters;
+  Set<String> get feedFilters => _feedFilters;
+  late Set<RegExp> _feedFiltersRegExp;
+  Set<RegExp> get feedFiltersRegExp => _feedFiltersRegExp;
+
+  void _regenerateFeedFiltersRegExp() {
+    _feedFiltersRegExp = _feedFilters
+        .map((filter) => RegExp(filter, caseSensitive: false))
+        .toSet();
+  }
+
   late Map<String, Server> _servers;
   late Map<String, Account> _accounts;
   late String _selectedAccount;
@@ -215,6 +226,9 @@ class SettingsController with ChangeNotifier {
     _defaultCreateLang = prefs.getString("defaultCreateLang") ?? 'en';
 
     _stars = prefs.getStringList("stars")?.toSet() ?? {};
+
+    _feedFilters = prefs.getStringList('feedFilters')?.toSet() ?? {};
+    _regenerateFeedFiltersRegExp();
 
     _servers = (jsonDecode(prefs.getString('servers') ??
             '{"kbin.earth":{"software":"mbin"}}') as Map<String, dynamic>)
@@ -500,6 +514,34 @@ class SettingsController with ChangeNotifier {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setStringList('stars', _stars.toList());
+  }
+
+  Future<void> addFeedFilter(
+    String? newFilter,
+  ) async {
+    if (newFilter == null) return;
+    if (_feedFilters.contains(newFilter)) return;
+
+    _feedFilters.add(newFilter);
+    _regenerateFeedFiltersRegExp();
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('feedFilters', _feedFilters.toList());
+  }
+
+  Future<void> removeFeedFilter(String? oldFilter) async {
+    if (oldFilter == null) return;
+    if (!_feedFilters.contains(oldFilter)) return;
+
+    _feedFilters.remove(oldFilter);
+    _regenerateFeedFiltersRegExp();
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('feedFilters', _feedFilters.toList());
   }
 
   Future<void> saveServer(ServerSoftware software, String server) async {

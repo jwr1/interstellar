@@ -591,7 +591,20 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
           _pagingController.itemList?.map((post) => post.id) ?? [];
       newItems = newPage.items
           .where((post) => !currentItemIds.contains(post.id))
-          .toList();
+          .where((post) {
+        // Skip feed filters if it's an explore page
+        if (widget.sourceId != null) return true;
+
+        for (var filter
+            in context.read<SettingsController>().feedFiltersRegExp) {
+          if ((post.title != null && filter.hasMatch(post.title!)) ||
+              (post.body != null && filter.hasMatch(post.body!))) {
+            return false;
+          }
+        }
+
+        return true;
+      }).toList();
 
       _pagingController.appendPage(newItems, newPage.nextPage);
     } catch (error, st) {

@@ -226,6 +226,81 @@ class GeneralScreen extends StatelessWidget {
             subtitle: const Text(
                 'When enabled, the instance of a user/magazine will always display instead of an @ button'),
           ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 16),
+                      child: Text('Feed Filters',
+                          style: Theme.of(context).textTheme.bodyLarge!),
+                    ),
+                    Flexible(
+                      child: Wrap(
+                        children: [
+                          ...(controller.feedFilters.map(
+                            (filter) => Padding(
+                              padding: const EdgeInsets.all(2),
+                              child: InputChip(
+                                label: Text(filter),
+                                onDeleted: () async {
+                                  controller.removeFeedFilter(filter);
+                                },
+                              ),
+                            ),
+                          )),
+                          Padding(
+                            padding: const EdgeInsets.all(2),
+                            child: IconButton(
+                              onPressed: () async {
+                                showModalBottomSheet(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(12),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            'Add Filter',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleLarge,
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          const SizedBox(height: 12),
+                                          TextFormField(
+                                            autofocus: true,
+                                            onFieldSubmitted: (String? filter) {
+                                              controller.addFeedFilter(filter);
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              icon: const Icon(Icons.add),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+                Text(
+                  'Use this to filter out posts in your "Feed" (not Explore) that contain any of these patterns in their title or body. Simple words or phrases like "hello world" are allowed, but you can also use regular expressions (case insensitive) to match text with a complex pattern.',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
