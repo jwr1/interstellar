@@ -11,6 +11,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   flutter_markdown: ^0.6.23
   http: ^1.2.1
   http_parser: ^4.0.2
