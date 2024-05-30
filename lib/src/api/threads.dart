@@ -207,36 +207,76 @@ class APIThreads {
   Future<PostModel> edit(
     int entryID,
     String title,
-    bool isOc,
+    bool? isOc,
     String body,
-    String lang,
-    bool isAdult,
+    String? lang,
+    bool? isAdult,
   ) async {
-    final path = '/api/entry/$entryID';
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        final path = '/api/entry/$entryID';
 
-    final response = await httpClient.put(
-      Uri.https(server, path),
-      body: jsonEncode({
-        'title': title,
-        'tags': [],
-        'isOc': isOc,
-        'body': body,
-        'lang': lang,
-        'isAdult': isAdult
-      }),
-    );
+        final response = await httpClient.put(
+          Uri.https(server, path),
+          body: jsonEncode({
+            'title': title,
+            'tags': [],
+            'isOc': isOc,
+            'body': body,
+            'lang': lang,
+            'isAdult': isAdult
+          }),
+        );
 
-    httpErrorHandler(response, message: "Failed to edit entry");
+        httpErrorHandler(response, message: "Failed to edit entry");
 
-    return PostModel.fromKbinEntry(
-        jsonDecode(response.body) as Map<String, Object?>);
+        return PostModel.fromKbinEntry(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        const path = '/api/v3/post';
+
+        final response = await httpClient.put(
+            Uri.https(server, path),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'post_id': entryID,
+              'name': title,
+              'body': body,
+              'nsfw': isAdult
+            })
+        );
+
+        httpErrorHandler(response, message: 'Failed to edit entry');
+
+        return PostModel.fromLemmy(
+            jsonDecode(response.body)['post_view'] as Map<String, Object?>);
+    }
   }
 
   Future<void> delete(int postID) async {
-    final response =
-        await httpClient.delete(Uri.https(server, '/api/entry/$postID'));
+    switch (software) {
+      case ServerSoftware.kbin:
+      case ServerSoftware.mbin:
+        final response =
+          await httpClient.delete(Uri.https(server, '/api/entry/$postID'));
 
-    httpErrorHandler(response, message: "Failed to delete entry");
+        httpErrorHandler(response, message: "Failed to delete entry");
+        break;
+
+      case ServerSoftware.lemmy:
+        final response =
+          await httpClient.post(Uri.https(server, '/api/v3/post/delete'),
+              headers: {'Content-Type': 'application/json'},
+              body: jsonEncode({
+                'post_id': postID,
+                'deleted': true
+              }));
+
+        httpErrorHandler(response, message: "Failed to delete entry");
+        break;
+    }
   }
 
   Future<PostModel> createArticle(

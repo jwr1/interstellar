@@ -186,9 +186,9 @@ class _PostPageState extends State<PostPage> {
                                 .edit(
                                   post.id,
                                   post.title!,
-                                  post.isOC!,
+                                  post.isOC,
                                   body,
-                                  post.lang!,
+                                  post.lang,
                                   post.isNSFW,
                                 ),
                             PostType.microblog => context
