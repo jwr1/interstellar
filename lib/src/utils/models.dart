@@ -3,21 +3,21 @@ import 'package:interstellar/src/models/image.dart';
 DateTime? optionalDateTime(String? value) =>
     value == null ? null : DateTime.parse(value);
 
-String? kbinCalcNextPaginationPage(Map<String, Object?> pagination) {
+String? mbinCalcNextPaginationPage(Map<String, Object?> pagination) {
   return (pagination['currentPage'] as int) != (pagination['maxPage'] as int)
       ? ((pagination['currentPage'] as int) + 1).toString()
       : null;
 }
 
-ImageModel? kbinGetImage(Map<String, Object?>? json) {
-  return json == null ? null : ImageModel.fromKbin(json);
+ImageModel? mbinGetImage(Map<String, Object?>? json) {
+  return json == null ? null : ImageModel.fromMbin(json);
 }
 
 ImageModel? lemmyGetImage(String? json) {
   return json == null ? null : ImageModel.fromLemmy(json);
 }
 
-String kbinNormalizeUsername(String username) {
+String mbinNormalizeUsername(String username) {
   return username.startsWith('@') ? username.substring(1) : username;
 }
 

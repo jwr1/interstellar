@@ -21,7 +21,6 @@ class APISearch {
     String? search,
   }) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         const path = '/api/search';
 
@@ -33,7 +32,7 @@ class APISearch {
 
         httpErrorHandler(response, message: 'Failed to load search');
 
-        return SearchListModel.fromKbin(
+        return SearchListModel.fromMbin(
             jsonDecode(response.body) as Map<String, dynamic>);
 
       case ServerSoftware.lemmy:
@@ -45,21 +44,16 @@ class APISearch {
           'listing_type': 'All'
         });
 
-        final response = await httpClient.get(Uri.https(
-          server,
-          path,
-          query
-        ));
+        final response = await httpClient.get(Uri.https(server, path, query));
 
         httpErrorHandler(response, message: 'Failed to load search');
-        
-        final json = jsonDecode(response.body) as Map<String, Object?>;
-        String? nextPage = null;
-        if ((json['comments'] as List<dynamic>).isNotEmpty
-          || (json['posts'] as List<dynamic>).isNotEmpty
-          || (json['communities'] as List<dynamic>).isNotEmpty
-          || (json['users'] as List<dynamic>).isNotEmpty) {
 
+        final json = jsonDecode(response.body) as Map<String, Object?>;
+        String? nextPage;
+        if ((json['comments'] as List<dynamic>).isNotEmpty ||
+            (json['posts'] as List<dynamic>).isNotEmpty ||
+            (json['communities'] as List<dynamic>).isNotEmpty ||
+            (json['users'] as List<dynamic>).isNotEmpty) {
           nextPage = (int.parse(page ?? '1') + 1).toString();
         }
 

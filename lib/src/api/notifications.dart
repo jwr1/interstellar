@@ -8,12 +8,12 @@ import 'package:interstellar/src/utils/utils.dart';
 // new_ is used because new is a reserved keyword
 enum NotificationsFilter { all, new_, read }
 
-class KbinAPINotifications {
+class MbinAPINotifications {
   final ServerSoftware software;
   final http.Client httpClient;
   final String server;
 
-  KbinAPINotifications(
+  MbinAPINotifications(
     this.software,
     this.httpClient,
     this.server,
@@ -31,13 +31,12 @@ class KbinAPINotifications {
 
     httpErrorHandler(response, message: 'Failed to load notifications');
 
-    return NotificationListModel.fromKbin(
+    return NotificationListModel.fromMbin(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
   Future<int> getCount() async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         const path = '/api/notifications/count';
 
@@ -81,7 +80,7 @@ class KbinAPINotifications {
 
     httpErrorHandler(response, message: 'Failed to mark notification');
 
-    return NotificationModel.fromKbin(
+    return NotificationModel.fromMbin(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 }

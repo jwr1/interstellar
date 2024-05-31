@@ -15,7 +15,7 @@ import 'package:interstellar/src/widgets/markdown/markdown_mention.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum ServerSoftware { kbin, mbin, lemmy }
+enum ServerSoftware { mbin, lemmy }
 
 enum PostImagePosition { auto, top, right }
 
@@ -26,7 +26,9 @@ class Server {
   Server(this.software, {this.oauthIdentifier});
 
   factory Server.fromJson(Map<String, Object?> json) => Server(
-        ServerSoftware.values.byName(json['software'] as String),
+        ServerSoftware.values.byName(json['software'] as String == 'kbin'
+            ? 'mbin'
+            : json['software'] as String),
         oauthIdentifier: json['oauthIdentifier'] as String?,
       );
 
@@ -496,7 +498,7 @@ class SettingsController with ChangeNotifier {
     await prefs.setString('servers', jsonEncode(_servers));
   }
 
-  Future<String> getKbinOAuthIdentifier(
+  Future<String> getMbinOAuthIdentifier(
       ServerSoftware software, String server) async {
     if (_servers.containsKey(server) &&
         _servers[server]!.oauthIdentifier != null) {
@@ -573,7 +575,6 @@ class SettingsController with ChangeNotifier {
     http.Client httpClient = http.Client();
 
     switch (serverSoftware) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         oauth2.Credentials? credentials = _accounts[_selectedAccount]!.oauth;
         if (credentials != null) {

@@ -13,13 +13,13 @@ class DetailedMagazineListModel with _$DetailedMagazineListModel {
     required String? nextPage,
   }) = _DetailedMagazineListModel;
 
-  factory DetailedMagazineListModel.fromKbin(Map<String, Object?> json) =>
+  factory DetailedMagazineListModel.fromMbin(Map<String, Object?> json) =>
       DetailedMagazineListModel(
         items: (json['items'] as List<dynamic>)
             .map((item) =>
-                DetailedMagazineModel.fromKbin(item as Map<String, Object?>))
+                DetailedMagazineModel.fromMbin(item as Map<String, Object?>))
             .toList(),
-        nextPage: kbinCalcNextPaginationPage(
+        nextPage: mbinCalcNextPaginationPage(
             json['pagination'] as Map<String, Object?>),
       );
 
@@ -53,16 +53,16 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
     required bool? isBlockedByUser,
   }) = _DetailedMagazineModel;
 
-  factory DetailedMagazineModel.fromKbin(Map<String, Object?> json) {
+  factory DetailedMagazineModel.fromMbin(Map<String, Object?> json) {
     final magazine = DetailedMagazineModel(
       id: json['magazineId'] as int,
       name: json['name'] as String,
       title: json['title'] as String,
-      icon: kbinGetImage(json['icon'] as Map<String, Object?>?),
+      icon: mbinGetImage(json['icon'] as Map<String, Object?>?),
       description: json['description'] as String?,
       rules: json['rules'] as String?,
       moderators: ((json['moderators'] ?? []) as List<dynamic>)
-          .map((user) => UserModel.fromKbin(user as Map<String, Object?>))
+          .map((user) => UserModel.fromMbin(user as Map<String, Object?>))
           .toList(),
       subscriptionsCount: json['subscriptionsCount'] as int,
       threadCount: json['entryCount'] as int,
@@ -115,10 +115,10 @@ class MagazineModel with _$MagazineModel {
     required ImageModel? icon,
   }) = _MagazineModel;
 
-  factory MagazineModel.fromKbin(Map<String, Object?> json) => MagazineModel(
+  factory MagazineModel.fromMbin(Map<String, Object?> json) => MagazineModel(
         id: json['magazineId'] as int,
         name: json['name'] as String,
-        icon: kbinGetImage(json['icon'] as Map<String, Object?>?),
+        icon: mbinGetImage(json['icon'] as Map<String, Object?>?),
       );
 
   factory MagazineModel.fromLemmy(Map<String, Object?> json) => MagazineModel(

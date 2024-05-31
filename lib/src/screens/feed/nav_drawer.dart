@@ -60,7 +60,7 @@ class _NavDrawerState extends State<NavDrawer> {
             .read<SettingsController>()
             .api
             .domains
-            .list(filter: KbinAPIDomainsFilter.subscribed)
+            .list(filter: MbinAPIDomainsFilter.subscribed)
             .then((value) => setState(() {
                   if (value.items.isNotEmpty) {
                     subbedDomains = value.items;

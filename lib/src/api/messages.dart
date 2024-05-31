@@ -5,12 +5,12 @@ import 'package:interstellar/src/models/message.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 
-class KbinAPIMessages {
+class MbinAPIMessages {
   final ServerSoftware software;
   final http.Client httpClient;
   final String server;
 
-  KbinAPIMessages(
+  MbinAPIMessages(
     this.software,
     this.httpClient,
     this.server,
@@ -26,7 +26,7 @@ class KbinAPIMessages {
 
     httpErrorHandler(response, message: 'Failed to load messages');
 
-    return MessageListModel.fromKbin(
+    return MessageListModel.fromMbin(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
@@ -43,7 +43,7 @@ class KbinAPIMessages {
 
     httpErrorHandler(response, message: 'Failed to send message');
 
-    return MessageThreadModel.fromKbin(
+    return MessageThreadModel.fromMbin(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
@@ -60,7 +60,7 @@ class KbinAPIMessages {
 
     httpErrorHandler(response, message: 'Failed to send message');
 
-    return MessageThreadModel.fromKbin(
+    return MessageThreadModel.fromMbin(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 }

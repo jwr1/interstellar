@@ -27,7 +27,6 @@ class APIUsers {
     UsersFilter? filter,
   }) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         final path = (filter == null || filter == UsersFilter.all)
             ? '/api/users'
@@ -40,7 +39,7 @@ class APIUsers {
 
         httpErrorHandler(response, message: 'Failed to load users');
 
-        return DetailedUserListModel.fromKbin(
+        return DetailedUserListModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -50,7 +49,6 @@ class APIUsers {
 
   Future<DetailedUserModel> get(int userId) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         final path = '/api/users/$userId';
 
@@ -58,7 +56,7 @@ class APIUsers {
 
         httpErrorHandler(response, message: 'Failed to load user');
 
-        return DetailedUserModel.fromKbin(
+        return DetailedUserModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -78,7 +76,6 @@ class APIUsers {
 
   Future<DetailedUserModel> getByName(String username) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         final path =
             '/api/users/name/${username.contains('@') ? '@$username' : username}';
@@ -87,7 +84,7 @@ class APIUsers {
 
         httpErrorHandler(response, message: 'Failed to load user');
 
-        return DetailedUserModel.fromKbin(
+        return DetailedUserModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -107,7 +104,6 @@ class APIUsers {
 
   Future<UserModel> getMe() async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         const path = '/api/users/me';
 
@@ -115,7 +111,7 @@ class APIUsers {
 
         httpErrorHandler(response, message: 'Failed to load user');
 
-        return UserModel.fromKbin(
+        return UserModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -135,7 +131,6 @@ class APIUsers {
     bool state,
   ) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         final path = '/api/users/$userId/${state ? 'follow' : 'unfollow'}';
 
@@ -143,7 +138,7 @@ class APIUsers {
 
         httpErrorHandler(response, message: 'Failed to send follow');
 
-        return DetailedUserModel.fromKbin(
+        return DetailedUserModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -153,7 +148,6 @@ class APIUsers {
 
   Future<DetailedUserModel?> updateProfile(String about) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         const path = '/api/users/profile';
 
@@ -162,7 +156,7 @@ class APIUsers {
 
         httpErrorHandler(response, message: 'Failed to update profile');
 
-        return DetailedUserModel.fromKbin(
+        return DetailedUserModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -183,7 +177,6 @@ class APIUsers {
     bool state,
   ) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         final path = '/api/users/$userId/${state ? 'block' : 'unblock'}';
 
@@ -191,7 +184,7 @@ class APIUsers {
 
         httpErrorHandler(response, message: 'Failed to send block');
 
-        return DetailedUserModel.fromKbin(
+        return DetailedUserModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -215,7 +208,6 @@ class APIUsers {
 
   Future<DetailedUserModel?> updateAvatar(XFile image) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         const path = '/api/users/avatar';
 
@@ -232,7 +224,7 @@ class APIUsers {
 
         httpErrorHandler(response, message: 'Failed to update avatar');
 
-        return DetailedUserModel.fromKbin(
+        return DetailedUserModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -275,14 +267,13 @@ class APIUsers {
 
   Future<DetailedUserModel> deleteAvatar() async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         const path = '/api/users/avatar';
         var response = await httpClient.delete(Uri.https(server, path));
 
         httpErrorHandler(response, message: 'Failed to delete avatar');
 
-        return DetailedUserModel.fromKbin(
+        return DetailedUserModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -292,7 +283,6 @@ class APIUsers {
 
   Future<DetailedUserModel?> updateCover(XFile image) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         const path = '/api/users/cover';
 
@@ -309,7 +299,7 @@ class APIUsers {
 
         httpErrorHandler(response, message: 'Failed to update cover');
 
-        return DetailedUserModel.fromKbin(
+        return DetailedUserModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -350,14 +340,13 @@ class APIUsers {
 
   Future<DetailedUserModel> deleteCover() async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         const path = '/api/users/cover';
         var response = await httpClient.delete(Uri.https(server, path));
 
         httpErrorHandler(response, message: 'Failed to delete cover');
 
-        return DetailedUserModel.fromKbin(
+        return DetailedUserModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -370,7 +359,6 @@ class APIUsers {
     String? page,
   }) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         final path = '/api/users/$userId/followers';
         final query = queryParams({
@@ -381,7 +369,7 @@ class APIUsers {
 
         httpErrorHandler(response, message: 'Failed to load followers');
 
-        return DetailedUserListModel.fromKbin(
+        return DetailedUserListModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -394,7 +382,6 @@ class APIUsers {
     String? page,
   }) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         final path = '/api/users/$userId/followed';
         final query = queryParams({
@@ -405,7 +392,7 @@ class APIUsers {
 
         httpErrorHandler(response, message: 'Failed to load following');
 
-        return DetailedUserListModel.fromKbin(
+        return DetailedUserListModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -415,14 +402,13 @@ class APIUsers {
 
   Future<UserSettings> getUserSettings() async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         const path = '/api/users/settings';
         final response = await httpClient.get(Uri.https(server, path));
 
         httpErrorHandler(response, message: 'Failed to get user settings');
 
-        return UserSettings.fromKbin(
+        return UserSettings.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -439,7 +425,6 @@ class APIUsers {
 
   Future<UserSettings> saveUserSettings(UserSettings settings) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         const path = '/api/users/settings';
         final response = await httpClient.put(Uri.https(server, path),
@@ -452,15 +437,17 @@ class APIUsers {
               'showProfileFollowings': settings.showProfileFollowings,
               'notifyOnNewEntry': settings.notifyOnNewEntry,
               'notifyOnNewEntryReply': settings.notifyOnNewEntryReply,
-              'notifyOnNewEntryCommentReply': settings.notifyOnNewEntryCommentReply,
+              'notifyOnNewEntryCommentReply':
+                  settings.notifyOnNewEntryCommentReply,
               'notifyOnNewPost': settings.notifyOnNewPost,
               'notifyOnNewPostReply': settings.notifyOnNewPostReply,
-              'notifyOnNewPostCommentReply': settings.notifyOnNewPostCommentReply,
+              'notifyOnNewPostCommentReply':
+                  settings.notifyOnNewPostCommentReply,
             }));
 
         httpErrorHandler(response, message: 'Failed to save user settings');
 
-        return UserSettings.fromKbin(
+        return UserSettings.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:

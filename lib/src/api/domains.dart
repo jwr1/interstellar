@@ -5,14 +5,14 @@ import 'package:interstellar/src/models/domain.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 
-enum KbinAPIDomainsFilter { all, subscribed, blocked }
+enum MbinAPIDomainsFilter { all, subscribed, blocked }
 
-class KbinAPIDomains {
+class MbinAPIDomains {
   final ServerSoftware software;
   final http.Client httpClient;
   final String server;
 
-  KbinAPIDomains(
+  MbinAPIDomains(
     this.software,
     this.httpClient,
     this.server,
@@ -20,14 +20,14 @@ class KbinAPIDomains {
 
   Future<DomainListModel> list({
     String? page,
-    KbinAPIDomainsFilter? filter,
+    MbinAPIDomainsFilter? filter,
     String? search,
   }) async {
-    final path = (filter == null || filter == KbinAPIDomainsFilter.all)
+    final path = (filter == null || filter == MbinAPIDomainsFilter.all)
         ? '/api/domains'
         : '/api/domains/${filter.name}';
     final query = queryParams(
-        (filter == null || filter == KbinAPIDomainsFilter.all)
+        (filter == null || filter == MbinAPIDomainsFilter.all)
             ? {'p': page, 'q': search}
             : {'p': page});
 
@@ -35,7 +35,7 @@ class KbinAPIDomains {
 
     httpErrorHandler(response, message: 'Failed to load domains');
 
-    return DomainListModel.fromKbin(
+    return DomainListModel.fromMbin(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
@@ -46,7 +46,7 @@ class KbinAPIDomains {
 
     httpErrorHandler(response, message: 'Failed to load domain');
 
-    return DomainModel.fromKbin(
+    return DomainModel.fromMbin(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
@@ -57,7 +57,7 @@ class KbinAPIDomains {
 
     httpErrorHandler(response, message: 'Failed to send subscribe');
 
-    return DomainModel.fromKbin(
+    return DomainModel.fromMbin(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
@@ -68,7 +68,7 @@ class KbinAPIDomains {
 
     httpErrorHandler(response, message: 'Failed to send block');
 
-    return DomainModel.fromKbin(
+    return DomainModel.fromMbin(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 }

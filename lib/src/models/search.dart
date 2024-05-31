@@ -14,33 +14,33 @@ class SearchListModel with _$SearchListModel {
     required String? nextPage,
   }) = _SearchListModel;
 
-  factory SearchListModel.fromKbin(Map<String, dynamic> json) {
+  factory SearchListModel.fromMbin(Map<String, dynamic> json) {
     List<Object> items = [];
 
     for (var actor in json['apActors']) {
       var type = actor['type'];
       if (type == 'user') {
-        items.add(DetailedUserModel.fromKbin(
+        items.add(DetailedUserModel.fromMbin(
             actor['object'] as Map<String, Object?>));
       } else if (type == 'magazine') {
-        items.add(DetailedMagazineModel.fromKbin(
+        items.add(DetailedMagazineModel.fromMbin(
             actor['object'] as Map<String, Object?>));
       }
     }
     for (var item in json['items']) {
       var itemType = item['itemType'];
       if (itemType == 'entry') {
-        items.add(PostModel.fromKbinEntry(item as Map<String, Object?>));
+        items.add(PostModel.fromMbinEntry(item as Map<String, Object?>));
       } else if (itemType == 'post') {
-        items.add(PostModel.fromKbinPost(item as Map<String, Object?>));
+        items.add(PostModel.fromMbinPost(item as Map<String, Object?>));
       } else if (itemType == 'entry_comment' || itemType == 'post_comment') {
-        items.add(CommentModel.fromKbin(item as Map<String, Object?>));
+        items.add(CommentModel.fromMbin(item as Map<String, Object?>));
       }
     }
 
     return SearchListModel(
       items: items,
-      nextPage: kbinCalcNextPaginationPage(
+      nextPage: mbinCalcNextPaginationPage(
           json['pagination'] as Map<String, Object?>),
     );
   }
@@ -53,7 +53,8 @@ class SearchListModel with _$SearchListModel {
     }
 
     for (var community in json['communities']) {
-      items.add(DetailedMagazineModel.fromLemmy(community as Map<String, Object?>));
+      items.add(
+          DetailedMagazineModel.fromLemmy(community as Map<String, Object?>));
     }
 
     for (var post in json['posts']) {
@@ -65,8 +66,6 @@ class SearchListModel with _$SearchListModel {
     }
 
     return SearchListModel(
-      items: items,
-      nextPage: json['next_page'] as String?
-    );
+        items: items, nextPage: json['next_page'] as String?);
   }
 }

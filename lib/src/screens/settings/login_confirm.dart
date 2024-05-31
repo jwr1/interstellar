@@ -133,7 +133,7 @@ class _LoginConfirmScreenState extends State<LoginConfirmScreen> {
 
                           String identifier = await context
                               .read<SettingsController>()
-                              .getKbinOAuthIdentifier(
+                              .getMbinOAuthIdentifier(
                                   widget.software, widget.server);
 
                           final grant = oauth2.AuthorizationCodeGrant(

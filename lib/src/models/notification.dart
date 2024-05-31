@@ -10,13 +10,13 @@ class NotificationListModel with _$NotificationListModel {
     required String? nextPage,
   }) = _NotificationListModel;
 
-  factory NotificationListModel.fromKbin(Map<String, Object?> json) =>
+  factory NotificationListModel.fromMbin(Map<String, Object?> json) =>
       NotificationListModel(
         items: (json['items'] as List<dynamic>)
             .map((post) =>
-                NotificationModel.fromKbin(post as Map<String, Object?>))
+                NotificationModel.fromMbin(post as Map<String, Object?>))
             .toList(),
-        nextPage: kbinCalcNextPaginationPage(
+        nextPage: mbinCalcNextPaginationPage(
             json['pagination'] as Map<String, Object?>),
       );
 }
@@ -30,7 +30,7 @@ class NotificationModel with _$NotificationModel {
     required Map<String, Object?> subject,
   }) = _NotificationModel;
 
-  factory NotificationModel.fromKbin(Map<String, Object?> json) =>
+  factory NotificationModel.fromMbin(Map<String, Object?> json) =>
       NotificationModel(
         id: json['notificationId'] as int,
         type: notificationTypeEnumMap.entries

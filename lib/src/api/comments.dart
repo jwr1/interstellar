@@ -50,11 +50,11 @@ const SelectionMenu<CommentSort> commentSortSelect = SelectionMenu(
   ],
 );
 
-const _postTypeKbin = {
+const _postTypeMbin = {
   PostType.thread: 'entry',
   PostType.microblog: 'posts',
 };
-const _postTypeKbinComment = {
+const _postTypeMbinComment = {
   PostType.thread: 'comments',
   PostType.microblog: 'post-comments',
 };
@@ -79,9 +79,8 @@ class APIComments {
     bool? usePreferredLangs,
   }) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
-        final path = '/api/${_postTypeKbin[postType]}/$postId/comments';
+        final path = '/api/${_postTypeMbin[postType]}/$postId/comments';
         final query = queryParams({
           'p': page,
           'sortBy': sort?.name,
@@ -93,7 +92,7 @@ class APIComments {
 
         httpErrorHandler(response, message: 'Failed to load comments');
 
-        return CommentListModel.fromKbin(
+        return CommentListModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -123,9 +122,8 @@ class APIComments {
     bool? usePreferredLangs,
   }) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
-        final path = '/api/users/$userId/${_postTypeKbinComment[postType]}';
+        final path = '/api/users/$userId/${_postTypeMbinComment[postType]}';
         final query = queryParams({
           'p': page,
           'sort': sort?.name,
@@ -137,7 +135,7 @@ class APIComments {
 
         httpErrorHandler(response, message: 'Failed to load comments');
 
-        return CommentListModel.fromKbin(
+        return CommentListModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -163,15 +161,14 @@ class APIComments {
 
   Future<CommentModel> get(PostType postType, int commentId) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
-        final path = '/api/${_postTypeKbinComment[postType]}/$commentId';
+        final path = '/api/${_postTypeMbinComment[postType]}/$commentId';
 
         final response = await httpClient.get(Uri.https(server, path));
 
         httpErrorHandler(response, message: 'Failed to load comment');
 
-        return CommentModel.fromKbin(
+        return CommentModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -200,18 +197,18 @@ class APIComments {
     int newScore,
   ) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         final path = choice == 1
-            ? '/api/${_postTypeKbinComment[postType]}/$commentId/favourite'
-            : '/api/${_postTypeKbinComment[postType]}/$commentId/vote/$choice';
+            ? '/api/${_postTypeMbinComment[postType]}/$commentId/favourite'
+            : '/api/${_postTypeMbinComment[postType]}/$commentId/vote/$choice';
 
         final response = await httpClient.put(Uri.https(server, path));
 
         httpErrorHandler(response, message: 'Failed to send vote');
 
-        return CommentModel.fromKbin(
+        return CommentModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
+
       case ServerSoftware.lemmy:
         const path = '/api/v3/comment/like';
 
@@ -233,15 +230,14 @@ class APIComments {
 
   Future<CommentModel> boost(PostType postType, int commentId) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
-        final path = '/api/${_postTypeKbinComment[postType]}/$commentId/vote/1';
+        final path = '/api/${_postTypeMbinComment[postType]}/$commentId/vote/1';
 
         final response = await httpClient.put(Uri.https(server, path));
 
         httpErrorHandler(response, message: 'Failed to send boost');
 
-        return CommentModel.fromKbin(
+        return CommentModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -256,10 +252,9 @@ class APIComments {
     int? parentCommentId,
   }) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         final path =
-            '/api/${_postTypeKbin[postType]}/$postId/comments${parentCommentId != null ? '/$parentCommentId/reply' : ''}';
+            '/api/${_postTypeMbin[postType]}/$postId/comments${parentCommentId != null ? '/$parentCommentId/reply' : ''}';
 
         final response = await httpClient.post(
           Uri.https(server, path),
@@ -268,7 +263,7 @@ class APIComments {
 
         httpErrorHandler(response, message: 'Failed to create comment');
 
-        return CommentModel.fromKbin(
+        return CommentModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -297,9 +292,8 @@ class APIComments {
     String body,
   ) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
-        final path = '/api/${_postTypeKbinComment[postType]}/$commentId';
+        final path = '/api/${_postTypeMbinComment[postType]}/$commentId';
 
         final response = await httpClient.put(
           Uri.https(server, path),
@@ -310,7 +304,7 @@ class APIComments {
 
         httpErrorHandler(response, message: "Failed to edit comment");
 
-        return CommentModel.fromKbin(
+        return CommentModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -334,9 +328,8 @@ class APIComments {
 
   Future<void> delete(PostType postType, int commentId) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
-        final path = '/api/${_postTypeKbinComment[postType]}/$commentId';
+        final path = '/api/${_postTypeMbinComment[postType]}/$commentId';
 
         final response = await httpClient.delete(Uri.https(server, path));
 
@@ -360,9 +353,8 @@ class APIComments {
 
   Future<void> report(PostType postType, int commentId, String reason) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
-        final path = '/api/${_postTypeKbinComment[postType]}/$commentId/report';
+        final path = '/api/${_postTypeMbinComment[postType]}/$commentId/report';
 
         final response = await httpClient.post(
           Uri.https(server, path),

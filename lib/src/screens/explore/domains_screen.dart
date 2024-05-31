@@ -21,7 +21,7 @@ class DomainsScreen extends StatefulWidget {
 }
 
 class _DomainsScreenState extends State<DomainsScreen> {
-  KbinAPIDomainsFilter filter = KbinAPIDomainsFilter.all;
+  MbinAPIDomainsFilter filter = MbinAPIDomainsFilter.all;
   String search = "";
 
   final PagingController<String, DomainModel> _pagingController =
@@ -32,7 +32,7 @@ class _DomainsScreenState extends State<DomainsScreen> {
     super.initState();
 
     if (widget.onlySubbed) {
-      filter = KbinAPIDomainsFilter.subscribed;
+      filter = MbinAPIDomainsFilter.subscribed;
     }
 
     _pagingController.addPageRequestListener(_fetchPage);
@@ -77,7 +77,7 @@ class _DomainsScreenState extends State<DomainsScreen> {
                     ...whenLoggedIn(context, [
                           Padding(
                             padding: const EdgeInsets.only(right: 12),
-                            child: DropdownButton<KbinAPIDomainsFilter>(
+                            child: DropdownButton<MbinAPIDomainsFilter>(
                               value: filter,
                               onChanged: (newFilter) {
                                 if (newFilter != null) {
@@ -89,15 +89,15 @@ class _DomainsScreenState extends State<DomainsScreen> {
                               },
                               items: const [
                                 DropdownMenuItem(
-                                  value: KbinAPIDomainsFilter.all,
+                                  value: MbinAPIDomainsFilter.all,
                                   child: Text('All'),
                                 ),
                                 DropdownMenuItem(
-                                  value: KbinAPIDomainsFilter.subscribed,
+                                  value: MbinAPIDomainsFilter.subscribed,
                                   child: Text('Subscribed'),
                                 ),
                                 DropdownMenuItem(
-                                  value: KbinAPIDomainsFilter.blocked,
+                                  value: MbinAPIDomainsFilter.blocked,
                                   child: Text('Blocked'),
                                 ),
                               ],
@@ -105,7 +105,7 @@ class _DomainsScreenState extends State<DomainsScreen> {
                           )
                         ]) ??
                         [],
-                    if (filter == KbinAPIDomainsFilter.all)
+                    if (filter == MbinAPIDomainsFilter.all)
                       SizedBox(
                         width: 128,
                         child: TextFormField(

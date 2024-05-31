@@ -53,11 +53,11 @@ class _NotificationItemState extends State<NotificationItem> {
     Map<String, Object?> rawUser = (widget.item.subject['user'] ??
         widget.item.subject['sender'] ??
         widget.item.subject['bannedBy']) as Map<String, Object?>;
-    UserModel user = UserModel.fromKbin(rawUser);
+    UserModel user = UserModel.fromMbin(rawUser);
     MagazineModel? bannedMagazine =
         widget.item.type == NotificationType.banNotification &&
                 widget.item.subject['magazine'] != null
-            ? MagazineModel.fromKbin(
+            ? MagazineModel.fromMbin(
                 widget.item.subject['magazine'] as Map<String, Object?>)
             : null;
 

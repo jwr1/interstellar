@@ -14,12 +14,12 @@ class CommentListModel with _$CommentListModel {
     required String? nextPage,
   }) = _CommentListModel;
 
-  factory CommentListModel.fromKbin(Map<String, Object?> json) =>
+  factory CommentListModel.fromMbin(Map<String, Object?> json) =>
       CommentListModel(
         items: (json['items'] as List<dynamic>)
-            .map((post) => CommentModel.fromKbin(post as Map<String, Object?>))
+            .map((post) => CommentModel.fromMbin(post as Map<String, Object?>))
             .toList(),
-        nextPage: kbinCalcNextPaginationPage(
+        nextPage: mbinCalcNextPaginationPage(
             json['pagination'] as Map<String, Object?>),
       );
 
@@ -62,17 +62,17 @@ class CommentModel with _$CommentModel {
     required String visibility,
   }) = _CommentModel;
 
-  factory CommentModel.fromKbin(Map<String, Object?> json) => CommentModel(
+  factory CommentModel.fromMbin(Map<String, Object?> json) => CommentModel(
         id: json['commentId'] as int,
-        user: UserModel.fromKbin(json['user'] as Map<String, Object?>),
+        user: UserModel.fromMbin(json['user'] as Map<String, Object?>),
         magazine:
-            MagazineModel.fromKbin(json['magazine'] as Map<String, Object?>),
+            MagazineModel.fromMbin(json['magazine'] as Map<String, Object?>),
         postType:
             (json['postId'] != null ? PostType.microblog : PostType.thread),
         postId: (json['entryId'] ?? json['postId']) as int,
         rootId: json['rootId'] as int?,
         parentId: json['parentId'] as int?,
-        image: kbinGetImage(json['image'] as Map<String, Object?>?),
+        image: mbinGetImage(json['image'] as Map<String, Object?>?),
         body: json['body'] as String?,
         lang: json['lang'] as String,
         upvotes: json['favourites'] as int?,
@@ -85,7 +85,7 @@ class CommentModel with _$CommentModel {
         createdAt: DateTime.parse(json['createdAt'] as String),
         editedAt: optionalDateTime(json['editedAt'] as String?),
         children: (json['children'] as List<dynamic>)
-            .map((c) => CommentModel.fromKbin(c as Map<String, Object?>))
+            .map((c) => CommentModel.fromMbin(c as Map<String, Object?>))
             .toList(),
         childCount: json['childCount'] as int,
         visibility: json['visibility'] as String,

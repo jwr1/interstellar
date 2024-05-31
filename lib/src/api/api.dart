@@ -19,12 +19,12 @@ class API {
   final String server;
 
   final APIComments comments;
-  final KbinAPIDomains domains;
+  final MbinAPIDomains domains;
   final APIThreads threads;
   final APIMagazines magazines;
-  final KbinAPIMessages messages;
-  final KbinAPINotifications notifications;
-  final KbinAPIMicroblogs microblogs;
+  final MbinAPIMessages messages;
+  final MbinAPINotifications notifications;
+  final MbinAPIMicroblogs microblogs;
   final APISearch search;
   final APIUsers users;
 
@@ -33,12 +33,12 @@ class API {
     this.httpClient,
     this.server,
   )   : comments = APIComments(software, httpClient, server),
-        domains = KbinAPIDomains(software, httpClient, server),
+        domains = MbinAPIDomains(software, httpClient, server),
         threads = APIThreads(software, httpClient, server),
         magazines = APIMagazines(software, httpClient, server),
-        messages = KbinAPIMessages(software, httpClient, server),
-        notifications = KbinAPINotifications(software, httpClient, server),
-        microblogs = KbinAPIMicroblogs(software, httpClient, server),
+        messages = MbinAPIMessages(software, httpClient, server),
+        notifications = MbinAPINotifications(software, httpClient, server),
+        microblogs = MbinAPIMicroblogs(software, httpClient, server),
         search = APISearch(software, httpClient, server),
         users = APIUsers(software, httpClient, server);
 }

@@ -53,7 +53,6 @@ class APIThreads {
     bool? usePreferredLangs,
   }) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         final path = switch (source) {
           FeedSource.all => '/api/entries',
@@ -75,7 +74,7 @@ class APIThreads {
 
         httpErrorHandler(response, message: 'Failed to load entries');
 
-        return PostListModel.fromKbinEntries(
+        return PostListModel.fromMbinEntries(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -126,7 +125,6 @@ class APIThreads {
 
   Future<PostModel> get(int postId) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         final path = '/api/entry/$postId';
 
@@ -134,7 +132,7 @@ class APIThreads {
 
         httpErrorHandler(response, message: 'Failed to load post');
 
-        return PostModel.fromKbinEntry(
+        return PostModel.fromMbinEntry(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -154,7 +152,6 @@ class APIThreads {
 
   Future<PostModel> vote(int postId, int choice, int newScore) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         final path = choice == 1
             ? '/api/entry/$postId/favourite'
@@ -164,7 +161,7 @@ class APIThreads {
 
         httpErrorHandler(response, message: 'Failed to send vote');
 
-        return PostModel.fromKbinEntry(
+        return PostModel.fromMbinEntry(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -188,7 +185,6 @@ class APIThreads {
 
   Future<PostModel> boost(int postId) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         final path = '/api/entry/$postId/vote/1';
 
@@ -196,7 +192,7 @@ class APIThreads {
 
         httpErrorHandler(response, message: 'Failed to send boost');
 
-        return PostModel.fromKbinEntry(
+        return PostModel.fromMbinEntry(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -213,7 +209,6 @@ class APIThreads {
     bool? isAdult,
   ) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         final path = '/api/entry/$entryID';
 
@@ -231,21 +226,21 @@ class APIThreads {
 
         httpErrorHandler(response, message: "Failed to edit entry");
 
-        return PostModel.fromKbinEntry(
+        return PostModel.fromMbinEntry(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
         const path = '/api/v3/post';
 
         final response = await httpClient.put(
-            Uri.https(server, path),
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({
-              'post_id': entryID,
-              'name': title,
-              'body': body,
-              'nsfw': isAdult
-            })
+          Uri.https(server, path),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'post_id': entryID,
+            'name': title,
+            'body': body,
+            'nsfw': isAdult
+          }),
         );
 
         httpErrorHandler(response, message: 'Failed to edit entry');
@@ -257,22 +252,19 @@ class APIThreads {
 
   Future<void> delete(int postID) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         final response =
-          await httpClient.delete(Uri.https(server, '/api/entry/$postID'));
+            await httpClient.delete(Uri.https(server, '/api/entry/$postID'));
 
         httpErrorHandler(response, message: "Failed to delete entry");
         break;
 
       case ServerSoftware.lemmy:
-        final response =
-          await httpClient.post(Uri.https(server, '/api/v3/post/delete'),
-              headers: {'Content-Type': 'application/json'},
-              body: jsonEncode({
-                'post_id': postID,
-                'deleted': true
-              }));
+        final response = await httpClient.post(
+          Uri.https(server, '/api/v3/post/delete'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({'post_id': postID, 'deleted': true}),
+        );
 
         httpErrorHandler(response, message: "Failed to delete entry");
         break;
@@ -289,7 +281,6 @@ class APIThreads {
     required List<String> tags,
   }) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         final path = '/api/magazine/$magazineID/article';
 
@@ -307,7 +298,7 @@ class APIThreads {
 
         httpErrorHandler(response, message: "Failed to create entry");
 
-        return PostModel.fromKbinEntry(
+        return PostModel.fromMbinEntry(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -341,7 +332,6 @@ class APIThreads {
     required List<String> tags,
   }) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         final path = '/api/magazine/$magazineID/link';
 
@@ -360,7 +350,7 @@ class APIThreads {
 
         httpErrorHandler(response, message: "Failed to create entry");
 
-        return PostModel.fromKbinEntry(
+        return PostModel.fromMbinEntry(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -396,7 +386,6 @@ class APIThreads {
     required List<String> tags,
   }) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         final path = '/api/magazine/$magazineID/image';
 
@@ -422,8 +411,9 @@ class APIThreads {
 
         httpErrorHandler(response, message: "Failed to create entry");
 
-        return PostModel.fromKbinEntry(
+        return PostModel.fromMbinEntry(
             jsonDecode(response.body) as Map<String, Object?>);
+
       case ServerSoftware.lemmy:
         const pictrsPath = '/pictrs/image';
 
@@ -468,7 +458,6 @@ class APIThreads {
 
   Future<void> report(int postId, String reason) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         final path = '/api/entry/$postId/report';
 

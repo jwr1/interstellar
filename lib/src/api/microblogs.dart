@@ -10,12 +10,12 @@ import 'package:interstellar/src/utils/utils.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart';
 
-class KbinAPIMicroblogs {
+class MbinAPIMicroblogs {
   final ServerSoftware software;
   final http.Client httpClient;
   final String server;
 
-  KbinAPIMicroblogs(
+  MbinAPIMicroblogs(
     this.software,
     this.httpClient,
     this.server,
@@ -51,7 +51,7 @@ class KbinAPIMicroblogs {
 
     httpErrorHandler(response, message: 'Failed to load posts');
 
-    return PostListModel.fromKbinPosts(
+    return PostListModel.fromMbinPosts(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
@@ -62,7 +62,7 @@ class KbinAPIMicroblogs {
 
     httpErrorHandler(response, message: 'Failed to load posts');
 
-    return PostModel.fromKbinPost(
+    return PostModel.fromMbinPost(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
@@ -73,7 +73,7 @@ class KbinAPIMicroblogs {
 
     httpErrorHandler(response, message: 'Failed to send vote');
 
-    return PostModel.fromKbinPost(
+    return PostModel.fromMbinPost(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
@@ -84,7 +84,7 @@ class KbinAPIMicroblogs {
 
     httpErrorHandler(response, message: 'Failed to send vote');
 
-    return PostModel.fromKbinPost(
+    return PostModel.fromMbinPost(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
@@ -103,7 +103,7 @@ class KbinAPIMicroblogs {
 
     httpErrorHandler(response, message: "Failed to edit post");
 
-    return PostModel.fromKbinPost(
+    return PostModel.fromMbinPost(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
@@ -130,7 +130,7 @@ class KbinAPIMicroblogs {
 
     httpErrorHandler(response, message: "Failed to create post");
 
-    return PostModel.fromKbinPost(
+    return PostModel.fromMbinPost(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 
@@ -162,7 +162,7 @@ class KbinAPIMicroblogs {
 
     httpErrorHandler(response, message: "Failed to create post");
 
-    return PostModel.fromKbinPost(
+    return PostModel.fromMbinPost(
         jsonDecode(response.body) as Map<String, Object?>);
   }
 

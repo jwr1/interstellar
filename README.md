@@ -1,6 +1,6 @@
 # Interstellar
 
-An app for Kbin, Mbin, and Lemmy; connecting you to the fediverse.
+An app for Mbin and Lemmy; connecting you to the fediverse.
 
 ## Downloads
 
@@ -12,6 +12,7 @@ See the [latest release](https://github.com/jwr1/interstellar/releases/latest) f
 ## Discussion
 
 You can ask questions, report bugs, make suggestions, etc., to any of the following:
+
 - [GitHub](https://github.com/jwr1/interstellar/issues)
 - [Mbin](https://kbin.earth/m/interstellar)
 - [Matrix](https://matrix.to/#/#interstellar-space:matrix.org)

@@ -12,7 +12,7 @@ class ImageModel with _$ImageModel {
     required int? blurHashHeight,
   }) = _ImageModel;
 
-  factory ImageModel.fromKbin(Map<String, Object?> json) => ImageModel(
+  factory ImageModel.fromMbin(Map<String, Object?> json) => ImageModel(
         src: (json['storageUrl'] ?? json['sourceUrl']) as String,
         altText: json['altText'] as String?,
         blurHash: json['blurHash'] as String?,

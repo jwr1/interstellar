@@ -32,8 +32,6 @@ enum APIMagazinesSort {
   scaled,
 }
 
-
-
 class APIMagazines {
   final ServerSoftware software;
   final http.Client httpClient;
@@ -52,7 +50,6 @@ class APIMagazines {
     String? search,
   }) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         final path = (filter == null ||
                 filter == APIMagazinesFilter.all ||
@@ -77,7 +74,7 @@ class APIMagazines {
 
         httpErrorHandler(response, message: 'Failed to load magazines');
 
-        return DetailedMagazineListModel.fromKbin(
+        return DetailedMagazineListModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -169,7 +166,6 @@ class APIMagazines {
 
   Future<DetailedMagazineModel> get(int magazineId) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         final path = '/api/magazine/$magazineId';
 
@@ -177,7 +173,7 @@ class APIMagazines {
 
         httpErrorHandler(response, message: 'Failed to load magazine');
 
-        return DetailedMagazineModel.fromKbin(
+        return DetailedMagazineModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -198,7 +194,6 @@ class APIMagazines {
 
   Future<DetailedMagazineModel> getByName(String magazineName) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         final path = '/api/magazine/name/$magazineName';
 
@@ -206,7 +201,7 @@ class APIMagazines {
 
         httpErrorHandler(response, message: 'Failed to load magazine');
 
-        return DetailedMagazineModel.fromKbin(
+        return DetailedMagazineModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -227,7 +222,6 @@ class APIMagazines {
 
   Future<DetailedMagazineModel> subscribe(int magazineId, bool state) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         final path =
             '/api/magazine/$magazineId/${state ? 'subscribe' : 'unsubscribe'}';
@@ -236,7 +230,7 @@ class APIMagazines {
 
         httpErrorHandler(response, message: 'Failed to send subscribe');
 
-        return DetailedMagazineModel.fromKbin(
+        return DetailedMagazineModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:
@@ -261,7 +255,6 @@ class APIMagazines {
 
   Future<DetailedMagazineModel> block(int magazineId, bool state) async {
     switch (software) {
-      case ServerSoftware.kbin:
       case ServerSoftware.mbin:
         final path = '/api/magazine/$magazineId/${state ? 'block' : 'unblock'}';
 
@@ -269,7 +262,7 @@ class APIMagazines {
 
         httpErrorHandler(response, message: 'Failed to send block');
 
-        return DetailedMagazineModel.fromKbin(
+        return DetailedMagazineModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
 
       case ServerSoftware.lemmy:

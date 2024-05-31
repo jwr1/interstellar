@@ -16,22 +16,22 @@ class PostListModel with _$PostListModel {
     required String? nextPage,
   }) = _PostListModel;
 
-  factory PostListModel.fromKbinEntries(Map<String, Object?> json) =>
+  factory PostListModel.fromMbinEntries(Map<String, Object?> json) =>
       PostListModel(
         items: (json['items'] as List<dynamic>)
             .map(
-                (post) => PostModel.fromKbinEntry(post as Map<String, Object?>))
+                (post) => PostModel.fromMbinEntry(post as Map<String, Object?>))
             .toList(),
-        nextPage: kbinCalcNextPaginationPage(
+        nextPage: mbinCalcNextPaginationPage(
             json['pagination'] as Map<String, Object?>),
       );
 
-  factory PostListModel.fromKbinPosts(Map<String, Object?> json) =>
+  factory PostListModel.fromMbinPosts(Map<String, Object?> json) =>
       PostListModel(
         items: (json['items'] as List<dynamic>)
-            .map((post) => PostModel.fromKbinPost(post as Map<String, Object?>))
+            .map((post) => PostModel.fromMbinPost(post as Map<String, Object?>))
             .toList(),
-        nextPage: kbinCalcNextPaginationPage(
+        nextPage: mbinCalcNextPaginationPage(
             json['pagination'] as Map<String, Object?>),
       );
 
@@ -71,16 +71,16 @@ class PostModel with _$PostModel {
     required String visibility,
   }) = _PostModel;
 
-  factory PostModel.fromKbinEntry(Map<String, Object?> json) => PostModel(
+  factory PostModel.fromMbinEntry(Map<String, Object?> json) => PostModel(
         type: PostType.thread,
         id: json['entryId'] as int,
-        user: UserModel.fromKbin(json['user'] as Map<String, Object?>),
+        user: UserModel.fromMbin(json['user'] as Map<String, Object?>),
         magazine:
-            MagazineModel.fromKbin(json['magazine'] as Map<String, Object?>),
-        domain: DomainModel.fromKbin(json['domain'] as Map<String, Object?>),
+            MagazineModel.fromMbin(json['magazine'] as Map<String, Object?>),
+        domain: DomainModel.fromMbin(json['domain'] as Map<String, Object?>),
         title: json['title'] as String,
         url: json['url'] as String?,
-        image: kbinGetImage(json['image'] as Map<String, Object?>?),
+        image: mbinGetImage(json['image'] as Map<String, Object?>?),
         body: json['body'] as String?,
         lang: json['lang'] as String,
         numComments: json['numComments'] as int,
@@ -100,16 +100,16 @@ class PostModel with _$PostModel {
         visibility: json['visibility'] as String,
       );
 
-  factory PostModel.fromKbinPost(Map<String, Object?> json) => PostModel(
+  factory PostModel.fromMbinPost(Map<String, Object?> json) => PostModel(
         type: PostType.microblog,
         id: json['postId'] as int,
-        user: UserModel.fromKbin(json['user'] as Map<String, Object?>),
+        user: UserModel.fromMbin(json['user'] as Map<String, Object?>),
         magazine:
-            MagazineModel.fromKbin(json['magazine'] as Map<String, Object?>),
+            MagazineModel.fromMbin(json['magazine'] as Map<String, Object?>),
         domain: null,
         title: null,
         url: null,
-        image: kbinGetImage(json['image'] as Map<String, Object?>?),
+        image: mbinGetImage(json['image'] as Map<String, Object?>?),
         body: json['body'] as String,
         lang: json['lang'] as String,
         numComments: json['comments'] as int,

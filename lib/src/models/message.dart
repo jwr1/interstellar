@@ -11,13 +11,13 @@ class MessageListModel with _$MessageListModel {
     required String? nextPage,
   }) = _MessageListModel;
 
-  factory MessageListModel.fromKbin(Map<String, Object?> json) =>
+  factory MessageListModel.fromMbin(Map<String, Object?> json) =>
       MessageListModel(
         items: (json['items'] as List<dynamic>)
             .map((post) =>
-                MessageThreadModel.fromKbin(post as Map<String, Object?>))
+                MessageThreadModel.fromMbin(post as Map<String, Object?>))
             .toList(),
-        nextPage: kbinCalcNextPaginationPage(
+        nextPage: mbinCalcNextPaginationPage(
             json['pagination'] as Map<String, Object?>),
       );
 }
@@ -31,16 +31,16 @@ class MessageThreadModel with _$MessageThreadModel {
     required int threadId,
   }) = _MessageThreadModel;
 
-  factory MessageThreadModel.fromKbin(Map<String, Object?> json) =>
+  factory MessageThreadModel.fromMbin(Map<String, Object?> json) =>
       MessageThreadModel(
         participants: (json['participants'] as List<dynamic>)
             .map((participant) =>
-                DetailedUserModel.fromKbin(participant as Map<String, Object?>))
+                DetailedUserModel.fromMbin(participant as Map<String, Object?>))
             .toList(),
         messageCount: json['messageCount'] as int,
         messages: (json['messages'] as List<dynamic>)
             .map((message) =>
-                MessageItemModel.fromKbin(message as Map<String, Object?>))
+                MessageItemModel.fromMbin(message as Map<String, Object?>))
             .toList(),
         threadId: json['threadId'] as int,
       );
@@ -57,9 +57,9 @@ class MessageItemModel with _$MessageItemModel {
     required int messageId,
   }) = _MessageItemModel;
 
-  factory MessageItemModel.fromKbin(Map<String, Object?> json) =>
+  factory MessageItemModel.fromMbin(Map<String, Object?> json) =>
       MessageItemModel(
-        sender: UserModel.fromKbin(json['sender'] as Map<String, Object?>),
+        sender: UserModel.fromMbin(json['sender'] as Map<String, Object?>),
         body: json['body'] as String,
         status: json['status'] as String,
         threadId: json['threadId'] as int,

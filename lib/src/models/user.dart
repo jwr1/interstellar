@@ -12,13 +12,13 @@ class DetailedUserListModel with _$DetailedUserListModel {
     required String? nextPage,
   }) = _DetailedUserListModel;
 
-  factory DetailedUserListModel.fromKbin(Map<String, Object?> json) =>
+  factory DetailedUserListModel.fromMbin(Map<String, Object?> json) =>
       DetailedUserListModel(
         items: (json['items'] as List<dynamic>)
             .map((post) =>
-                DetailedUserModel.fromKbin(post as Map<String, Object?>))
+                DetailedUserModel.fromMbin(post as Map<String, Object?>))
             .toList(),
-        nextPage: kbinCalcNextPaginationPage(
+        nextPage: mbinCalcNextPaginationPage(
             json['pagination'] as Map<String, Object?>),
       );
 }
@@ -40,13 +40,13 @@ class DetailedUserModel with _$DetailedUserModel {
     required bool? isBlockedByUser,
   }) = _DetailedUserModel;
 
-  factory DetailedUserModel.fromKbin(Map<String, Object?> json) {
+  factory DetailedUserModel.fromMbin(Map<String, Object?> json) {
     final user = DetailedUserModel(
       id: json['userId'] as int,
-      name: kbinNormalizeUsername(json['username'] as String),
+      name: mbinNormalizeUsername(json['username'] as String),
       displayName: null,
-      avatar: kbinGetImage(json['avatar'] as Map<String, Object?>?),
-      cover: kbinGetImage(json['cover'] as Map<String, Object?>?),
+      avatar: mbinGetImage(json['avatar'] as Map<String, Object?>?),
+      cover: mbinGetImage(json['cover'] as Map<String, Object?>?),
       createdAt: DateTime.parse(json['createdAt'] as String),
       isBot: json['isBot'] as bool,
       about: json['about'] as String?,
@@ -90,10 +90,10 @@ class UserModel with _$UserModel {
     required ImageModel? avatar,
   }) = _UserModel;
 
-  factory UserModel.fromKbin(Map<String, Object?> json) => UserModel(
+  factory UserModel.fromMbin(Map<String, Object?> json) => UserModel(
         id: json['userId'] as int,
-        name: kbinNormalizeUsername(json['username'] as String),
-        avatar: kbinGetImage(json['avatar'] as Map<String, Object?>?),
+        name: mbinNormalizeUsername(json['username'] as String),
+        avatar: mbinGetImage(json['avatar'] as Map<String, Object?>?),
       );
 
   factory UserModel.fromLemmy(Map<String, Object?> json) => UserModel(
@@ -122,7 +122,7 @@ class UserSettings with _$UserSettings {
     required bool? notifyOnNewPostCommentReply,
   }) = _UserSettings;
 
-  factory UserSettings.fromKbin(Map<String, Object?> json) => UserSettings(
+  factory UserSettings.fromMbin(Map<String, Object?> json) => UserSettings(
         showNSFW: !(json['hideAdult'] as bool),
         blurNSFW: null,
         showReadPosts: null,

@@ -10,12 +10,12 @@ class DomainListModel with _$DomainListModel {
     required String? nextPage,
   }) = _DomainListModel;
 
-  factory DomainListModel.fromKbin(Map<String, Object?> json) =>
+  factory DomainListModel.fromMbin(Map<String, Object?> json) =>
       DomainListModel(
         items: (json['items'] as List<dynamic>)
-            .map((post) => DomainModel.fromKbin(post as Map<String, Object?>))
+            .map((post) => DomainModel.fromMbin(post as Map<String, Object?>))
             .toList(),
-        nextPage: kbinCalcNextPaginationPage(
+        nextPage: mbinCalcNextPaginationPage(
             json['pagination'] as Map<String, Object?>),
       );
 }
@@ -31,7 +31,7 @@ class DomainModel with _$DomainModel {
     required bool? isBlockedByUser,
   }) = _DomainModel;
 
-  factory DomainModel.fromKbin(Map<String, Object?> json) => DomainModel(
+  factory DomainModel.fromMbin(Map<String, Object?> json) => DomainModel(
         id: json['domainId'] as int,
         name: json['name'] as String,
         entryCount: json['entryCount'] as int,
