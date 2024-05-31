@@ -47,20 +47,6 @@ dev_dependencies:
   build_runner: ^2.4.9
   freezed: ^2.5.2
 
-flutter_launcher_icons:
-  image_path: 'assets/icons/logo.png'
-  android: true
-  adaptive_icon_foreground: 'assets/icons/logo-transparent.png'
-  adaptive_icon_background: '#294062'
-  adaptive_icon_monochrome: 'assets/icons/logo-monochrome.png'
-  ios: true
-  remove_alpha_ios: true
-  windows:
-    generate: true
-    image_path: 'assets/icons/logo-transparent-512.png'
-  macos:
-    generate: true
-
 flutter:
   uses-material-design: true
 
@@ -70,3 +56,13 @@ flutter:
   assets:
     # Add assets from the icons directory to the application.
     - assets/icons/
+
+flutter_launcher_icons:
+  image_path: 'assets/icons/logo.png'
+  android: true
+  adaptive_icon_foreground: 'assets/icons/logo-transparent.png'
+  adaptive_icon_background: '#294062'
+  adaptive_icon_monochrome: 'assets/icons/logo-monochrome.png'
+  windows:
+    generate: true
+    image_path: 'assets/icons/logo-transparent-512.png'

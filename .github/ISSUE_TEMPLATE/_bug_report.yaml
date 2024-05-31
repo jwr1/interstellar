@@ -38,9 +38,7 @@ body:
       multiple: true
       options:
         - Android
-        - iOS
         - Linux
-        - macOS
         - Windows
     validations:
       required: true
