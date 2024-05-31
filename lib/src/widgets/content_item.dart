@@ -476,7 +476,7 @@ class _ContentItemState extends State<ContentItem> {
                                           context, widget.openLinkUri!),
                                       child: const Padding(
                                           padding: EdgeInsets.all(12),
-                                          child: Text("Open Link")),
+                                          child: Text('Open Link')),
                                     ),
                                   if (widget.onReport != null)
                                     MenuItemButton(
@@ -491,7 +491,7 @@ class _ContentItemState extends State<ContentItem> {
                                       },
                                       child: const Padding(
                                           padding: EdgeInsets.all(12),
-                                          child: Text("Report")),
+                                          child: Text('Report')),
                                     ),
                                   if (widget.onEdit != null)
                                     MenuItemButton(
@@ -502,7 +502,7 @@ class _ContentItemState extends State<ContentItem> {
                                       }),
                                       child: const Padding(
                                           padding: EdgeInsets.all(12),
-                                          child: Text("Edit")),
+                                          child: Text('Edit')),
                                     ),
                                   if (widget.onDelete != null)
                                     MenuItemButton(
@@ -536,7 +536,7 @@ class _ContentItemState extends State<ContentItem> {
                                       ),
                                       child: const Padding(
                                           padding: EdgeInsets.all(12),
-                                          child: Text("Delete")),
+                                          child: Text('Delete')),
                                     ),
                                 ],
                               ),

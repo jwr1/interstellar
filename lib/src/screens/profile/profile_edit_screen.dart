@@ -172,7 +172,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                 ]),
                 Row(
                   children: [
-                    const Text("Select Avatar"),
+                    const Text('Select Avatar'),
                     Padding(
                       padding: const EdgeInsets.all(12),
                       child: ImageSelector(
@@ -187,13 +187,13 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                           _deleteAvatar = true;
                         });
                       },
-                      child: const Text("Delete"),
+                      child: const Text('Delete'),
                     )
                   ],
                 ),
                 Row(
                   children: [
-                    const Text("Select Cover"),
+                    const Text('Select Cover'),
                     Padding(
                       padding: const EdgeInsets.all(12),
                       child: ImageSelector(
@@ -209,7 +209,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                           _deleteCover = true;
                         });
                       },
-                      child: const Text("Delete"),
+                      child: const Text('Delete'),
                     )
                   ],
                 ),
@@ -217,7 +217,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                   padding: const EdgeInsets.only(top: 12),
                   child: MarkdownEditor(
                     _aboutTextController!,
-                    label: "About",
+                    label: 'About',
                   ),
                 ),
                 if (_settings != null)
@@ -227,11 +227,11 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
-                            "Settings",
+                            'Settings',
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                           SwitchListTile(
-                            title: const Text("Show NSFW"),
+                            title: const Text('Show NSFW'),
                             value: _settings!.showNSFW,
                             onChanged: (bool value) {
                               setState(() {
@@ -242,7 +242,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                           ),
                           if (_settings!.blurNSFW != null)
                             SwitchListTile(
-                              title: const Text("Blur NSFW"),
+                              title: const Text('Blur NSFW'),
                               value: _settings!.blurNSFW!,
                               onChanged: (bool? value) {
                                 setState(() {
@@ -253,7 +253,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                             ),
                           if (_settings!.showReadPosts != null)
                             SwitchListTile(
-                              title: const Text("Show read posts"),
+                              title: const Text('Show read posts'),
                               value: _settings!.showReadPosts!,
                               onChanged: (bool? value) {
                                 setState(() {
@@ -264,7 +264,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                             ),
                           if (_settings!.showSubscribedUsers != null)
                             SwitchListTile(
-                              title: const Text("Show subscribed users"),
+                              title: const Text('Show subscribed users'),
                               value: _settings!.showSubscribedUsers!,
                               onChanged: (bool? value) {
                                 setState(() {
@@ -275,7 +275,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                             ),
                           if (_settings!.showSubscribedMagazines != null)
                             SwitchListTile(
-                              title: const Text("Show subscribed magazines"),
+                              title: const Text('Show subscribed magazines'),
                               value: _settings!.showSubscribedMagazines!,
                               onChanged: (bool? value) {
                                 setState(() {
@@ -286,7 +286,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                             ),
                           if (_settings!.showSubscribedDomains != null)
                             SwitchListTile(
-                              title: const Text("Show subscribed domains"),
+                              title: const Text('Show subscribed domains'),
                               value: _settings!.showSubscribedDomains!,
                               onChanged: (bool? value) {
                                 setState(() {
@@ -297,7 +297,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                             ),
                           if (_settings!.showProfileSubscriptions != null)
                             SwitchListTile(
-                              title: const Text("Show profile subscriptions"),
+                              title: const Text('Show profile subscriptions'),
                               value: _settings!.showProfileSubscriptions!,
                               onChanged: (bool? value) {
                                 setState(() {
@@ -308,7 +308,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                             ),
                           if (_settings!.showProfileFollowings != null)
                             SwitchListTile(
-                              title: const Text("Show profile followings"),
+                              title: const Text('Show profile followings'),
                               value: _settings!.showProfileFollowings!,
                               onChanged: (bool? value) {
                                 setState(() {
@@ -320,7 +320,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                           if (_settings!.notifyOnNewEntry != null)
                             SwitchListTile(
                               title: const Text(
-                                  "Notify on new threads in subscribed magazines"),
+                                  'Notify on new threads in subscribed magazines'),
                               value: _settings!.notifyOnNewEntry!,
                               onChanged: (bool? value) {
                                 setState(() {
@@ -332,7 +332,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                           if (_settings!.notifyOnNewPost != null)
                             SwitchListTile(
                               title: const Text(
-                                  "Notify on new microblog in subscribed magazines"),
+                                  'Notify on new microblog in subscribed magazines'),
                               value: _settings!.notifyOnNewPost!,
                               onChanged: (bool? value) {
                                 setState(() {
@@ -344,7 +344,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                           if (_settings!.notifyOnNewEntryReply != null)
                             SwitchListTile(
                               title: const Text(
-                                  "Notify on comments in authored threads"),
+                                  'Notify on comments in authored threads'),
                               value: _settings!.notifyOnNewEntryReply!,
                               onChanged: (bool? value) {
                                 setState(() {
@@ -356,7 +356,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                           if (_settings!.notifyOnNewEntryCommentReply != null)
                             SwitchListTile(
                               title:
-                                  const Text("Notify on thread comment reply"),
+                                  const Text('Notify on thread comment reply'),
                               value: _settings!.notifyOnNewEntryCommentReply!,
                               onChanged: (bool? value) {
                                 setState(() {
@@ -369,7 +369,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                           if (_settings!.notifyOnNewPostReply != null)
                             SwitchListTile(
                               title: const Text(
-                                  "Notify on comments in authored microposts"),
+                                  'Notify on comments in authored microblogs'),
                               value: _settings!.notifyOnNewPostReply!,
                               onChanged: (bool? value) {
                                 setState(() {
@@ -381,7 +381,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                           if (_settings!.notifyOnNewPostCommentReply != null)
                             SwitchListTile(
                               title: const Text(
-                                  "Notify on microblog comment reply"),
+                                  'Notify on microblog comment reply'),
                               value: _settings!.notifyOnNewPostCommentReply!,
                               onChanged: (bool? value) {
                                 setState(() {

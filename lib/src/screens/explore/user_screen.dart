@@ -174,7 +174,7 @@ class _UserScreenState extends State<UserScreen> {
                                   });
                                 });
                               })),
-                              child: const Text("Edit"),
+                              child: const Text('Edit'),
                             ),
                           ),
                         )
@@ -260,7 +260,7 @@ class _UserScreenState extends State<UserScreen> {
                                 },
                                 icon: const Icon(Icons.block),
                                 style: ButtonStyle(
-                                  foregroundColor: MaterialStatePropertyAll(
+                                  foregroundColor: WidgetStatePropertyAll(
                                       user.isBlockedByUser == true
                                           ? Theme.of(context).colorScheme.error
                                           : Theme.of(context).disabledColor),

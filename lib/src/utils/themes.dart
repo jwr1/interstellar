@@ -22,11 +22,9 @@ class ThemeInfo {
     onError: Color(0xFFFFFFFF),
     errorContainer: Color(0xFFF9DEDC),
     onErrorContainer: Color(0xFF410E0B),
-    background: Color(0xFFFFFBFE),
-    onBackground: Color(0xFF1C1B1F),
     surface: Color(0xFFFFFBFE),
     onSurface: Color(0xFF1C1B1F),
-    surfaceVariant: Color(0xFFE7E0EC),
+    surfaceContainerHighest: Color(0xFFE7E0EC),
     onSurfaceVariant: Color(0xFF49454F),
     outline: Color(0xFF79747E),
     outlineVariant: Color(0xFFCAC4D0),
@@ -56,11 +54,9 @@ class ThemeInfo {
     onError: Color(0xFF601410),
     errorContainer: Color(0xFF8C1D18),
     onErrorContainer: Color(0xFFF9DEDC),
-    background: Color(0xFF1C1B1F),
-    onBackground: Color(0xFFE6E1E5),
     surface: Color(0xFF1C1B1F),
     onSurface: Color(0xFFE6E1E5),
-    surfaceVariant: Color(0xFF49454F),
+    surfaceContainerHighest: Color(0xFF49454F),
     onSurfaceVariant: Color(0xFFCAC4D0),
     outline: Color(0xFF938F99),
     outlineVariant: Color(0xFF49454F),
@@ -75,8 +71,8 @@ class ThemeInfo {
 }
 
 final List<ThemeInfo> themes = [
-  ThemeInfo("Default"),
-  ThemeInfo("Catppuccin",
+  ThemeInfo('Default'),
+  ThemeInfo('Cappuccino',
       lightMode: const ColorScheme(
         brightness: Brightness.light,
         primary: Color(0xFFDCE0E8),
@@ -85,8 +81,6 @@ final List<ThemeInfo> themes = [
         onSecondary: Color(0xFFEA76CB),
         error: Color(0xFFACB0BE),
         onError: Color(0xFFD20F39),
-        background: Color(0xFFEFF1F5),
-        onBackground: Color(0xFF4C4F69),
         surface: Color(0xFFCCD0DA),
         onSurface: Color(0xFF4C4F69),
       ),
@@ -98,13 +92,11 @@ final List<ThemeInfo> themes = [
         onSecondary: Color(0xFFF5C2E7),
         error: Color(0xFF585B70),
         onError: Color(0xFFF38BA8),
-        background: Color(0xFF1E1E2E),
-        onBackground: Color(0xFFCDD6F4),
         surface: Color(0xFF313244),
         onSurface: Color(0xFFCDD6F4),
       )),
   ThemeInfo(
-    "Blue",
+    'Blue',
     lightMode: ColorScheme.fromSwatch(
         primarySwatch: Colors.blue, backgroundColor: const Color(0xFFFFFBFE)),
     darkMode: ColorScheme.fromSwatch(
@@ -114,7 +106,7 @@ final List<ThemeInfo> themes = [
     ),
   ),
   ThemeInfo(
-    "Purple",
+    'Purple',
     lightMode: ColorScheme.fromSwatch(
       primarySwatch: Colors.purple,
     ),
@@ -124,7 +116,7 @@ final List<ThemeInfo> themes = [
     ),
   ),
   ThemeInfo(
-    "Red",
+    'Red',
     lightMode: ColorScheme.fromSwatch(
       primarySwatch: Colors.red,
     ),
@@ -134,7 +126,7 @@ final List<ThemeInfo> themes = [
     ),
   ),
   ThemeInfo(
-    "Amber",
+    'Amber',
     lightMode: ColorScheme.fromSwatch(
       primarySwatch: Colors.amber,
     ),

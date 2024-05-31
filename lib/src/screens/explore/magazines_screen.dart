@@ -25,7 +25,7 @@ class MagazinesScreen extends StatefulWidget {
 class _MagazinesScreenState extends State<MagazinesScreen> {
   APIMagazinesFilter filter = APIMagazinesFilter.all;
   APIMagazinesSort sort = APIMagazinesSort.hot;
-  String search = "";
+  String search = '';
   final searchDebounce = Debouncer(duration: const Duration(milliseconds: 500));
 
   final PagingController<String, DetailedMagazineModel> _pagingController =

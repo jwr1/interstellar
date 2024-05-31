@@ -67,7 +67,7 @@ class APIUsers {
 
         final response = await httpClient.get(Uri.https(server, path, query));
 
-        httpErrorHandler(response, message: "Failed to load user");
+        httpErrorHandler(response, message: 'Failed to load user');
 
         return DetailedUserModel.fromLemmy(
             jsonDecode(response.body) as Map<String, Object?>);
@@ -95,7 +95,7 @@ class APIUsers {
 
         final response = await httpClient.get(Uri.https(server, path, query));
 
-        httpErrorHandler(response, message: "Failed to load user");
+        httpErrorHandler(response, message: 'Failed to load user');
 
         return DetailedUserModel.fromLemmy(
             jsonDecode(response.body) as Map<String, Object?>);
@@ -166,7 +166,7 @@ class APIUsers {
             headers: {'Content-Type': 'application/json'},
             body: jsonEncode({'bio': about}));
 
-        httpErrorHandler(response, message: "Failed to load user");
+        httpErrorHandler(response, message: 'Failed to load user');
 
         return null;
     }
@@ -199,7 +199,7 @@ class APIUsers {
           }),
         );
 
-        httpErrorHandler(response, message: "Failed to send block");
+        httpErrorHandler(response, message: 'Failed to send block');
 
         return DetailedUserModel.fromLemmy(
             jsonDecode(response.body) as Map<String, Object?>);
@@ -259,7 +259,7 @@ class APIUsers {
           }),
         );
 
-        httpErrorHandler(response, message: "Failed to update avatar");
+        httpErrorHandler(response, message: 'Failed to update avatar');
 
         return null;
     }
@@ -332,7 +332,7 @@ class APIUsers {
               'banner': 'https://$server/pictrs/image/$imageName',
             }));
 
-        httpErrorHandler(response, message: "Failed to update cover");
+        httpErrorHandler(response, message: 'Failed to update cover');
 
         return null;
     }

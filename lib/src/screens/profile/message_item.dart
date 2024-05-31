@@ -21,7 +21,7 @@ class MessageItem extends StatelessWidget {
             context
                 .watch<SettingsController>()
                 .selectedAccount
-                .split("@")
+                .split('@')
                 .first)
         .first;
 

@@ -305,7 +305,7 @@ const SelectionMenu<ThemeMode> themeModeSelect = SelectionMenu(
 );
 
 SelectionMenu<String> themeSelect = SelectionMenu(
-  "Theme Accent Color",
+  'Theme Accent Color',
   themes
       .map((themeInfo) => SelectionMenuItem(
             value: themeInfo.name,

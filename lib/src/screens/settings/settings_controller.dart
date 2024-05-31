@@ -141,60 +141,60 @@ class SettingsController with ChangeNotifier {
     _themeMode = parseEnum(
       ThemeMode.values,
       ThemeMode.system,
-      prefs.getString("themeMode"),
+      prefs.getString('themeMode'),
     );
-    _useDynamicColor = prefs.getBool("useDynamicColor") ?? true;
-    _accentColor = prefs.getString("accentColor") ?? "Default";
+    _useDynamicColor = prefs.getBool('useDynamicColor') ?? true;
+    _accentColor = prefs.getString('accentColor') ?? 'Default';
 
-    _alwaysShowInstance = prefs.getBool("alwaysShowInstance") ?? false;
+    _alwaysShowInstance = prefs.getBool('alwaysShowInstance') ?? false;
 
     _postImagePosition = parseEnum(
       PostImagePosition.values,
       PostImagePosition.auto,
-      prefs.getString("postImagePosition"),
+      prefs.getString('postImagePosition'),
     );
-    _postCompactPreview = prefs.getBool("postCompactPreview") ?? false;
+    _postCompactPreview = prefs.getBool('postCompactPreview') ?? false;
 
     _feedActionBackToTop = parseEnum(
       ActionLocation.values,
       ActionLocation.fabMenu,
-      prefs.getString("feedActionBackToTop"),
+      prefs.getString('feedActionBackToTop'),
     );
     _feedActionCreatePost = parseEnum(
       ActionLocation.values,
       ActionLocation.fabMenu,
-      prefs.getString("feedActionCreatePost"),
+      prefs.getString('feedActionCreatePost'),
     );
     _feedActionExpandFab = parseEnum(
       ActionLocation.values,
       ActionLocation.fabTap,
-      prefs.getString("feedActionExpandFab"),
+      prefs.getString('feedActionExpandFab'),
     );
     _feedActionRefresh = parseEnum(
       ActionLocation.values,
       ActionLocation.fabMenu,
-      prefs.getString("feedActionRefresh"),
+      prefs.getString('feedActionRefresh'),
     );
     _feedActionSetFilter = parseEnum(
       ActionLocationWithTabs.values,
       ActionLocationWithTabs.tabs,
-      prefs.getString("feedActionSetFilter"),
+      prefs.getString('feedActionSetFilter'),
     );
     _feedActionSetSort = parseEnum(
       ActionLocation.values,
       ActionLocation.appBar,
-      prefs.getString("feedActionSetSort"),
+      prefs.getString('feedActionSetSort'),
     );
     _feedActionSetType = parseEnum(
       ActionLocationWithTabs.values,
       ActionLocationWithTabs.appBar,
-      prefs.getString("feedActionSetType"),
+      prefs.getString('feedActionSetType'),
     );
 
     _defaultFeedType = parseEnum(
       PostType.values,
       PostType.thread,
-      prefs.getString("defaultFeedType"),
+      prefs.getString('defaultFeedType'),
     );
     _defaultEntriesFeedSort = parseEnum(
       FeedSort.values,
@@ -214,14 +214,14 @@ class SettingsController with ChangeNotifier {
     _defaultCommentSort = parseEnum(
       CommentSort.values,
       CommentSort.hot,
-      prefs.getString("defaultCommentSort"),
+      prefs.getString('defaultCommentSort'),
     );
 
-    _useAccountLangFilter = prefs.getBool("useAccountLangFilter") ?? true;
-    _langFilter = prefs.getStringList("langFilter")?.toSet() ?? {};
-    _defaultCreateLang = prefs.getString("defaultCreateLang") ?? 'en';
+    _useAccountLangFilter = prefs.getBool('useAccountLangFilter') ?? true;
+    _langFilter = prefs.getStringList('langFilter')?.toSet() ?? {};
+    _defaultCreateLang = prefs.getString('defaultCreateLang') ?? 'en';
 
-    _stars = prefs.getStringList("stars")?.toSet() ?? {};
+    _stars = prefs.getStringList('stars')?.toSet() ?? {};
 
     _feedFilters = prefs.getStringList('feedFilters')?.toSet() ?? {};
     _regenerateFeedFiltersRegExp();

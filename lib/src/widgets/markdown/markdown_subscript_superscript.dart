@@ -7,7 +7,7 @@ class SubscriptMarkdownSyntax extends md.InlineSyntax {
 
   @override
   bool onMatch(md.InlineParser parser, Match match) {
-    parser.addNode(md.Element.text("sub", match[1]!));
+    parser.addNode(md.Element.text('sub', match[1]!));
     return true;
   }
 }
@@ -17,7 +17,7 @@ class SuperscriptMarkdownSyntax extends md.InlineSyntax {
 
   @override
   bool onMatch(md.InlineParser parser, Match match) {
-    parser.addNode(md.Element.text("sup", match[1]!));
+    parser.addNode(md.Element.text('sup', match[1]!));
     return true;
   }
 }

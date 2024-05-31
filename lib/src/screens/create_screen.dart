@@ -86,7 +86,7 @@ class _CreateScreenState extends State<CreateScreen> {
                           magazineId,
                           title: _titleTextController.text,
                           image: _imageFile!,
-                          alt: "",
+                          alt: '',
                           isOc: _isOc,
                           body: _bodyTextController.text,
                           lang: _lang,
@@ -118,7 +118,7 @@ class _CreateScreenState extends State<CreateScreen> {
                       await api.microblogs.createImage(
                         magazineId,
                         image: _imageFile!,
-                        alt: "",
+                        alt: '',
                         body: _bodyTextController.text,
                         lang: _lang,
                         isAdult: _isAdult,
@@ -145,7 +145,7 @@ class _CreateScreenState extends State<CreateScreen> {
                     padding: const EdgeInsets.all(5),
                     child: TextEditor(
                       _titleTextController,
-                      label: "Title",
+                      label: 'Title',
                     ),
                   ),
                 if (_imageFile == null || widget.type == PostType.microblog)
@@ -167,7 +167,7 @@ class _CreateScreenState extends State<CreateScreen> {
                             child: TextEditor(
                               _urlTextController,
                               keyboardType: TextInputType.url,
-                              label: "URL",
+                              label: 'URL',
                               onChanged: (_) => setState(() {}),
                             ),
                           ),
@@ -194,7 +194,7 @@ class _CreateScreenState extends State<CreateScreen> {
                     padding: const EdgeInsets.all(5),
                     child: TextEditor(
                       _tagsTextController,
-                      label: "Tags",
+                      label: 'Tags',
                       hint: 'Separate with spaces',
                     ),
                   ),

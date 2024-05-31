@@ -22,7 +22,7 @@ class DomainsScreen extends StatefulWidget {
 
 class _DomainsScreenState extends State<DomainsScreen> {
   MbinAPIDomainsFilter filter = MbinAPIDomainsFilter.all;
-  String search = "";
+  String search = '';
 
   final PagingController<String, DomainModel> _pagingController =
       PagingController(firstPageKey: '');

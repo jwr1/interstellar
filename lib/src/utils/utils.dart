@@ -17,35 +17,35 @@ String timeDiffFormat(DateTime input) {
   if (difference.inDays > 0) {
     var years = (difference.inDays / 365).truncate();
     if (years >= 1) {
-      return "${years}Y";
+      return '${years}Y';
     }
 
     var months = (difference.inDays / 30).truncate();
     if (months >= 1) {
-      return "${months}M";
+      return '${months}M';
     }
 
     var weeks = (difference.inDays / 7).truncate();
     if (weeks >= 1) {
-      return "${weeks}w";
+      return '${weeks}w';
     }
 
     var days = difference.inDays;
-    return "${days}d";
+    return '${days}d';
   }
 
   var hours = difference.inHours;
   if (hours > 0) {
-    return "${hours}h";
+    return '${hours}h';
   }
 
   var minutes = difference.inMinutes;
   if (minutes > 0) {
-    return "${minutes}m";
+    return '${minutes}m';
   }
 
   var seconds = difference.inSeconds;
-  return "${seconds}s";
+  return '${seconds}s';
 }
 
 void httpErrorHandler(http.Response response, {String? message}) {
@@ -84,7 +84,7 @@ T? whenLoggedIn<T>(
                 context
                         .read<SettingsController>()
                         .selectedAccount
-                        .split("@")
+                        .split('@')
                         .first ==
                     matchesUsername)
         ? value

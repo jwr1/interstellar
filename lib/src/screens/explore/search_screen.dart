@@ -29,7 +29,7 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  String search = "";
+  String search = '';
   final searchDebounce = Debouncer(duration: const Duration(milliseconds: 500));
 
   final PagingController<String, dynamic> _pagingController =
@@ -77,7 +77,7 @@ class _SearchScreenState extends State<SearchScreen> {
           decoration: const InputDecoration(
             contentPadding: EdgeInsets.all(12),
             border: OutlineInputBorder(),
-            label: Text("Search"),
+            label: Text('Search'),
           ),
         ),
       ),
@@ -129,7 +129,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       case CommentModel item:
                         return PostCommentScreen(item.postType, item.id);
                       case _:
-                        throw "Unrecognized search item";
+                        throw 'Unrecognized search item';
                     }
                   }),
                 );
@@ -243,7 +243,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                       ]),
                     ),
-                  _ => const Text("Unknown"),
+                  _ => const Text('Unknown'),
                 },
               );
             }),

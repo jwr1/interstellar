@@ -88,7 +88,7 @@ class APIThreads {
 
           final response = await httpClient.get(Uri.https(server, path, query));
 
-          httpErrorHandler(response, message: "Failed to load user");
+          httpErrorHandler(response, message: 'Failed to load user');
 
           final json = jsonDecode(response.body) as Map<String, Object?>;
 
@@ -224,7 +224,7 @@ class APIThreads {
           }),
         );
 
-        httpErrorHandler(response, message: "Failed to edit entry");
+        httpErrorHandler(response, message: 'Failed to edit entry');
 
         return PostModel.fromMbinEntry(
             jsonDecode(response.body) as Map<String, Object?>);
@@ -256,7 +256,7 @@ class APIThreads {
         final response =
             await httpClient.delete(Uri.https(server, '/api/entry/$postID'));
 
-        httpErrorHandler(response, message: "Failed to delete entry");
+        httpErrorHandler(response, message: 'Failed to delete entry');
         break;
 
       case ServerSoftware.lemmy:
@@ -266,7 +266,7 @@ class APIThreads {
           body: jsonEncode({'post_id': postID, 'deleted': true}),
         );
 
-        httpErrorHandler(response, message: "Failed to delete entry");
+        httpErrorHandler(response, message: 'Failed to delete entry');
         break;
     }
   }
@@ -296,7 +296,7 @@ class APIThreads {
           }),
         );
 
-        httpErrorHandler(response, message: "Failed to create entry");
+        httpErrorHandler(response, message: 'Failed to create entry');
 
         return PostModel.fromMbinEntry(
             jsonDecode(response.body) as Map<String, Object?>);
@@ -348,7 +348,7 @@ class APIThreads {
           }),
         );
 
-        httpErrorHandler(response, message: "Failed to create entry");
+        httpErrorHandler(response, message: 'Failed to create entry');
 
         return PostModel.fromMbinEntry(
             jsonDecode(response.body) as Map<String, Object?>);
@@ -409,7 +409,7 @@ class APIThreads {
         var response =
             await http.Response.fromStream(await httpClient.send(request));
 
-        httpErrorHandler(response, message: "Failed to create entry");
+        httpErrorHandler(response, message: 'Failed to create entry');
 
         return PostModel.fromMbinEntry(
             jsonDecode(response.body) as Map<String, Object?>);
@@ -429,7 +429,7 @@ class APIThreads {
         var pictrsResponse =
             await http.Response.fromStream(await httpClient.send(request));
 
-        httpErrorHandler(pictrsResponse, message: "Failed to upload image");
+        httpErrorHandler(pictrsResponse, message: 'Failed to upload image');
 
         final json = jsonDecode(pictrsResponse.body) as Map<String, Object?>;
 
@@ -468,7 +468,7 @@ class APIThreads {
           }),
         );
 
-        httpErrorHandler(response, message: "Failed to report post");
+        httpErrorHandler(response, message: 'Failed to report post');
 
       case ServerSoftware.lemmy:
         const path = '/api/v3/post/report';
@@ -482,7 +482,7 @@ class APIThreads {
           }),
         );
 
-        httpErrorHandler(response, message: "Failed to report post");
+        httpErrorHandler(response, message: 'Failed to report post');
     }
   }
 }

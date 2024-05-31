@@ -47,7 +47,7 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
             context
                 .watch<SettingsController>()
                 .selectedAccount
-                .split("@")
+                .split('@')
                 .first)
         .first;
 

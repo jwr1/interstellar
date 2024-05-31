@@ -100,7 +100,7 @@ class _DomainScreenState extends State<DomainScreen> {
                           },
                           icon: const Icon(Icons.block),
                           style: ButtonStyle(
-                            foregroundColor: MaterialStatePropertyAll(
+                            foregroundColor: WidgetStatePropertyAll(
                                 _data!.isBlockedByUser == true
                                     ? Theme.of(context).colorScheme.error
                                     : Theme.of(context).disabledColor),

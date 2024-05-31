@@ -148,7 +148,7 @@ class APIComments {
 
         final response = await httpClient.get(Uri.https(server, path, query));
 
-        httpErrorHandler(response, message: "Failed to load user");
+        httpErrorHandler(response, message: 'Failed to load user');
 
         final json = jsonDecode(response.body) as Map<String, Object?>;
 
@@ -302,7 +302,7 @@ class APIComments {
           }),
         );
 
-        httpErrorHandler(response, message: "Failed to edit comment");
+        httpErrorHandler(response, message: 'Failed to edit comment');
 
         return CommentModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);
@@ -319,7 +319,7 @@ class APIComments {
           }),
         );
 
-        httpErrorHandler(response, message: "Failed to edit comment");
+        httpErrorHandler(response, message: 'Failed to edit comment');
 
         return CommentModel.fromLemmy(
             jsonDecode(response.body)['comment_view'] as Map<String, Object?>);
@@ -333,7 +333,7 @@ class APIComments {
 
         final response = await httpClient.delete(Uri.https(server, path));
 
-        httpErrorHandler(response, message: "Failed to delete comment");
+        httpErrorHandler(response, message: 'Failed to delete comment');
 
       case ServerSoftware.lemmy:
         const path = '/api/v3/comment/delete';
@@ -347,7 +347,7 @@ class APIComments {
           }),
         );
 
-        httpErrorHandler(response, message: "Failed to delete comment");
+        httpErrorHandler(response, message: 'Failed to delete comment');
     }
   }
 
@@ -363,7 +363,7 @@ class APIComments {
           }),
         );
 
-        httpErrorHandler(response, message: "Failed to report comment");
+        httpErrorHandler(response, message: 'Failed to report comment');
 
       case ServerSoftware.lemmy:
         const path = '/api/v3/comment/report';
@@ -377,7 +377,7 @@ class APIComments {
           }),
         );
 
-        httpErrorHandler(response, message: "Failed to report comment");
+        httpErrorHandler(response, message: 'Failed to report comment');
     }
   }
 }

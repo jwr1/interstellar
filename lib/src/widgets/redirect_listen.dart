@@ -26,9 +26,9 @@ class _RedirectListenerState extends State<RedirectListener> {
     final req = await server.first;
     final result = req.uri;
     req.response.statusCode = 200;
-    req.response.headers.set("content-type", "text/plain");
+    req.response.headers.set('content-type', 'text/plain');
     req.response.writeln(
-        "Redirect received. You can close this tab now and return to the app.");
+        'Redirect received. You can close this tab now and return to the app.');
     await req.response.close();
     await server.close();
     return result;

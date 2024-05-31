@@ -101,7 +101,7 @@ class MbinAPIMicroblogs {
       body: jsonEncode({'body': body, 'lang': lang, 'isAdult': isAdult}),
     );
 
-    httpErrorHandler(response, message: "Failed to edit post");
+    httpErrorHandler(response, message: 'Failed to edit post');
 
     return PostModel.fromMbinPost(
         jsonDecode(response.body) as Map<String, Object?>);
@@ -114,7 +114,7 @@ class MbinAPIMicroblogs {
 
     final response = await httpClient.delete(Uri.https(server, path));
 
-    httpErrorHandler(response, message: "Failed to delete post");
+    httpErrorHandler(response, message: 'Failed to delete post');
   }
 
   Future<PostModel> create(
@@ -128,7 +128,7 @@ class MbinAPIMicroblogs {
     final response = await httpClient.post(Uri.https(server, path),
         body: jsonEncode({'body': body, 'lang': lang, 'isAdult': isAdult}));
 
-    httpErrorHandler(response, message: "Failed to create post");
+    httpErrorHandler(response, message: 'Failed to create post');
 
     return PostModel.fromMbinPost(
         jsonDecode(response.body) as Map<String, Object?>);
@@ -160,7 +160,7 @@ class MbinAPIMicroblogs {
     var response =
         await http.Response.fromStream(await httpClient.send(request));
 
-    httpErrorHandler(response, message: "Failed to create post");
+    httpErrorHandler(response, message: 'Failed to create post');
 
     return PostModel.fromMbinPost(
         jsonDecode(response.body) as Map<String, Object?>);
@@ -176,6 +176,6 @@ class MbinAPIMicroblogs {
       }),
     );
 
-    httpErrorHandler(response, message: "Failed to report post");
+    httpErrorHandler(response, message: 'Failed to report post');
   }
 }
