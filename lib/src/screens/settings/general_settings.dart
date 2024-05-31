@@ -106,39 +106,15 @@ class GeneralScreen extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text('Limit Title Preview'),
-            leading: const Icon(Icons.title),
-            onTap: () {
-              controller.updatePostLimitTitlePreview(
-                  !controller.postLimitTitlePreview);
-            },
-            trailing: Switch(
-              value: controller.postLimitTitlePreview,
-              onChanged: controller.updatePostLimitTitlePreview,
-            ),
-          ),
-          ListTile(
-            title: const Text('Show Text Preview'),
-            leading: const Icon(Icons.description),
-            onTap: () {
-              controller
-                  .updatePostShowTextPreview(!controller.postShowTextPreview);
-            },
-            trailing: Switch(
-              value: controller.postShowTextPreview,
-              onChanged: controller.updatePostShowTextPreview,
-            ),
-          ),
-          ListTile(
-            title: const Text('Use Card Preview'),
+            title: const Text('Use Compact Preview'),
             leading: const Icon(Icons.view_agenda),
             onTap: () {
               controller
-                  .updatePostUseCardPreview(!controller.postUseCardPreview);
+                  .updatePostCompactPreview(!controller.postCompactPreview);
             },
             trailing: Switch(
-              value: controller.postUseCardPreview,
-              onChanged: controller.updatePostUseCardPreview,
+              value: controller.postCompactPreview,
+              onChanged: controller.updatePostCompactPreview,
             ),
           ),
           const SettingsHeader('Language'),

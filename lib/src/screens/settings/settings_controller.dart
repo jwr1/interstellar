@@ -67,12 +67,8 @@ class SettingsController with ChangeNotifier {
 
   late PostImagePosition _postImagePosition;
   PostImagePosition get postImagePosition => _postImagePosition;
-  late bool _postLimitTitlePreview;
-  bool get postLimitTitlePreview => _postLimitTitlePreview;
-  late bool _postShowTextPreview;
-  bool get postShowTextPreview => _postShowTextPreview;
-  late bool _postUseCardPreview;
-  bool get postUseCardPreview => _postUseCardPreview;
+  late bool _postCompactPreview;
+  bool get postCompactPreview => _postCompactPreview;
 
   late bool _alwaysShowInstance;
   bool get alwaysShowInstance => _alwaysShowInstance;
@@ -155,9 +151,7 @@ class SettingsController with ChangeNotifier {
       PostImagePosition.auto,
       prefs.getString("postImagePosition"),
     );
-    _postLimitTitlePreview = prefs.getBool("postLimitTitlePreview") ?? false;
-    _postShowTextPreview = prefs.getBool("postShowTextPreview") ?? true;
-    _postUseCardPreview = prefs.getBool("postUseCardPreview") ?? true;
+    _postCompactPreview = prefs.getBool("postCompactPreview") ?? false;
 
     _feedActionBackToTop = parseEnum(
       ActionLocation.values,
@@ -242,36 +236,6 @@ class SettingsController with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> presetClassic() async {
-    _postImagePosition = PostImagePosition.auto;
-    _postLimitTitlePreview = false;
-    _postShowTextPreview = true;
-    _postUseCardPreview = true;
-
-    notifyListeners();
-
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('postImagePosition', _postImagePosition.name);
-    await prefs.setBool('postLimitTitlePreview', _postLimitTitlePreview);
-    await prefs.setBool('postShowTextPreview', _postShowTextPreview);
-    await prefs.setBool('postUseCardPreview', _postUseCardPreview);
-  }
-
-  Future<void> presetCompact() async {
-    _postImagePosition = PostImagePosition.right;
-    _postLimitTitlePreview = true;
-    _postShowTextPreview = false;
-    _postUseCardPreview = false;
-
-    notifyListeners();
-
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('postImagePosition', _postImagePosition.name);
-    await prefs.setBool('postLimitTitlePreview', _postLimitTitlePreview);
-    await prefs.setBool('postShowTextPreview', _postShowTextPreview);
-    await prefs.setBool('postUseCardPreview', _postUseCardPreview);
-  }
-
   Future<void> updateThemeMode(ThemeMode? newValue) async {
     if (newValue == null) return;
     if (newValue == _themeMode) return;
@@ -320,40 +284,16 @@ class SettingsController with ChangeNotifier {
     await prefs.setString('postImagePosition', newValue.name);
   }
 
-  Future<void> updatePostLimitTitlePreview(bool? newValue) async {
+  Future<void> updatePostCompactPreview(bool? newValue) async {
     if (newValue == null) return;
-    if (newValue == _postLimitTitlePreview) return;
+    if (newValue == _postCompactPreview) return;
 
-    _postLimitTitlePreview = newValue;
+    _postCompactPreview = newValue;
 
     notifyListeners();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('postLimitTitlePreview', newValue);
-  }
-
-  Future<void> updatePostShowTextPreview(bool? newValue) async {
-    if (newValue == null) return;
-    if (newValue == _postShowTextPreview) return;
-
-    _postShowTextPreview = newValue;
-
-    notifyListeners();
-
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('postShowTextPreview', newValue);
-  }
-
-  Future<void> updatePostUseCardPreview(bool? newValue) async {
-    if (newValue == null) return;
-    if (newValue == _postUseCardPreview) return;
-
-    _postUseCardPreview = newValue;
-
-    notifyListeners();
-
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('postUseCardPreview', newValue);
+    await prefs.setBool('postCompactPreview', newValue);
   }
 
   Future<void> updateAlwaysShowInstance(bool? newValue) async {

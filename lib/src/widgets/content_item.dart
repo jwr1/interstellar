@@ -227,7 +227,7 @@ class _ContentItemState extends State<ContentItem> {
           ? Theme.of(context).textTheme.titleLarge!
           : Theme.of(context).textTheme.titleMedium!;
       final titleOverflow = widget.isPreview &&
-              context.watch<SettingsController>().postLimitTitlePreview
+              context.watch<SettingsController>().postCompactPreview
           ? TextOverflow.ellipsis
           : null;
 
@@ -349,7 +349,7 @@ class _ContentItemState extends State<ContentItem> {
                                 icon: const Icon(Icons.public),
                                 iconSize: 16,
                                 style: const ButtonStyle(
-                                    minimumSize: MaterialStatePropertyAll(
+                                    minimumSize: WidgetStatePropertyAll(
                                         Size.fromRadius(16))),
                               ),
                             ),
@@ -357,10 +357,10 @@ class _ContentItemState extends State<ContentItem> {
                       ),
                       if (widget.body != null &&
                           widget.body!.isNotEmpty &&
-                          (!widget.isPreview ||
+                          !(widget.isPreview &&
                               context
                                   .watch<SettingsController>()
-                                  .postShowTextPreview))
+                                  .postCompactPreview))
                         Padding(
                             padding: const EdgeInsets.only(top: 10),
                             child: widget.isPreview

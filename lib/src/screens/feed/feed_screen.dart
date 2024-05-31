@@ -684,21 +684,14 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
                   ),
                 );
 
-                return context.watch<SettingsController>().postUseCardPreview
-                    ? Card(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        clipBehavior: Clip.antiAlias,
-                        child: inner,
-                      )
-                    : Column(
-                        children: [
-                          inner,
-                          const Divider(height: 1),
-                        ],
-                      );
+                return Card(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: inner,
+                );
               },
             ),
           )
