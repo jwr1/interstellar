@@ -10,7 +10,9 @@ String? mbinCalcNextPaginationPage(Map<String, Object?> pagination) {
 }
 
 ImageModel? mbinGetImage(Map<String, Object?>? json) {
-  return json == null ? null : ImageModel.fromMbin(json);
+  return json == null || (json['storageUrl'] ?? json['sourceUrl']) == null
+      ? null
+      : ImageModel.fromMbin(json);
 }
 
 ImageModel? lemmyGetImage(String? json) {

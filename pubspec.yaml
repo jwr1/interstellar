@@ -60,9 +60,8 @@ flutter:
 flutter_launcher_icons:
   image_path: 'assets/icons/logo.png'
   android: true
-  adaptive_icon_foreground: 'assets/icons/logo-transparent.png'
+  adaptive_icon_foreground: 'assets/icons/logo-android-foreground.png'
   adaptive_icon_background: '#294062'
-  adaptive_icon_monochrome: 'assets/icons/logo-monochrome.png'
+  adaptive_icon_monochrome: 'assets/icons/logo-android-monochrome.png'
   windows:
     generate: true
-    image_path: 'assets/icons/logo-transparent-512.png'
