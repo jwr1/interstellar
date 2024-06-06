@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/users.dart' as api_users;
 import 'package:interstellar/src/models/user.dart';
-import 'package:interstellar/src/screens/explore/user_screen.dart';
+import 'package:interstellar/src/screens/explore/user_item.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
-import 'package:interstellar/src/widgets/avatar.dart';
-import 'package:interstellar/src/widgets/cake_day_icon.dart';
-import 'package:interstellar/src/widgets/subscription_button.dart';
 import 'package:provider/provider.dart';
 
 class UsersScreen extends StatefulWidget {
@@ -116,70 +113,13 @@ class _UsersScreenState extends State<UsersScreen> {
           PagedSliverList(
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<DetailedUserModel>(
-              itemBuilder: (context, item, index) => InkWell(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => UserScreen(
-                        item.id,
-                        initData: item,
-                        onUpdate: (newValue) {
-                          var newList = _pagingController.itemList;
-                          newList![index] = newValue;
-                          setState(() {
-                            _pagingController.itemList = newList;
-                          });
-                        },
-                      ),
-                    ),
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Row(children: [
-                    if (item.avatar != null)
-                      Avatar(
-                        item.avatar,
-                        radius: 16,
-                      ),
-                    Container(width: 8 + (item.avatar != null ? 0 : 32)),
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Flexible(
-                              child: Text(item.name,
-                                  overflow: TextOverflow.ellipsis)),
-                          if (isSameDayOfYear(item.createdAt))
-                            const Padding(
-                              padding: EdgeInsets.only(left: 5),
-                              child: CakeDayIcon(),
-                            ),
-                        ],
-                      ),
-                    ),
-                    if (item.followersCount != null)
-                      Padding(
-                        padding: const EdgeInsets.only(left: 12),
-                        child: SubscriptionButton(
-                          subsCount: item.followersCount!,
-                          isSubed: item.isFollowedByUser == true,
-                          onPress: whenLoggedIn(context, () async {
-                            var newValue = await context
-                                .read<SettingsController>()
-                                .api
-                                .users
-                                .follow(item.id, !item.isFollowedByUser!);
-                            var newList = _pagingController.itemList;
-                            newList![index] = newValue;
-                            setState(() {
-                              _pagingController.itemList = newList;
-                            });
-                          }),
-                        ),
-                      )
-                  ]),
-                ),
-              ),
+              itemBuilder: (context, item, index) => UserItem(item, (newValue) {
+                var newList = _pagingController.itemList;
+                newList![index] = newValue;
+                setState(() {
+                  _pagingController.itemList = newList;
+                });
+              }),
             ),
           )
         ],
