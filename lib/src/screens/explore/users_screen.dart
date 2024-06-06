@@ -6,6 +6,7 @@ import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
+import 'package:interstellar/src/widgets/cake_day_icon.dart';
 import 'package:interstellar/src/widgets/subscription_button.dart';
 import 'package:provider/provider.dart';
 
@@ -143,8 +144,19 @@ class _UsersScreenState extends State<UsersScreen> {
                       ),
                     Container(width: 8 + (item.avatar != null ? 0 : 32)),
                     Expanded(
-                        child:
-                            Text(item.name, overflow: TextOverflow.ellipsis)),
+                      child: Row(
+                        children: [
+                          Flexible(
+                              child: Text(item.name,
+                                  overflow: TextOverflow.ellipsis)),
+                          if (isSameDayOfYear(item.createdAt))
+                            const Padding(
+                              padding: EdgeInsets.only(left: 5),
+                              child: CakeDayIcon(),
+                            ),
+                        ],
+                      ),
+                    ),
                     if (item.followersCount != null)
                       Padding(
                         padding: const EdgeInsets.only(left: 12),

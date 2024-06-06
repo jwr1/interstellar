@@ -145,8 +145,7 @@ class _ContentItemState extends State<ContentItem> {
                       : null,
                 ),
                 if (widget.userCakeDay != null &&
-                    widget.userCakeDay!.month == DateTime.now().month &&
-                    widget.userCakeDay!.day == DateTime.now().day)
+                    isSameDayOfYear(widget.userCakeDay!))
                   const Padding(
                     padding: EdgeInsets.only(left: 5),
                     child: CakeDayIcon(),

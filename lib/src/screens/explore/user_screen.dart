@@ -222,10 +222,7 @@ class _UserScreenState extends State<UserScreen> {
                                     children: [
                                       Text(
                                           'Joined: ${dateOnlyFormat(user.createdAt)}'),
-                                      if (user.createdAt.month ==
-                                              DateTime.now().month &&
-                                          user.createdAt.day ==
-                                              DateTime.now().day)
+                                      if (isSameDayOfYear(user.createdAt))
                                         const Padding(
                                           padding: EdgeInsets.only(left: 5),
                                           child: CakeDayIcon(),

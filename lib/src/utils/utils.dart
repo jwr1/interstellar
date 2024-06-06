@@ -6,9 +6,8 @@ import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-var intF = NumberFormat.compact();
 String intFormat(int input) {
-  return intF.format(input);
+  return NumberFormat.compact().format(input);
 }
 
 String dateOnlyFormat(DateTime input) {
@@ -54,6 +53,12 @@ String dateDiffFormat(DateTime input) {
 
   var seconds = difference.inSeconds;
   return '${seconds}s';
+}
+
+bool isSameDayOfYear(DateTime input) {
+  final now = DateTime.now();
+
+  return input.month == now.month && input.day == now.day;
 }
 
 void httpErrorHandler(http.Response response, {String? message}) {
