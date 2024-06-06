@@ -44,6 +44,7 @@ class PostItem extends StatelessWidget {
       user: item.user.name,
       userIcon: item.user.avatar,
       userIdOnClick: item.user.id,
+      userCakeDay: item.user.createdAt,
       magazine: item.magazine.name,
       magazineIcon: item.magazine.icon,
       magazineIdOnClick: item.magazine.id,

@@ -88,18 +88,24 @@ class UserModel with _$UserModel {
     required int id,
     required String name,
     required ImageModel? avatar,
+    required DateTime createdAt,
+    required bool isBot,
   }) = _UserModel;
 
   factory UserModel.fromMbin(Map<String, Object?> json) => UserModel(
         id: json['userId'] as int,
         name: mbinNormalizeUsername(json['username'] as String),
         avatar: mbinGetImage(json['avatar'] as Map<String, Object?>?),
+        createdAt: DateTime.parse(json['createdAt'] as String),
+        isBot: json['isBot'] as bool,
       );
 
   factory UserModel.fromLemmy(Map<String, Object?> json) => UserModel(
         id: json['id'] as int,
         name: lemmyGetActorName(json),
         avatar: lemmyGetImage(json['avatar'] as String?),
+        createdAt: DateTime.parse(json['published'] as String),
+        isBot: json['bot_account'] as bool,
       );
 }
 

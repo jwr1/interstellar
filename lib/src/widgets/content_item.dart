@@ -6,6 +6,7 @@ import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/blur.dart';
+import 'package:interstellar/src/widgets/cake_day_icon.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/image.dart';
 import 'package:interstellar/src/widgets/markdown/markdown.dart';
@@ -36,6 +37,7 @@ class ContentItem extends StatefulWidget {
   final String? user;
   final ImageModel? userIcon;
   final int? userIdOnClick;
+  final DateTime? userCakeDay;
   final int? opUserId;
 
   final String? magazine;
@@ -84,6 +86,7 @@ class ContentItem extends StatefulWidget {
     this.user,
     this.userIcon,
     this.userIdOnClick,
+    this.userCakeDay,
     this.opUserId,
     this.magazine,
     this.magazineIcon,
@@ -141,6 +144,13 @@ class _ContentItemState extends State<ContentItem> {
                           )
                       : null,
                 ),
+                if (widget.userCakeDay != null &&
+                    widget.userCakeDay!.month == DateTime.now().month &&
+                    widget.userCakeDay!.day == DateTime.now().day)
+                  const Padding(
+                    padding: EdgeInsets.only(left: 5),
+                    child: CakeDayIcon(),
+                  ),
                 if (widget.opUserId == widget.userIdOnClick)
                   const Padding(
                     padding: EdgeInsets.only(left: 5),
@@ -318,10 +328,10 @@ class _ContentItemState extends State<ContentItem> {
                               padding: const EdgeInsets.only(right: 10),
                               child: Tooltip(
                                 message:
-                                    'Created: ${widget.createdAt!.toIso8601String()}${widget.editedAt == null ? '' : '\nEdited: ${widget.editedAt!.toIso8601String()}'}',
+                                    'Created: ${dateTimeFormat(widget.createdAt!)}${widget.editedAt == null ? '' : '\nEdited: ${dateTimeFormat(widget.editedAt!)}'}',
                                 triggerMode: TooltipTriggerMode.tap,
                                 child: Text(
-                                  timeDiffFormat(widget.createdAt!),
+                                  dateDiffFormat(widget.createdAt!),
                                   style: const TextStyle(
                                       fontWeight: FontWeight.w300),
                                 ),

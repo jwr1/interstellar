@@ -11,7 +11,15 @@ String intFormat(int input) {
   return intF.format(input);
 }
 
-String timeDiffFormat(DateTime input) {
+String dateOnlyFormat(DateTime input) {
+  return DateFormat.yMMMMd().format(input);
+}
+
+String dateTimeFormat(DateTime input) {
+  return DateFormat().format(input);
+}
+
+String dateDiffFormat(DateTime input) {
   final difference = DateTime.now().difference(input);
 
   if (difference.inDays > 0) {

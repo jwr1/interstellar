@@ -16,6 +16,7 @@ import 'package:interstellar/src/screens/profile/profile_edit_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
+import 'package:interstellar/src/widgets/cake_day_icon.dart';
 import 'package:interstellar/src/widgets/image.dart';
 import 'package:interstellar/src/widgets/loading_template.dart';
 import 'package:interstellar/src/widgets/markdown/markdown.dart';
@@ -216,7 +217,21 @@ class _UserScreenState extends State<UserScreen> {
                                       );
                                     },
                                     child: Text(globalName),
-                                  )
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                          'Joined: ${dateOnlyFormat(user.createdAt)}'),
+                                      if (user.createdAt.month ==
+                                              DateTime.now().month &&
+                                          user.createdAt.day ==
+                                              DateTime.now().day)
+                                        const Padding(
+                                          padding: EdgeInsets.only(left: 5),
+                                          child: CakeDayIcon(),
+                                        ),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
