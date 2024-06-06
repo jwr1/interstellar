@@ -341,27 +341,6 @@ class _ContentItemState extends State<ContentItem> {
                           if (!widget.showMagazineFirst &&
                               magazineWidget != null)
                             magazineWidget,
-                          if (widget.domain != null)
-                            Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: IconButton(
-                                tooltip: widget.domain,
-                                onPressed: widget.domainIdOnClick != null
-                                    ? () => Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (context) => DomainScreen(
-                                              widget.domainIdOnClick!,
-                                            ),
-                                          ),
-                                        )
-                                    : null,
-                                icon: const Icon(Icons.public),
-                                iconSize: 16,
-                                style: const ButtonStyle(
-                                    minimumSize: WidgetStatePropertyAll(
-                                        Size.fromRadius(16))),
-                              ),
-                            ),
                         ],
                       ),
                       if (widget.body != null &&
@@ -486,6 +465,21 @@ class _ContentItemState extends State<ContentItem> {
                                       child: const Padding(
                                           padding: EdgeInsets.all(12),
                                           child: Text('Open Link')),
+                                    ),
+                                  if (widget.domain != null)
+                                    MenuItemButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) => DomainScreen(
+                                            widget.domainIdOnClick!,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Padding(
+                                          padding: const EdgeInsets.all(12),
+                                          child: Text(
+                                              'More from ${widget.domain}')),
                                     ),
                                   if (widget.onReport != null)
                                     MenuItemButton(

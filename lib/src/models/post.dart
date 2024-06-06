@@ -77,7 +77,9 @@ class PostModel with _$PostModel {
         user: UserModel.fromMbin(json['user'] as Map<String, Object?>),
         magazine:
             MagazineModel.fromMbin(json['magazine'] as Map<String, Object?>),
-        domain: DomainModel.fromMbin(json['domain'] as Map<String, Object?>),
+        domain: json['domain'] == null
+            ? null
+            : DomainModel.fromMbin(json['domain'] as Map<String, Object?>),
         title: json['title'] as String,
         url: json['url'] as String?,
         image: mbinGetImage(json['image'] as Map<String, Object?>?),
