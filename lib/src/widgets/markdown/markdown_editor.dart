@@ -27,14 +27,6 @@ class MarkdownEditor extends StatefulWidget {
 }
 
 class _MarkdownEditorState extends State<MarkdownEditor> {
-  final _buttonStyle = TextButton.styleFrom(
-    shape: const LinearBorder(),
-  );
-  final _textButtonStyle = TextButton.styleFrom(
-    shape: const LinearBorder(),
-    padding: const EdgeInsets.all(16),
-  );
-
   final _focusNodeTextField = FocusNode();
   final _focusNodePreviewButton = FocusNode();
 
@@ -89,32 +81,37 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
               Wrap(
                 children: [
                   DecoratedBox(
-                      decoration: BoxDecoration(
-                        border: enablePreview
-                            ? null
-                            : Border(
-                                right: BorderSide(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .outlineVariant),
-                              ),
-                      ),
-                      child: Tooltip(
-                        message: readableShortcut(togglePreviewShortcut),
-                        child: CallbackShortcuts(
-                          bindings: <ShortcutActivator, VoidCallback>{
-                            togglePreviewShortcut: togglePreview,
-                          },
+                    decoration: BoxDecoration(
+                      border: enablePreview
+                          ? null
+                          : Border(
+                              right: BorderSide(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .outlineVariant),
+                            ),
+                    ),
+                    child: Tooltip(
+                      message: readableShortcut(togglePreviewShortcut),
+                      child: CallbackShortcuts(
+                        bindings: <ShortcutActivator, VoidCallback>{
+                          togglePreviewShortcut: togglePreview,
+                        },
+                        child: SizedBox(
+                          height: 40,
                           child: TextButton.icon(
                             label: Text(enablePreview ? 'Edit' : 'Preview'),
                             icon: Icon(
                                 enablePreview ? Icons.edit : Icons.preview),
                             onPressed: togglePreview,
-                            style: _textButtonStyle,
+                            style: TextButton.styleFrom(
+                                shape: const LinearBorder()),
                             focusNode: _focusNodePreviewButton,
                           ),
                         ),
-                      )),
+                      ),
+                    ),
+                  ),
                   if (!enablePreview)
                     ..._actions.map(
                       (action) => DecoratedBox(
@@ -128,18 +125,23 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
                                 )
                               : null,
                         ),
-                        child: IconButton(
-                          onPressed: () {
-                            _focusNodeTextField.requestFocus();
+                        child: SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: IconButton(
+                            onPressed: () {
+                              _focusNodeTextField.requestFocus();
 
-                            execAction(action.action);
-                          },
-                          icon: Icon(action.icon),
-                          tooltip: action.tooltip +
-                              (action.shortcut == null
-                                  ? ''
-                                  : ' (${readableShortcut(action.shortcut!)})'),
-                          style: _buttonStyle,
+                              execAction(action.action);
+                            },
+                            icon: Icon(action.icon),
+                            tooltip: action.tooltip +
+                                (action.shortcut == null
+                                    ? ''
+                                    : ' (${readableShortcut(action.shortcut!)})'),
+                            style: TextButton.styleFrom(
+                                shape: const LinearBorder()),
+                          ),
                         ),
                       ),
                     ),
