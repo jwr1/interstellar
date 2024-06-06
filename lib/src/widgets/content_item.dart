@@ -6,13 +6,13 @@ import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/blur.dart';
-import 'package:interstellar/src/widgets/cake_day_icon.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/image.dart';
 import 'package:interstellar/src/widgets/markdown/markdown.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:interstellar/src/widgets/open_webpage.dart';
 import 'package:interstellar/src/widgets/report_content.dart';
+import 'package:interstellar/src/widgets/user_status_icons.dart';
 import 'package:interstellar/src/widgets/video.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
 import 'package:provider/provider.dart';
@@ -38,6 +38,7 @@ class ContentItem extends StatefulWidget {
   final ImageModel? userIcon;
   final int? userIdOnClick;
   final DateTime? userCakeDay;
+  final bool userIsBot;
   final int? opUserId;
 
   final String? magazine;
@@ -87,6 +88,7 @@ class ContentItem extends StatefulWidget {
     this.userIcon,
     this.userIdOnClick,
     this.userCakeDay,
+    this.userIsBot = false,
     this.opUserId,
     this.magazine,
     this.magazineIcon,
@@ -144,12 +146,10 @@ class _ContentItemState extends State<ContentItem> {
                           )
                       : null,
                 ),
-                if (widget.userCakeDay != null &&
-                    isSameDayOfYear(widget.userCakeDay!))
-                  const Padding(
-                    padding: EdgeInsets.only(left: 5),
-                    child: CakeDayIcon(),
-                  ),
+                UserStatusIcons(
+                  cakeDay: widget.userCakeDay,
+                  isBot: widget.userIsBot,
+                ),
                 if (widget.opUserId == widget.userIdOnClick)
                   const Padding(
                     padding: EdgeInsets.only(left: 5),

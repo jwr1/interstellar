@@ -4,8 +4,8 @@ import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
-import 'package:interstellar/src/widgets/cake_day_icon.dart';
 import 'package:interstellar/src/widgets/subscription_button.dart';
+import 'package:interstellar/src/widgets/user_status_icons.dart';
 import 'package:provider/provider.dart';
 
 class UserItem extends StatelessWidget {
@@ -42,11 +42,10 @@ class UserItem extends StatelessWidget {
               children: [
                 Flexible(
                     child: Text(user.name, overflow: TextOverflow.ellipsis)),
-                if (isSameDayOfYear(user.createdAt))
-                  const Padding(
-                    padding: EdgeInsets.only(left: 5),
-                    child: CakeDayIcon(),
-                  ),
+                UserStatusIcons(
+                  cakeDay: user.createdAt,
+                  isBot: user.isBot,
+                ),
               ],
             ),
           ),

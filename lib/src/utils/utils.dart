@@ -55,12 +55,6 @@ String dateDiffFormat(DateTime input) {
   return '${seconds}s';
 }
 
-bool isSameDayOfYear(DateTime input) {
-  final now = DateTime.now();
-
-  return input.month == now.month && input.day == now.day;
-}
-
 void httpErrorHandler(http.Response response, {String? message}) {
   if (response.statusCode >= 400) {
     String? errorDetails;

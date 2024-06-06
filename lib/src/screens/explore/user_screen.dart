@@ -17,13 +17,13 @@ import 'package:interstellar/src/screens/profile/profile_edit_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
-import 'package:interstellar/src/widgets/cake_day_icon.dart';
 import 'package:interstellar/src/widgets/image.dart';
 import 'package:interstellar/src/widgets/loading_template.dart';
 import 'package:interstellar/src/widgets/markdown/markdown.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:interstellar/src/widgets/star_button.dart';
 import 'package:interstellar/src/widgets/subscription_button.dart';
+import 'package:interstellar/src/widgets/user_status_icons.dart';
 import 'package:provider/provider.dart';
 
 enum UserFeedType { thread, microblog, comment, reply, follower, following }
@@ -222,11 +222,10 @@ class _UserScreenState extends State<UserScreen> {
                                     children: [
                                       Text(
                                           'Joined: ${dateOnlyFormat(user.createdAt)}'),
-                                      if (isSameDayOfYear(user.createdAt))
-                                        const Padding(
-                                          padding: EdgeInsets.only(left: 5),
-                                          child: CakeDayIcon(),
-                                        ),
+                                      UserStatusIcons(
+                                        cakeDay: user.createdAt,
+                                        isBot: user.isBot,
+                                      ),
                                     ],
                                   ),
                                 ],

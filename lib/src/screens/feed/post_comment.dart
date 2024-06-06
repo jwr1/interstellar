@@ -51,6 +51,7 @@ class _PostCommentState extends State<PostComment> {
               userIcon: widget.comment.user.avatar,
               userIdOnClick: widget.comment.user.id,
               userCakeDay: widget.comment.user.createdAt,
+              userIsBot: widget.comment.user.isBot ?? false,
               opUserId: widget.opUserId,
               boosts: widget.comment.boosts,
               isBoosted: widget.comment.myBoost == true,
