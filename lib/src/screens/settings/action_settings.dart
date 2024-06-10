@@ -18,9 +18,9 @@ class ActionSettings extends StatelessWidget {
     final currentDefaultFeedMode =
         feedTypeSelect.getOption(controller.defaultFeedType);
     final currentDefaultEntriesFeedSort =
-        feedSortSelect.getOption(controller.defaultEntriesFeedSort);
+        feedSortSelect.getOption(controller.defaultThreadsFeedSort);
     final currentDefaultPostsFeedSort =
-        feedSortSelect.getOption(controller.defaultPostsFeedSort);
+        feedSortSelect.getOption(controller.defaultMicroblogFeedSort);
     final currentDefaultExploreFeedSort =
         feedSortSelect.getOption(controller.defaultExploreFeedSort);
     final currentDefaultCommentSort =
@@ -95,7 +95,7 @@ class ActionSettings extends StatelessWidget {
             title: const Text('Threads Feed Sort'),
             leading: const Icon(Icons.sort),
             onTap: () async {
-              controller.updateDefaultEntriesFeedSort(
+              controller.updateDefaultThreadsFeedSort(
                 await feedSortSelect.askSelection(
                   context,
                   currentDefaultEntriesFeedSort.value,
@@ -116,7 +116,7 @@ class ActionSettings extends StatelessWidget {
             leading: const Icon(Icons.sort),
             enabled: !isLemmy,
             onTap: () async {
-              controller.updateDefaultPostsFeedSort(
+              controller.updateDefaultMicroblogFeedSort(
                 await feedSortSelect.askSelection(
                   context,
                   currentDefaultPostsFeedSort.value,

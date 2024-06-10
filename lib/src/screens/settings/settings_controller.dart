@@ -92,10 +92,10 @@ class SettingsController with ChangeNotifier {
 
   late PostType _defaultFeedType;
   PostType get defaultFeedType => _defaultFeedType;
-  late FeedSort _defaultEntriesFeedSort;
-  FeedSort get defaultEntriesFeedSort => _defaultEntriesFeedSort;
-  late FeedSort _defaultPostsFeedSort;
-  FeedSort get defaultPostsFeedSort => _defaultPostsFeedSort;
+  late FeedSort _defaultThreadsFeedSort;
+  FeedSort get defaultThreadsFeedSort => _defaultThreadsFeedSort;
+  late FeedSort _defaultMicroblogFeedSort;
+  FeedSort get defaultMicroblogFeedSort => _defaultMicroblogFeedSort;
   late FeedSort _defaultExploreFeedSort;
   FeedSort get defaultExploreFeedSort => _defaultExploreFeedSort;
   late CommentSort _defaultCommentSort;
@@ -196,15 +196,15 @@ class SettingsController with ChangeNotifier {
       PostType.thread,
       prefs.getString('defaultFeedType'),
     );
-    _defaultEntriesFeedSort = parseEnum(
+    _defaultThreadsFeedSort = parseEnum(
       FeedSort.values,
       FeedSort.hot,
-      prefs.getString('defaultEntriesFeedSort'),
+      prefs.getString('defaultThreadsFeedSort'),
     );
-    _defaultPostsFeedSort = parseEnum(
+    _defaultMicroblogFeedSort = parseEnum(
       FeedSort.values,
       FeedSort.hot,
-      prefs.getString('defaultPostsFeedSort'),
+      prefs.getString('defaultMicroblogFeedSort'),
     );
     _defaultExploreFeedSort = parseEnum(
       FeedSort.values,
@@ -322,28 +322,28 @@ class SettingsController with ChangeNotifier {
     await prefs.setString('defaultFeedType', newValue.name);
   }
 
-  Future<void> updateDefaultEntriesFeedSort(FeedSort? newValue) async {
+  Future<void> updateDefaultThreadsFeedSort(FeedSort? newValue) async {
     if (newValue == null) return;
-    if (newValue == _defaultEntriesFeedSort) return;
+    if (newValue == _defaultThreadsFeedSort) return;
 
-    _defaultEntriesFeedSort = newValue;
+    _defaultThreadsFeedSort = newValue;
 
     notifyListeners();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('defaultFeedSortEntries', newValue.name);
+    await prefs.setString('defaultThreadsFeedSort', newValue.name);
   }
 
-  Future<void> updateDefaultPostsFeedSort(FeedSort? newValue) async {
+  Future<void> updateDefaultMicroblogFeedSort(FeedSort? newValue) async {
     if (newValue == null) return;
-    if (newValue == _defaultPostsFeedSort) return;
+    if (newValue == _defaultMicroblogFeedSort) return;
 
-    _defaultPostsFeedSort = newValue;
+    _defaultMicroblogFeedSort = newValue;
 
     notifyListeners();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('defaultPostsFeedSort', newValue.name);
+    await prefs.setString('defaultMicroblogFeedSort', newValue.name);
   }
 
   Future<void> updateDefaultExploreFeedSort(

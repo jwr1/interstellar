@@ -60,8 +60,8 @@ class _FeedScreenState extends State<FeedScreen> {
         : PostType.thread;
     _sort = widget.source == null
         ? _mode == PostType.thread
-            ? context.read<SettingsController>().defaultEntriesFeedSort
-            : context.read<SettingsController>().defaultPostsFeedSort
+            ? context.read<SettingsController>().defaultThreadsFeedSort
+            : context.read<SettingsController>().defaultMicroblogFeedSort
         : context.read<SettingsController>().defaultExploreFeedSort;
   }
 
@@ -142,8 +142,10 @@ class _FeedScreenState extends State<FeedScreen> {
                   ? _mode == PostType.thread
                       ? context
                           .read<SettingsController>()
-                          .defaultEntriesFeedSort
-                      : context.read<SettingsController>().defaultPostsFeedSort
+                          .defaultThreadsFeedSort
+                      : context
+                          .read<SettingsController>()
+                          .defaultMicroblogFeedSort
                   : context.read<SettingsController>().defaultExploreFeedSort;
             });
           }
