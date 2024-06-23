@@ -44,6 +44,7 @@ class _PostCommentState extends State<PostComment> {
                 InkWell(onTap: widget.onClick, child: child),
             child: ContentItem(
               originInstance: getNameHost(context, widget.comment.user.name),
+              image: widget.comment.image,
               body: widget.comment.body ?? '_comment deleted_',
               createdAt: widget.comment.createdAt,
               editedAt: widget.comment.editedAt,
