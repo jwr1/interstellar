@@ -229,6 +229,7 @@ class _ContentItemState extends State<ContentItem> {
                       : AdvancedImage(
                           widget.image!,
                           openTitle: imageOpenTitle,
+                          fit: BoxFit.scaleDown,
                         )),
             );
 

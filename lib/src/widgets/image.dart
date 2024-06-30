@@ -38,20 +38,28 @@ class AdvancedImage extends StatelessWidget {
         },
         child: child,
       ),
-      child: image.blurHash == null
-          ? Image.network(
-              image.src,
+      child: Stack(
+        alignment: Alignment.center,
+        fit: StackFit.passthrough,
+        children: [
+          if (image.blurHash != null)
+            Image(
               fit: fit,
-            )
-          : BlurhashFfi(
-              hash: image.blurHash!,
-              decodingWidth:
-                  (blurHashSizeFactor! * image.blurHashWidth!).ceil(),
-              decodingHeight:
-                  (blurHashSizeFactor * image.blurHashHeight!).ceil(),
-              image: image.src,
-              imageFit: fit,
+              image: BlurhashFfiImage(
+                image.blurHash!,
+                decodingWidth:
+                    (blurHashSizeFactor! * image.blurHashWidth!).ceil(),
+                decodingHeight:
+                    (blurHashSizeFactor * image.blurHashHeight!).ceil(),
+                scale: blurHashSizeFactor,
+              ),
             ),
+          Image.network(
+            image.src,
+            fit: fit,
+          ),
+        ],
+      ),
     );
   }
 }
