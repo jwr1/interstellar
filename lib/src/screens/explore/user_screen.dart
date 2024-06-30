@@ -128,10 +128,11 @@ class _UserScreenState extends State<UserScreen> {
             headerSliverBuilder: (context, innerBoxIsScrolled) => [
               SliverToBoxAdapter(
                   child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Stack(
                     alignment: Alignment.center,
+                    fit: StackFit.passthrough,
                     children: [
                       Container(
                         constraints: BoxConstraints(
@@ -141,7 +142,7 @@ class _UserScreenState extends State<UserScreen> {
                         child: user.cover != null
                             ? AdvancedImage(
                                 user.cover!,
-                                fit: BoxFit.fitWidth,
+                                fit: BoxFit.cover,
                               )
                             : null,
                       ),
