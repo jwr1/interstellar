@@ -168,7 +168,10 @@ class _PostCommentState extends State<PostComment> {
                     : '/m/${widget.comment.magazine.name}/${switch (widget.comment.postType) {
                         PostType.thread => 't',
                         PostType.microblog => 'p',
-                      }}/${widget.comment.postId}/-/reply/${widget.comment.id}',
+                      }}/${widget.comment.postId}/-/${switch (widget.comment.postType) {
+                        PostType.thread => 'comment',
+                        PostType.microblog => 'reply',
+                      }}/${widget.comment.id}',
               ),
             ),
           ),
