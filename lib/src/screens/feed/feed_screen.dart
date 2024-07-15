@@ -53,7 +53,9 @@ class _FeedScreenState extends State<FeedScreen> {
   void initState() {
     super.initState();
 
-    _filter = whenLoggedIn(context, FeedSource.subscribed) ?? FeedSource.all;
+    _filter = whenLoggedIn(
+            context, context.read<SettingsController>().defaultFeedFilter) ??
+        FeedSource.all;
     _mode = context.read<SettingsController>().serverSoftware !=
             ServerSoftware.lemmy
         ? context.read<SettingsController>().defaultFeedType
@@ -190,7 +192,14 @@ class _FeedScreenState extends State<FeedScreen> {
       shouldWrap: tabsAction != null,
       parentBuilder: (child) => DefaultTabController(
         initialIndex: switch (tabsAction?.name) {
-          String name when name == feedActionSetFilter.name => 0,
+          String name when name == feedActionSetFilter.name => feedFilterSelect
+              .options
+              .asMap()
+              .entries
+              .firstWhere((entry) =>
+                  entry.value.value ==
+                  context.watch<SettingsController>().defaultFeedFilter)
+              .key,
           String name when name == feedActionSetType.name => feedTypeSelect
               .options
               .asMap()
@@ -205,7 +214,8 @@ class _FeedScreenState extends State<FeedScreen> {
           _ => 0
         },
         length: switch (tabsAction?.name) {
-          String name when name == feedActionSetFilter.name => 4,
+          String name when name == feedActionSetFilter.name =>
+            feedFilterSelect.options.length,
           String name when name == feedActionSetType.name =>
             feedTypeSelect.options.length,
           _ => 0
@@ -255,24 +265,15 @@ class _FeedScreenState extends State<FeedScreen> {
               ? null
               : TabBar(
                   tabs: switch (tabsAction.name) {
-                    String name when name == feedActionSetFilter.name => [
-                        const Tab(
-                          text: 'Sub',
-                          icon: Icon(Icons.group),
-                        ),
-                        const Tab(
-                          text: 'Mod',
-                          icon: Icon(Icons.lock),
-                        ),
-                        const Tab(
-                          text: 'Fav',
-                          icon: Icon(Icons.favorite),
-                        ),
-                        const Tab(
-                          text: 'All',
-                          icon: Icon(Icons.newspaper),
-                        ),
-                      ],
+                    String name when name == feedActionSetFilter.name =>
+                      feedFilterSelect.options
+                          .map(
+                            (option) => Tab(
+                              text: option.title.substring(0, 3),
+                              icon: Icon(option.icon),
+                            ),
+                          )
+                          .toList(),
                     String name when name == feedActionSetType.name =>
                       feedTypeSelect.options
                           .map(

@@ -92,6 +92,8 @@ class SettingsController with ChangeNotifier {
 
   late PostType _defaultFeedType;
   PostType get defaultFeedType => _defaultFeedType;
+  late FeedSource _defaultFeedFilter;
+  FeedSource get defaultFeedFilter => _defaultFeedFilter;
   late FeedSort _defaultThreadsFeedSort;
   FeedSort get defaultThreadsFeedSort => _defaultThreadsFeedSort;
   late FeedSort _defaultMicroblogFeedSort;
@@ -195,6 +197,11 @@ class SettingsController with ChangeNotifier {
       PostType.values,
       PostType.thread,
       prefs.getString('defaultFeedType'),
+    );
+    _defaultFeedFilter = parseEnum(
+      FeedSource.values,
+      FeedSource.subscribed,
+      prefs.getString('defaultFeedFilter'),
     );
     _defaultThreadsFeedSort = parseEnum(
       FeedSort.values,
@@ -320,6 +327,18 @@ class SettingsController with ChangeNotifier {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('defaultFeedType', newValue.name);
+  }
+
+  Future<void> updateDefaultFeedFilter(FeedSource? newValue) async {
+    if (newValue == null) return;
+    if (newValue == _defaultFeedFilter) return;
+
+    _defaultFeedFilter = newValue;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('defaultFeedFilter', newValue.name);
   }
 
   Future<void> updateDefaultThreadsFeedSort(FeedSort? newValue) async {

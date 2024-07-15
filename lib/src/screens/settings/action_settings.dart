@@ -17,9 +17,11 @@ class ActionSettings extends StatelessWidget {
 
     final currentDefaultFeedMode =
         feedTypeSelect.getOption(controller.defaultFeedType);
-    final currentDefaultEntriesFeedSort =
+    final currentDefaultFeedFilter =
+        feedFilterSelect.getOption(controller.defaultFeedFilter);
+    final currentDefaultThreadsFeedSort =
         feedSortSelect.getOption(controller.defaultThreadsFeedSort);
-    final currentDefaultPostsFeedSort =
+    final currentDefaultMicroblogFeedSort =
         feedSortSelect.getOption(controller.defaultMicroblogFeedSort);
     final currentDefaultExploreFeedSort =
         feedSortSelect.getOption(controller.defaultExploreFeedSort);
@@ -92,22 +94,42 @@ class ActionSettings extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text('Threads Feed Sort'),
-            leading: const Icon(Icons.sort),
+            title: const Text('Feed Filter'),
+            leading: const Icon(Icons.filter_alt),
             onTap: () async {
-              controller.updateDefaultThreadsFeedSort(
-                await feedSortSelect.askSelection(
+              controller.updateDefaultFeedFilter(
+                await feedFilterSelect.askSelection(
                   context,
-                  currentDefaultEntriesFeedSort.value,
+                  currentDefaultFeedFilter.value,
                 ),
               );
             },
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(currentDefaultEntriesFeedSort.icon),
+                Icon(currentDefaultFeedFilter.icon),
                 const SizedBox(width: 4),
-                Text(currentDefaultEntriesFeedSort.title),
+                Text(currentDefaultFeedFilter.title),
+              ],
+            ),
+          ),
+          ListTile(
+            title: const Text('Threads Feed Sort'),
+            leading: const Icon(Icons.sort),
+            onTap: () async {
+              controller.updateDefaultThreadsFeedSort(
+                await feedSortSelect.askSelection(
+                  context,
+                  currentDefaultThreadsFeedSort.value,
+                ),
+              );
+            },
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(currentDefaultThreadsFeedSort.icon),
+                const SizedBox(width: 4),
+                Text(currentDefaultThreadsFeedSort.title),
               ],
             ),
           ),
@@ -119,16 +141,16 @@ class ActionSettings extends StatelessWidget {
               controller.updateDefaultMicroblogFeedSort(
                 await feedSortSelect.askSelection(
                   context,
-                  currentDefaultPostsFeedSort.value,
+                  currentDefaultMicroblogFeedSort.value,
                 ),
               );
             },
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(currentDefaultPostsFeedSort.icon),
+                Icon(currentDefaultMicroblogFeedSort.icon),
                 const SizedBox(width: 4),
-                Text(currentDefaultPostsFeedSort.title),
+                Text(currentDefaultMicroblogFeedSort.title),
               ],
             ),
           ),
