@@ -17,13 +17,14 @@ import 'package:interstellar/src/widgets/video.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
 import 'package:provider/provider.dart';
 
+import './content_item_link_panel.dart';
+
 class ContentItem extends StatefulWidget {
   final String originInstance;
 
   final String? title;
   final ImageModel? image;
   final Uri? link;
-  final Uri? video;
   final String? body;
   final DateTime? createdAt;
   final DateTime? editedAt;
@@ -76,7 +77,6 @@ class ContentItem extends StatefulWidget {
     this.title,
     this.image,
     this.link,
-    this.video,
     this.body,
     this.createdAt,
     this.editedAt,
@@ -127,6 +127,8 @@ class _ContentItemState extends State<ContentItem> {
 
   @override
   Widget build(BuildContext context) {
+    final isVideo = widget.link != null && isSupportedVideo(widget.link!);
+
     final Widget? userWidget = widget.user != null
         ? Padding(
             padding: const EdgeInsets.only(right: 10),
@@ -244,7 +246,7 @@ class _ContentItemState extends State<ContentItem> {
       return Column(
         children: <Widget>[
           if ((!isRightImage && imageWidget != null) ||
-              (!widget.isPreview && widget.video != null))
+              (!widget.isPreview && isVideo))
             Wrapper(
               shouldWrap: !widget.isPreview,
               parentBuilder: (child) => Container(
@@ -252,8 +254,8 @@ class _ContentItemState extends State<ContentItem> {
                     maxHeight: MediaQuery.of(context).size.height / 2,
                   ),
                   child: child),
-              child: (!widget.isPreview && widget.video != null)
-                  ? VideoPlayer(widget.video!)
+              child: (!widget.isPreview && isVideo)
+                  ? VideoPlayer(widget.link!)
                   : imageWidget!,
             ),
           Container(
@@ -268,24 +270,14 @@ class _ContentItemState extends State<ContentItem> {
                       if (widget.title != null)
                         Padding(
                           padding: const EdgeInsets.only(bottom: 10),
-                          child: widget.link != null
-                              ? InkWell(
-                                  child: Text(
-                                    widget.title!,
-                                    style: titleStyle.apply(
-                                        decoration: TextDecoration.underline),
-                                    overflow: titleOverflow,
-                                  ),
-                                  onTap: () {
-                                    openWebpage(context, widget.link!);
-                                  },
-                                )
-                              : Text(
-                                  widget.title!,
-                                  style: titleStyle,
-                                  overflow: titleOverflow,
-                                ),
+                          child: Text(
+                            widget.title!,
+                            style: titleStyle,
+                            overflow: titleOverflow,
+                          ),
                         ),
+                      if (widget.link != null)
+                        ContentItemLinkPanel(link: widget.link!),
                       Row(
                         children: [
                           if (widget.isNSFW)

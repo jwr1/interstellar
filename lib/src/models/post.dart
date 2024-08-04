@@ -81,7 +81,8 @@ class PostModel with _$PostModel {
             ? null
             : DomainModel.fromMbin(json['domain'] as Map<String, Object?>),
         title: json['title'] as String,
-        url: json['url'] as String?,
+        // Only include link if it's not an Image post
+        url: json['type'] == 'image' ? null : json['url'] as String?,
         image: mbinGetImage(json['image'] as Map<String, Object?>?),
         body: json['body'] as String?,
         lang: json['lang'] as String,
@@ -143,7 +144,11 @@ class PostModel with _$PostModel {
           MagazineModel.fromLemmy(json['community'] as Map<String, Object?>),
       domain: null,
       title: lemmyPost['name'] as String,
-      url: lemmyPost['url'] as String?,
+      // Only include link if it's not an Image post
+      url: (lemmyPost['url_content_type'] != null &&
+              (lemmyPost['url_content_type'] as String).startsWith('image/'))
+          ? null
+          : lemmyPost['url'] as String?,
       image: lemmyGetImage(lemmyPost['thumbnail_url'] as String?),
       body: lemmyPost['body'] as String?,
       lang: null,

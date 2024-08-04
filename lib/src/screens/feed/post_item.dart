@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
-import 'package:interstellar/src/widgets/content_item.dart';
-import 'package:interstellar/src/widgets/video.dart';
+import 'package:interstellar/src/widgets/content_item/content_item.dart';
 import 'package:provider/provider.dart';
 
 class PostItem extends StatelessWidget {
@@ -26,14 +25,11 @@ class PostItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isVideo = item.url != null && isSupportedVideo(item.url!);
-
     return ContentItem(
       originInstance: getNameHost(context, item.user.name),
       title: item.title,
       image: item.image,
       link: item.url != null ? Uri.parse(item.url!) : null,
-      video: isVideo ? Uri.parse(item.url!) : null,
       body: item.body,
       createdAt: item.createdAt,
       editedAt: item.editedAt,

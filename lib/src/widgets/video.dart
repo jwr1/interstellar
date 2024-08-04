@@ -4,15 +4,15 @@ import 'package:media_kit_video/media_kit_video.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart'
     as youtube_explode_dart;
 
-bool isSupportedVideo(String link) {
+bool isSupportedVideo(Uri link) {
   return ['www.youtube.com', 'youtube.com', 'youtu.be', 'm.youtube.com']
-      .contains(Uri.parse(link).host);
+      .contains(link.host);
 }
 
 Future<Uri> getVideoStreamUri(Uri link) async {
-  var yt = youtube_explode_dart.YoutubeExplode();
+  final yt = youtube_explode_dart.YoutubeExplode();
 
-  var manifest = await yt.videos.streamsClient.getManifest(link);
+  final manifest = await yt.videos.streamsClient.getManifest(link);
 
   return manifest.muxed.withHighestBitrate().url;
 }
