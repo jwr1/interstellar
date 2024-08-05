@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:interstellar/src/models/image.dart';
 import 'package:interstellar/src/screens/explore/domain_screen.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
@@ -532,6 +533,45 @@ class _ContentItemState extends State<ContentItem> {
                                           padding: EdgeInsets.all(12),
                                           child: Text('Delete')),
                                     ),
+                                  if (widget.body != null)
+                                    MenuItemButton(
+                                      child: const Padding(
+                                        padding: EdgeInsets.all(12),
+                                        child: Text('View Source'),
+                                      ),
+                                      onPressed: () => showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: const Text('View Source'),
+                                          content: Card.outlined(
+                                            margin: EdgeInsets.zero,
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8),
+                                              child:
+                                                  SelectableText(widget.body!),
+                                            ),
+                                          ),
+                                          actions: [
+                                            OutlinedButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: const Text('Close'),
+                                            ),
+                                            FilledButton.tonal(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+
+                                                Clipboard.setData(
+                                                  ClipboardData(
+                                                      text: widget.body!),
+                                                );
+                                              },
+                                              child: const Text('Copy'),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    )
                                 ],
                               ),
                           ];
