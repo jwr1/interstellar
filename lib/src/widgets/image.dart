@@ -3,18 +3,21 @@ import 'dart:math';
 import 'package:blurhash_ffi/blurhash_ffi.dart';
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/models/image.dart';
+import 'package:interstellar/src/widgets/blur.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
 
 class AdvancedImage extends StatelessWidget {
   final ImageModel image;
   final BoxFit fit;
   final String? openTitle;
+  final bool enableBlur;
 
   const AdvancedImage(
     this.image, {
     super.key,
     this.fit = BoxFit.contain,
     this.openTitle,
+    this.enableBlur = false,
   });
 
   @override
@@ -38,27 +41,31 @@ class AdvancedImage extends StatelessWidget {
         },
         child: child,
       ),
-      child: Stack(
-        alignment: Alignment.center,
-        fit: StackFit.passthrough,
-        children: [
-          if (image.blurHash != null)
-            Image(
-              fit: fit,
-              image: BlurhashFfiImage(
-                image.blurHash!,
-                decodingWidth:
-                    (blurHashSizeFactor! * image.blurHashWidth!).ceil(),
-                decodingHeight:
-                    (blurHashSizeFactor * image.blurHashHeight!).ceil(),
-                scale: blurHashSizeFactor,
+      child: Wrapper(
+        shouldWrap: enableBlur,
+        parentBuilder: (child) => Blur(child),
+        child: Stack(
+          alignment: Alignment.center,
+          fit: StackFit.passthrough,
+          children: [
+            if (image.blurHash != null)
+              Image(
+                fit: fit,
+                image: BlurhashFfiImage(
+                  image.blurHash!,
+                  decodingWidth:
+                      (blurHashSizeFactor! * image.blurHashWidth!).ceil(),
+                  decodingHeight:
+                      (blurHashSizeFactor * image.blurHashHeight!).ceil(),
+                  scale: blurHashSizeFactor,
+                ),
               ),
+            Image.network(
+              image.src,
+              fit: fit,
             ),
-          Image.network(
-            image.src,
-            fit: fit,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -5,7 +5,6 @@ import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
-import 'package:interstellar/src/widgets/blur.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/image.dart';
 import 'package:interstellar/src/widgets/markdown/markdown.dart';
@@ -205,35 +204,34 @@ class _ContentItemState extends State<ContentItem> {
 
       final imageWidget = widget.image == null
           ? null
-          : Wrapper(
-              shouldWrap: widget.isNSFW,
-              parentBuilder: (child) => Blur(child),
-              child: isRightImage
+          : isRightImage
+              ? SizedBox(
+                  height: rightImageSize,
+                  width: rightImageSize,
+                  child: AdvancedImage(
+                    widget.image!,
+                    fit: BoxFit.cover,
+                    openTitle: imageOpenTitle,
+                    enableBlur: widget.isNSFW,
+                  ),
+                )
+              : (widget.isPreview
                   ? SizedBox(
-                      height: rightImageSize,
-                      width: rightImageSize,
+                      height: 160,
+                      width: double.infinity,
                       child: AdvancedImage(
                         widget.image!,
                         fit: BoxFit.cover,
                         openTitle: imageOpenTitle,
+                        enableBlur: widget.isNSFW,
                       ),
                     )
-                  : (widget.isPreview
-                      ? SizedBox(
-                          height: 160,
-                          width: double.infinity,
-                          child: AdvancedImage(
-                            widget.image!,
-                            fit: BoxFit.cover,
-                            openTitle: imageOpenTitle,
-                          ),
-                        )
-                      : AdvancedImage(
-                          widget.image!,
-                          openTitle: imageOpenTitle,
-                          fit: BoxFit.scaleDown,
-                        )),
-            );
+                  : AdvancedImage(
+                      widget.image!,
+                      openTitle: imageOpenTitle,
+                      fit: BoxFit.scaleDown,
+                      enableBlur: widget.isNSFW,
+                    ));
 
       final titleStyle = hasWideSize
           ? Theme.of(context).textTheme.titleLarge!
@@ -457,7 +455,7 @@ class _ContentItemState extends State<ContentItem> {
                                           context, widget.openLinkUri!),
                                       child: const Padding(
                                           padding: EdgeInsets.all(12),
-                                          child: Text('Open Link')),
+                                          child: Text('Open in Browser')),
                                     ),
                                   if (widget.domain != null)
                                     MenuItemButton(
