@@ -51,6 +51,7 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
     required bool isAdult,
     required bool? isUserSubscribed,
     required bool? isBlockedByUser,
+    required bool isPostingRestrictedToMods,
   }) = _DetailedMagazineModel;
 
   factory DetailedMagazineModel.fromMbin(Map<String, Object?> json) {
@@ -72,6 +73,8 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
       isAdult: json['isAdult'] as bool,
       isUserSubscribed: json['isUserSubscribed'] as bool?,
       isBlockedByUser: json['isBlockedByUser'] as bool?,
+      isPostingRestrictedToMods:
+          (json['isPostingRestrictedToMods'] ?? false) as bool,
     );
 
     magazineMentionCache[magazine.name] = magazine;
@@ -99,6 +102,8 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
       isAdult: lemmyCommunity['nsfw'] as bool,
       isUserSubscribed: (json['subscribed'] as String) != 'NotSubscribed',
       isBlockedByUser: json['blocked'] as bool?,
+      isPostingRestrictedToMods:
+          (lemmyCommunity['posting_restricted_to_mods']) as bool,
     );
 
     magazineMentionCache[magazine.name] = magazine;

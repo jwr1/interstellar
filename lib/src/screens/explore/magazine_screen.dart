@@ -73,9 +73,15 @@ class _MagazineScreenState extends State<MagazineScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              _data!.title,
-                              style: Theme.of(context).textTheme.titleLarge,
+                            Row(
+                              children: [
+                                Text(
+                                  _data!.title,
+                                  style: Theme.of(context).textTheme.titleLarge,
+                                ),
+                                if (_data!.isPostingRestrictedToMods)
+                                  const PostingRestrictedIndicator(),
+                              ],
                             ),
                             InkWell(
                               onTap: () async {
@@ -159,6 +165,22 @@ class _MagazineScreenState extends State<MagazineScreen> {
               ),
             )
           : null,
+    );
+  }
+}
+
+class PostingRestrictedIndicator extends StatelessWidget {
+  const PostingRestrictedIndicator({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.all(4),
+      child: Tooltip(
+        message: 'Posting restricted to mods',
+        triggerMode: TooltipTriggerMode.tap,
+        child: Icon(Icons.lock, size: 16),
+      ),
     );
   }
 }

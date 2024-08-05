@@ -145,7 +145,9 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                                     value: APIMagazinesSort.hot,
                                     child: Text('Hot'),
                                   ),
-                                  if (context.watch<SettingsController>().serverSoftware ==
+                                  if (context
+                                          .watch<SettingsController>()
+                                          .serverSoftware ==
                                       ServerSoftware.lemmy)
                                     const DropdownMenuItem(
                                       value: APIMagazinesSort.top,
@@ -159,85 +161,113 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                                     value: APIMagazinesSort.newest,
                                     child: Text('Newest'),
                                   ),
-                                  if (context.watch<SettingsController>().serverSoftware ==
+                                  if (context
+                                          .watch<SettingsController>()
+                                          .serverSoftware ==
                                       ServerSoftware.lemmy)
                                     const DropdownMenuItem(
                                       value: APIMagazinesSort.oldest,
                                       child: Text('Oldest'),
                                     ),
-                                  if (context.watch<SettingsController>().serverSoftware ==
+                                  if (context
+                                          .watch<SettingsController>()
+                                          .serverSoftware ==
                                       ServerSoftware.lemmy)
                                     const DropdownMenuItem(
                                       value: APIMagazinesSort.scaled,
                                       child: Text('Scaled'),
                                     ),
-                                  if (context.watch<SettingsController>().serverSoftware ==
+                                  if (context
+                                          .watch<SettingsController>()
+                                          .serverSoftware ==
                                       ServerSoftware.lemmy)
                                     const DropdownMenuItem(
                                       value: APIMagazinesSort.controversial,
                                       child: Text('Controversial'),
                                     ),
-                                  if (context.watch<SettingsController>().serverSoftware ==
+                                  if (context
+                                          .watch<SettingsController>()
+                                          .serverSoftware ==
                                       ServerSoftware.lemmy)
                                     const DropdownMenuItem(
                                       value: APIMagazinesSort.commented,
                                       child: Text('Most Comments'),
                                     ),
-                                  if (context.watch<SettingsController>().serverSoftware ==
+                                  if (context
+                                          .watch<SettingsController>()
+                                          .serverSoftware ==
                                       ServerSoftware.lemmy)
                                     const DropdownMenuItem(
                                       value: APIMagazinesSort.newComments,
                                       child: Text('Newest Comments'),
                                     ),
-                                  if (context.watch<SettingsController>().serverSoftware ==
+                                  if (context
+                                          .watch<SettingsController>()
+                                          .serverSoftware ==
                                       ServerSoftware.lemmy)
                                     const DropdownMenuItem(
                                       value: APIMagazinesSort.topHour,
                                       child: Text('Top Hour'),
                                     ),
-                                  if (context.watch<SettingsController>().serverSoftware ==
+                                  if (context
+                                          .watch<SettingsController>()
+                                          .serverSoftware ==
                                       ServerSoftware.lemmy)
                                     const DropdownMenuItem(
                                       value: APIMagazinesSort.topSixHour,
                                       child: Text('Top Six Hours'),
                                     ),
-                                  if (context.watch<SettingsController>().serverSoftware ==
+                                  if (context
+                                          .watch<SettingsController>()
+                                          .serverSoftware ==
                                       ServerSoftware.lemmy)
                                     const DropdownMenuItem(
                                       value: APIMagazinesSort.topTwelveHour,
                                       child: Text('Top Twelve Hours'),
                                     ),
-                                  if (context.watch<SettingsController>().serverSoftware ==
+                                  if (context
+                                          .watch<SettingsController>()
+                                          .serverSoftware ==
                                       ServerSoftware.lemmy)
                                     const DropdownMenuItem(
                                       value: APIMagazinesSort.topDay,
                                       child: Text('Top Day'),
                                     ),
-                                  if (context.watch<SettingsController>().serverSoftware ==
+                                  if (context
+                                          .watch<SettingsController>()
+                                          .serverSoftware ==
                                       ServerSoftware.lemmy)
                                     const DropdownMenuItem(
                                       value: APIMagazinesSort.topWeek,
                                       child: Text('Top Week'),
                                     ),
-                                  if (context.watch<SettingsController>().serverSoftware ==
+                                  if (context
+                                          .watch<SettingsController>()
+                                          .serverSoftware ==
                                       ServerSoftware.lemmy)
                                     const DropdownMenuItem(
                                       value: APIMagazinesSort.topMonth,
                                       child: Text('Top Month'),
                                     ),
-                                  if (context.watch<SettingsController>().serverSoftware ==
+                                  if (context
+                                          .watch<SettingsController>()
+                                          .serverSoftware ==
                                       ServerSoftware.lemmy)
                                     const DropdownMenuItem(
                                       value: APIMagazinesSort.topThreeMonths,
                                       child: Text('Top Three Months'),
                                     ),
-                                  if (context.watch<SettingsController>().serverSoftware ==
+                                  if (context
+                                          .watch<SettingsController>()
+                                          .serverSoftware ==
                                       ServerSoftware.lemmy)
                                     const DropdownMenuItem(
                                       value: APIMagazinesSort.topSixMonths,
                                       child: Text('Top Six Months'),
                                     ),
-                                  if (context.watch<SettingsController>().serverSoftware ==
+                                  if (context
+                                          .watch<SettingsController>()
+                                          .serverSoftware ==
                                       ServerSoftware.lemmy)
                                     const DropdownMenuItem(
                                       value: APIMagazinesSort.topNineMonths,
@@ -291,39 +321,51 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(12),
                   child: Row(children: [
-                    if (item.icon != null) Avatar(item.icon, radius: 16),
-                    Container(width: 8 + (item.icon != null ? 0 : 32)),
                     Expanded(
-                        child:
-                            Text(item.name, overflow: TextOverflow.ellipsis)),
-                    const Icon(Icons.feed),
-                    Container(
-                      width: 4,
+                      child: Row(
+                        children: [
+                          if (item.icon != null) Avatar(item.icon, radius: 16),
+                          Container(width: 8 + (item.icon != null ? 0 : 32)),
+                          Flexible(
+                              child: Text(item.name,
+                                  overflow: TextOverflow.ellipsis)),
+                          if (item.isPostingRestrictedToMods)
+                            const PostingRestrictedIndicator(),
+                        ],
+                      ),
                     ),
-                    Text(intFormat(item.threadCount)),
-                    const SizedBox(width: 12),
-                    const Icon(Icons.comment),
-                    Container(
-                      width: 4,
-                    ),
-                    Text(intFormat(item.threadCommentCount)),
-                    const SizedBox(width: 12),
-                    SubscriptionButton(
-                      subsCount: item.subscriptionsCount,
-                      isSubed: item.isUserSubscribed == true,
-                      onPress: whenLoggedIn(context, () async {
-                        var newValue = await context
-                            .read<SettingsController>()
-                            .api
-                            .magazines
-                            .subscribe(item.id, !item.isUserSubscribed!);
-                        var newList = _pagingController.itemList;
-                        newList![index] = newValue;
-                        setState(() {
-                          _pagingController.itemList = newList;
-                        });
-                      }),
-                    ),
+                    Row(
+                      children: [
+                        const Icon(Icons.feed),
+                        Container(
+                          width: 4,
+                        ),
+                        Text(intFormat(item.threadCount)),
+                        const SizedBox(width: 12),
+                        const Icon(Icons.comment),
+                        Container(
+                          width: 4,
+                        ),
+                        Text(intFormat(item.threadCommentCount)),
+                        const SizedBox(width: 12),
+                        SubscriptionButton(
+                          subsCount: item.subscriptionsCount,
+                          isSubed: item.isUserSubscribed == true,
+                          onPress: whenLoggedIn(context, () async {
+                            var newValue = await context
+                                .read<SettingsController>()
+                                .api
+                                .magazines
+                                .subscribe(item.id, !item.isUserSubscribed!);
+                            var newList = _pagingController.itemList;
+                            newList![index] = newValue;
+                            setState(() {
+                              _pagingController.itemList = newList;
+                            });
+                          }),
+                        ),
+                      ],
+                    )
                   ]),
                 ),
               ),
