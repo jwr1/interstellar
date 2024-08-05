@@ -69,3 +69,34 @@ class UserItem extends StatelessWidget {
     );
   }
 }
+
+class UserItemSimple extends StatelessWidget {
+  final UserModel user;
+
+  const UserItemSimple(this.user, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => UserScreen(user.id),
+          ),
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(children: [
+          if (user.avatar != null)
+            Avatar(
+              user.avatar,
+              radius: 16,
+            ),
+          Container(width: 8 + (user.avatar != null ? 0 : 32)),
+          Text(user.name, overflow: TextOverflow.ellipsis)
+        ]),
+      ),
+    );
+  }
+}

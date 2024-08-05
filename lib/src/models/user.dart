@@ -89,7 +89,7 @@ class UserModel with _$UserModel {
     required String name,
     required ImageModel? avatar,
     required DateTime? createdAt,
-    required bool? isBot,
+    required bool isBot,
   }) = _UserModel;
 
   factory UserModel.fromMbin(Map<String, Object?> json) => UserModel(
@@ -97,7 +97,7 @@ class UserModel with _$UserModel {
         name: mbinNormalizeUsername(json['username'] as String),
         avatar: mbinGetImage(json['avatar'] as Map<String, Object?>?),
         createdAt: optionalDateTime(json['createdAt'] as String?),
-        isBot: json['isBot'] as bool?,
+        isBot: (json['isBot'] ?? false) as bool,
       );
 
   factory UserModel.fromLemmy(Map<String, Object?> json) => UserModel(

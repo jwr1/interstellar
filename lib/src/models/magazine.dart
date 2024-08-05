@@ -41,7 +41,6 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
     required String title,
     required ImageModel? icon,
     required String? description,
-    required String? rules,
     required List<UserModel> moderators,
     required int subscriptionsCount,
     required int threadCount,
@@ -61,7 +60,6 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
       title: json['title'] as String,
       icon: mbinGetImage(json['icon'] as Map<String, Object?>?),
       description: json['description'] as String?,
-      rules: json['rules'] as String?,
       moderators: ((json['moderators'] ?? []) as List<dynamic>)
           .map((user) => UserModel.fromMbin(user as Map<String, Object?>))
           .toList(),
@@ -92,7 +90,6 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
       title: lemmyCommunity['title'] as String,
       icon: lemmyGetImage(lemmyCommunity['icon'] as String?),
       description: lemmyCommunity['description'] as String?,
-      rules: null,
       moderators: [],
       subscriptionsCount: lemmyCounts['subscribers'] as int,
       threadCount: lemmyCounts['posts'] as int,
