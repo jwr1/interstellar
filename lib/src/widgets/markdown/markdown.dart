@@ -25,7 +25,7 @@ class Markdown extends StatelessWidget {
       )),
       onTapLink: (text, href, title) async {
         if (href != null) {
-          openWebpage(context, Uri.parse(href));
+          openWebpageSecondary(context, Uri.parse(href));
         }
       },
       imageBuilder: (uri, title, alt) {

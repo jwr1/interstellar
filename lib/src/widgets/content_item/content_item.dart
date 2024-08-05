@@ -453,7 +453,7 @@ class _ContentItemState extends State<ContentItem> {
                                 menuChildren: [
                                   if (widget.openLinkUri != null)
                                     MenuItemButton(
-                                      onPressed: () => openWebpage(
+                                      onPressed: () => openWebpagePrimary(
                                           context, widget.openLinkUri!),
                                       child: const Padding(
                                           padding: EdgeInsets.all(12),

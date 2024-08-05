@@ -100,7 +100,7 @@ class _ContentItemLinkPanelState extends State<ContentItemLinkPanel> {
                         : _linkAltSources)
                     .map(
                   (source) => MenuItemButton(
-                    onPressed: () => openWebpage(
+                    onPressed: () => openWebpagePrimary(
                         context,
                         Uri.parse(source.urlPrefix +
                             (_youtubeVideoId ?? widget.link.toString()))),
@@ -146,7 +146,13 @@ class _ContentItemLinkPanelState extends State<ContentItemLinkPanel> {
                     ),
                   ),
                   onTap: () {
-                    openWebpage(context, widget.link);
+                    openWebpagePrimary(context, widget.link);
+                  },
+                  onLongPress: () {
+                    openWebpageSecondary(context, widget.link);
+                  },
+                  onSecondaryTap: () {
+                    openWebpageSecondary(context, widget.link);
                   },
                 ),
               ),

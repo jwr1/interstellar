@@ -4,7 +4,11 @@ import 'package:interstellar/src/utils/variables.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-void openWebpage(BuildContext context, Uri uri) {
+void openWebpagePrimary(BuildContext context, Uri uri) {
+  launchUrl(uri);
+}
+
+void openWebpageSecondary(BuildContext context, Uri uri) {
   showDialog<String>(
     context: context,
     builder: (BuildContext context) => AlertDialog(
