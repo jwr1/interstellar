@@ -69,6 +69,7 @@ class SettingsScreen extends StatelessWidget {
                         .servers[account.split('@').last]!.software.name),
                     onTap: () => controller.setSelectedAccount(account),
                     trailing: IconButton(
+                      icon: const Icon(Icons.delete_outline),
                       onPressed: controller.selectedAccount == account
                           ? null
                           : () {
@@ -94,7 +95,6 @@ class SettingsScreen extends StatelessWidget {
                                 ),
                               );
                             },
-                      icon: const Icon(Icons.delete_outline),
                     ),
                   )),
           Padding(

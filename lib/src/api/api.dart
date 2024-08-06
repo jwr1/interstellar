@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:interstellar/src/api/comments.dart';
 import 'package:interstellar/src/api/domains.dart';
+import 'package:interstellar/src/api/magazine_moderation.dart';
 import 'package:interstellar/src/api/magazines.dart';
 import 'package:interstellar/src/api/messages.dart';
 import 'package:interstellar/src/api/microblogs.dart';
@@ -22,6 +23,7 @@ class API {
   final MbinAPIDomains domains;
   final APIThreads threads;
   final APIMagazines magazines;
+  final APIMagazineModeration magazineModeration;
   final MbinAPIMessages messages;
   final MbinAPINotifications notifications;
   final MbinAPIMicroblogs microblogs;
@@ -36,6 +38,8 @@ class API {
         domains = MbinAPIDomains(software, httpClient, server),
         threads = APIThreads(software, httpClient, server),
         magazines = APIMagazines(software, httpClient, server),
+        magazineModeration =
+            APIMagazineModeration(software, httpClient, server),
         messages = MbinAPIMessages(software, httpClient, server),
         notifications = MbinAPINotifications(software, httpClient, server),
         microblogs = MbinAPIMicroblogs(software, httpClient, server),

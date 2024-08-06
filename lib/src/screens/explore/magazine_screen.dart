@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/models/magazine.dart';
+import 'package:interstellar/src/screens/explore/magazine_panel.dart';
 import 'package:interstellar/src/screens/explore/user_item.dart';
 import 'package:interstellar/src/screens/feed/feed_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
@@ -161,6 +162,36 @@ class _MagazineScreenState extends State<MagazineScreen> {
                             padding: EdgeInsets.all(12),
                             child: Text('View Moderators')),
                       ),
+                      if (() {
+                        final loggedInUser = context
+                            .watch<SettingsController>()
+                            .selectedAccount
+                            .split('@')
+                            .first;
+
+                        return _data!.moderators
+                            .any((mod) => mod.name == loggedInUser);
+                      }())
+                        MenuItemButton(
+                          onPressed: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => MagazinePanel(
+                                initData: _data!,
+                                onUpdate: (newValue) {
+                                  setState(() {
+                                    _data = newValue;
+                                  });
+                                  if (widget.onUpdate != null) {
+                                    widget.onUpdate!(newValue);
+                                  }
+                                },
+                              ),
+                            ),
+                          ),
+                          child: const Padding(
+                              padding: EdgeInsets.all(12),
+                              child: Text('Magazine Panel')),
+                        ),
                     ],
                   ),
                 ];

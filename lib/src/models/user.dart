@@ -107,6 +107,14 @@ class UserModel with _$UserModel {
         createdAt: DateTime.parse(json['published'] as String),
         isBot: json['bot_account'] as bool,
       );
+
+  factory UserModel.fromDetailedUser(DetailedUserModel user) => UserModel(
+        id: user.id,
+        name: user.name,
+        avatar: user.avatar,
+        createdAt: user.createdAt,
+        isBot: user.isBot,
+      );
 }
 
 @unfreezed

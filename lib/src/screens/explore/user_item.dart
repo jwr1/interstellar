@@ -72,8 +72,11 @@ class UserItem extends StatelessWidget {
 
 class UserItemSimple extends StatelessWidget {
   final UserModel user;
+  final List<Widget>? trailingWidgets;
+  final bool noTap;
 
-  const UserItemSimple(this.user, {super.key});
+  const UserItemSimple(this.user,
+      {this.trailingWidgets, this.noTap = false, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +97,8 @@ class UserItemSimple extends StatelessWidget {
               radius: 16,
             ),
           Container(width: 8 + (user.avatar != null ? 0 : 32)),
-          Text(user.name, overflow: TextOverflow.ellipsis)
+          Expanded(child: Text(user.name, overflow: TextOverflow.ellipsis)),
+          ...trailingWidgets ?? []
         ]),
       ),
     );
