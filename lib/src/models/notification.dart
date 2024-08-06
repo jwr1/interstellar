@@ -27,7 +27,7 @@ class NotificationModel with _$NotificationModel {
     required int id,
     required NotificationType type,
     required String status,
-    required Map<String, Object?> subject,
+    required Map<String, Object?>? subject,
   }) = _NotificationModel;
 
   factory NotificationModel.fromMbin(Map<String, Object?> json) =>
@@ -37,7 +37,7 @@ class NotificationModel with _$NotificationModel {
             .firstWhere((type) => json['type'] as String == type.value)
             .key,
         status: json['status'] as String,
-        subject: json['subject'] as Map<String, Object?>,
+        subject: json['subject'] as Map<String, Object?>?,
       );
 }
 
@@ -62,6 +62,7 @@ enum NotificationType {
   postCommentMentionedNotification,
   messageNotification,
   banNotification,
+  magazineBanNotification,
 }
 
 const notificationTypeEnumMap = {
@@ -95,4 +96,5 @@ const notificationTypeEnumMap = {
       'post_comment_mentioned_notification',
   NotificationType.messageNotification: 'message_notification',
   NotificationType.banNotification: 'ban_notification',
+  NotificationType.magazineBanNotification: 'magazine_ban_notification',
 };

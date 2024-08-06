@@ -35,6 +35,7 @@ const notificationTitle = {
   NotificationType.postCommentMentionedNotification: 'mentioned you',
   NotificationType.messageNotification: 'messaged you',
   NotificationType.banNotification: 'banned you from',
+  NotificationType.magazineBanNotification: 'banned you from',
 };
 
 class NotificationItem extends StatefulWidget {
@@ -50,19 +51,21 @@ class NotificationItem extends StatefulWidget {
 class _NotificationItemState extends State<NotificationItem> {
   @override
   Widget build(BuildContext context) {
-    Map<String, Object?> rawUser = (widget.item.subject['user'] ??
-        widget.item.subject['sender'] ??
-        widget.item.subject['bannedBy']) as Map<String, Object?>;
+    if (widget.item.subject == null) return const SizedBox();
+
+    Map<String, Object?> rawUser = (widget.item.subject!['user'] ??
+        widget.item.subject!['sender'] ??
+        widget.item.subject!['bannedBy']) as Map<String, Object?>;
     UserModel user = UserModel.fromMbin(rawUser);
     MagazineModel? bannedMagazine =
         widget.item.type == NotificationType.banNotification &&
-                widget.item.subject['magazine'] != null
+                widget.item.subject!['magazine'] != null
             ? MagazineModel.fromMbin(
-                widget.item.subject['magazine'] as Map<String, Object?>)
+                widget.item.subject!['magazine'] as Map<String, Object?>)
             : null;
 
-    String body = (widget.item.subject['body'] ??
-        widget.item.subject['reason'] ??
+    String body = (widget.item.subject!['body'] ??
+        widget.item.subject!['reason'] ??
         '') as String;
 
     return Card(
@@ -70,15 +73,15 @@ class _NotificationItemState extends State<NotificationItem> {
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       surfaceTintColor: widget.item.status == 'new' ? Colors.amber : null,
       child: InkWell(
-        onTap: widget.item.subject.containsKey('commentId')
+        onTap: widget.item.subject!.containsKey('commentId')
             ? () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => PostCommentScreen(
-                        widget.item.subject.containsKey('postId')
+                        widget.item.subject!.containsKey('postId')
                             ? PostType.microblog
                             : PostType.thread,
-                        widget.item.subject['commentId'] as int),
+                        widget.item.subject!['commentId'] as int),
                   ),
                 );
               }
