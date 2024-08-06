@@ -263,6 +263,7 @@ class _MagazinePanelModeratorsState extends State<MagazinePanelModerators> {
         ...widget.data.moderators.map(
           (mod) => UserItemSimple(
             mod,
+            isOwner: mod.id == widget.data.owner?.id,
             trailingWidgets: [
               IconButton(
                 icon: const Icon(Icons.delete_outline),
@@ -274,7 +275,10 @@ class _MagazinePanelModeratorsState extends State<MagazinePanelModerators> {
                       content: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          UserItemSimple(mod),
+                          UserItemSimple(
+                            mod,
+                            isOwner: mod.id == widget.data.owner?.id,
+                          ),
                         ],
                       ),
                       actions: <Widget>[

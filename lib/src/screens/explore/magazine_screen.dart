@@ -153,7 +153,10 @@ class _MagazineScreenState extends State<MagazineScreen> {
                             content: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: _data!.moderators
-                                  .map((mod) => UserItemSimple(mod))
+                                  .map((mod) => UserItemSimple(
+                                        mod,
+                                        isOwner: mod.id == _data!.owner?.id,
+                                      ))
                                   .toList(),
                             ),
                           ),
@@ -162,16 +165,13 @@ class _MagazineScreenState extends State<MagazineScreen> {
                             padding: EdgeInsets.all(12),
                             child: Text('View Moderators')),
                       ),
-                      if (() {
-                        final loggedInUser = context
-                            .watch<SettingsController>()
-                            .selectedAccount
-                            .split('@')
-                            .first;
-
-                        return _data!.moderators
-                            .any((mod) => mod.name == loggedInUser);
-                      }())
+                      if (_data!.owner != null &&
+                          _data!.owner!.name ==
+                              context
+                                  .watch<SettingsController>()
+                                  .selectedAccount
+                                  .split('@')
+                                  .first)
                         MenuItemButton(
                           onPressed: () => Navigator.of(context).push(
                             MaterialPageRoute(
