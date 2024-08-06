@@ -35,6 +35,7 @@ class PostItem extends StatelessWidget {
       editedAt: item.editedAt,
       isPreview: isPreview,
       showMagazineFirst: item.type == PostType.thread,
+      isPinned: item.isPinned,
       isNSFW: item.isNSFW,
       isOC: item.isOC == true,
       user: item.user.name,

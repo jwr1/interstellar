@@ -32,6 +32,7 @@ class ContentItem extends StatefulWidget {
   final bool isPreview;
   final bool showMagazineFirst;
 
+  final bool isPinned;
   final bool isNSFW;
   final bool isOC;
 
@@ -82,6 +83,7 @@ class ContentItem extends StatefulWidget {
     this.editedAt,
     this.isPreview = false,
     this.showMagazineFirst = false,
+    this.isPinned = false,
     this.isNSFW = false,
     this.isOC = false,
     this.user,
@@ -279,6 +281,15 @@ class _ContentItemState extends State<ContentItem> {
                         ContentItemLinkPanel(link: widget.link!),
                       Row(
                         children: [
+                          if (widget.isPinned)
+                            const Padding(
+                              padding: EdgeInsets.only(right: 10),
+                              child: Tooltip(
+                                message: 'Pinned in Magazine',
+                                triggerMode: TooltipTriggerMode.tap,
+                                child: Icon(Icons.push_pin, size: 20),
+                              ),
+                            ),
                           if (widget.isNSFW)
                             const Padding(
                               padding: EdgeInsets.only(right: 10),
