@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/models/magazine.dart';
-import 'package:interstellar/src/screens/explore/magazine_panel.dart';
+import 'package:interstellar/src/screens/explore/magazine_mod_panel.dart';
+import 'package:interstellar/src/screens/explore/magazine_owner_panel.dart';
 import 'package:interstellar/src/screens/explore/user_item.dart';
 import 'package:interstellar/src/screens/feed/feed_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
@@ -165,17 +166,20 @@ class _MagazineScreenState extends State<MagazineScreen> {
                             padding: EdgeInsets.all(12),
                             child: Text('View Moderators')),
                       ),
-                      if (_data!.owner != null &&
-                          _data!.owner!.name ==
-                              context
-                                  .watch<SettingsController>()
-                                  .selectedAccount
-                                  .split('@')
-                                  .first)
+                      if (() {
+                        final loggedInUser = context
+                            .watch<SettingsController>()
+                            .selectedAccount
+                            .split('@')
+                            .first;
+
+                        return _data!.moderators
+                            .any((mod) => mod.name == loggedInUser);
+                      }())
                         MenuItemButton(
                           onPressed: () => Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => MagazinePanel(
+                              builder: (context) => MagazineModPanel(
                                 initData: _data!,
                                 onUpdate: (newValue) {
                                   setState(() {
@@ -189,8 +193,37 @@ class _MagazineScreenState extends State<MagazineScreen> {
                             ),
                           ),
                           child: const Padding(
-                              padding: EdgeInsets.all(12),
-                              child: Text('Magazine Panel')),
+                            padding: EdgeInsets.all(12),
+                            child: Text('Mod Panel'),
+                          ),
+                        ),
+                      if (_data!.owner != null &&
+                          _data!.owner!.name ==
+                              context
+                                  .watch<SettingsController>()
+                                  .selectedAccount
+                                  .split('@')
+                                  .first)
+                        MenuItemButton(
+                          onPressed: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => MagazineOwnerPanel(
+                                initData: _data!,
+                                onUpdate: (newValue) {
+                                  setState(() {
+                                    _data = newValue;
+                                  });
+                                  if (widget.onUpdate != null) {
+                                    widget.onUpdate!(newValue);
+                                  }
+                                },
+                              ),
+                            ),
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.all(12),
+                            child: Text('Owner Panel'),
+                          ),
                         ),
                     ],
                   ),

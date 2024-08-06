@@ -134,3 +134,47 @@ class MagazineModel with _$MagazineModel {
         icon: lemmyGetImage(json['icon'] as String?),
       );
 }
+
+@freezed
+class MagazineBanListModel with _$MagazineBanListModel {
+  const factory MagazineBanListModel({
+    required List<MagazineBanModel> items,
+    required String? nextPage,
+  }) = _MagazineBanListModel;
+
+  factory MagazineBanListModel.fromMbin(Map<String, Object?> json) =>
+      MagazineBanListModel(
+        items: (json['items'] as List<dynamic>)
+            .map((item) =>
+                MagazineBanModel.fromMbin(item as Map<String, Object?>))
+            .toList(),
+        nextPage: mbinCalcNextPaginationPage(
+            json['pagination'] as Map<String, Object?>),
+      );
+}
+
+@freezed
+class MagazineBanModel with _$MagazineBanModel {
+  const factory MagazineBanModel({
+    required int id,
+    required String? reason,
+    required DateTime? expiresAt,
+    required MagazineModel magazine,
+    required UserModel bannedUser,
+    required UserModel bannedBy,
+    required bool expired,
+  }) = _MagazineBanModel;
+
+  factory MagazineBanModel.fromMbin(Map<String, Object?> json) =>
+      MagazineBanModel(
+        id: json['banId'] as int,
+        reason: json['reason'] as String?,
+        expiresAt: optionalDateTime(json['expiresAt'] as String?),
+        magazine:
+            MagazineModel.fromMbin(json['magazine'] as Map<String, Object?>),
+        bannedUser:
+            UserModel.fromMbin(json['bannedUser'] as Map<String, Object?>),
+        bannedBy: UserModel.fromMbin(json['bannedBy'] as Map<String, Object?>),
+        expired: json['expired'] as bool,
+      );
+}

@@ -8,21 +8,21 @@ import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:provider/provider.dart';
 
-class MagazinePanel extends StatefulWidget {
+class MagazineOwnerPanel extends StatefulWidget {
   final DetailedMagazineModel initData;
   final void Function(DetailedMagazineModel) onUpdate;
 
-  const MagazinePanel({
+  const MagazineOwnerPanel({
     super.key,
     required this.initData,
     required this.onUpdate,
   });
 
   @override
-  State<MagazinePanel> createState() => _MagazinePanelState();
+  State<MagazineOwnerPanel> createState() => _MagazineOwnerPanelState();
 }
 
-class _MagazinePanelState extends State<MagazinePanel> {
+class _MagazineOwnerPanelState extends State<MagazineOwnerPanel> {
   late DetailedMagazineModel _data;
 
   @override
@@ -45,7 +45,7 @@ class _MagazinePanelState extends State<MagazinePanel> {
       length: 3,
       child: Scaffold(
           appBar: AppBar(
-            title: Text('Magazine Panel for ${widget.initData.name}'),
+            title: Text('Owner Panel for ${widget.initData.name}'),
             bottom: const TabBar(
               tabs: <Widget>[
                 Tab(text: 'General'),
@@ -56,30 +56,31 @@ class _MagazinePanelState extends State<MagazinePanel> {
           ),
           body: TabBarView(
             children: <Widget>[
-              MagazinePanelGeneral(data: _data, onUpdate: onUpdate),
-              MagazinePanelModerators(data: _data, onUpdate: onUpdate),
-              MagazinePanelDeletion(data: _data, onUpdate: onUpdate),
+              MagazineOwnerPanelGeneral(data: _data, onUpdate: onUpdate),
+              MagazineOwnerPanelModerators(data: _data, onUpdate: onUpdate),
+              MagazineOwnerPanelDeletion(data: _data, onUpdate: onUpdate),
             ],
           )),
     );
   }
 }
 
-class MagazinePanelGeneral extends StatefulWidget {
+class MagazineOwnerPanelGeneral extends StatefulWidget {
   final DetailedMagazineModel data;
   final void Function(DetailedMagazineModel) onUpdate;
 
-  const MagazinePanelGeneral({
+  const MagazineOwnerPanelGeneral({
     super.key,
     required this.data,
     required this.onUpdate,
   });
 
   @override
-  State<MagazinePanelGeneral> createState() => _MagazinePanelGeneralState();
+  State<MagazineOwnerPanelGeneral> createState() =>
+      _MagazineOwnerPanelGeneralState();
 }
 
-class _MagazinePanelGeneralState extends State<MagazinePanelGeneral> {
+class _MagazineOwnerPanelGeneralState extends State<MagazineOwnerPanelGeneral> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
@@ -176,22 +177,23 @@ class _MagazinePanelGeneralState extends State<MagazinePanelGeneral> {
   }
 }
 
-class MagazinePanelModerators extends StatefulWidget {
+class MagazineOwnerPanelModerators extends StatefulWidget {
   final DetailedMagazineModel data;
   final void Function(DetailedMagazineModel) onUpdate;
 
-  const MagazinePanelModerators({
+  const MagazineOwnerPanelModerators({
     super.key,
     required this.data,
     required this.onUpdate,
   });
 
   @override
-  State<MagazinePanelModerators> createState() =>
-      _MagazinePanelModeratorsState();
+  State<MagazineOwnerPanelModerators> createState() =>
+      _MagazineOwnerPanelModeratorsState();
 }
 
-class _MagazinePanelModeratorsState extends State<MagazinePanelModerators> {
+class _MagazineOwnerPanelModeratorsState
+    extends State<MagazineOwnerPanelModerators> {
   final TextEditingController _addModController = TextEditingController();
 
   @override
@@ -314,21 +316,23 @@ class _MagazinePanelModeratorsState extends State<MagazinePanelModerators> {
   }
 }
 
-class MagazinePanelDeletion extends StatefulWidget {
+class MagazineOwnerPanelDeletion extends StatefulWidget {
   final DetailedMagazineModel data;
   final void Function(DetailedMagazineModel) onUpdate;
 
-  const MagazinePanelDeletion({
+  const MagazineOwnerPanelDeletion({
     super.key,
     required this.data,
     required this.onUpdate,
   });
 
   @override
-  State<MagazinePanelDeletion> createState() => _MagazinePanelDeletionState();
+  State<MagazineOwnerPanelDeletion> createState() =>
+      _MagazineOwnerPanelDeletionState();
 }
 
-class _MagazinePanelDeletionState extends State<MagazinePanelDeletion> {
+class _MagazineOwnerPanelDeletionState
+    extends State<MagazineOwnerPanelDeletion> {
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -360,7 +364,7 @@ class _MagazinePanelDeletionState extends State<MagazinePanelDeletion> {
               final result = await showDialog<bool>(
                 context: context,
                 builder: (BuildContext context) =>
-                    MagazinePanelDeletionDialog(data: widget.data),
+                    MagazineOwnerPanelDeletionDialog(data: widget.data),
               );
 
               if (result == true) {
@@ -376,21 +380,21 @@ class _MagazinePanelDeletionState extends State<MagazinePanelDeletion> {
   }
 }
 
-class MagazinePanelDeletionDialog extends StatefulWidget {
+class MagazineOwnerPanelDeletionDialog extends StatefulWidget {
   final DetailedMagazineModel data;
 
-  const MagazinePanelDeletionDialog({
+  const MagazineOwnerPanelDeletionDialog({
     super.key,
     required this.data,
   });
 
   @override
-  State<MagazinePanelDeletionDialog> createState() =>
-      _MagazinePanelDeletionDialogState();
+  State<MagazineOwnerPanelDeletionDialog> createState() =>
+      _MagazineOwnerPanelDeletionDialogState();
 }
 
-class _MagazinePanelDeletionDialogState
-    extends State<MagazinePanelDeletionDialog> {
+class _MagazineOwnerPanelDeletionDialogState
+    extends State<MagazineOwnerPanelDeletionDialog> {
   final TextEditingController _confirmController = TextEditingController();
 
   @override

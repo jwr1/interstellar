@@ -16,6 +16,52 @@ class APIMagazineModeration {
     this.server,
   );
 
+  Future<MagazineBanListModel> listBans(
+    int magazineId, {
+    String? page,
+  }) async {
+    switch (software) {
+      case ServerSoftware.mbin:
+        final path = '/api/moderate/magazine/$magazineId/bans';
+        final query = queryParams({
+          'p': page,
+        });
+
+        final response = await httpClient.get(Uri.https(server, path, query));
+
+        httpErrorHandler(response, message: 'Failed to load magazine bans');
+
+        return MagazineBanListModel.fromMbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        throw Exception('List banned users not allowed on lemmy');
+    }
+  }
+
+  Future<MagazineBanModel> updateBan(
+    int magazineId,
+    int userId,
+    bool state,
+  ) async {
+    switch (software) {
+      case ServerSoftware.mbin:
+        final path = '/api/moderate/magazine/$magazineId/ban/$userId';
+
+        final response = await (state
+            ? httpClient.post(Uri.https(server, path))
+            : httpClient.delete(Uri.https(server, path)));
+
+        httpErrorHandler(response, message: 'Failed to send ban update');
+
+        return MagazineBanModel.fromMbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        throw Exception('Ban update not implemented on Lemmy yet');
+    }
+  }
+
   Future<DetailedMagazineModel> edit(
     int magazineId, {
     required String title,
