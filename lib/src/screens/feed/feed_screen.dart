@@ -21,6 +21,7 @@ class FeedScreen extends StatefulWidget {
   final String? title;
   final Widget? details;
   final DetailedMagazineModel? createPostMagazine;
+  final bool canModerate;
 
   const FeedScreen({
     super.key,
@@ -29,6 +30,7 @@ class FeedScreen extends StatefulWidget {
     this.title,
     this.details,
     this.createPostMagazine,
+    this.canModerate = false,
   });
 
   @override
@@ -295,6 +297,7 @@ class _FeedScreenState extends State<FeedScreen> {
                 sort: _sort,
                 mode: _mode,
                 details: widget.details,
+                canModerate: widget.canModerate,
               )
             : TabBarView(
                 children: switch (tabsAction.name) {
@@ -305,6 +308,7 @@ class _FeedScreenState extends State<FeedScreen> {
                         sort: _sort,
                         mode: _mode,
                         details: widget.details,
+                        canModerate: widget.canModerate,
                       ),
                       FeedScreenBody(
                         key: _getFeedKey(1),
@@ -312,6 +316,7 @@ class _FeedScreenState extends State<FeedScreen> {
                         sort: _sort,
                         mode: _mode,
                         details: widget.details,
+                        canModerate: true,
                       ),
                       FeedScreenBody(
                         key: _getFeedKey(2),
@@ -319,6 +324,7 @@ class _FeedScreenState extends State<FeedScreen> {
                         sort: _sort,
                         mode: _mode,
                         details: widget.details,
+                        canModerate: widget.canModerate,
                       ),
                       FeedScreenBody(
                         key: _getFeedKey(3),
@@ -326,6 +332,7 @@ class _FeedScreenState extends State<FeedScreen> {
                         sort: _sort,
                         mode: _mode,
                         details: widget.details,
+                        canModerate: widget.canModerate,
                       ),
                     ],
                   String name when name == feedActionSetType.name => [
@@ -335,6 +342,7 @@ class _FeedScreenState extends State<FeedScreen> {
                         sort: _sort,
                         mode: PostType.thread,
                         details: widget.details,
+                        canModerate: widget.canModerate,
                       ),
                       FeedScreenBody(
                         key: _getFeedKey(1),
@@ -342,6 +350,7 @@ class _FeedScreenState extends State<FeedScreen> {
                         sort: _sort,
                         mode: PostType.microblog,
                         details: widget.details,
+                        canModerate: widget.canModerate,
                       ),
                     ],
                   _ => [],
@@ -535,6 +544,7 @@ class FeedScreenBody extends StatefulWidget {
   final FeedSort sort;
   final PostType mode;
   final Widget? details;
+  final bool canModerate;
 
   const FeedScreenBody({
     super.key,
@@ -543,6 +553,7 @@ class FeedScreenBody extends StatefulWidget {
     required this.sort,
     required this.mode,
     this.details,
+    required this.canModerate,
   });
 
   @override
@@ -684,6 +695,7 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
                       });
                     },
                     isPreview: item.type == PostType.thread,
+                    canModerate: widget.canModerate,
                   ),
                 );
 

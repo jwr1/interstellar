@@ -7,6 +7,7 @@ import 'package:interstellar/src/api/magazine_moderation.dart';
 import 'package:interstellar/src/api/magazines.dart';
 import 'package:interstellar/src/api/messages.dart';
 import 'package:interstellar/src/api/microblogs.dart';
+import 'package:interstellar/src/api/moderation.dart';
 import 'package:interstellar/src/api/notifications.dart';
 import 'package:interstellar/src/api/search.dart';
 import 'package:interstellar/src/api/threads.dart';
@@ -25,6 +26,7 @@ class API {
   final APIMagazines magazines;
   final APIMagazineModeration magazineModeration;
   final MbinAPIMessages messages;
+  final APIModeration moderation;
   final MbinAPINotifications notifications;
   final MbinAPIMicroblogs microblogs;
   final APISearch search;
@@ -41,6 +43,7 @@ class API {
         magazineModeration =
             APIMagazineModeration(software, httpClient, server),
         messages = MbinAPIMessages(software, httpClient, server),
+        moderation = APIModeration(software, httpClient, server),
         notifications = MbinAPINotifications(software, httpClient, server),
         microblogs = MbinAPIMicroblogs(software, httpClient, server),
         search = APISearch(software, httpClient, server),

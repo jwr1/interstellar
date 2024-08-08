@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/ban_dialog.dart';
 import 'package:interstellar/src/widgets/content_item/content_item.dart';
 import 'package:provider/provider.dart';
 
@@ -14,6 +15,7 @@ class PostItem extends StatelessWidget {
     this.onReply,
     this.onEdit,
     this.onDelete,
+    this.canModerate = false,
   });
 
   final PostModel item;
@@ -22,6 +24,7 @@ class PostItem extends StatelessWidget {
   final Future<void> Function(String)? onEdit;
   final Future<void> Function()? onDelete;
   final bool isPreview;
+  final bool canModerate;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +45,7 @@ class PostItem extends StatelessWidget {
       userIcon: item.user.avatar,
       userIdOnClick: item.user.id,
       userCakeDay: item.user.createdAt,
-      userIsBot: item.user.isBot ?? false,
+      userIsBot: item.user.isBot,
       magazine: item.magazine.name,
       magazineIcon: item.magazine.icon,
       magazineIdOnClick: item.magazine.id,
@@ -111,6 +114,39 @@ class PostItem extends StatelessWidget {
       }),
       onEdit: onEdit,
       onDelete: onDelete,
+      onModeratePin: !canModerate
+          ? null
+          : () async {
+              onUpdate(await context
+                  .read<SettingsController>()
+                  .api
+                  .moderation
+                  .postPin(item.type, item.id));
+            },
+      onModerateMarkNSFW: !canModerate
+          ? null
+          : () async {
+              onUpdate(await context
+                  .read<SettingsController>()
+                  .api
+                  .moderation
+                  .postMarkNSFW(item.type, item.id, !item.isNSFW));
+            },
+      onModerateDelete: !canModerate
+          ? null
+          : () async {
+              onUpdate(await context
+                  .read<SettingsController>()
+                  .api
+                  .moderation
+                  .postDelete(item.type, item.id, true));
+            },
+      onModerateBan: !canModerate
+          ? null
+          : () async {
+              await openBanDialog(context,
+                  user: item.user, magazine: item.magazine);
+            },
       numComments: item.numComments,
       openLinkUri: Uri.https(
         context.watch<SettingsController>().instanceHost,

@@ -70,6 +70,11 @@ class ContentItem extends StatefulWidget {
   final Future<void> Function(String)? onEdit;
   final Future<void> Function()? onDelete;
 
+  final Future<void> Function()? onModeratePin;
+  final Future<void> Function()? onModerateMarkNSFW;
+  final Future<void> Function()? onModerateDelete;
+  final Future<void> Function()? onModerateBan;
+
   final bool isCollapsed;
   final void Function()? onCollapse;
 
@@ -113,6 +118,10 @@ class ContentItem extends StatefulWidget {
     this.onReport,
     this.onEdit,
     this.onDelete,
+    this.onModeratePin,
+    this.onModerateMarkNSFW,
+    this.onModerateDelete,
+    this.onModerateBan,
     this.isCollapsed = false,
     this.onCollapse,
     super.key,
@@ -582,7 +591,52 @@ class _ContentItemState extends State<ContentItem> {
                                           ],
                                         ),
                                       ),
-                                    )
+                                    ),
+                                  if (widget.onModeratePin != null ||
+                                      widget.onModerateMarkNSFW != null ||
+                                      widget.onModerateDelete != null ||
+                                      widget.onModerateBan != null)
+                                    SubmenuButton(
+                                      menuChildren: [
+                                        if (widget.onModeratePin != null)
+                                          MenuItemButton(
+                                            onPressed: widget.onModeratePin,
+                                            child: const Padding(
+                                              padding: EdgeInsets.all(12),
+                                              child: Text('Pin'),
+                                            ),
+                                          ),
+                                        if (widget.onModerateMarkNSFW != null)
+                                          MenuItemButton(
+                                            onPressed:
+                                                widget.onModerateMarkNSFW,
+                                            child: const Padding(
+                                              padding: EdgeInsets.all(12),
+                                              child: Text('Mark NSFW'),
+                                            ),
+                                          ),
+                                        if (widget.onModerateDelete != null)
+                                          MenuItemButton(
+                                            onPressed: widget.onModerateDelete,
+                                            child: const Padding(
+                                              padding: EdgeInsets.all(12),
+                                              child: Text('Delete'),
+                                            ),
+                                          ),
+                                        if (widget.onModerateBan != null)
+                                          MenuItemButton(
+                                            onPressed: widget.onModerateBan,
+                                            child: const Padding(
+                                              padding: EdgeInsets.all(12),
+                                              child: Text('Ban User'),
+                                            ),
+                                          ),
+                                      ],
+                                      child: const Padding(
+                                        padding: EdgeInsets.all(12),
+                                        child: Text('Moderate'),
+                                      ),
+                                    ),
                                 ],
                               ),
                           ];

@@ -39,20 +39,42 @@ class APIMagazineModeration {
     }
   }
 
-  Future<MagazineBanModel> updateBan(
+  Future<MagazineBanModel> createBan(
     int magazineId,
-    int userId,
-    bool state,
-  ) async {
+    int userId, {
+    String? reason,
+    DateTime? expiredAt,
+  }) async {
     switch (software) {
       case ServerSoftware.mbin:
         final path = '/api/moderate/magazine/$magazineId/ban/$userId';
 
-        final response = await (state
-            ? httpClient.post(Uri.https(server, path))
-            : httpClient.delete(Uri.https(server, path)));
+        final response = await httpClient.post(
+          Uri.https(server, path),
+          body: jsonEncode({
+            'reason': reason,
+            'expiredAt': expiredAt?.toIso8601String(),
+          }),
+        );
 
-        httpErrorHandler(response, message: 'Failed to send ban update');
+        httpErrorHandler(response, message: 'Failed to send ban');
+
+        return MagazineBanModel.fromMbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        throw Exception('Ban update not implemented on Lemmy yet');
+    }
+  }
+
+  Future<MagazineBanModel> removeBan(int magazineId, int userId) async {
+    switch (software) {
+      case ServerSoftware.mbin:
+        final path = '/api/moderate/magazine/$magazineId/ban/$userId';
+
+        final response = await httpClient.delete(Uri.https(server, path));
+
+        httpErrorHandler(response, message: 'Failed to send unban');
 
         return MagazineBanModel.fromMbin(
             jsonDecode(response.body) as Map<String, Object?>);

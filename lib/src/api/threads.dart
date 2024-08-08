@@ -119,7 +119,8 @@ class APIThreads {
         httpErrorHandler(response, message: 'Failed to load posts');
 
         return PostListModel.fromLemmy(
-            jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, Object?>);
+            jsonDecode(utf8.decode(response.bodyBytes))
+                as Map<String, Object?>);
     }
   }
 
@@ -146,7 +147,8 @@ class APIThreads {
         httpErrorHandler(response, message: 'Failed to load post');
 
         return PostModel.fromLemmy(
-            jsonDecode(utf8.decode(response.bodyBytes))['post_view'] as Map<String, Object?>);
+            jsonDecode(utf8.decode(response.bodyBytes))['post_view']
+                as Map<String, Object?>);
     }
   }
 
@@ -246,7 +248,8 @@ class APIThreads {
         httpErrorHandler(response, message: 'Failed to edit entry');
 
         return PostModel.fromLemmy(
-            jsonDecode(utf8.decode(response.bodyBytes))['post_view'] as Map<String, Object?>);
+            jsonDecode(utf8.decode(response.bodyBytes))['post_view']
+                as Map<String, Object?>);
     }
   }
 
@@ -317,7 +320,8 @@ class APIThreads {
         httpErrorHandler(response, message: 'Failed to create entry');
 
         return PostModel.fromLemmy(
-            jsonDecode(utf8.decode(response.bodyBytes))['post_view'] as Map<String, Object?>);
+            jsonDecode(utf8.decode(response.bodyBytes))['post_view']
+                as Map<String, Object?>);
     }
   }
 
@@ -370,7 +374,8 @@ class APIThreads {
         httpErrorHandler(response, message: 'Failed to create entry');
 
         return PostModel.fromLemmy(
-            jsonDecode(utf8.decode(response.bodyBytes))['post_view'] as Map<String, Object?>);
+            jsonDecode(utf8.decode(response.bodyBytes))['post_view']
+                as Map<String, Object?>);
     }
   }
 
@@ -452,7 +457,8 @@ class APIThreads {
         httpErrorHandler(response, message: 'Failed to create entry');
 
         return PostModel.fromLemmy(
-            jsonDecode(utf8.decode(response.bodyBytes))['post_view'] as Map<String, Object?>);
+            jsonDecode(utf8.decode(response.bodyBytes))['post_view']
+                as Map<String, Object?>);
     }
   }
 

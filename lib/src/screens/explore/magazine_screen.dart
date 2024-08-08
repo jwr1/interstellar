@@ -57,11 +57,19 @@ class _MagazineScreenState extends State<MagazineScreen> {
             ? '!${_data!.name}'
             : '!${_data!.name}@${context.watch<SettingsController>().instanceHost}';
 
+    final loggedInUser =
+        context.watch<SettingsController>().selectedAccount.split('@').first;
+
+    final isModerator = _data == null
+        ? false
+        : _data!.moderators.any((mod) => mod.name == loggedInUser);
+
     return FeedScreen(
       source: FeedSource.magazine,
       sourceId: widget.magazineId,
       title: _data?.name ?? '',
       createPostMagazine: _data,
+      canModerate: isModerator,
       details: _data == null
           ? null
           : Padding(
@@ -166,16 +174,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                             padding: EdgeInsets.all(12),
                             child: Text('View Moderators')),
                       ),
-                      if (() {
-                        final loggedInUser = context
-                            .watch<SettingsController>()
-                            .selectedAccount
-                            .split('@')
-                            .first;
-
-                        return _data!.moderators
-                            .any((mod) => mod.name == loggedInUser);
-                      }())
+                      if (isModerator)
                         MenuItemButton(
                           onPressed: () => Navigator.of(context).push(
                             MaterialPageRoute(

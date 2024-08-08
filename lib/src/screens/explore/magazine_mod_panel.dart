@@ -128,11 +128,7 @@ class _MagazineModPanelBansState extends State<MagazineModPanelBans> {
                           .read<SettingsController>()
                           .api
                           .magazineModeration
-                          .updateBan(
-                            widget.data.id,
-                            item.bannedUser.id,
-                            false,
-                          );
+                          .removeBan(widget.data.id, item.bannedUser.id);
 
                       var newList = _pagingController.itemList;
                       newList!.removeAt(index);

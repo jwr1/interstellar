@@ -15,6 +15,7 @@ class PostComment extends StatefulWidget {
     this.onUpdate, {
     this.opUserId,
     this.onClick,
+    this.canModerate = false,
     super.key,
   });
 
@@ -22,6 +23,7 @@ class PostComment extends StatefulWidget {
   final void Function(CommentModel) onUpdate;
   final int? opUserId;
   final void Function()? onClick;
+  final bool canModerate;
 
   @override
   State<PostComment> createState() => _PostCommentState();
@@ -223,6 +225,7 @@ class _PostCommentState extends State<PostComment> {
                           },
                           opUserId: widget.opUserId,
                           onClick: widget.onClick,
+                          canModerate: widget.canModerate,
                         ))
                     .toList(),
               ),
