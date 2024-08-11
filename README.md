@@ -4,8 +4,9 @@ An app for Mbin and Lemmy; connecting you to the fediverse.
 
 ## Downloads
 
-[![](assets/readme/google-play-badge.png)](https://play.google.com/store/apps/details?id=one.jwr.interstellar)
-[![](assets/readme/flathub-badge.png)](https://flathub.org/apps/one.jwr.interstellar)
+[![](assets/readme/GooglePlay-badge.png)](https://play.google.com/store/apps/details?id=one.jwr.interstellar)
+[![](assets/readme/IzzyOnDroid-badge.png)](https://apt.izzysoft.de/fdroid/index/apk/one.jwr.interstellar)
+[![](assets/readme/Flathub-badge.png)](https://flathub.org/apps/one.jwr.interstellar)
 
 See the [latest release](https://github.com/jwr1/interstellar/releases/latest) for direct APK files, an AppImage, and more platforms.
 
