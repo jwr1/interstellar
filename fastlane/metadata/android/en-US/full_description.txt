@@ -1,0 +1,1 @@
+<p><i>Interstellar</i> is a free and open source, Fediverse client, allowing you to access your Mbin and Lemmy accounts and interact with your favorite communities.</p>
