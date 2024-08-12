@@ -25,76 +25,77 @@ class NotificationListModel with _$NotificationListModel {
 class NotificationModel with _$NotificationModel {
   const factory NotificationModel({
     required int id,
-    required NotificationType type,
-    required String status,
+    required NotificationType? type,
+    required NotificationStatus? status,
     required Map<String, Object?>? subject,
   }) = _NotificationModel;
 
   factory NotificationModel.fromMbin(Map<String, Object?> json) =>
       NotificationModel(
         id: json['notificationId'] as int,
-        type: notificationTypeEnumMap.entries
-            .firstWhere((type) => json['type'] as String == type.value)
-            .key,
-        status: json['status'] as String,
+        type: notificationTypeMap[json['type']],
+        status: notificationStatusMap[json['status']],
         subject: json['subject'] as Map<String, Object?>?,
       );
 }
 
+enum NotificationStatus { all, new_, read }
+
+const notificationStatusMap = {
+  'all': NotificationStatus.all,
+  'new': NotificationStatus.new_,
+  'read': NotificationStatus.read,
+};
+
 enum NotificationType {
-  entryCreatedNotification,
-  entryEditedNotification,
-  entryDeletedNotification,
-  entryMentionedNotification,
-  entryCommentCreatedNotification,
-  entryCommentEditedNotification,
-  entryCommentReplyNotification,
-  entryCommentDeletedNotification,
-  entryCommentMentionedNotification,
-  postCreatedNotification,
-  postEditedNotification,
-  postDeletedNotification,
-  postMentionedNotification,
-  postCommentCreatedNotification,
-  postCommentEditedNotification,
-  postCommentReplyNotification,
-  postCommentDeletedNotification,
-  postCommentMentionedNotification,
-  messageNotification,
-  banNotification,
-  magazineBanNotification,
+  entryCreated,
+  entryEdited,
+  entryDeleted,
+  entryMentioned,
+  entryCommentCreated,
+  entryCommentEdited,
+  entryCommentReply,
+  entryCommentDeleted,
+  entryCommentMentioned,
+  postCreated,
+  postEdited,
+  postDeleted,
+  postMentioned,
+  postCommentCreated,
+  postCommentEdited,
+  postCommentReply,
+  postCommentDeleted,
+  postCommentMentioned,
+  message,
+  ban,
+  reportCreated,
+  reportRejected,
+  reportApproved
 }
 
-const notificationTypeEnumMap = {
-  NotificationType.entryCreatedNotification: 'entry_created_notification',
-  NotificationType.entryEditedNotification: 'entry_edited_notification',
-  NotificationType.entryDeletedNotification: 'entry_deleted_notification',
-  NotificationType.entryMentionedNotification: 'entry_mentioned_notification',
-  NotificationType.entryCommentCreatedNotification:
-      'entry_comment_created_notification',
-  NotificationType.entryCommentEditedNotification:
-      'entry_comment_edited_notification',
-  NotificationType.entryCommentReplyNotification:
-      'entry_comment_reply_notification',
-  NotificationType.entryCommentDeletedNotification:
-      'entry_comment_deleted_notification',
-  NotificationType.entryCommentMentionedNotification:
-      'entry_comment_mentioned_notification',
-  NotificationType.postCreatedNotification: 'post_created_notification',
-  NotificationType.postEditedNotification: 'post_edited_notification',
-  NotificationType.postDeletedNotification: 'post_deleted_notification',
-  NotificationType.postMentionedNotification: 'post_mentioned_notification',
-  NotificationType.postCommentCreatedNotification:
-      'post_comment_created_notification',
-  NotificationType.postCommentEditedNotification:
-      'post_comment_edited_notification',
-  NotificationType.postCommentReplyNotification:
-      'post_comment_reply_notification',
-  NotificationType.postCommentDeletedNotification:
-      'post_comment_deleted_notification',
-  NotificationType.postCommentMentionedNotification:
-      'post_comment_mentioned_notification',
-  NotificationType.messageNotification: 'message_notification',
-  NotificationType.banNotification: 'ban_notification',
-  NotificationType.magazineBanNotification: 'magazine_ban_notification',
+const notificationTypeMap = {
+  'entry_created_notification': NotificationType.entryCreated,
+  'entry_edited_notification': NotificationType.entryEdited,
+  'entry_deleted_notification': NotificationType.entryDeleted,
+  'entry_mentioned_notification': NotificationType.entryMentioned,
+  'entry_comment_created_notification': NotificationType.entryCommentCreated,
+  'entry_comment_edited_notification': NotificationType.entryCommentEdited,
+  'entry_comment_reply_notification': NotificationType.entryCommentReply,
+  'entry_comment_deleted_notification': NotificationType.entryCommentDeleted,
+  'entry_comment_mentioned_notification':
+      NotificationType.entryCommentMentioned,
+  'post_created_notification': NotificationType.postCreated,
+  'post_edited_notification': NotificationType.postEdited,
+  'post_deleted_notification': NotificationType.postDeleted,
+  'post_mentioned_notification': NotificationType.postMentioned,
+  'post_comment_created_notification': NotificationType.postCommentCreated,
+  'post_comment_edited_notification': NotificationType.postCommentEdited,
+  'post_comment_reply_notification': NotificationType.postCommentReply,
+  'post_comment_deleted_notification': NotificationType.postCommentDeleted,
+  'post_comment_mentioned_notification': NotificationType.postCommentMentioned,
+  'message_notification': NotificationType.message,
+  'ban_notification': NotificationType.ban,
+  'report_created_notification': NotificationType.reportCreated,
+  'report_rejected_notification': NotificationType.reportRejected,
+  'report_approved_notification': NotificationType.reportApproved,
 };

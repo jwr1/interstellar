@@ -6,6 +6,7 @@ import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/feed/post_comment_screen.dart';
+import 'package:interstellar/src/screens/feed/post_page.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
@@ -15,27 +16,29 @@ import 'package:provider/provider.dart';
 import './notification_count_controller.dart';
 
 const notificationTitle = {
-  NotificationType.entryCreatedNotification: 'created a thread',
-  NotificationType.entryEditedNotification: 'edited your thread',
-  NotificationType.entryDeletedNotification: 'deleted your thread',
-  NotificationType.entryMentionedNotification: 'mentioned you',
-  NotificationType.entryCommentCreatedNotification: 'added a new comment',
-  NotificationType.entryCommentEditedNotification: 'edited your comment',
-  NotificationType.entryCommentReplyNotification: 'replied to your comment',
-  NotificationType.entryCommentDeletedNotification: 'deleted your comment',
-  NotificationType.entryCommentMentionedNotification: 'mentioned you',
-  NotificationType.postCreatedNotification: 'created a post',
-  NotificationType.postEditedNotification: 'edited your post',
-  NotificationType.postDeletedNotification: 'deleted your post',
-  NotificationType.postMentionedNotification: 'mentioned you',
-  NotificationType.postCommentCreatedNotification: 'added a new comment',
-  NotificationType.postCommentEditedNotification: 'edited your comment',
-  NotificationType.postCommentReplyNotification: 'replied to your comment',
-  NotificationType.postCommentDeletedNotification: 'deleted your comment',
-  NotificationType.postCommentMentionedNotification: 'mentioned you',
-  NotificationType.messageNotification: 'messaged you',
-  NotificationType.banNotification: 'banned you from',
-  NotificationType.magazineBanNotification: 'banned you from',
+  NotificationType.entryCreated: 'created a thread',
+  NotificationType.entryEdited: 'edited your thread',
+  NotificationType.entryDeleted: 'deleted your thread',
+  NotificationType.entryMentioned: 'mentioned you',
+  NotificationType.entryCommentCreated: 'added a new comment',
+  NotificationType.entryCommentEdited: 'edited your comment',
+  NotificationType.entryCommentReply: 'replied to your comment',
+  NotificationType.entryCommentDeleted: 'deleted your comment',
+  NotificationType.entryCommentMentioned: 'mentioned you',
+  NotificationType.postCreated: 'created a microblog',
+  NotificationType.postEdited: 'edited your microblog',
+  NotificationType.postDeleted: 'deleted your microblog',
+  NotificationType.postMentioned: 'mentioned you',
+  NotificationType.postCommentCreated: 'added a new comment',
+  NotificationType.postCommentEdited: 'edited your comment',
+  NotificationType.postCommentReply: 'replied to your comment',
+  NotificationType.postCommentDeleted: 'deleted your comment',
+  NotificationType.postCommentMentioned: 'mentioned you',
+  NotificationType.message: 'messaged you',
+  NotificationType.ban: 'banned you',
+  NotificationType.reportCreated: 'report created',
+  NotificationType.reportRejected: 'report rejected',
+  NotificationType.reportApproved: 'report approved',
 };
 
 class NotificationItem extends StatefulWidget {
@@ -51,18 +54,19 @@ class NotificationItem extends StatefulWidget {
 class _NotificationItemState extends State<NotificationItem> {
   @override
   Widget build(BuildContext context) {
-    if (widget.item.subject == null) return const SizedBox();
+    if (widget.item.type == null ||
+        widget.item.status == null ||
+        widget.item.subject == null) return const SizedBox();
 
     Map<String, Object?> rawUser = (widget.item.subject!['user'] ??
         widget.item.subject!['sender'] ??
         widget.item.subject!['bannedBy']) as Map<String, Object?>;
     UserModel user = UserModel.fromMbin(rawUser);
-    MagazineModel? bannedMagazine =
-        widget.item.type == NotificationType.banNotification &&
-                widget.item.subject!['magazine'] != null
-            ? MagazineModel.fromMbin(
-                widget.item.subject!['magazine'] as Map<String, Object?>)
-            : null;
+    MagazineModel? bannedMagazine = widget.item.type == NotificationType.ban &&
+            widget.item.subject!['magazine'] != null
+        ? MagazineModel.fromMbin(
+            widget.item.subject!['magazine'] as Map<String, Object?>)
+        : null;
 
     String body = (widget.item.subject!['body'] ??
         widget.item.subject!['reason'] ??
@@ -71,7 +75,8 @@ class _NotificationItemState extends State<NotificationItem> {
     return Card(
       clipBehavior: Clip.antiAlias,
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      surfaceTintColor: widget.item.status == 'new' ? Colors.amber : null,
+      surfaceTintColor:
+          widget.item.status == NotificationStatus.new_ ? Colors.amber : null,
       child: InkWell(
         onTap: widget.item.subject!.containsKey('commentId')
             ? () {
@@ -85,7 +90,29 @@ class _NotificationItemState extends State<NotificationItem> {
                   ),
                 );
               }
-            : null,
+            : widget.item.subject!.containsKey('entryId')
+                ? () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => PostPage(
+                          postType: PostType.thread,
+                          postId: widget.item.subject!['entryId'] as int,
+                        ),
+                      ),
+                    );
+                  }
+                : widget.item.subject!.containsKey('postId')
+                    ? () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => PostPage(
+                              postType: PostType.microblog,
+                              postId: widget.item.subject!['postId'] as int,
+                            ),
+                          ),
+                        );
+                      }
+                    : null,
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Column(
@@ -129,7 +156,7 @@ class _NotificationItemState extends State<NotificationItem> {
                           .notifications
                           .putRead(
                             widget.item.id,
-                            widget.item.status == 'new',
+                            widget.item.status == NotificationStatus.new_,
                           );
 
                       widget.onUpdate(newNotification);
@@ -137,10 +164,10 @@ class _NotificationItemState extends State<NotificationItem> {
                       if (!mounted) return;
                       context.read<NotificationCountController>().reload();
                     },
-                    icon: Icon(widget.item.status == 'new'
+                    icon: Icon(widget.item.status == NotificationStatus.new_
                         ? Icons.mark_email_read
                         : Icons.mark_email_unread),
-                    tooltip: widget.item.status == 'new'
+                    tooltip: widget.item.status == NotificationStatus.new_
                         ? 'Mark as read'
                         : 'Mark as unread',
                   ),
