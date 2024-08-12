@@ -39,11 +39,16 @@ class NotificationCountController with ChangeNotifier {
   }
 
   void _update() async {
-    int newValue = _account == null ? 0 : await _api.notifications.getCount();
+    try {
+      int newValue = _account == null ? 0 : await _api.notifications.getCount();
 
-    if (_value != newValue) {
-      _value = newValue;
-      notifyListeners();
+      if (_value != newValue) {
+        _value = newValue;
+        notifyListeners();
+      }
+    } catch (_) {
+      // Do not throw error if unsuccessful due to the spam of pop ups received
+      // when going from background to foreground visibility
     }
   }
 
