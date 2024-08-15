@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 final List<String> _recommendedInstances = [
   'kbin.earth',
   'fedia.io',
-  'kbin.run',
+  'thebrainbin.org',
   'kbin.melroy.org',
   'lemm.ee',
   'lemmy.ml',
