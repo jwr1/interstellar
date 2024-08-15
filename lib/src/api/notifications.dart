@@ -83,4 +83,71 @@ class MbinAPINotifications {
     return NotificationModel.fromMbin(
         jsonDecode(response.body) as Map<String, Object?>);
   }
+
+  // Returns server's public key
+  Future<void> pushRegister({
+    required String endpoint,
+    required String serverKey,
+    required String contentPublicKey,
+  }) async {
+    switch (software) {
+      case ServerSoftware.mbin:
+        const path = '/api/notification/push';
+
+        final response = await httpClient.post(
+          Uri.https(server, path),
+          headers: {
+            'content-type': 'application/json',
+          },
+          body: jsonEncode({
+            'endpoint': endpoint,
+            'serverKey': serverKey,
+            'contentPublicKey': contentPublicKey
+          }),
+        );
+
+        httpErrorHandler(response, message: 'Failed to send register push');
+
+        return;
+
+      case ServerSoftware.lemmy:
+        throw Exception('Notifications not yet implemented on Lemmy');
+    }
+  }
+
+  Future<void> pushDelete() async {
+    switch (software) {
+      case ServerSoftware.mbin:
+        const path = '/api/notification/push';
+
+        final response = await httpClient.delete(
+          Uri.https(server, path),
+        );
+
+        httpErrorHandler(response, message: 'Failed to send delete push');
+
+        return;
+
+      case ServerSoftware.lemmy:
+        throw Exception('Notifications not yet implemented on Lemmy');
+    }
+  }
+
+  Future<void> pushTest() async {
+    switch (software) {
+      case ServerSoftware.mbin:
+        const path = '/api/notification/push/test';
+
+        final response = await httpClient.get(
+          Uri.https(server, path),
+        );
+
+        httpErrorHandler(response, message: 'Failed to send test push');
+
+        return;
+
+      case ServerSoftware.lemmy:
+        throw Exception('Notifications not yet implemented on Lemmy');
+    }
+  }
 }

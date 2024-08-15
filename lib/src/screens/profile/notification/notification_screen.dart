@@ -1,10 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/notifications.dart';
 import 'package:interstellar/src/models/notification.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:provider/provider.dart';
+import 'package:unifiedpush/constants.dart';
+import 'package:unifiedpush/unifiedpush.dart';
 
 import './notification_count_controller.dart';
 import './notification_item.dart';
@@ -67,7 +72,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(12),
-              child: Row(
+              child: Wrap(
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(right: 12),
@@ -98,18 +103,98 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     ),
                   ),
                   OutlinedButton(
-                      onPressed: () async {
-                        await context
-                            .read<SettingsController>()
-                            .api
-                            .notifications
-                            .putReadAll();
-                        _pagingController.refresh();
+                    onPressed: () async {
+                      await context
+                          .read<SettingsController>()
+                          .api
+                          .notifications
+                          .putReadAll();
+                      _pagingController.refresh();
 
-                        if (!mounted) return;
-                        context.read<NotificationCountController>().reload();
-                      },
-                      child: const Text('Mark all as read'))
+                      if (!mounted) return;
+                      context.read<NotificationCountController>().reload();
+                    },
+                    child: const Text('Mark all as read'),
+                  ),
+                  if (Platform.isAndroid)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 12),
+                      child: MenuAnchor(
+                        builder: (BuildContext context,
+                            MenuController controller, Widget? child) {
+                          return OutlinedButton(
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text('Push'),
+                                SizedBox(width: 4),
+                                Icon(Icons.arrow_drop_down),
+                              ],
+                            ),
+                            onPressed: () {
+                              if (controller.isOpen) {
+                                controller.close();
+                              } else {
+                                controller.open();
+                              }
+                            },
+                          );
+                        },
+                        menuChildren: [
+                          MenuItemButton(
+                            onPressed: () async {
+                              final permissionsResult =
+                                  await FlutterLocalNotificationsPlugin()
+                                      .resolvePlatformSpecificImplementation<
+                                          AndroidFlutterLocalNotificationsPlugin>()
+                                      ?.requestNotificationsPermission();
+
+                              if (permissionsResult == false) {
+                                throw Exception(
+                                    'Notification permissions denied');
+                              }
+
+                              if (!mounted) return;
+                              await UnifiedPush.registerAppWithDialog(
+                                context,
+                                context
+                                    .read<SettingsController>()
+                                    .selectedAccount,
+                                [featureAndroidBytesMessage],
+                              );
+                            },
+                            child: const Text('Register'),
+                          ),
+                          MenuItemButton(
+                            onPressed: () async {
+                              await UnifiedPush.unregister(
+                                context
+                                    .read<SettingsController>()
+                                    .selectedAccount,
+                              );
+
+                              if (!mounted) return;
+                              await context
+                                  .read<SettingsController>()
+                                  .api
+                                  .notifications
+                                  .pushDelete();
+                            },
+                            child: const Text('Unregister'),
+                          ),
+                          MenuItemButton(
+                            onPressed: () async {
+                              await context
+                                  .read<SettingsController>()
+                                  .api
+                                  .notifications
+                                  .pushTest();
+                            },
+                            child: const Text('Test notification'),
+                          ),
+                        ],
+                      ),
+                    ),
                 ],
               ),
             ),

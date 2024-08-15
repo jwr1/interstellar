@@ -14,6 +14,7 @@ import 'package:interstellar/src/widgets/actions.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_mention.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:webpush_encryption/webpush_encryption.dart';
 
 enum ServerSoftware { mbin, lemmy }
 
@@ -124,6 +125,9 @@ class SettingsController with ChangeNotifier {
         .toSet();
   }
 
+  late WebPushKeys _webPushKeys;
+  WebPushKeys get webPushKeys => _webPushKeys;
+
   late Map<String, Server> _servers;
   late Map<String, Account> _accounts;
   late String _selectedAccount;
@@ -232,6 +236,14 @@ class SettingsController with ChangeNotifier {
 
     _feedFilters = prefs.getStringList('feedFilters')?.toSet() ?? {};
     _regenerateFeedFiltersRegExp();
+
+    if (prefs.getString('webPushKeys') != null) {
+      _webPushKeys =
+          await WebPushKeys.deserialize(prefs.getString('webPushKeys')!);
+    } else {
+      _webPushKeys = await WebPushKeys.newKeyPair();
+      await prefs.setString('webPushKeys', _webPushKeys.serialize);
+    }
 
     _servers = (jsonDecode(prefs.getString('servers') ??
             '{"kbin.earth":{"software":"mbin"}}') as Map<String, dynamic>)

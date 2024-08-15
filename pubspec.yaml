@@ -13,8 +13,8 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  flutter_markdown: ^0.6.23
-  http: ^1.2.1
+  flutter_markdown: ^0.7.3
+  http: ^1.2.2
   http_parser: ^4.0.2
   path: ^1.9.0
   mime: ^1.0.5
@@ -25,17 +25,40 @@ dependencies:
   media_kit_libs_video: ^1.0.4
   oauth2: ^2.0.2
   provider: ^6.1.2
-  shared_preferences: ^2.2.3
-  url_launcher: ^6.2.6
-  webview_flutter: ^4.7.0
-  youtube_explode_dart: ^2.2.0
-  freezed_annotation: ^2.4.1
+  shared_preferences: ^2.3.1
+  url_launcher: ^6.3.0
+  webview_flutter: ^4.8.0
+  youtube_explode_dart: ^2.2.1
+  freezed_annotation: ^2.4.4
   badges: ^3.1.2
-  image_picker: ^1.1.0
+  image_picker: ^1.1.2
   dynamic_color: ^1.7.0
   markdown: ^7.2.2
   expandable: ^5.0.1
   blurhash_ffi: ^1.2.6
+  unifiedpush:
+    git:
+      url: https://github.com/emersion/UnifiedPush-flutter-connector.git
+      ref: 1c2861f9e1e744a5644efdcad957d0a6a3aac733
+      path: unifiedpush/
+  webpush_encryption:
+    git:
+      url: https://github.com/UnifiedPush/dart-webpush-encryption.git
+      ref: v0.1.0
+  flutter_local_notifications: ^17.2.2
+
+dependency_overrides:
+  webcrypto: ^0.5.7
+  unifiedpush_android:
+    git:
+      url: https://github.com/emersion/UnifiedPush-flutter-connector.git
+      ref: 1c2861f9e1e744a5644efdcad957d0a6a3aac733
+      path: unifiedpush_android/
+  unifiedpush_platform_interface:
+    git:
+      url: https://github.com/emersion/UnifiedPush-flutter-connector.git
+      ref: 1c2861f9e1e744a5644efdcad957d0a6a3aac733
+      path: unifiedpush_platform_interface/
 
 dev_dependencies:
   flutter_lints: ^3.0.2
@@ -44,8 +67,8 @@ dev_dependencies:
     git:
       url: 'https://github.com/fluttercommunity/flutter_launcher_icons.git'
       ref: '006cb1ed53f969bf11816cde5b16dd520e1ee40e'
-  build_runner: ^2.4.9
-  freezed: ^2.5.2
+  build_runner: ^2.4.12
+  freezed: ^2.5.7
 
 flutter:
   uses-material-design: true
