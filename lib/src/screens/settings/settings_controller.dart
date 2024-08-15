@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:interstellar/src/api/api.dart';
 import 'package:interstellar/src/api/comments.dart';
@@ -14,6 +15,8 @@ import 'package:interstellar/src/widgets/actions.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_mention.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:unifiedpush/constants.dart';
+import 'package:unifiedpush/unifiedpush.dart';
 import 'package:webpush_encryption/webpush_encryption.dart';
 
 enum ServerSoftware { mbin, lemmy }
@@ -127,6 +130,9 @@ class SettingsController with ChangeNotifier {
 
   late WebPushKeys _webPushKeys;
   WebPushKeys get webPushKeys => _webPushKeys;
+
+  late Set<String> _pushRegistrations;
+  bool get isPushRegistered => _pushRegistrations.contains(selectedAccount);
 
   late Map<String, Server> _servers;
   late Map<String, Account> _accounts;
@@ -244,6 +250,9 @@ class SettingsController with ChangeNotifier {
       _webPushKeys = await WebPushKeys.newKeyPair();
       await prefs.setString('webPushKeys', _webPushKeys.serialize);
     }
+
+    _pushRegistrations =
+        prefs.getStringList('pushRegistrations')?.toSet() ?? {};
 
     _servers = (jsonDecode(prefs.getString('servers') ??
             '{"kbin.earth":{"software":"mbin"}}') as Map<String, dynamic>)
@@ -517,6 +526,65 @@ class SettingsController with ChangeNotifier {
     await prefs.setStringList('feedFilters', _feedFilters.toList());
   }
 
+  Future<void> registerPush(BuildContext context) async {
+    if (serverSoftware != ServerSoftware.mbin) {
+      throw Exception('Push notifications only supported on Mbin');
+    }
+
+    final permissionsResult = await FlutterLocalNotificationsPlugin()
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestNotificationsPermission();
+
+    if (permissionsResult == false) {
+      throw Exception('Notification permissions denied');
+    }
+
+    await UnifiedPush.registerAppWithDialog(
+      context,
+      selectedAccount,
+      [featureAndroidBytesMessage],
+    );
+
+    await addPushRegistrationStatus(selectedAccount);
+  }
+
+  Future<void> unregisterPush([String? overrideAccount]) async {
+    if (serverSoftware != ServerSoftware.mbin) {
+      throw Exception('Push notifications only supported on Mbin');
+    }
+
+    final account = overrideAccount ?? _selectedAccount;
+
+    await UnifiedPush.unregister(account);
+
+    // When unregistering a non selected account, make sure the api uses the correct
+    // authentication for the target account, instead of the currently selected account.
+    await (account == _selectedAccount ? api : await getApiForAccount(account))
+        .notifications
+        .pushDelete();
+
+    removePushRegistrationStatus(account);
+  }
+
+  Future<void> addPushRegistrationStatus(String account) async {
+    _pushRegistrations.add(account);
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('pushRegistrations', _pushRegistrations.toList());
+  }
+
+  Future<void> removePushRegistrationStatus(String account) async {
+    _pushRegistrations.remove(account);
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('pushRegistrations', _pushRegistrations.toList());
+  }
+
   Future<void> saveServer(ServerSoftware software, String server) async {
     if (_servers.containsKey(server) &&
         _servers[server]!.software == software) {
@@ -571,8 +639,10 @@ class SettingsController with ChangeNotifier {
     }
   }
 
-  Future<void> removeOAuthCredentials(String key) async {
+  Future<void> removeAccount(String key) async {
     if (!_accounts.containsKey(key)) return;
+
+    if (_pushRegistrations.contains(key)) await unregisterPush(key);
 
     _accounts.remove(key);
     _selectedAccount = _accounts.keys.firstOrNull ?? '@kbin.earth';
@@ -602,19 +672,21 @@ class SettingsController with ChangeNotifier {
     await prefs.setString('selectedAccount', newSelectedAccount);
   }
 
-  Future<void> updateAPI() async {
+  Future<API> getApiForAccount(String account) async {
+    final instance = account.split('@').last;
+
     http.Client httpClient = http.Client();
 
     switch (serverSoftware) {
       case ServerSoftware.mbin:
-        oauth2.Credentials? credentials = _accounts[_selectedAccount]!.oauth;
+        oauth2.Credentials? credentials = _accounts[account]!.oauth;
         if (credentials != null) {
-          String identifier = _servers[instanceHost]!.oauthIdentifier!;
+          String identifier = _servers[instance]!.oauthIdentifier!;
           httpClient = oauth2.Client(
             credentials,
             identifier: identifier,
             onCredentialsRefreshed: (newCredentials) async {
-              _accounts[_selectedAccount] = Account(oauth: newCredentials);
+              _accounts[account] = Account(oauth: newCredentials);
 
               final SharedPreferences prefs =
                   await SharedPreferences.getInstance();
@@ -624,7 +696,7 @@ class SettingsController with ChangeNotifier {
         }
         break;
       case ServerSoftware.lemmy:
-        String? jwt = _accounts[_selectedAccount]!.jwt;
+        String? jwt = _accounts[account]!.jwt;
         if (jwt != null) {
           httpClient = JwtHttpClient(jwt);
         }
@@ -632,7 +704,11 @@ class SettingsController with ChangeNotifier {
       default:
     }
 
-    _api = API(serverSoftware, httpClient, instanceHost);
+    return API(serverSoftware, httpClient, instance);
+  }
+
+  Future<void> updateAPI() async {
+    _api = await getApiForAccount(_selectedAccount);
   }
 
   Future<void> updateFeedActionBackToTop(ActionLocation? newLocation) async {

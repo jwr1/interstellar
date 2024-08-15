@@ -86,8 +86,7 @@ class SettingsScreen extends StatelessWidget {
                                     FilledButton(
                                       onPressed: () {
                                         Navigator.pop(context);
-                                        controller
-                                            .removeOAuthCredentials(account);
+                                        controller.removeAccount(account);
                                       },
                                       child: const Text('Remove'),
                                     ),

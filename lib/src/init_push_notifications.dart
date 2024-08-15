@@ -20,22 +20,21 @@ Future<void> initPushNotifications(
 
   await UnifiedPush.initialize(
     onNewEndpoint: (String endpoint, String instance) async {
-      print('register start');
-      print(endpoint);
       await settingsController.api.notifications.pushRegister(
         endpoint: endpoint,
         serverKey: settingsController.webPushKeys.auth,
         contentPublicKey: settingsController.webPushKeys.p256dh,
       );
-      print('register finish');
     },
-    // onRegistrationFailed: (String instance) {},
-    // onUnregistered: (String instance) {},
+    onRegistrationFailed: (String instance) {
+      settingsController.removePushRegistrationStatus(instance);
+    },
+    onUnregistered: (String instance) {
+      settingsController.removePushRegistrationStatus(instance);
+    },
     onMessage: (Uint8List message, String instance) async {
       final data = jsonDecode(utf8.decode(
           await WebPush.decrypt(settingsController.webPushKeys, message)));
-
-      print(data);
 
       await flutterLocalNotificationsPlugin.show(
         random.nextInt(2 ^ 31 - 1),
