@@ -1,4 +1,5 @@
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -35,7 +36,7 @@ class _AppState extends State<App> {
     final settingsController = context.watch<SettingsController>();
 
     return DynamicColorBuilder(
-      builder: (lightColourScheme, darkColourScheme) {
+      builder: (lightColorScheme, darkColorScheme) {
         return ChangeNotifierProxyProvider<SettingsController,
             NotificationCountController>(
           create: (_) => NotificationCountController(),
@@ -55,20 +56,24 @@ class _AppState extends State<App> {
             ],
             onGenerateTitle: (BuildContext context) =>
                 AppLocalizations.of(context)!.appTitle,
-            theme: ThemeData(
-              colorScheme: settingsController.useDynamicColor &&
-                      lightColourScheme != null
-                  ? lightColourScheme
-                  : settingsController.theme.lightMode,
+            theme: FlexThemeData.light(
+              colorScheme:
+                  settingsController.useDynamicColor && lightColorScheme != null
+                      ? lightColorScheme
+                      : settingsController.theme.lightMode,
+              surfaceMode: FlexSurfaceMode.highSurfaceLowScaffold,
+              blendLevel: 13,
               useMaterial3: true,
             ),
-            darkTheme: ThemeData(
-              brightness: Brightness.dark,
+            darkTheme: FlexThemeData.dark(
               colorScheme:
-                  settingsController.useDynamicColor && darkColourScheme != null
-                      ? darkColourScheme
+                  settingsController.useDynamicColor && darkColorScheme != null
+                      ? darkColorScheme
                       : settingsController.theme.darkMode,
+              surfaceMode: FlexSurfaceMode.highSurfaceLowScaffold,
+              blendLevel: 13,
               useMaterial3: true,
+              darkIsTrueBlack: settingsController.enableTrueBlack,
             ),
             themeMode: settingsController.themeMode,
             scaffoldMessengerKey: scaffoldMessengerKey,

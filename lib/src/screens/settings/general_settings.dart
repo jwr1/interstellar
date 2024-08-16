@@ -53,6 +53,18 @@ class GeneralScreen extends StatelessWidget {
             ),
           ),
           ListTile(
+            title: const Text('Enable True Black'),
+            leading: const Icon(Icons.brightness_1_outlined),
+            onTap: () {
+              controller.updateEnableTrueBlack(!controller.enableTrueBlack);
+            },
+            trailing: Switch(
+              value: controller.enableTrueBlack,
+              onChanged: controller.updateEnableTrueBlack,
+            ),
+            enabled: controller.themeMode != ThemeMode.light,
+          ),
+          ListTile(
             title: const Text('Use Dynamic Color'),
             leading: const Icon(Icons.auto_awesome_rounded),
             onTap: () {

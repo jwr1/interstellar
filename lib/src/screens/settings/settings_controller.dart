@@ -64,6 +64,8 @@ class Account {
 class SettingsController with ChangeNotifier {
   late ThemeMode _themeMode;
   ThemeMode get themeMode => _themeMode;
+  late bool _enableTrueBlack;
+  bool get enableTrueBlack => _enableTrueBlack;
   late bool _useDynamicColor;
   bool get useDynamicColor => _useDynamicColor;
   late String _accentColor;
@@ -155,6 +157,7 @@ class SettingsController with ChangeNotifier {
       ThemeMode.system,
       prefs.getString('themeMode'),
     );
+    _enableTrueBlack = prefs.getBool('enableTrueBlack') ?? false;
     _useDynamicColor = prefs.getBool('useDynamicColor') ?? true;
     _accentColor = prefs.getString('accentColor') ?? 'Default';
 
@@ -276,6 +279,18 @@ class SettingsController with ChangeNotifier {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('themeMode', newValue.name);
+  }
+
+  Future<void> updateEnableTrueBlack(bool? newValue) async {
+    if (newValue == null) return;
+    if (newValue == _enableTrueBlack) return;
+
+    _enableTrueBlack = newValue;
+
+    notifyListeners();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('enableTrueBlack', newValue);
   }
 
   Future<void> updateUseDynamicColor(bool? newValue) async {
