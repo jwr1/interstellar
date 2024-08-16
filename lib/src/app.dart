@@ -37,6 +37,11 @@ class _AppState extends State<App> {
 
     return DynamicColorBuilder(
       builder: (lightColorScheme, darkColorScheme) {
+        final dynamicLightColorScheme =
+            settingsController.useDynamicColor ? lightColorScheme : null;
+        final dynamicDarkColorScheme =
+            settingsController.useDynamicColor ? darkColorScheme : null;
+
         return ChangeNotifierProxyProvider<SettingsController,
             NotificationCountController>(
           create: (_) => NotificationCountController(),
@@ -57,19 +62,19 @@ class _AppState extends State<App> {
             onGenerateTitle: (BuildContext context) =>
                 AppLocalizations.of(context)!.appTitle,
             theme: FlexThemeData.light(
-              colorScheme:
-                  settingsController.useDynamicColor && lightColorScheme != null
-                      ? lightColorScheme
-                      : settingsController.theme.lightMode,
+              colorScheme: dynamicLightColorScheme,
+              scheme: dynamicLightColorScheme != null
+                  ? null
+                  : settingsController.colorScheme,
               surfaceMode: FlexSurfaceMode.highSurfaceLowScaffold,
               blendLevel: 13,
               useMaterial3: true,
             ),
             darkTheme: FlexThemeData.dark(
-              colorScheme:
-                  settingsController.useDynamicColor && darkColorScheme != null
-                      ? darkColorScheme
-                      : settingsController.theme.darkMode,
+              colorScheme: dynamicDarkColorScheme,
+              scheme: dynamicDarkColorScheme != null
+                  ? null
+                  : settingsController.colorScheme,
               surfaceMode: FlexSurfaceMode.highSurfaceLowScaffold,
               blendLevel: 13,
               useMaterial3: true,

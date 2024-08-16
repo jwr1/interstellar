@@ -1,6 +1,6 @@
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/utils/language_codes.dart';
-import 'package:interstellar/src/utils/themes.dart';
 import 'package:interstellar/src/widgets/selection_menu.dart';
 import 'package:interstellar/src/widgets/settings_header.dart';
 
@@ -16,7 +16,7 @@ class GeneralScreen extends StatelessWidget {
     final isLemmy = controller.serverSoftware == ServerSoftware.lemmy;
 
     final currentThemeMode = themeModeSelect.getOption(controller.themeMode);
-    final currentTheme = themeSelect.getOption(controller.accentColor);
+    final currentColorScheme = themeSelect.getOption(controller.colorScheme);
 
     final currentPostImagePosition =
         postLayoutSelect.getOption(controller.postImagePosition);
@@ -76,22 +76,23 @@ class GeneralScreen extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text('Accent Color'),
+            title: const Text('Color Scheme'),
             leading: const Icon(Icons.palette),
             onTap: () async {
-              controller.updateAccentColor(
+              controller.updateColorScheme(
                 await themeSelect.askSelection(
                   context,
-                  currentTheme.value,
+                  currentColorScheme.value,
                 ),
               );
             },
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(currentTheme.icon, color: currentTheme.iconColor),
+                Icon(currentColorScheme.icon,
+                    color: currentColorScheme.iconColor),
                 const SizedBox(width: 4),
-                Text(currentTheme.title),
+                Text(currentColorScheme.title),
               ],
             ),
             enabled: !controller.useDynamicColor,
@@ -316,17 +317,67 @@ const SelectionMenu<ThemeMode> themeModeSelect = SelectionMenu(
   ],
 );
 
-SelectionMenu<String> themeSelect = SelectionMenu(
+final Map<FlexScheme, String> themeNameMap = {
+  FlexScheme.blue: 'Blue',
+  FlexScheme.indigo: 'Indigo',
+  FlexScheme.hippieBlue: 'Hippie Blue',
+  FlexScheme.aquaBlue: 'Aqua Blue',
+  FlexScheme.brandBlue: 'Brand Blue',
+  FlexScheme.deepBlue: 'Deep Blue',
+  FlexScheme.sakura: 'Sakura',
+  FlexScheme.mandyRed: 'Mandy Red',
+  FlexScheme.red: 'Red',
+  FlexScheme.redWine: 'Red Wine',
+  FlexScheme.purpleBrown: 'Purple Brown',
+  FlexScheme.green: 'Green',
+  FlexScheme.money: 'Money',
+  FlexScheme.jungle: 'Jungle',
+  FlexScheme.greyLaw: 'Grey Law',
+  FlexScheme.wasabi: 'Wasabi',
+  FlexScheme.gold: 'Gold',
+  FlexScheme.mango: 'Mango',
+  FlexScheme.amber: 'Amber',
+  FlexScheme.vesuviusBurn: 'Vesuvius Burn',
+  FlexScheme.deepPurple: 'Deep Purple',
+  FlexScheme.ebonyClay: 'Ebony Clay',
+  FlexScheme.barossa: 'Barossa',
+  FlexScheme.shark: 'Shark',
+  FlexScheme.bigStone: 'Big Stone',
+  FlexScheme.damask: 'Damask',
+  FlexScheme.bahamaBlue: 'Bahama Blue',
+  FlexScheme.mallardGreen: 'Mallard Green',
+  FlexScheme.espresso: 'Espresso',
+  FlexScheme.outerSpace: 'Outer Space',
+  FlexScheme.blueWhale: 'Blue Whale',
+  FlexScheme.sanJuanBlue: 'San Juan Blue',
+  FlexScheme.rosewood: 'Rosewood',
+  FlexScheme.blumineBlue: 'Blumine Blue',
+  FlexScheme.flutterDash: 'Flutter Dash',
+};
+
+SelectionMenu<FlexScheme> themeSelect = SelectionMenu(
   'Theme Accent Color',
-  themes
-      .map((themeInfo) => SelectionMenuItem(
-            value: themeInfo.name,
-            title: themeInfo.name,
+  themeNameMap.keys
+      .map((theme) => SelectionMenuItem(
+            value: theme,
+            title: themeNameMap[theme]!,
             icon: Icons.brightness_1,
-            iconColor: themeInfo.lightMode?.primary,
+            iconColor: FlexColor.schemesWithCustom[theme]!.light.primary,
           ))
       .toList(),
 );
+
+// SelectionMenu<String> themeSelect = SelectionMenu(
+//   'Theme Accent Color',
+//   themes
+//       .map((themeInfo) => SelectionMenuItem(
+//             value: themeInfo.name,
+//             title: themeInfo.name,
+//             icon: Icons.brightness_1,
+//             iconColor: themeInfo.lightMode?.primary,
+//           ))
+//       .toList(),
+// );
 
 const SelectionMenu<PostImagePosition> postLayoutSelect = SelectionMenu(
   'Post Image Position',

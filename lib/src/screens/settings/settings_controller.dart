@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
@@ -9,7 +10,6 @@ import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/api/oauth.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/utils/jwt_http_client.dart';
-import 'package:interstellar/src/utils/themes.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/actions.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_mention.dart';
@@ -68,10 +68,8 @@ class SettingsController with ChangeNotifier {
   bool get enableTrueBlack => _enableTrueBlack;
   late bool _useDynamicColor;
   bool get useDynamicColor => _useDynamicColor;
-  late String _accentColor;
-  String get accentColor => _accentColor;
-  ThemeInfo get theme =>
-      themes.firstWhere((theme) => theme.name == _accentColor);
+  late FlexScheme _colorScheme;
+  FlexScheme get colorScheme => _colorScheme;
 
   late PostImagePosition _postImagePosition;
   PostImagePosition get postImagePosition => _postImagePosition;
@@ -159,7 +157,11 @@ class SettingsController with ChangeNotifier {
     );
     _enableTrueBlack = prefs.getBool('enableTrueBlack') ?? false;
     _useDynamicColor = prefs.getBool('useDynamicColor') ?? true;
-    _accentColor = prefs.getString('accentColor') ?? 'Default';
+    _colorScheme = parseEnum(
+      FlexScheme.values,
+      FlexScheme.outerSpace,
+      prefs.getString('colorScheme'),
+    );
 
     _alwaysShowInstance = prefs.getBool('alwaysShowInstance') ?? false;
 
@@ -305,16 +307,16 @@ class SettingsController with ChangeNotifier {
     await prefs.setBool('useDynamicColor', newValue);
   }
 
-  Future<void> updateAccentColor(String? newValue) async {
+  Future<void> updateColorScheme(FlexScheme? newValue) async {
     if (newValue == null) return;
-    if (newValue == _accentColor) return;
+    if (newValue == _colorScheme) return;
 
-    _accentColor = newValue;
+    _colorScheme = newValue;
 
     notifyListeners();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('accentColor', newValue);
+    await prefs.setString('colorScheme', _colorScheme.name);
   }
 
   Future<void> updatePostImagePosition(PostImagePosition? newValue) async {
