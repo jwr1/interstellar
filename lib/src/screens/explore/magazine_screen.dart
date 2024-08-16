@@ -29,7 +29,6 @@ class MagazineScreen extends StatefulWidget {
 
 class _MagazineScreenState extends State<MagazineScreen> {
   DetailedMagazineModel? _data;
-  final MenuController _menuController = MenuController();
 
   @override
   void initState() {
@@ -128,15 +127,14 @@ class _MagazineScreenState extends State<MagazineScreen> {
                       return IconButton(
                         icon: const Icon(Icons.more_vert),
                         onPressed: () {
-                          if (_menuController.isOpen) {
-                            _menuController.close();
+                          if (controller.isOpen) {
+                            controller.close();
                           } else {
-                            _menuController.open();
+                            controller.open();
                           }
                         },
                       );
                     },
-                    controller: _menuController,
                     menuChildren: [
                       MenuItemButton(
                         onPressed: () => openWebpagePrimary(
@@ -150,9 +148,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                                   ? '/c/${_data!.name}'
                                   : '/m/${_data!.name}',
                             )),
-                        child: const Padding(
-                            padding: EdgeInsets.all(12),
-                            child: Text('Open in Browser')),
+                        child: const Text('Open in Browser'),
                       ),
                       MenuItemButton(
                         onPressed: () => showDialog(
@@ -170,9 +166,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                             ),
                           ),
                         ),
-                        child: const Padding(
-                            padding: EdgeInsets.all(12),
-                            child: Text('View Moderators')),
+                        child: const Text('View Moderators'),
                       ),
                       if (isModerator)
                         MenuItemButton(
@@ -191,10 +185,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                               ),
                             ),
                           ),
-                          child: const Padding(
-                            padding: EdgeInsets.all(12),
-                            child: Text('Mod Panel'),
-                          ),
+                          child: const Text('Mod Panel'),
                         ),
                       if (_data!.owner != null &&
                           _data!.owner!.name ==
@@ -219,10 +210,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                               ),
                             ),
                           ),
-                          child: const Padding(
-                            padding: EdgeInsets.all(12),
-                            child: Text('Owner Panel'),
-                          ),
+                          child: const Text('Owner Panel'),
                         ),
                     ],
                   ),

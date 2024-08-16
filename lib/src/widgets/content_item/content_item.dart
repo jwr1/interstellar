@@ -134,7 +134,6 @@ class ContentItem extends StatefulWidget {
 class _ContentItemState extends State<ContentItem> {
   TextEditingController? _replyTextController;
   TextEditingController? _editTextController;
-  final MenuController _menuController = MenuController();
 
   @override
   Widget build(BuildContext context) {
@@ -460,23 +459,20 @@ class _ContentItemState extends State<ContentItem> {
                                   return IconButton(
                                     icon: const Icon(Icons.more_vert),
                                     onPressed: () {
-                                      if (_menuController.isOpen) {
-                                        _menuController.close();
+                                      if (controller.isOpen) {
+                                        controller.close();
                                       } else {
-                                        _menuController.open();
+                                        controller.open();
                                       }
                                     },
                                   );
                                 },
-                                controller: _menuController,
                                 menuChildren: [
                                   if (widget.openLinkUri != null)
                                     MenuItemButton(
                                       onPressed: () => openWebpagePrimary(
                                           context, widget.openLinkUri!),
-                                      child: const Padding(
-                                          padding: EdgeInsets.all(12),
-                                          child: Text('Open in Browser')),
+                                      child: const Text('Open in Browser'),
                                     ),
                                   if (widget.domain != null)
                                     MenuItemButton(
@@ -488,10 +484,7 @@ class _ContentItemState extends State<ContentItem> {
                                           ),
                                         ),
                                       ),
-                                      child: Padding(
-                                          padding: const EdgeInsets.all(12),
-                                          child: Text(
-                                              'More from ${widget.domain}')),
+                                      child: Text('More from ${widget.domain}'),
                                     ),
                                   if (widget.onReport != null)
                                     MenuItemButton(
@@ -504,9 +497,7 @@ class _ContentItemState extends State<ContentItem> {
                                           await widget.onReport!(reportReason);
                                         }
                                       },
-                                      child: const Padding(
-                                          padding: EdgeInsets.all(12),
-                                          child: Text('Report')),
+                                      child: const Text('Report'),
                                     ),
                                   if (widget.onEdit != null)
                                     MenuItemButton(
@@ -515,9 +506,7 @@ class _ContentItemState extends State<ContentItem> {
                                             TextEditingController(
                                                 text: widget.body);
                                       }),
-                                      child: const Padding(
-                                          padding: EdgeInsets.all(12),
-                                          child: Text('Edit')),
+                                      child: const Text('Edit'),
                                     ),
                                   if (widget.onDelete != null)
                                     MenuItemButton(
@@ -549,16 +538,11 @@ class _ContentItemState extends State<ContentItem> {
                                               VerticalDirection.up,
                                         ),
                                       ),
-                                      child: const Padding(
-                                          padding: EdgeInsets.all(12),
-                                          child: Text('Delete')),
+                                      child: const Text('Delete'),
                                     ),
                                   if (widget.body != null)
                                     MenuItemButton(
-                                      child: const Padding(
-                                        padding: EdgeInsets.all(12),
-                                        child: Text('View Source'),
-                                      ),
+                                      child: const Text('View Source'),
                                       onPressed: () => showDialog(
                                         context: context,
                                         builder: (context) => AlertDialog(
@@ -601,41 +585,26 @@ class _ContentItemState extends State<ContentItem> {
                                         if (widget.onModeratePin != null)
                                           MenuItemButton(
                                             onPressed: widget.onModeratePin,
-                                            child: const Padding(
-                                              padding: EdgeInsets.all(12),
-                                              child: Text('Pin'),
-                                            ),
+                                            child: const Text('Pin'),
                                           ),
                                         if (widget.onModerateMarkNSFW != null)
                                           MenuItemButton(
                                             onPressed:
                                                 widget.onModerateMarkNSFW,
-                                            child: const Padding(
-                                              padding: EdgeInsets.all(12),
-                                              child: Text('Mark NSFW'),
-                                            ),
+                                            child: const Text('Mark NSFW'),
                                           ),
                                         if (widget.onModerateDelete != null)
                                           MenuItemButton(
                                             onPressed: widget.onModerateDelete,
-                                            child: const Padding(
-                                              padding: EdgeInsets.all(12),
-                                              child: Text('Delete'),
-                                            ),
+                                            child: const Text('Delete'),
                                           ),
                                         if (widget.onModerateBan != null)
                                           MenuItemButton(
                                             onPressed: widget.onModerateBan,
-                                            child: const Padding(
-                                              padding: EdgeInsets.all(12),
-                                              child: Text('Ban User'),
-                                            ),
+                                            child: const Text('Ban User'),
                                           ),
                                       ],
-                                      child: const Padding(
-                                        padding: EdgeInsets.all(12),
-                                        child: Text('Moderate'),
-                                      ),
+                                      child: const Text('Moderate'),
                                     ),
                                 ],
                               ),

@@ -46,7 +46,6 @@ class ContentItemLinkPanel extends StatefulWidget {
 }
 
 class _ContentItemLinkPanelState extends State<ContentItemLinkPanel> {
-  final MenuController _menuController = MenuController();
   String? _youtubeVideoId;
 
   @override
@@ -79,17 +78,16 @@ class _ContentItemLinkPanelState extends State<ContentItemLinkPanel> {
                         ? Icons.play_circle
                         : Icons.link),
                     onPressed: () {
-                      if (_menuController.isOpen) {
-                        _menuController.close();
+                      if (controller.isOpen) {
+                        controller.close();
                       } else {
-                        _menuController.open();
+                        controller.open();
                       }
                     },
                     style: TextButton.styleFrom(shape: const LinearBorder()),
                   ),
                 );
               },
-              controller: _menuController,
               menuChildren: [
                 const Padding(
                   padding: EdgeInsets.all(8),
@@ -104,10 +102,7 @@ class _ContentItemLinkPanelState extends State<ContentItemLinkPanel> {
                         context,
                         Uri.parse(source.urlPrefix +
                             (_youtubeVideoId ?? widget.link.toString()))),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Text(source.name),
-                    ),
+                    child: Text(source.name),
                   ),
                 ),
               ],
