@@ -230,7 +230,7 @@ class SettingsController with ChangeNotifier {
     );
     _defaultExploreFeedSort = parseEnum(
       FeedSort.values,
-      FeedSort.hot,
+      FeedSort.newest,
       prefs.getString('defaultExploreFeedSort'),
     );
     _defaultCommentSort = parseEnum(
