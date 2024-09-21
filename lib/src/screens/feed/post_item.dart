@@ -15,7 +15,6 @@ class PostItem extends StatelessWidget {
     this.onReply,
     this.onEdit,
     this.onDelete,
-    this.canModerate = false,
   });
 
   final PostModel item;
@@ -24,10 +23,11 @@ class PostItem extends StatelessWidget {
   final Future<void> Function(String)? onEdit;
   final Future<void> Function()? onDelete;
   final bool isPreview;
-  final bool canModerate;
 
   @override
   Widget build(BuildContext context) {
+    final canModerate = item.canAuthUserModerate ?? false;
+
     return ContentItem(
       originInstance: getNameHost(context, item.user.name),
       title: item.title,

@@ -5,6 +5,7 @@ import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/screens/feed/post_comment_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/ban_dialog.dart';
 import 'package:interstellar/src/widgets/content_item/content_item.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
 import 'package:provider/provider.dart';
@@ -35,6 +36,8 @@ class _PostCommentState extends State<PostComment> {
 
   @override
   Widget build(BuildContext context) {
+    final canModerate = widget.comment.canAuthUserModerate ?? false;
+
     return Column(
       children: [
         Card(
@@ -156,6 +159,31 @@ class _PostCommentState extends State<PostComment> {
                       ));
                     }, matchesUsername: widget.comment.user.name)
                   : null,
+              onModerateDelete: !canModerate
+                  ? null
+                  : () async {
+                      final newValue = await context
+                          .read<SettingsController>()
+                          .api
+                          .moderation
+                          .commentDelete(
+                            widget.comment.postType,
+                            widget.comment.id,
+                            true,
+                          );
+
+                      widget.onUpdate(newValue.copyWith(
+                        childCount: widget.comment.childCount,
+                        children: widget.comment.children,
+                      ));
+                    },
+              onModerateBan: !canModerate
+                  ? null
+                  : () async {
+                      await openBanDialog(context,
+                          user: widget.comment.user,
+                          magazine: widget.comment.magazine);
+                    },
               isCollapsed: !_expandableController.expanded,
               onCollapse: widget.comment.childCount > 0
                   ? () => setState(() {

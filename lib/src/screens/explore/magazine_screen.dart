@@ -68,7 +68,6 @@ class _MagazineScreenState extends State<MagazineScreen> {
       sourceId: widget.magazineId,
       title: _data?.name ?? '',
       createPostMagazine: _data,
-      canModerate: isModerator,
       details: _data == null
           ? null
           : Padding(

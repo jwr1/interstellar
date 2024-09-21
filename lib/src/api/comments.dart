@@ -109,7 +109,8 @@ class APIComments {
         httpErrorHandler(response, message: 'Failed to load comments');
 
         return CommentListModel.fromLemmy(
-            jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, Object?>);
+            jsonDecode(utf8.decode(response.bodyBytes))
+                as Map<String, Object?>);
     }
   }
 
@@ -150,7 +151,8 @@ class APIComments {
 
         httpErrorHandler(response, message: 'Failed to load user');
 
-        final json = jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, Object?>;
+        final json =
+            jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, Object?>;
 
         json['next_page'] =
             lemmyCalcNextIntPage(json['comments'] as List<dynamic>, page);
@@ -185,7 +187,8 @@ class APIComments {
           (jsonDecode(response.body)['comments'] as List<dynamic>)
               .firstWhere((item) => item['comment']['id'] == commentId),
           possibleChildren:
-              jsonDecode(utf8.decode(response.bodyBytes))['comments'] as List<dynamic>,
+              jsonDecode(utf8.decode(response.bodyBytes))['comments']
+                  as List<dynamic>,
         );
     }
   }
@@ -224,7 +227,8 @@ class APIComments {
         httpErrorHandler(response, message: 'Failed to send vote');
 
         return CommentModel.fromLemmy(
-            jsonDecode(utf8.decode(response.bodyBytes))['comment_view'] as Map<String, Object?>);
+            jsonDecode(utf8.decode(response.bodyBytes))['comment_view']
+                as Map<String, Object?>);
     }
   }
 
@@ -282,7 +286,8 @@ class APIComments {
         httpErrorHandler(response, message: 'Failed to create comment');
 
         return CommentModel.fromLemmy(
-            jsonDecode(utf8.decode(response.bodyBytes))['comment_view'] as Map<String, Object?>);
+            jsonDecode(utf8.decode(response.bodyBytes))['comment_view']
+                as Map<String, Object?>);
     }
   }
 
@@ -322,7 +327,8 @@ class APIComments {
         httpErrorHandler(response, message: 'Failed to edit comment');
 
         return CommentModel.fromLemmy(
-            jsonDecode(utf8.decode(response.bodyBytes))['comment_view'] as Map<String, Object?>);
+            jsonDecode(utf8.decode(response.bodyBytes))['comment_view']
+                as Map<String, Object?>);
     }
   }
 

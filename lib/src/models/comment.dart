@@ -60,6 +60,7 @@ class CommentModel with _$CommentModel {
     required List<CommentModel>? children,
     required int childCount,
     required String visibility,
+    required bool? canAuthUserModerate,
   }) = _CommentModel;
 
   factory CommentModel.fromMbin(Map<String, Object?> json) => CommentModel(
@@ -89,6 +90,7 @@ class CommentModel with _$CommentModel {
             .toList(),
         childCount: json['childCount'] as int,
         visibility: json['visibility'] as String,
+        canAuthUserModerate: json['canAuthUserModerate'] as bool?,
       );
 
   factory CommentModel.fromLemmy(
@@ -140,6 +142,7 @@ class CommentModel with _$CommentModel {
       children: children,
       childCount: lemmyCounts['child_count'] as int,
       visibility: 'visible',
+      canAuthUserModerate: null,
     );
   }
 }

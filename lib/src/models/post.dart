@@ -69,6 +69,7 @@ class PostModel with _$PostModel {
     required DateTime? editedAt,
     required DateTime lastActive,
     required String visibility,
+    required bool? canAuthUserModerate,
   }) = _PostModel;
 
   factory PostModel.fromMbinEntry(Map<String, Object?> json) => PostModel(
@@ -101,6 +102,7 @@ class PostModel with _$PostModel {
         editedAt: optionalDateTime(json['editedAt'] as String?),
         lastActive: DateTime.parse(json['lastActive'] as String),
         visibility: json['visibility'] as String,
+        canAuthUserModerate: json['canAuthUserModerate'] as bool?,
       );
 
   factory PostModel.fromMbinPost(Map<String, Object?> json) => PostModel(
@@ -130,6 +132,7 @@ class PostModel with _$PostModel {
         editedAt: optionalDateTime(json['editedAt'] as String?),
         lastActive: DateTime.parse(json['lastActive'] as String),
         visibility: json['visibility'] as String,
+        canAuthUserModerate: json['canAuthUserModerate'] as bool?,
       );
 
   factory PostModel.fromLemmy(Map<String, Object?> json) {
@@ -166,6 +169,7 @@ class PostModel with _$PostModel {
       editedAt: optionalDateTime(lemmyPost['updated'] as String?),
       lastActive: DateTime.parse(lemmyCounts['newest_comment_time'] as String),
       visibility: 'visible',
+      canAuthUserModerate: null,
     );
   }
 }
