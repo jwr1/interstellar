@@ -83,7 +83,9 @@ class PostModel with _$PostModel {
             : DomainModel.fromMbin(json['domain'] as Map<String, Object?>),
         title: json['title'] as String?,
         // Only include link if it's not an Image post
-        url: json['type'] == 'image' ? null : json['url'] as String?,
+        url: (json['type'] == 'image' && json['image'] != null)
+            ? null
+            : json['url'] as String?,
         image: mbinGetImage(json['image'] as Map<String, Object?>?),
         body: json['body'] as String?,
         lang: json['lang'] as String,
