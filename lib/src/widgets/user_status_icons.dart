@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/utils/utils.dart';
 
 class UserStatusIcons extends StatelessWidget {
   final DateTime? cakeDay;
@@ -20,16 +21,16 @@ class UserStatusIcons extends StatelessWidget {
     Widget? cakeDayWidget;
 
     if (isBot) {
-      botWidget = const Tooltip(
-        message: 'Bot Account',
-        child: Icon(Icons.smart_toy_outlined),
+      botWidget = Tooltip(
+        message: l10n(context).botAccount,
+        child: const Icon(Icons.smart_toy_outlined),
       );
     }
 
     if (cakeDay == null) {
     } else if (now.difference(cakeDay!).inDays <= 14) {
       cakeDayWidget = Tooltip(
-        message: 'New User',
+        message: l10n(context).newUser,
         child: ShaderMask(
           blendMode: BlendMode.srcIn,
           shaderCallback: (Rect bounds) => const LinearGradient(
@@ -47,7 +48,7 @@ class UserStatusIcons extends StatelessWidget {
       );
     } else if (cakeDay!.day == now.day && cakeDay!.month == now.month) {
       cakeDayWidget = Tooltip(
-        message: 'Cake Day',
+        message: l10n(context).cakeDay,
         child: ShaderMask(
           blendMode: BlendMode.srcIn,
           shaderCallback: (Rect bounds) => const LinearGradient(

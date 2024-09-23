@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/comments.dart';
 import 'package:interstellar/src/screens/feed/feed_screen.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/actions.dart';
 import 'package:interstellar/src/widgets/settings_header.dart';
 
@@ -30,7 +31,7 @@ class ActionSettings extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Actions and Defaults'),
+        title: Text(l10n(context).actionsAndDefaults),
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16),

@@ -231,7 +231,7 @@ class _FeedScreenState extends State<FeedScreen> {
                   context.watch<SettingsController>().selectedAccount +
                       (context.watch<SettingsController>().isLoggedIn
                           ? ''
-                          : ' (Guest)'),
+                          : ' (${l10n(context).guest})'),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),

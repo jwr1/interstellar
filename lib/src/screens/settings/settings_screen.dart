@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:interstellar/src/screens/settings/action_settings.dart';
 import 'package:interstellar/src/screens/settings/general_settings.dart';
 import 'package:interstellar/src/screens/settings/login_select.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/settings_header.dart';
 import 'package:provider/provider.dart';
 
@@ -16,13 +17,13 @@ class SettingsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: Text(l10n(context).settings),
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         children: [
           ListTile(
-            title: const Text('General Settings'),
+            title: Text(l10n(context).generalSettings),
             leading: const Icon(Icons.settings),
             onTap: () async {
               await Navigator.push(
@@ -34,7 +35,7 @@ class SettingsScreen extends StatelessWidget {
             },
           ),
           ListTile(
-            title: const Text('Actions and Defaults'),
+            title: Text(l10n(context).actionsAndDefaults),
             leading: const Icon(Icons.toggle_on),
             onTap: () async {
               await Navigator.push(
@@ -45,7 +46,7 @@ class SettingsScreen extends StatelessWidget {
               );
             },
           ),
-          const SettingsHeader('Accounts'),
+          SettingsHeader(l10n(context).accounts),
           ...(controller.accounts.keys.toList()
                 ..sort((a, b) {
                   final [aLocal, aHost] = a.split('@');
@@ -76,19 +77,19 @@ class SettingsScreen extends StatelessWidget {
                               showDialog<String>(
                                 context: context,
                                 builder: (BuildContext context) => AlertDialog(
-                                  title: const Text('Remove account'),
+                                  title: Text(l10n(context).removeAccount),
                                   content: Text(account),
                                   actions: <Widget>[
                                     OutlinedButton(
                                       onPressed: () => Navigator.pop(context),
-                                      child: const Text('Cancel'),
+                                      child: Text(l10n(context).cancel),
                                     ),
                                     FilledButton(
                                       onPressed: () {
                                         Navigator.pop(context);
                                         controller.removeAccount(account);
                                       },
-                                      child: const Text('Remove'),
+                                      child: Text(l10n(context).remove),
                                     ),
                                   ],
                                 ),
@@ -106,7 +107,7 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 );
               },
-              child: const Text('Add Account'),
+              child: Text(l10n(context).addAccount),
             ),
           ),
         ],

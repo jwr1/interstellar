@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/api.dart';
 import 'package:interstellar/src/screens/settings/login_confirm.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:provider/provider.dart';
 
@@ -62,7 +63,7 @@ class _LoginSelectScreenState extends State<LoginSelectScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Account'),
+        title: Text(l10n(context).addAccount),
       ),
       body: ListView(
         children: [
@@ -73,7 +74,7 @@ class _LoginSelectScreenState extends State<LoginSelectScreen> {
               children: [
                 TextEditor(
                   _instanceHostController,
-                  label: 'Instance Host',
+                  label: l10n(context).instanceHost,
                   onChanged: (_) => setState(() {}),
                 ),
                 const SizedBox(height: 12),
@@ -81,7 +82,7 @@ class _LoginSelectScreenState extends State<LoginSelectScreen> {
                   onPressed: _instanceHostController.text.isEmpty
                       ? null
                       : () => _initiateLogin(_instanceHostController.text),
-                  child: const Text('Continue'),
+                  child: Text(l10n(context).continue_),
                 ),
               ],
             ),
@@ -90,7 +91,7 @@ class _LoginSelectScreenState extends State<LoginSelectScreen> {
             padding: const EdgeInsets.all(16),
             child: Column(children: [
               Text(
-                'Recommended Instances',
+                l10n(context).recommendedInstances,
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(height: 4),

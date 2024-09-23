@@ -1,6 +1,7 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/utils/language_codes.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/selection_menu.dart';
 import 'package:interstellar/src/widgets/settings_header.dart';
 
@@ -26,7 +27,7 @@ class GeneralScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('General Settings'),
+        title: Text(l10n(context).generalSettings),
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16),

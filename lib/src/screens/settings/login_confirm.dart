@@ -31,7 +31,7 @@ class _LoginConfirmScreenState extends State<LoginConfirmScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Account'),
+        title: Text(l10n(context).addAccount),
       ),
       body: ListView(
         children: [
@@ -56,21 +56,21 @@ class _LoginConfirmScreenState extends State<LoginConfirmScreen> {
               child: Column(children: [
                 TextEditor(
                   _usernameEmailTextController,
-                  label: 'Username or Email',
+                  label: l10n(context).usernameOrEmail,
                   keyboardType: TextInputType.emailAddress,
                   onChanged: (_) => setState(() {}),
                 ),
                 const SizedBox(height: 12),
                 TextEditor(
                   _passwordTextController,
-                  label: 'Password',
+                  label: l10n(context).password,
                   keyboardType: TextInputType.visiblePassword,
                   onChanged: (_) => setState(() {}),
                 ),
                 const SizedBox(height: 12),
                 TextEditor(
                   _totpTokenTextController,
-                  label: '2fa token',
+                  label: l10n(context).totpToken,
                   keyboardType: TextInputType.visiblePassword,
                 ),
               ]),
@@ -87,7 +87,7 @@ class _LoginConfirmScreenState extends State<LoginConfirmScreen> {
 
                   Navigator.pop(context, true);
                 },
-                child: const Text('Guest'),
+                child: Text(l10n(context).guest),
               ),
               const SizedBox(width: 12),
               FilledButton(
@@ -186,7 +186,7 @@ class _LoginConfirmScreenState extends State<LoginConfirmScreen> {
 
                         Navigator.pop(context, true);
                       },
-                child: const Text('Login'),
+                child: Text(l10n(context).login),
               ),
             ],
           ),
