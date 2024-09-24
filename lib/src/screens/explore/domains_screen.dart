@@ -87,18 +87,18 @@ class _DomainsScreenState extends State<DomainsScreen> {
                                   });
                                 }
                               },
-                              items: const [
+                              items: [
                                 DropdownMenuItem(
                                   value: MbinAPIDomainsFilter.all,
-                                  child: Text('All'),
+                                  child: Text(l10n(context).filter_all),
                                 ),
                                 DropdownMenuItem(
                                   value: MbinAPIDomainsFilter.subscribed,
-                                  child: Text('Subscribed'),
+                                  child: Text(l10n(context).filter_subscribed),
                                 ),
                                 DropdownMenuItem(
                                   value: MbinAPIDomainsFilter.blocked,
-                                  child: Text('Blocked'),
+                                  child: Text(l10n(context).filter_blocked),
                                 ),
                               ],
                             ),
@@ -116,9 +116,9 @@ class _DomainsScreenState extends State<DomainsScreen> {
                               _pagingController.refresh();
                             });
                           },
-                          decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              label: Text('Search')),
+                          decoration: InputDecoration(
+                              border: const OutlineInputBorder(),
+                              label: Text(l10n(context).search)),
                         ),
                       )
                   ],

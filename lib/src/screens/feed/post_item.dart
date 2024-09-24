@@ -96,7 +96,7 @@ class PostItem extends StatelessWidget {
               .putVote(item.id, -1),
         });
       }),
-      contentTypeName: 'Post',
+      contentTypeName: l10n(context).post,
       onReply: onReply,
       onReport: whenLoggedIn(context, (reason) async {
         await switch (item.type) {

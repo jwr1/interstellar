@@ -69,8 +69,8 @@ class _FeedScreenState extends State<FeedScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final currentFeedModeOption = feedTypeSelect.getOption(_mode);
-    final currentFeedSortOption = feedSortSelect.getOption(_sort);
+    final currentFeedModeOption = feedTypeSelect(context).getOption(_mode);
+    final currentFeedSortOption = feedSortSelect(context).getOption(_sort);
 
     final actions = [
       feedActionCreatePost.withProps(
@@ -99,7 +99,7 @@ class _FeedScreenState extends State<FeedScreen> {
               ),
         () async {
           final newFilter =
-              await feedFilterSelect.askSelection(context, _filter);
+              await feedFilterSelect(context).askSelection(context, _filter);
 
           if (newFilter != null && newFilter != _filter) {
             setState(() {
@@ -115,7 +115,8 @@ class _FeedScreenState extends State<FeedScreen> {
           context.watch<SettingsController>().feedActionSetSort.name,
         ),
         () async {
-          final newSort = await feedSortSelect.askSelection(context, _sort);
+          final newSort =
+              await feedSortSelect(context).askSelection(context, _sort);
 
           if (newSort != null && newSort != _sort) {
             setState(() {
@@ -135,7 +136,8 @@ class _FeedScreenState extends State<FeedScreen> {
                 context.watch<SettingsController>().feedActionSetType.name,
               ),
         () async {
-          final newMode = await feedTypeSelect.askSelection(context, _mode);
+          final newMode =
+              await feedTypeSelect(context).askSelection(context, _mode);
 
           if (newMode != null && newMode != _mode) {
             setState(() {
@@ -192,32 +194,34 @@ class _FeedScreenState extends State<FeedScreen> {
       shouldWrap: tabsAction != null,
       parentBuilder: (child) => DefaultTabController(
         initialIndex: switch (tabsAction?.name) {
-          String name when name == feedActionSetFilter.name => feedFilterSelect
-              .options
-              .asMap()
-              .entries
-              .firstWhere((entry) =>
-                  entry.value.value ==
-                  context.watch<SettingsController>().defaultFeedFilter)
-              .key,
-          String name when name == feedActionSetType.name => feedTypeSelect
-              .options
-              .asMap()
-              .entries
-              .firstWhere((entry) =>
-                  entry.value.value ==
-                  (context.watch<SettingsController>().serverSoftware !=
-                          ServerSoftware.lemmy
-                      ? context.watch<SettingsController>().defaultFeedType
-                      : PostType.thread))
-              .key,
+          String name when name == feedActionSetFilter.name =>
+            feedFilterSelect(context)
+                .options
+                .asMap()
+                .entries
+                .firstWhere((entry) =>
+                    entry.value.value ==
+                    context.watch<SettingsController>().defaultFeedFilter)
+                .key,
+          String name when name == feedActionSetType.name =>
+            feedTypeSelect(context)
+                .options
+                .asMap()
+                .entries
+                .firstWhere((entry) =>
+                    entry.value.value ==
+                    (context.watch<SettingsController>().serverSoftware !=
+                            ServerSoftware.lemmy
+                        ? context.watch<SettingsController>().defaultFeedType
+                        : PostType.thread))
+                .key,
           _ => 0
         },
         length: switch (tabsAction?.name) {
           String name when name == feedActionSetFilter.name =>
-            feedFilterSelect.options.length,
+            feedFilterSelect(context).options.length,
           String name when name == feedActionSetType.name =>
-            feedTypeSelect.options.length,
+            feedTypeSelect(context).options.length,
           _ => 0
         },
         child: child,
@@ -266,7 +270,8 @@ class _FeedScreenState extends State<FeedScreen> {
               : TabBar(
                   tabs: switch (tabsAction.name) {
                     String name when name == feedActionSetFilter.name =>
-                      feedFilterSelect.options
+                      feedFilterSelect(context)
+                          .options
                           .map(
                             (option) => Tab(
                               text: option.title.substring(0, 3),
@@ -275,7 +280,8 @@ class _FeedScreenState extends State<FeedScreen> {
                           )
                           .toList(),
                     String name when name == feedActionSetType.name =>
-                      feedTypeSelect.options
+                      feedTypeSelect(context)
+                          .options
                           .map(
                             (option) => Tab(
                               text: option.title,
@@ -371,163 +377,164 @@ class _FeedScreenState extends State<FeedScreen> {
   }
 }
 
-const SelectionMenu<PostType> feedTypeSelect = SelectionMenu(
-  'Feed Type',
-  [
-    SelectionMenuItem(
-      value: PostType.thread,
-      title: 'Threads',
-      icon: Icons.feed,
-    ),
-    SelectionMenuItem(
-      value: PostType.microblog,
-      title: 'Microblog',
-      icon: Icons.chat,
-    ),
-  ],
-);
+SelectionMenu<PostType> feedTypeSelect(BuildContext context) => SelectionMenu(
+      l10n(context).feedType,
+      [
+        SelectionMenuItem(
+          value: PostType.thread,
+          title: l10n(context).threads,
+          icon: Icons.feed,
+        ),
+        SelectionMenuItem(
+          value: PostType.microblog,
+          title: l10n(context).microblog,
+          icon: Icons.chat,
+        ),
+      ],
+    );
 
-const SelectionMenu<FeedSort> feedSortSelect = SelectionMenu(
-  'Sort by',
-  [
-    SelectionMenuItem(
-      value: FeedSort.hot,
-      title: 'Hot',
-      icon: Icons.local_fire_department,
-    ),
-    SelectionMenuItem(
-      value: FeedSort.top,
-      title: 'Top',
-      icon: Icons.trending_up,
-    ),
-    SelectionMenuItem(
-      value: FeedSort.newest,
-      title: 'Newest',
-      icon: Icons.auto_awesome_rounded,
-    ),
-    SelectionMenuItem(
-      value: FeedSort.active,
-      title: 'Active',
-      icon: Icons.rocket_launch,
-    ),
-    SelectionMenuItem(
-      value: FeedSort.commented,
-      title: 'Commented',
-      icon: Icons.chat,
-    ),
-    SelectionMenuItem(
-      value: FeedSort.oldest,
-      title: 'Oldest',
-      icon: Icons.access_time_outlined,
-    ),
+SelectionMenu<FeedSort> feedSortSelect(BuildContext context) => SelectionMenu(
+      l10n(context).sort,
+      [
+        SelectionMenuItem(
+          value: FeedSort.hot,
+          title: l10n(context).sort_hot,
+          icon: Icons.local_fire_department,
+        ),
+        SelectionMenuItem(
+          value: FeedSort.top,
+          title: l10n(context).sort_top,
+          icon: Icons.trending_up,
+        ),
+        SelectionMenuItem(
+          value: FeedSort.newest,
+          title: l10n(context).sort_newest,
+          icon: Icons.auto_awesome_rounded,
+        ),
+        SelectionMenuItem(
+          value: FeedSort.active,
+          title: l10n(context).sort_active,
+          icon: Icons.rocket_launch,
+        ),
+        SelectionMenuItem(
+          value: FeedSort.commented,
+          title: l10n(context).sort_commented,
+          icon: Icons.chat,
+        ),
+        SelectionMenuItem(
+          value: FeedSort.oldest,
+          title: l10n(context).sort_oldest,
+          icon: Icons.access_time_outlined,
+        ),
 
-    //lemmy specific
-    SelectionMenuItem(
-      value: FeedSort.newComments,
-      title: 'NewComments',
-      icon: Icons.mark_chat_unread,
-      validSoftware: ServerSoftware.lemmy,
-    ),
-    SelectionMenuItem(
-      value: FeedSort.controversial,
-      title: 'Controversial',
-      icon: Icons.thumbs_up_down,
-      validSoftware: ServerSoftware.lemmy,
-    ),
-    SelectionMenuItem(
-      value: FeedSort.scaled,
-      title: 'Scaled',
-      icon: Icons.scale,
-      validSoftware: ServerSoftware.lemmy,
-    ),
-    SelectionMenuItem(
-      value: FeedSort.topDay,
-      title: 'TopDay',
-      icon: Icons.trending_up,
-      validSoftware: ServerSoftware.lemmy,
-    ),
-    SelectionMenuItem(
-      value: FeedSort.topWeek,
-      title: 'TopWeek',
-      icon: Icons.trending_up,
-      validSoftware: ServerSoftware.lemmy,
-    ),
-    SelectionMenuItem(
-      value: FeedSort.topMonth,
-      title: 'TopMonth',
-      icon: Icons.trending_up,
-      validSoftware: ServerSoftware.lemmy,
-    ),
-    SelectionMenuItem(
-      value: FeedSort.topYear,
-      title: 'TopYear',
-      icon: Icons.trending_up,
-      validSoftware: ServerSoftware.lemmy,
-    ),
-    SelectionMenuItem(
-      value: FeedSort.topHour,
-      title: 'TopHour',
-      icon: Icons.trending_up,
-      validSoftware: ServerSoftware.lemmy,
-    ),
-    SelectionMenuItem(
-      value: FeedSort.topSixHour,
-      title: 'TopSixHour',
-      icon: Icons.trending_up,
-      validSoftware: ServerSoftware.lemmy,
-    ),
-    SelectionMenuItem(
-      value: FeedSort.topTwelveHour,
-      title: 'TopTwelveHour',
-      icon: Icons.trending_up,
-      validSoftware: ServerSoftware.lemmy,
-    ),
-    SelectionMenuItem(
-      value: FeedSort.topThreeMonths,
-      title: 'TopThreeMonths',
-      icon: Icons.trending_up,
-      validSoftware: ServerSoftware.lemmy,
-    ),
-    SelectionMenuItem(
-      value: FeedSort.topSixMonths,
-      title: 'TopSixMonths',
-      icon: Icons.trending_up,
-      validSoftware: ServerSoftware.lemmy,
-    ),
-    SelectionMenuItem(
-      value: FeedSort.topNineMonths,
-      title: 'TopNineMonths',
-      icon: Icons.trending_up,
-      validSoftware: ServerSoftware.lemmy,
-    ),
-  ],
-);
+        //lemmy specific
+        SelectionMenuItem(
+          value: FeedSort.newComments,
+          title: l10n(context).sort_newComments,
+          icon: Icons.mark_chat_unread,
+          validSoftware: ServerSoftware.lemmy,
+        ),
+        SelectionMenuItem(
+          value: FeedSort.controversial,
+          title: l10n(context).sort_controversial,
+          icon: Icons.thumbs_up_down,
+          validSoftware: ServerSoftware.lemmy,
+        ),
+        SelectionMenuItem(
+          value: FeedSort.scaled,
+          title: l10n(context).sort_scaled,
+          icon: Icons.scale,
+          validSoftware: ServerSoftware.lemmy,
+        ),
+        SelectionMenuItem(
+          value: FeedSort.topDay,
+          title: l10n(context).sort_topDay,
+          icon: Icons.trending_up,
+          validSoftware: ServerSoftware.lemmy,
+        ),
+        SelectionMenuItem(
+          value: FeedSort.topWeek,
+          title: l10n(context).sort_topWeek,
+          icon: Icons.trending_up,
+          validSoftware: ServerSoftware.lemmy,
+        ),
+        SelectionMenuItem(
+          value: FeedSort.topMonth,
+          title: l10n(context).sort_topMonth,
+          icon: Icons.trending_up,
+          validSoftware: ServerSoftware.lemmy,
+        ),
+        SelectionMenuItem(
+          value: FeedSort.topYear,
+          title: l10n(context).sort_topYear,
+          icon: Icons.trending_up,
+          validSoftware: ServerSoftware.lemmy,
+        ),
+        SelectionMenuItem(
+          value: FeedSort.topHour,
+          title: l10n(context).sort_topHour,
+          icon: Icons.trending_up,
+          validSoftware: ServerSoftware.lemmy,
+        ),
+        SelectionMenuItem(
+          value: FeedSort.topSixHour,
+          title: l10n(context).sort_topSixHour,
+          icon: Icons.trending_up,
+          validSoftware: ServerSoftware.lemmy,
+        ),
+        SelectionMenuItem(
+          value: FeedSort.topTwelveHour,
+          title: l10n(context).sort_topTwelveHour,
+          icon: Icons.trending_up,
+          validSoftware: ServerSoftware.lemmy,
+        ),
+        SelectionMenuItem(
+          value: FeedSort.topThreeMonths,
+          title: l10n(context).sort_topThreeMonths,
+          icon: Icons.trending_up,
+          validSoftware: ServerSoftware.lemmy,
+        ),
+        SelectionMenuItem(
+          value: FeedSort.topSixMonths,
+          title: l10n(context).sort_topSixMonths,
+          icon: Icons.trending_up,
+          validSoftware: ServerSoftware.lemmy,
+        ),
+        SelectionMenuItem(
+          value: FeedSort.topNineMonths,
+          title: l10n(context).sort_topNineMonths,
+          icon: Icons.trending_up,
+          validSoftware: ServerSoftware.lemmy,
+        ),
+      ],
+    );
 
-const SelectionMenu<FeedSource> feedFilterSelect = SelectionMenu(
-  'Filter by',
-  [
-    SelectionMenuItem(
-      value: FeedSource.subscribed,
-      title: 'Subscribed',
-      icon: Icons.group,
-    ),
-    SelectionMenuItem(
-      value: FeedSource.moderated,
-      title: 'Moderated',
-      icon: Icons.lock,
-    ),
-    SelectionMenuItem(
-      value: FeedSource.favorited,
-      title: 'Favorited',
-      icon: Icons.favorite,
-    ),
-    SelectionMenuItem(
-      value: FeedSource.all,
-      title: 'All',
-      icon: Icons.newspaper,
-    ),
-  ],
-);
+SelectionMenu<FeedSource> feedFilterSelect(BuildContext context) =>
+    SelectionMenu(
+      l10n(context).filter,
+      [
+        SelectionMenuItem(
+          value: FeedSource.subscribed,
+          title: l10n(context).filter_subscribed,
+          icon: Icons.group,
+        ),
+        SelectionMenuItem(
+          value: FeedSource.moderated,
+          title: l10n(context).filter_moderated,
+          icon: Icons.lock,
+        ),
+        SelectionMenuItem(
+          value: FeedSource.favorited,
+          title: l10n(context).filter_favorited,
+          icon: Icons.favorite,
+        ),
+        SelectionMenuItem(
+          value: FeedSource.all,
+          title: l10n(context).filter_all,
+          icon: Icons.newspaper,
+        ),
+      ],
+    );
 
 class FeedScreenBody extends StatefulWidget {
   final FeedSource source;

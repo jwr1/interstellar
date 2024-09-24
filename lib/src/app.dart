@@ -52,7 +52,8 @@ class _AppState extends State<App> {
             restorationScopeId: 'app',
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            onGenerateTitle: (BuildContext context) => l10n(context).appTitle,
+            onGenerateTitle: (BuildContext context) =>
+                l10n(context).interstellar,
             theme: FlexThemeData.light(
               colorScheme: dynamicLightColorScheme,
               scheme: dynamicLightColorScheme != null

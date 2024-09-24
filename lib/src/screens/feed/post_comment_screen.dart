@@ -4,6 +4,7 @@ import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/screens/feed/post_comment.dart';
 import 'package:interstellar/src/screens/feed/post_page.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/loading_template.dart';
 import 'package:provider/provider.dart';
 
@@ -50,7 +51,7 @@ class _PostCommentScreenState extends State<PostCommentScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Comment by ${comment.user.name}'),
+        title: Text(l10n(context).commentBy(comment.user.name)),
       ),
       body: ListView(
         children: [
@@ -76,7 +77,7 @@ class _PostCommentScreenState extends State<PostCommentScreen> {
                         }),
                       );
                     },
-                    child: const Text('Open OP'),
+                    child: Text(l10n(context).openOP),
                   ),
                 ),
                 Padding(
@@ -94,7 +95,7 @@ class _PostCommentScreenState extends State<PostCommentScreen> {
                             );
                           }
                         : null,
-                    child: const Text('Open Root'),
+                    child: Text(l10n(context).openRoot),
                   ),
                 ),
                 Padding(
@@ -112,7 +113,7 @@ class _PostCommentScreenState extends State<PostCommentScreen> {
                             );
                           }
                         : null,
-                    child: const Text('Open Parent'),
+                    child: Text(l10n(context).openParent),
                   ),
                 ),
               ],

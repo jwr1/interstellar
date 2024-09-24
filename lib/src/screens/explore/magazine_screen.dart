@@ -147,13 +147,13 @@ class _MagazineScreenState extends State<MagazineScreen> {
                                   ? '/c/${_data!.name}'
                                   : '/m/${_data!.name}',
                             )),
-                        child: const Text('Open in Browser'),
+                        child: Text(l10n(context).openInBrowser),
                       ),
                       MenuItemButton(
                         onPressed: () => showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
-                            title: Text('Mods of ${_data!.name}'),
+                            title: Text(l10n(context).modsOf(_data!.name)),
                             content: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: _data!.moderators
@@ -165,7 +165,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                             ),
                           ),
                         ),
-                        child: const Text('View Moderators'),
+                        child: Text(l10n(context).viewMods),
                       ),
                       if (isModerator)
                         MenuItemButton(
@@ -184,7 +184,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                               ),
                             ),
                           ),
-                          child: const Text('Mod Panel'),
+                          child: Text(l10n(context).modPanel),
                         ),
                       if (_data!.owner != null &&
                           _data!.owner!.name ==
@@ -209,7 +209,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                               ),
                             ),
                           ),
-                          child: const Text('Owner Panel'),
+                          child: Text(l10n(context).ownerPanel),
                         ),
                     ],
                   ),
@@ -250,9 +250,9 @@ class _MagazineScreenState extends State<MagazineScreen> {
 
                                   if (!mounted) return;
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Copied'),
-                                      duration: Duration(seconds: 2),
+                                    SnackBar(
+                                      content: Text(l10n(context).copied),
+                                      duration: const Duration(seconds: 2),
                                     ),
                                   );
                                 },
@@ -290,12 +290,12 @@ class PostingRestrictedIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.all(4),
+    return Padding(
+      padding: const EdgeInsets.all(4),
       child: Tooltip(
-        message: 'Posting restricted to mods',
+        message: l10n(context).postingRestricted,
         triggerMode: TooltipTriggerMode.tap,
-        child: Icon(Icons.lock, size: 16),
+        child: const Icon(Icons.lock, size: 16),
       ),
     );
   }

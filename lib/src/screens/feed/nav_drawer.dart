@@ -12,6 +12,7 @@ import 'package:interstellar/src/screens/explore/magazines_screen.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/explore/users_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
 import 'package:interstellar/src/widgets/settings_header.dart';
 import 'package:interstellar/src/widgets/star_button.dart';
@@ -77,16 +78,16 @@ class _NavDrawerState extends State<NavDrawer> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8),
-              child: SettingsHeader('Stars'),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: SettingsHeader(l10n(context).stars),
             ),
             if (context.watch<SettingsController>().stars.isEmpty)
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Text(
-                  'This feels empty; star a magazine or user to appear here.',
-                  style: TextStyle(fontWeight: FontWeight.w300),
+                  l10n(context).stars_empty,
+                  style: const TextStyle(fontWeight: FontWeight.w300),
                 ),
               ),
             ...(context.watch<SettingsController>().stars.toList()..sort()).map(
@@ -152,9 +153,9 @@ class _NavDrawerState extends State<NavDrawer> {
                 (subbedMagazines != null ||
                     subbedUsers != null ||
                     subbedDomains != null)) ...[
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                child: SettingsHeader('Subscriptions'),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: SettingsHeader(l10n(context).subscriptions),
               ),
               if (subbedMagazines != null) ...[
                 ...subbedMagazines!
@@ -196,12 +197,13 @@ class _NavDrawerState extends State<NavDrawer> {
                       MaterialPageRoute(
                         builder: (context) => Scaffold(
                           appBar: AppBar(
-                              title: const Text('Magazine Subscriptions')),
+                              title:
+                                  Text(l10n(context).subscriptions_magazine)),
                           body: const MagazinesScreen(onlySubbed: true),
                         ),
                       ),
                     ),
-                    child: const Text('All Magazine Subs'),
+                    child: Text(l10n(context).subscriptions_magazine_all),
                   ),
                 ),
               ],
@@ -247,12 +249,13 @@ class _NavDrawerState extends State<NavDrawer> {
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => Scaffold(
-                        appBar: AppBar(title: const Text('User Follows')),
+                        appBar: AppBar(
+                            title: Text(l10n(context).subscriptions_user)),
                         body: const UsersScreen(onlySubbed: true),
                       ),
                     ),
                   ),
-                  child: const Text('All User Follows'),
+                  child: Text(l10n(context).subscriptions_user_all),
                 ),
               ),
             ],
@@ -291,13 +294,13 @@ class _NavDrawerState extends State<NavDrawer> {
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => Scaffold(
-                        appBar:
-                            AppBar(title: const Text('Domain Subscriptions')),
+                        appBar: AppBar(
+                            title: Text(l10n(context).subscriptions_domain)),
                         body: const DomainsScreen(onlySubbed: true),
                       ),
                     ),
                   ),
-                  child: const Text('All Domain Subs'),
+                  child: Text(l10n(context).subscriptions_domain_all),
                 ),
               ),
             ],

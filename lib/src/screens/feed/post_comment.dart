@@ -50,7 +50,7 @@ class _PostCommentState extends State<PostComment> {
             child: ContentItem(
               originInstance: getNameHost(context, widget.comment.user.name),
               image: widget.comment.image,
-              body: widget.comment.body ?? '_comment deleted_',
+              body: widget.comment.body ?? '_${l10n(context).commentDeleted}_',
               createdAt: widget.comment.createdAt,
               editedAt: widget.comment.editedAt,
               user: widget.comment.user.name,
@@ -100,7 +100,7 @@ class _PostCommentState extends State<PostComment> {
                   children: widget.comment.children,
                 ));
               }),
-              contentTypeName: 'Comment',
+              contentTypeName: l10n(context).comment,
               onReply: whenLoggedIn(context, (body) async {
                 var newSubComment = await context
                     .read<SettingsController>()
@@ -150,8 +150,11 @@ class _PostCommentState extends State<PostComment> {
                           .api
                           .comments
                           .delete(widget.comment.postType, widget.comment.id);
+
+                      if (!mounted) return;
+
                       widget.onUpdate(widget.comment.copyWith(
-                        body: '_comment deleted_',
+                        body: '_${l10n(context).commentDeleted}_',
                         upvotes: null,
                         downvotes: null,
                         boosts: null,
@@ -219,8 +222,7 @@ class _PostCommentState extends State<PostComment> {
                 ),
               ),
             ),
-            child: Text(
-                'Open ${widget.comment.childCount} reply${widget.comment.childCount == 1 ? '' : 's'}'),
+            child: Text(l10n(context).openReplies(widget.comment.childCount)),
           ),
         if (widget.comment.childCount > 0)
           Expandable(

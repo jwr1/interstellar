@@ -120,7 +120,7 @@ class _PostPageState extends State<PostPage> {
           ),
           subtitle: Row(
             children: [
-              const Text('Comments'),
+              Text(l10n(context).comments),
               const SizedBox(width: 6),
               Icon(currentCommentSortOption.icon, size: 20),
               const SizedBox(width: 2),
@@ -224,7 +224,7 @@ class _PostPageState extends State<PostPage> {
                                 .delete(post.id),
                           };
                           _onUpdate(post.copyWith(
-                            body: '_post deleted_',
+                            body: '_${l10n(context).postDeleted}_',
                             upvotes: null,
                             downvotes: null,
                             boosts: null,

@@ -472,7 +472,7 @@ class _ContentItemState extends State<ContentItem> {
                                     MenuItemButton(
                                       onPressed: () => openWebpagePrimary(
                                           context, widget.openLinkUri!),
-                                      child: const Text('Open in Browser'),
+                                      child: Text(l10n(context).openInBrowser),
                                     ),
                                   if (widget.domain != null)
                                     MenuItemButton(

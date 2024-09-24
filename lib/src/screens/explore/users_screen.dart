@@ -84,22 +84,22 @@ class _UsersScreenState extends State<UsersScreen> {
                                   });
                                 }
                               },
-                              items: const [
+                              items: [
                                 DropdownMenuItem(
                                   value: api_users.UsersFilter.all,
-                                  child: Text('All'),
+                                  child: Text(l10n(context).filter_all),
                                 ),
                                 DropdownMenuItem(
                                   value: api_users.UsersFilter.followed,
-                                  child: Text('Followed'),
+                                  child: Text(l10n(context).filter_followed),
                                 ),
                                 DropdownMenuItem(
                                   value: api_users.UsersFilter.followers,
-                                  child: Text('Followers'),
+                                  child: Text(l10n(context).filter_followers),
                                 ),
                                 DropdownMenuItem(
                                   value: api_users.UsersFilter.blocked,
-                                  child: Text('Blocked'),
+                                  child: Text(l10n(context).filter_blocked),
                                 ),
                               ],
                             ),

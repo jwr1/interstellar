@@ -17,15 +17,15 @@ class ActionSettings extends StatelessWidget {
     final isLemmy = controller.serverSoftware == ServerSoftware.lemmy;
 
     final currentDefaultFeedMode =
-        feedTypeSelect.getOption(controller.defaultFeedType);
+        feedTypeSelect(context).getOption(controller.defaultFeedType);
     final currentDefaultFeedFilter =
-        feedFilterSelect.getOption(controller.defaultFeedFilter);
+        feedFilterSelect(context).getOption(controller.defaultFeedFilter);
     final currentDefaultThreadsFeedSort =
-        feedSortSelect.getOption(controller.defaultThreadsFeedSort);
+        feedSortSelect(context).getOption(controller.defaultThreadsFeedSort);
     final currentDefaultMicroblogFeedSort =
-        feedSortSelect.getOption(controller.defaultMicroblogFeedSort);
+        feedSortSelect(context).getOption(controller.defaultMicroblogFeedSort);
     final currentDefaultExploreFeedSort =
-        feedSortSelect.getOption(controller.defaultExploreFeedSort);
+        feedSortSelect(context).getOption(controller.defaultExploreFeedSort);
     final currentDefaultCommentSort =
         commentSortSelect.getOption(controller.defaultCommentSort);
 
@@ -79,7 +79,7 @@ class ActionSettings extends StatelessWidget {
             enabled: !isLemmy,
             onTap: () async {
               controller.updateDefaultFeedType(
-                await feedTypeSelect.askSelection(
+                await feedTypeSelect(context).askSelection(
                   context,
                   currentDefaultFeedMode.value,
                 ),
@@ -99,7 +99,7 @@ class ActionSettings extends StatelessWidget {
             leading: const Icon(Icons.filter_alt),
             onTap: () async {
               controller.updateDefaultFeedFilter(
-                await feedFilterSelect.askSelection(
+                await feedFilterSelect(context).askSelection(
                   context,
                   currentDefaultFeedFilter.value,
                 ),
@@ -119,7 +119,7 @@ class ActionSettings extends StatelessWidget {
             leading: const Icon(Icons.sort),
             onTap: () async {
               controller.updateDefaultThreadsFeedSort(
-                await feedSortSelect.askSelection(
+                await feedSortSelect(context).askSelection(
                   context,
                   currentDefaultThreadsFeedSort.value,
                 ),
@@ -140,7 +140,7 @@ class ActionSettings extends StatelessWidget {
             enabled: !isLemmy,
             onTap: () async {
               controller.updateDefaultMicroblogFeedSort(
-                await feedSortSelect.askSelection(
+                await feedSortSelect(context).askSelection(
                   context,
                   currentDefaultMicroblogFeedSort.value,
                 ),
@@ -160,7 +160,7 @@ class ActionSettings extends StatelessWidget {
             leading: const Icon(Icons.explore),
             onTap: () async {
               controller.updateDefaultExploreFeedSort(
-                await feedSortSelect.askSelection(
+                await feedSortSelect(context).askSelection(
                   context,
                   currentDefaultExploreFeedSort.value,
                 ),

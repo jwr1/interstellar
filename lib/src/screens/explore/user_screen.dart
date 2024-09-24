@@ -72,7 +72,7 @@ class _UserScreenState extends State<UserScreen> {
     }
 
     final user = _data!;
-    final currentFeedSortOption = feedSortSelect.getOption(_sort);
+    final currentFeedSortOption = feedSortSelect(context).getOption(_sort);
 
     final globalName = user.name.contains('@')
         ? '@${user.name}'
@@ -105,8 +105,8 @@ class _UserScreenState extends State<UserScreen> {
               padding: const EdgeInsets.only(right: 8),
               child: IconButton(
                 onPressed: () async {
-                  final newSort =
-                      await feedSortSelect.askSelection(context, _sort);
+                  final newSort = await feedSortSelect(context)
+                      .askSelection(context, _sort);
 
                   if (newSort != null && newSort != _sort) {
                     setState(() {
@@ -211,9 +211,9 @@ class _UserScreenState extends State<UserScreen> {
                                       if (!mounted) return;
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
-                                        const SnackBar(
-                                          content: Text('Copied'),
-                                          duration: Duration(seconds: 2),
+                                        SnackBar(
+                                          content: Text(l10n(context).copied),
+                                          duration: const Duration(seconds: 2),
                                         ),
                                       );
                                     },

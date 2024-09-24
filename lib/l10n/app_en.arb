@@ -1,6 +1,5 @@
 {
-  "@@locale": "en",
-  "appTitle": "Interstellar",
+  "interstellar": "Interstellar",
   "feed": "Feed",
   "explore": "Explore",
   "profile": "Profile",
@@ -22,5 +21,89 @@
   "guest": "Guest",
   "botAccount": "Bot Account",
   "newUser": "New User",
-  "cakeDay": "Cake Day"
+  "cakeDay": "Cake Day",
+  "filter": "Filter by",
+  "filter_all": "All",
+  "filter_subscribed": "Subscribed",
+  "filter_moderated": "Moderated",
+  "filter_favorited": "Favorited",
+  "filter_blocked": "Blocked",
+  "filter_local": "Local",
+  "filter_followed": "Followed",
+  "filter_followers": "Followers",
+  "sort": "Sort by",
+  "sort_active": "Active",
+  "sort_hot": "Hot",
+  "sort_newest": "Newest",
+  "sort_oldest": "Oldest",
+  "sort_top": "Top",
+  "sort_commented": "Commented",
+  "sort_topDay": "Top Day",
+  "sort_topWeek": "Top Week",
+  "sort_topMonth": "Top Month",
+  "sort_topYear": "Top Year",
+  "sort_newComments": "New Comments",
+  "sort_topHour": "Top Hour",
+  "sort_topSixHour": "Top Six Hour",
+  "sort_topTwelveHour": "Top Twelve Hour",
+  "sort_topThreeMonths": "Top Three Months",
+  "sort_topSixMonths": "Top Six Months",
+  "sort_topNineMonths": "Top Nine Months",
+  "sort_controversial": "Controversial",
+  "sort_scaled": "Scaled",
+  "feedType": "Feed Type",
+  "threads": "Threads",
+  "microblog": "Microblog",
+  "stars": "Stars",
+  "stars_empty": "This feels empty; star a magazine or user to appear here.",
+  "subscriptions": "Subscriptions",
+  "subscriptions_magazine": "Magazine Subscriptions",
+  "subscriptions_magazine_all": "All Magazine Subs",
+  "subscriptions_user": "User Follows",
+  "subscriptions_user_all": "All User Follows",
+  "subscriptions_domain": "Domain Subscriptions",
+  "subscriptions_domain_all": "All Domain Subs",
+  "post": "Post",
+  "postDeleted": "Post Deleted",
+  "comment": "Comment",
+  "comments": "Comments",
+  "commentDeleted": "Comment Deleted",
+  "commentBy": "Comment by {username}",
+  "@commentBy": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+  "openOP": "Open OP",
+  "openRoot": "Open Root",
+  "openParent": "Open Parent",
+  "openReplies": "Open {count} {count, plural, =1{reply} other{replies}}",
+  "@openReplies": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "search": "Search",
+  "magazines": "Magazines",
+  "people": "People",
+  "domains": "Domains",
+  "openInBrowser": "Open in Browser",
+  "modsOf": "Mods of {magazine}",
+  "@modsOf": {
+    "placeholders": {
+      "magazine": {
+        "type": "String"
+      }
+    }
+  },
+  "viewMods": "View Moderators",
+  "modPanel": "Mod Panel",
+  "ownerPanel": "Owner Panel",
+  "copied": "Copied",
+  "postingRestricted": "Posting restricted to mods",
+  "owner": "Owner"
 }
