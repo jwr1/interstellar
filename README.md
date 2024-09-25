@@ -39,3 +39,11 @@ The app icon is under the `assets/icons` folder, where the `logo.png` file is ju
 Icons created by [Benjamin Mathis](https://github.com/BenjMathis1)
 
 To generate a new icon, simply run the following: `dart run flutter_launcher_icons`
+
+## Translating
+
+<a href="https://hosted.weblate.org/engage/interstellar/">
+<img src="https://hosted.weblate.org/widget/interstellar/interstellar/287x66-white.png" alt="Translation status" />
+</a>
+
+Interstellar uses the [Hosted Weblate](https://hosted.weblate.org/engage/interstellar/) to make translating as easy as possible. If you'd like to help, feel free to create an account there and start translating!
