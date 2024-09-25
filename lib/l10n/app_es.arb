@@ -138,5 +138,49 @@
         "type": "String"
       }
     }
-  }
+  },
+  "sort_topWeek": "Lo mejor de la semana",
+  "@sort_topWeek": {},
+  "sort_topMonth": "Lo mejor del mes",
+  "@sort_topMonth": {},
+  "sort_topYear": "Lo mejor del año",
+  "@sort_topYear": {},
+  "sort_topHour": "Lo mejor de la hora",
+  "@sort_topHour": {},
+  "sort_topSixHour": "Lo mejor de la hace seis horas",
+  "@sort_topSixHour": {},
+  "sort_topTwelveHour": "Lo mejor de hace doce horas",
+  "@sort_topTwelveHour": {},
+  "openReplies": "Abrir {count} {count, plural, =1{respuesta} other{respuestas}}",
+  "@openReplies": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "domains": "Dominios",
+  "@domains": {},
+  "openInBrowser": "Abrir en el navegador",
+  "@openInBrowser": {},
+  "modsOf": "Moderadores de {magazine}",
+  "@modsOf": {
+    "placeholders": {
+      "magazine": {
+        "type": "String"
+      }
+    }
+  },
+  "openParent": "Abrir principal",
+  "@openParent": {},
+  "viewMods": "Ver moderadores",
+  "@viewMods": {},
+  "modPanel": "Panel de moderación",
+  "@modPanel": {},
+  "ownerPanel": "Panel del administrador",
+  "@ownerPanel": {},
+  "copied": "Copiado",
+  "@copied": {},
+  "postingRestricted": "Publicación restringida a moderadores",
+  "@postingRestricted": {}
 }
