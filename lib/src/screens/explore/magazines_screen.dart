@@ -95,20 +95,20 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                         items: [
                           DropdownMenuItem(
                             value: APIMagazinesFilter.all,
-                            child: Text(l10n(context).filter_all),
+                            child: Text(l(context).filter_all),
                           ),
                           DropdownMenuItem(
                             value: APIMagazinesFilter.local,
-                            child: Text(l10n(context).filter_local),
+                            child: Text(l(context).filter_local),
                           ),
                           ...(whenLoggedIn(context, [
                                 DropdownMenuItem(
                                   value: APIMagazinesFilter.subscribed,
-                                  child: Text(l10n(context).filter_subscribed),
+                                  child: Text(l(context).filter_subscribed),
                                 ),
                                 DropdownMenuItem(
                                   value: APIMagazinesFilter.moderated,
-                                  child: Text(l10n(context).filter_moderated),
+                                  child: Text(l(context).filter_moderated),
                                 ),
                                 if (context
                                         .read<SettingsController>()
@@ -116,7 +116,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                                     ServerSoftware.lemmy)
                                   DropdownMenuItem(
                                     value: APIMagazinesFilter.blocked,
-                                    child: Text(l10n(context).filter_blocked),
+                                    child: Text(l(context).filter_blocked),
                                   ),
                               ]) ??
                               [])
@@ -143,7 +143,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                                 items: [
                                   DropdownMenuItem(
                                     value: APIMagazinesSort.hot,
-                                    child: Text(l10n(context).sort_hot),
+                                    child: Text(l(context).sort_hot),
                                   ),
                                   if (context
                                           .watch<SettingsController>()
@@ -151,15 +151,15 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                                       ServerSoftware.lemmy)
                                     DropdownMenuItem(
                                       value: APIMagazinesSort.top,
-                                      child: Text(l10n(context).sort_top),
+                                      child: Text(l(context).sort_top),
                                     ),
                                   DropdownMenuItem(
                                     value: APIMagazinesSort.active,
-                                    child: Text(l10n(context).sort_active),
+                                    child: Text(l(context).sort_active),
                                   ),
                                   DropdownMenuItem(
                                     value: APIMagazinesSort.newest,
-                                    child: Text(l10n(context).sort_newest),
+                                    child: Text(l(context).sort_newest),
                                   ),
                                   if (context
                                           .watch<SettingsController>()
@@ -167,7 +167,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                                       ServerSoftware.lemmy)
                                     DropdownMenuItem(
                                       value: APIMagazinesSort.oldest,
-                                      child: Text(l10n(context).sort_oldest),
+                                      child: Text(l(context).sort_oldest),
                                     ),
                                   if (context
                                           .watch<SettingsController>()
@@ -175,7 +175,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                                       ServerSoftware.lemmy)
                                     DropdownMenuItem(
                                       value: APIMagazinesSort.scaled,
-                                      child: Text(l10n(context).sort_scaled),
+                                      child: Text(l(context).sort_scaled),
                                     ),
                                   if (context
                                           .watch<SettingsController>()
@@ -183,8 +183,8 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                                       ServerSoftware.lemmy)
                                     DropdownMenuItem(
                                       value: APIMagazinesSort.controversial,
-                                      child: Text(
-                                          l10n(context).sort_controversial),
+                                      child:
+                                          Text(l(context).sort_controversial),
                                     ),
                                   if (context
                                           .watch<SettingsController>()
@@ -192,7 +192,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                                       ServerSoftware.lemmy)
                                     DropdownMenuItem(
                                       value: APIMagazinesSort.commented,
-                                      child: Text(l10n(context).sort_commented),
+                                      child: Text(l(context).sort_commented),
                                     ),
                                   if (context
                                           .watch<SettingsController>()
@@ -200,8 +200,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                                       ServerSoftware.lemmy)
                                     DropdownMenuItem(
                                       value: APIMagazinesSort.newComments,
-                                      child:
-                                          Text(l10n(context).sort_newComments),
+                                      child: Text(l(context).sort_newComments),
                                     ),
                                   if (context
                                           .watch<SettingsController>()
@@ -209,7 +208,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                                       ServerSoftware.lemmy)
                                     DropdownMenuItem(
                                       value: APIMagazinesSort.topHour,
-                                      child: Text(l10n(context).sort_topHour),
+                                      child: Text(l(context).sort_topHour),
                                     ),
                                   if (context
                                           .watch<SettingsController>()
@@ -217,8 +216,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                                       ServerSoftware.lemmy)
                                     DropdownMenuItem(
                                       value: APIMagazinesSort.topSixHour,
-                                      child:
-                                          Text(l10n(context).sort_topSixHour),
+                                      child: Text(l(context).sort_topSixHour),
                                     ),
                                   if (context
                                           .watch<SettingsController>()
@@ -226,8 +224,8 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                                       ServerSoftware.lemmy)
                                     DropdownMenuItem(
                                       value: APIMagazinesSort.topTwelveHour,
-                                      child: Text(
-                                          l10n(context).sort_topTwelveHour),
+                                      child:
+                                          Text(l(context).sort_topTwelveHour),
                                     ),
                                   if (context
                                           .watch<SettingsController>()
@@ -235,7 +233,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                                       ServerSoftware.lemmy)
                                     DropdownMenuItem(
                                       value: APIMagazinesSort.topDay,
-                                      child: Text(l10n(context).sort_topDay),
+                                      child: Text(l(context).sort_topDay),
                                     ),
                                   if (context
                                           .watch<SettingsController>()
@@ -243,7 +241,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                                       ServerSoftware.lemmy)
                                     DropdownMenuItem(
                                       value: APIMagazinesSort.topWeek,
-                                      child: Text(l10n(context).sort_topWeek),
+                                      child: Text(l(context).sort_topWeek),
                                     ),
                                   if (context
                                           .watch<SettingsController>()
@@ -251,7 +249,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                                       ServerSoftware.lemmy)
                                     DropdownMenuItem(
                                       value: APIMagazinesSort.topMonth,
-                                      child: Text(l10n(context).sort_topMonth),
+                                      child: Text(l(context).sort_topMonth),
                                     ),
                                   if (context
                                           .watch<SettingsController>()
@@ -259,8 +257,8 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                                       ServerSoftware.lemmy)
                                     DropdownMenuItem(
                                       value: APIMagazinesSort.topThreeMonths,
-                                      child: Text(
-                                          l10n(context).sort_topThreeMonths),
+                                      child:
+                                          Text(l(context).sort_topThreeMonths),
                                     ),
                                   if (context
                                           .watch<SettingsController>()
@@ -268,8 +266,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                                       ServerSoftware.lemmy)
                                     DropdownMenuItem(
                                       value: APIMagazinesSort.topSixMonths,
-                                      child:
-                                          Text(l10n(context).sort_topSixMonths),
+                                      child: Text(l(context).sort_topSixMonths),
                                     ),
                                   if (context
                                           .watch<SettingsController>()
@@ -277,8 +274,8 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                                       ServerSoftware.lemmy)
                                     DropdownMenuItem(
                                       value: APIMagazinesSort.topNineMonths,
-                                      child: Text(
-                                          l10n(context).sort_topNineMonths),
+                                      child:
+                                          Text(l(context).sort_topNineMonths),
                                     ),
                                 ],
                               ),
@@ -295,7 +292,7 @@ class _MagazinesScreenState extends State<MagazinesScreen> {
                                 },
                                 decoration: InputDecoration(
                                     border: const OutlineInputBorder(),
-                                    label: Text(l10n(context).search)),
+                                    label: Text(l(context).search)),
                               ),
                             ),
                           ]

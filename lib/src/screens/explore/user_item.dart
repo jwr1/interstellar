@@ -113,7 +113,7 @@ class UserItemSimple extends StatelessWidget {
                   style:
                       TextStyle(fontWeight: isOwner ? FontWeight.bold : null),
                 ),
-                if (isOwner) Text(l10n(context).owner),
+                if (isOwner) Text(l(context).owner),
               ],
             ),
           ),

@@ -34,7 +34,7 @@ class _LoginSelectScreenState extends State<LoginSelectScreen> {
     if (!mounted) return;
 
     if (software == null) {
-      throw Exception(l10n(context).unsupportedSoftware(host));
+      throw Exception(l(context).unsupportedSoftware(host));
     }
 
     await context.read<SettingsController>().saveServer(software, host);
@@ -64,7 +64,7 @@ class _LoginSelectScreenState extends State<LoginSelectScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n(context).addAccount),
+        title: Text(l(context).addAccount),
       ),
       body: ListView(
         children: [
@@ -75,7 +75,7 @@ class _LoginSelectScreenState extends State<LoginSelectScreen> {
               children: [
                 TextEditor(
                   _instanceHostController,
-                  label: l10n(context).instanceHost,
+                  label: l(context).instanceHost,
                   onChanged: (_) => setState(() {}),
                 ),
                 const SizedBox(height: 12),
@@ -83,7 +83,7 @@ class _LoginSelectScreenState extends State<LoginSelectScreen> {
                   onPressed: _instanceHostController.text.isEmpty
                       ? null
                       : () => _initiateLogin(_instanceHostController.text),
-                  child: Text(l10n(context).continue_),
+                  child: Text(l(context).continue_),
                 ),
               ],
             ),
@@ -92,7 +92,7 @@ class _LoginSelectScreenState extends State<LoginSelectScreen> {
             padding: const EdgeInsets.all(16),
             child: Column(children: [
               Text(
-                l10n(context).recommendedInstances,
+                l(context).recommendedInstances,
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(height: 4),

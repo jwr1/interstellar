@@ -90,15 +90,15 @@ class _DomainsScreenState extends State<DomainsScreen> {
                               items: [
                                 DropdownMenuItem(
                                   value: MbinAPIDomainsFilter.all,
-                                  child: Text(l10n(context).filter_all),
+                                  child: Text(l(context).filter_all),
                                 ),
                                 DropdownMenuItem(
                                   value: MbinAPIDomainsFilter.subscribed,
-                                  child: Text(l10n(context).filter_subscribed),
+                                  child: Text(l(context).filter_subscribed),
                                 ),
                                 DropdownMenuItem(
                                   value: MbinAPIDomainsFilter.blocked,
-                                  child: Text(l10n(context).filter_blocked),
+                                  child: Text(l(context).filter_blocked),
                                 ),
                               ],
                             ),
@@ -118,7 +118,7 @@ class _DomainsScreenState extends State<DomainsScreen> {
                           },
                           decoration: InputDecoration(
                               border: const OutlineInputBorder(),
-                              label: Text(l10n(context).search)),
+                              label: Text(l(context).search)),
                         ),
                       )
                   ],

@@ -113,7 +113,7 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
                     ),
                   ),
                   if (!enablePreview)
-                    ..._actions.map(
+                    ..._actions(context).map(
                       (action) => DecoratedBox(
                         decoration: BoxDecoration(
                           border: action.showDivider
@@ -161,7 +161,7 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
                         togglePreviewShortcut: togglePreview,
                         const SingleActivator(LogicalKeyboardKey.enter): () =>
                             execAction(const _MarkdownEditorActionEnter()),
-                        for (var action in _actions
+                        for (var action in _actions(context)
                             .where((action) => action.shortcut != null))
                           action.shortcut!: () => execAction(action.action)
                       },
@@ -187,114 +187,116 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
   }
 }
 
-const List<_MarkdownEditorActionInfo> _actions = [
-  _MarkdownEditorActionInfo(
-    action: _MarkdownEditorActionBlock('### '),
-    icon: Icons.title,
-    tooltip: 'Heading',
-    shortcut: SingleActivator(LogicalKeyboardKey.keyH, control: true),
-    showDivider: true,
-  ),
-  _MarkdownEditorActionInfo(
-    action: _MarkdownEditorActionInline('**'),
-    icon: Icons.format_bold,
-    tooltip: 'Bold',
-    shortcut: SingleActivator(LogicalKeyboardKey.keyB, control: true),
-  ),
-  _MarkdownEditorActionInfo(
-    action: _MarkdownEditorActionInline('_'),
-    icon: Icons.format_italic,
-    tooltip: 'Italic',
-    shortcut: SingleActivator(LogicalKeyboardKey.keyI, control: true),
-  ),
-  _MarkdownEditorActionInfo(
-    action: _MarkdownEditorActionInline('~~'),
-    icon: Icons.strikethrough_s,
-    tooltip: 'Strikethrough',
-    shortcut:
-        SingleActivator(LogicalKeyboardKey.keyX, control: true, alt: true),
-    showDivider: true,
-  ),
-  _MarkdownEditorActionInfo(
-    action: _MarkdownEditorActionInline('`'),
-    icon: Icons.code,
-    tooltip: 'Inline Code',
-    shortcut: SingleActivator(LogicalKeyboardKey.keyE, control: true),
-  ),
-  _MarkdownEditorActionInfo(
-    action: _MarkdownEditorActionInline('\n```\n'),
-    icon: Icons.segment,
-    tooltip: 'Code Block',
-    shortcut:
-        SingleActivator(LogicalKeyboardKey.keyE, control: true, alt: true),
-    showDivider: true,
-  ),
-  _MarkdownEditorActionInfo(
-    action: _MarkdownEditorActionLink(),
-    icon: Icons.link,
-    tooltip: 'Link',
-    shortcut: SingleActivator(LogicalKeyboardKey.keyK, control: true),
-  ),
-  _MarkdownEditorActionInfo(
-    action: _MarkdownEditorActionLink(isImage: true),
-    icon: Icons.image,
-    tooltip: 'Image',
-    shortcut:
-        SingleActivator(LogicalKeyboardKey.keyK, control: true, alt: true),
-    showDivider: true,
-  ),
-  _MarkdownEditorActionInfo(
-    action: _MarkdownEditorActionInline('~'),
-    icon: Icons.subscript,
-    tooltip: 'Subscript',
-    shortcut: SingleActivator(LogicalKeyboardKey.comma, control: true),
-  ),
-  _MarkdownEditorActionInfo(
-    action: _MarkdownEditorActionInline('^'),
-    icon: Icons.superscript,
-    tooltip: 'Superscript',
-    shortcut: SingleActivator(LogicalKeyboardKey.period, control: true),
-    showDivider: true,
-  ),
-  _MarkdownEditorActionInfo(
-    action: _MarkdownEditorActionBlock('> '),
-    icon: Icons.format_quote,
-    tooltip: 'Quote',
-    shortcut:
-        SingleActivator(LogicalKeyboardKey.keyQ, control: true, alt: true),
-  ),
-  _MarkdownEditorActionInfo(
-    action: _MarkdownEditorActionHorizontalRule(),
-    icon: Icons.horizontal_rule,
-    tooltip: 'Horizontal Rule',
-    shortcut:
-        SingleActivator(LogicalKeyboardKey.keyH, control: true, alt: true),
-    showDivider: true,
-  ),
-  _MarkdownEditorActionInfo(
-    action: _MarkdownEditorActionBlock('- '),
-    icon: Icons.format_list_bulleted,
-    tooltip: 'Bulleted List',
-    shortcut: SingleActivator(LogicalKeyboardKey.keyL, control: true),
-  ),
-  _MarkdownEditorActionInfo(
-    action: _MarkdownEditorActionBlock('1. '),
-    icon: Icons.format_list_numbered,
-    tooltip: 'Numbered List',
-    shortcut:
-        SingleActivator(LogicalKeyboardKey.keyL, control: true, alt: true),
-    showDivider: true,
-  ),
-  _MarkdownEditorActionInfo(
-    action:
-        _MarkdownEditorActionBlock('\n::: spoiler PREVIEW_HERE\n', '\n:::\n'),
-    icon: Icons.warning,
-    tooltip: 'Spoiler',
-    shortcut:
-        SingleActivator(LogicalKeyboardKey.keyS, control: true, alt: true),
-    showDivider: true,
-  ),
-];
+List<_MarkdownEditorActionInfo> _actions(BuildContext context) => [
+      _MarkdownEditorActionInfo(
+        action: const _MarkdownEditorActionBlock('### '),
+        icon: Icons.title,
+        tooltip: l(context).markdownEditor_heading,
+        shortcut: const SingleActivator(LogicalKeyboardKey.keyH, control: true),
+        showDivider: true,
+      ),
+      _MarkdownEditorActionInfo(
+        action: const _MarkdownEditorActionInline('**'),
+        icon: Icons.format_bold,
+        tooltip: l(context).markdownEditor_bold,
+        shortcut: const SingleActivator(LogicalKeyboardKey.keyB, control: true),
+      ),
+      _MarkdownEditorActionInfo(
+        action: const _MarkdownEditorActionInline('_'),
+        icon: Icons.format_italic,
+        tooltip: l(context).markdownEditor_italic,
+        shortcut: const SingleActivator(LogicalKeyboardKey.keyI, control: true),
+      ),
+      _MarkdownEditorActionInfo(
+        action: const _MarkdownEditorActionInline('~~'),
+        icon: Icons.strikethrough_s,
+        tooltip: l(context).markdownEditor_strikethrough,
+        shortcut: const SingleActivator(LogicalKeyboardKey.keyX,
+            control: true, alt: true),
+        showDivider: true,
+      ),
+      _MarkdownEditorActionInfo(
+        action: const _MarkdownEditorActionInline('`'),
+        icon: Icons.code,
+        tooltip: l(context).markdownEditor_inlineCode,
+        shortcut: const SingleActivator(LogicalKeyboardKey.keyE, control: true),
+      ),
+      _MarkdownEditorActionInfo(
+        action: const _MarkdownEditorActionInline('\n```\n'),
+        icon: Icons.segment,
+        tooltip: l(context).markdownEditor_codeBlock,
+        shortcut: const SingleActivator(LogicalKeyboardKey.keyE,
+            control: true, alt: true),
+        showDivider: true,
+      ),
+      _MarkdownEditorActionInfo(
+        action: const _MarkdownEditorActionLink(),
+        icon: Icons.link,
+        tooltip: l(context).markdownEditor_link,
+        shortcut: const SingleActivator(LogicalKeyboardKey.keyK, control: true),
+      ),
+      _MarkdownEditorActionInfo(
+        action: const _MarkdownEditorActionLink(isImage: true),
+        icon: Icons.image,
+        tooltip: l(context).markdownEditor_image,
+        shortcut: const SingleActivator(LogicalKeyboardKey.keyK,
+            control: true, alt: true),
+        showDivider: true,
+      ),
+      _MarkdownEditorActionInfo(
+        action: const _MarkdownEditorActionInline('~'),
+        icon: Icons.subscript,
+        tooltip: l(context).markdownEditor_subscript,
+        shortcut:
+            const SingleActivator(LogicalKeyboardKey.comma, control: true),
+      ),
+      _MarkdownEditorActionInfo(
+        action: const _MarkdownEditorActionInline('^'),
+        icon: Icons.superscript,
+        tooltip: l(context).markdownEditor_superscript,
+        shortcut:
+            const SingleActivator(LogicalKeyboardKey.period, control: true),
+        showDivider: true,
+      ),
+      _MarkdownEditorActionInfo(
+        action: const _MarkdownEditorActionBlock('> '),
+        icon: Icons.format_quote,
+        tooltip: l(context).markdownEditor_Quote,
+        shortcut: const SingleActivator(LogicalKeyboardKey.keyQ,
+            control: true, alt: true),
+      ),
+      _MarkdownEditorActionInfo(
+        action: const _MarkdownEditorActionHorizontalRule(),
+        icon: Icons.horizontal_rule,
+        tooltip: l(context).markdownEditor_horizontalRule,
+        shortcut: const SingleActivator(LogicalKeyboardKey.keyH,
+            control: true, alt: true),
+        showDivider: true,
+      ),
+      _MarkdownEditorActionInfo(
+        action: const _MarkdownEditorActionBlock('- '),
+        icon: Icons.format_list_bulleted,
+        tooltip: l(context).markdownEditor_bulletedList,
+        shortcut: const SingleActivator(LogicalKeyboardKey.keyL, control: true),
+      ),
+      _MarkdownEditorActionInfo(
+        action: const _MarkdownEditorActionBlock('1. '),
+        icon: Icons.format_list_numbered,
+        tooltip: l(context).markdownEditor_numberedList,
+        shortcut: const SingleActivator(LogicalKeyboardKey.keyL,
+            control: true, alt: true),
+        showDivider: true,
+      ),
+      _MarkdownEditorActionInfo(
+        action: const _MarkdownEditorActionBlock(
+            '\n::: spoiler PREVIEW_HERE\n', '\n:::\n'),
+        icon: Icons.warning,
+        tooltip: l(context).markdownEditor_spoiler,
+        shortcut: const SingleActivator(LogicalKeyboardKey.keyS,
+            control: true, alt: true),
+        showDivider: true,
+      ),
+    ];
 
 class _MarkdownEditorActionInfo {
   final _MarkdownEditorActionBase action;

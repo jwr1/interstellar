@@ -28,19 +28,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     appBar: AppBar(
                       title: Text(
                           context.watch<SettingsController>().selectedAccount),
-                      bottom: const TabBar(tabs: [
+                      bottom: TabBar(tabs: [
                         Tab(
-                          text: 'Notifications',
-                          icon: NotificationBadge(
+                          text: l(context).notifications,
+                          icon: const NotificationBadge(
                               child: Icon(Icons.notifications)),
                         ),
                         Tab(
-                          text: 'Overview',
-                          icon: Icon(Icons.person),
+                          text: l(context).profile_overview,
+                          icon: const Icon(Icons.person),
                         ),
                         Tab(
-                          text: 'Messages',
-                          icon: Icon(Icons.message),
+                          text: l(context).messages,
+                          icon: const Icon(Icons.message),
                         ),
                       ]),
                     ),
@@ -52,8 +52,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
         ) ??
-        const Center(
-          child: Text('Not logged in'),
+        Center(
+          child: Text(l(context).notLoggedIn),
         );
   }
 }

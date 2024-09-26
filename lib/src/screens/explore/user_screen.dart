@@ -212,7 +212,7 @@ class _UserScreenState extends State<UserScreen> {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
                                         SnackBar(
-                                          content: Text(l10n(context).copied),
+                                          content: Text(l(context).copied),
                                           duration: const Duration(seconds: 2),
                                         ),
                                       );

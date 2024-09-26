@@ -80,13 +80,13 @@ class _NavDrawerState extends State<NavDrawer> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: SettingsHeader(l10n(context).stars),
+              child: SettingsHeader(l(context).stars),
             ),
             if (context.watch<SettingsController>().stars.isEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Text(
-                  l10n(context).stars_empty,
+                  l(context).stars_empty,
                   style: const TextStyle(fontWeight: FontWeight.w300),
                 ),
               ),
@@ -155,7 +155,7 @@ class _NavDrawerState extends State<NavDrawer> {
                     subbedDomains != null)) ...[
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: SettingsHeader(l10n(context).subscriptions),
+                child: SettingsHeader(l(context).subscriptions),
               ),
               if (subbedMagazines != null) ...[
                 ...subbedMagazines!
@@ -197,13 +197,12 @@ class _NavDrawerState extends State<NavDrawer> {
                       MaterialPageRoute(
                         builder: (context) => Scaffold(
                           appBar: AppBar(
-                              title:
-                                  Text(l10n(context).subscriptions_magazine)),
+                              title: Text(l(context).subscriptions_magazine)),
                           body: const MagazinesScreen(onlySubbed: true),
                         ),
                       ),
                     ),
-                    child: Text(l10n(context).subscriptions_magazine_all),
+                    child: Text(l(context).subscriptions_magazine_all),
                   ),
                 ),
               ],
@@ -249,13 +248,13 @@ class _NavDrawerState extends State<NavDrawer> {
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => Scaffold(
-                        appBar: AppBar(
-                            title: Text(l10n(context).subscriptions_user)),
+                        appBar:
+                            AppBar(title: Text(l(context).subscriptions_user)),
                         body: const UsersScreen(onlySubbed: true),
                       ),
                     ),
                   ),
-                  child: Text(l10n(context).subscriptions_user_all),
+                  child: Text(l(context).subscriptions_user_all),
                 ),
               ),
             ],
@@ -295,12 +294,12 @@ class _NavDrawerState extends State<NavDrawer> {
                     MaterialPageRoute(
                       builder: (context) => Scaffold(
                         appBar: AppBar(
-                            title: Text(l10n(context).subscriptions_domain)),
+                            title: Text(l(context).subscriptions_domain)),
                         body: const DomainsScreen(onlySubbed: true),
                       ),
                     ),
                   ),
-                  child: Text(l10n(context).subscriptions_domain_all),
+                  child: Text(l(context).subscriptions_domain_all),
                 ),
               ),
             ],

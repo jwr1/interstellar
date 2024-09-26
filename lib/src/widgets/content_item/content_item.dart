@@ -163,14 +163,14 @@ class _ContentItemState extends State<ContentItem> {
                   isBot: widget.userIsBot,
                 ),
                 if (widget.opUserId == widget.userIdOnClick)
-                  const Padding(
-                    padding: EdgeInsets.only(left: 5),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 5),
                     child: Tooltip(
-                      message: 'Original Poster',
+                      message: l(context).originalPoster_long,
                       triggerMode: TooltipTriggerMode.tap,
                       child: Text(
-                        'OP',
-                        style: TextStyle(
+                        l(context).originalPoster_short,
+                        style: const TextStyle(
                           color: Colors.blue,
                           fontWeight: FontWeight.bold,
                         ),
@@ -290,23 +290,23 @@ class _ContentItemState extends State<ContentItem> {
                       Row(
                         children: [
                           if (widget.isPinned)
-                            const Padding(
-                              padding: EdgeInsets.only(right: 10),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 10),
                               child: Tooltip(
-                                message: 'Pinned in Magazine',
+                                message: l(context).pinnedInMagazine,
                                 triggerMode: TooltipTriggerMode.tap,
-                                child: Icon(Icons.push_pin, size: 20),
+                                child: const Icon(Icons.push_pin, size: 20),
                               ),
                             ),
                           if (widget.isNSFW)
-                            const Padding(
-                              padding: EdgeInsets.only(right: 10),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 10),
                               child: Tooltip(
-                                message: 'Not Safe For Work',
+                                message: l(context).notSafeForWork_long,
                                 triggerMode: TooltipTriggerMode.tap,
                                 child: Text(
-                                  'NSFW',
-                                  style: TextStyle(
+                                  l(context).notSafeForWork_short,
+                                  style: const TextStyle(
                                     color: Colors.red,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -314,14 +314,14 @@ class _ContentItemState extends State<ContentItem> {
                               ),
                             ),
                           if (widget.isOC)
-                            const Padding(
-                              padding: EdgeInsets.only(right: 10),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 10),
                               child: Tooltip(
-                                message: 'Original Content',
+                                message: l(context).originalContent_long,
                                 triggerMode: TooltipTriggerMode.tap,
                                 child: Text(
-                                  'OC',
-                                  style: TextStyle(
+                                  l(context).originalContent_short,
+                                  style: const TextStyle(
                                     color: Colors.lightGreen,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -337,8 +337,11 @@ class _ContentItemState extends State<ContentItem> {
                             Padding(
                               padding: const EdgeInsets.only(right: 10),
                               child: Tooltip(
-                                message:
-                                    'Created: ${dateTimeFormat(widget.createdAt!)}${widget.editedAt == null ? '' : '\nEdited: ${dateTimeFormat(widget.editedAt!)}'}',
+                                message: l(context).createdAt(
+                                        dateTimeFormat(widget.createdAt!)) +
+                                    (widget.editedAt == null
+                                        ? ''
+                                        : '\n${l(context).editedAt(dateTimeFormat(widget.editedAt!))}'),
                                 triggerMode: TooltipTriggerMode.tap,
                                 child: Text(
                                   dateDiffFormat(widget.createdAt!),
@@ -441,8 +444,8 @@ class _ContentItemState extends State<ContentItem> {
                             if (widget.onCollapse != null)
                               IconButton(
                                   tooltip: widget.isCollapsed
-                                      ? 'Expand'
-                                      : 'Collapse',
+                                      ? l(context).expand
+                                      : l(context).collapse,
                                   onPressed: widget.onCollapse,
                                   icon: widget.isCollapsed
                                       ? const Icon(Icons.expand_more)
@@ -472,7 +475,7 @@ class _ContentItemState extends State<ContentItem> {
                                     MenuItemButton(
                                       onPressed: () => openWebpagePrimary(
                                           context, widget.openLinkUri!),
-                                      child: Text(l10n(context).openInBrowser),
+                                      child: Text(l(context).openInBrowser),
                                     ),
                                   if (widget.domain != null)
                                     MenuItemButton(
@@ -484,7 +487,8 @@ class _ContentItemState extends State<ContentItem> {
                                           ),
                                         ),
                                       ),
-                                      child: Text('More from ${widget.domain}'),
+                                      child: Text(
+                                          l(context).moreFrom(widget.domain!)),
                                     ),
                                   if (widget.onReport != null)
                                     MenuItemButton(
@@ -497,7 +501,7 @@ class _ContentItemState extends State<ContentItem> {
                                           await widget.onReport!(reportReason);
                                         }
                                       },
-                                      child: const Text('Report'),
+                                      child: Text(l(context).report),
                                     ),
                                   if (widget.onEdit != null)
                                     MenuItemButton(
@@ -506,7 +510,7 @@ class _ContentItemState extends State<ContentItem> {
                                             TextEditingController(
                                                 text: widget.body);
                                       }),
-                                      child: const Text('Edit'),
+                                      child: Text(l(context).edit),
                                     ),
                                   if (widget.onDelete != null)
                                     MenuItemButton(
@@ -514,13 +518,13 @@ class _ContentItemState extends State<ContentItem> {
                                         context: context,
                                         builder: (BuildContext context) =>
                                             AlertDialog(
-                                          title: Text(
-                                              'Delete ${widget.contentTypeName}'),
+                                          title: Text(l(context)
+                                              .deleteX(widget.contentTypeName)),
                                           actions: <Widget>[
                                             OutlinedButton(
                                               onPressed: () =>
                                                   Navigator.pop(context),
-                                              child: const Text('Cancel'),
+                                              child: Text(l(context).cancel),
                                             ),
                                             FilledButton(
                                               onPressed: () {
@@ -528,7 +532,7 @@ class _ContentItemState extends State<ContentItem> {
 
                                                 widget.onDelete!();
                                               },
-                                              child: const Text('Delete'),
+                                              child: Text(l(context).delete),
                                             ),
                                           ],
                                           actionsOverflowAlignment:
@@ -538,15 +542,15 @@ class _ContentItemState extends State<ContentItem> {
                                               VerticalDirection.up,
                                         ),
                                       ),
-                                      child: const Text('Delete'),
+                                      child: Text(l(context).delete),
                                     ),
                                   if (widget.body != null)
                                     MenuItemButton(
-                                      child: const Text('View Source'),
+                                      child: Text(l(context).viewSource),
                                       onPressed: () => showDialog(
                                         context: context,
                                         builder: (context) => AlertDialog(
-                                          title: const Text('View Source'),
+                                          title: Text(l(context).viewSource),
                                           content: Card.outlined(
                                             margin: EdgeInsets.zero,
                                             child: Padding(
@@ -559,7 +563,7 @@ class _ContentItemState extends State<ContentItem> {
                                             OutlinedButton(
                                               onPressed: () =>
                                                   Navigator.pop(context),
-                                              child: const Text('Close'),
+                                              child: Text(l(context).close),
                                             ),
                                             FilledButton.tonal(
                                               onPressed: () {
@@ -570,7 +574,7 @@ class _ContentItemState extends State<ContentItem> {
                                                       text: widget.body!),
                                                 );
                                               },
-                                              child: const Text('Copy'),
+                                              child: Text(l(context).copy),
                                             ),
                                           ],
                                         ),
@@ -585,26 +589,27 @@ class _ContentItemState extends State<ContentItem> {
                                         if (widget.onModeratePin != null)
                                           MenuItemButton(
                                             onPressed: widget.onModeratePin,
-                                            child: const Text('Pin'),
+                                            child: Text(l(context).pin),
                                           ),
                                         if (widget.onModerateMarkNSFW != null)
                                           MenuItemButton(
                                             onPressed:
                                                 widget.onModerateMarkNSFW,
-                                            child: const Text('Mark NSFW'),
+                                            child: Text(
+                                                l(context).notSafeForWork_mark),
                                           ),
                                         if (widget.onModerateDelete != null)
                                           MenuItemButton(
                                             onPressed: widget.onModerateDelete,
-                                            child: const Text('Delete'),
+                                            child: Text(l(context).delete),
                                           ),
                                         if (widget.onModerateBan != null)
                                           MenuItemButton(
                                             onPressed: widget.onModerateBan,
-                                            child: const Text('Ban User'),
+                                            child: Text(l(context).banUser),
                                           ),
                                       ],
-                                      child: const Text('Moderate'),
+                                      child: Text(l(context).moderate),
                                     ),
                                 ],
                               ),
@@ -655,7 +660,7 @@ class _ContentItemState extends State<ContentItem> {
                                             _replyTextController!.dispose();
                                             _replyTextController = null;
                                           }),
-                                      child: const Text('Cancel')),
+                                      child: Text(l(context).cancel)),
                                   const SizedBox(width: 8),
                                   FilledButton(
                                       onPressed: () async {
@@ -668,7 +673,7 @@ class _ContentItemState extends State<ContentItem> {
                                           _replyTextController = null;
                                         });
                                       },
-                                      child: const Text('Submit'))
+                                      child: Text(l(context).submit))
                                 ],
                               )
                             ],
@@ -689,7 +694,7 @@ class _ContentItemState extends State<ContentItem> {
                                             _editTextController!.dispose();
                                             _editTextController = null;
                                           }),
-                                      child: const Text('Cancel')),
+                                      child: Text(l(context).cancel)),
                                   const SizedBox(width: 8),
                                   FilledButton(
                                     onPressed: () async {
@@ -702,7 +707,7 @@ class _ContentItemState extends State<ContentItem> {
                                         _editTextController = null;
                                       });
                                     },
-                                    child: const Text('Submit'),
+                                    child: Text(l(context).submit),
                                   )
                                 ],
                               )

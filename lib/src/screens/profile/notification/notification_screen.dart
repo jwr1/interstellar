@@ -83,18 +83,18 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           });
                         }
                       },
-                      items: const [
+                      items: [
                         DropdownMenuItem(
                           value: NotificationsFilter.all,
-                          child: Text('All'),
+                          child: Text(l(context).filter_all),
                         ),
                         DropdownMenuItem(
                           value: NotificationsFilter.new_,
-                          child: Text('New'),
+                          child: Text(l(context).filter_new),
                         ),
                         DropdownMenuItem(
                           value: NotificationsFilter.read,
-                          child: Text('Read'),
+                          child: Text(l(context).filter_read),
                         ),
                       ],
                     ),
@@ -111,7 +111,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       if (!mounted) return;
                       context.read<NotificationCountController>().reload();
                     },
-                    child: const Text('Mark all as read'),
+                    child: Text(l(context).notifications_markAllAsRead),
                   ),
                   // Push notifications only work on Android devices and Mbin servers
                   if (Platform.isAndroid &&
@@ -130,8 +130,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                     .registerPush(context),
                         child: Text(
                             context.watch<SettingsController>().isPushRegistered
-                                ? 'Unregister push'
-                                : 'Register push'),
+                                ? l(context).notifications_unregisterPush
+                                : l(context).notifications_registerPush),
                       ),
                     ),
                 ],

@@ -51,7 +51,7 @@ class _PostCommentScreenState extends State<PostCommentScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n(context).commentBy(comment.user.name)),
+        title: Text(l(context).commentBy(comment.user.name)),
       ),
       body: ListView(
         children: [
@@ -77,7 +77,7 @@ class _PostCommentScreenState extends State<PostCommentScreen> {
                         }),
                       );
                     },
-                    child: Text(l10n(context).comment_openOriginalPost),
+                    child: Text(l(context).comment_openOriginalPost),
                   ),
                 ),
                 Padding(
@@ -95,7 +95,7 @@ class _PostCommentScreenState extends State<PostCommentScreen> {
                             );
                           }
                         : null,
-                    child: Text(l10n(context).comment_openRoot),
+                    child: Text(l(context).comment_openRoot),
                   ),
                 ),
                 Padding(
@@ -113,7 +113,7 @@ class _PostCommentScreenState extends State<PostCommentScreen> {
                             );
                           }
                         : null,
-                    child: Text(l10n(context).comment_openParent),
+                    child: Text(l(context).comment_openParent),
                   ),
                 ),
               ],

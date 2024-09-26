@@ -2,7 +2,6 @@
   "interstellar": "Interstellar",
   "feed": "Feed",
   "explore": "Explore",
-  "profile": "Profile",
   "accounts": "Accounts",
   "addAccount": "Add Account",
   "removeAccount": "Remove Account",
@@ -28,6 +27,8 @@
   "filter_local": "Local",
   "filter_followed": "Followed",
   "filter_followers": "Followers",
+  "filter_new": "New",
+  "filter_read": "Read",
   "sort": "Sort by",
   "sort_active": "Active",
   "sort_hot": "Hot",
@@ -100,9 +101,48 @@
   "viewMods": "View Moderators",
   "modPanel": "Mod Panel",
   "ownerPanel": "Owner Panel",
+  "copy": "Copy",
   "copied": "Copied",
   "postingRestricted": "Posting restricted to mods",
   "owner": "Owner",
+  "profile": "Profile",
+  "profile_overview": "Overview",
+  "profile_settings_selectAvatar": "Select Avatar",
+  "profile_settings_selectAvatar_Delete": "Delete",
+  "profile_settings_selectCover": "Select Cover",
+  "profile_settings_selectCover_delete": "Delete",
+  "profile_settings_about": "About",
+  "profile_settings_settings": "Settings",
+  "profile_settings_showNSFW": "Show NSFW",
+  "profile_settings_blurNSFW": "Blur NSFW",
+  "profile_settings_showReadPosts": "Show read posts",
+  "profile_settings_showSubscribedUsers": "Show subscribed users",
+  "profile_settings_showSubscribedMagazines": "Show subscribed magazines",
+  "profile_settings_showSubscribedDomains": "Show subscribed domains",
+  "profile_settings_showProfileSubscriptions": "Show profile subscriptions",
+  "profile_settings_showProfileFollowings": "Show profile followings",
+  "profile_settings_notifyOnThread": "Notify on new threads in subscribed magazines",
+  "profile_settings_notifyOnMicroblog": "Notify on new microblog in subscribed magazines",
+  "profile_settings_notifyOnThreadReply": "Notify on comments in authored threads",
+  "profile_settings_notifyOnThreadCommentReply": "Notify on thread comment reply",
+  "profile_settings_notifyOnMicroblogReply": "Notify on comments in authored microblogs",
+  "profile_settings_notifyOnMicroblogCommentReply": "Notify on microblog comment reply",
+  "notifications": "Notifications",
+  "notifications_markAllAsRead": "Mark all as read",
+  "notifications_registerPush": "Register push",
+  "notifications_unregisterPush": "Unregister push",
+  "messages": "Messages",
+  "messagesWith": "Messages with {username}",
+  "@messagesWith": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+  "reply": "Reply",
+  "send": "Send",
+  "notLoggedIn": "Not logged in",
   "settings": "Settings",
   "settings_general": "General Settings",
   "settings_theme": "Theme",
@@ -177,5 +217,72 @@
         "type": "String"
       }
     }
-  }
+  },
+  "originalPoster_short": "OP",
+  "originalPoster_long": "Original Poster",
+  "pin": "Pin",
+  "pinnedInMagazine": "Pinned in Magazine",
+  "notSafeForWork_short": "NSFW",
+  "notSafeForWork_long": "Not Safe For Work",
+  "notSafeForWork_mark": "Mark NSFW",
+  "originalContent_short": "OC",
+  "originalContent_long": "Original Content",
+  "createdAt": "Created at {datetime}",
+  "@createdAt": {
+    "placeholders": {
+      "datetime": {
+        "type": "String"
+      }
+    }
+  },
+  "editedAt": "Edited at {datetime}",
+  "@editedAt": {
+    "placeholders": {
+      "datetime": {
+        "type": "String"
+      }
+    }
+  },
+  "expand": "Expand",
+  "collapse": "Collapse",
+  "moreFrom": "More from {name}",
+  "@moreFrom": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "report": "Report",
+  "edit": "Edit",
+  "delete": "Delete",
+  "deleteX": "Delete {name}",
+  "@deleteX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "viewSource": "View Source",
+  "close": "Close",
+  "banUser": "Ban User",
+  "moderate": "Moderate",
+  "submit": "Submit",
+  "alternativeSources": "Alternative Sources",
+  "markdownEditor_heading": "Heading",
+  "markdownEditor_bold": "Bold",
+  "markdownEditor_italic": "Italic",
+  "markdownEditor_strikethrough": "Strikethrough",
+  "markdownEditor_inlineCode": "Inline Code",
+  "markdownEditor_codeBlock": "Code Block",
+  "markdownEditor_link": "Link",
+  "markdownEditor_image": "Image",
+  "markdownEditor_subscript": "Subscript",
+  "markdownEditor_superscript": "Superscript",
+  "markdownEditor_Quote": "Quote",
+  "markdownEditor_horizontalRule": "Horizontal Rule",
+  "markdownEditor_bulletedList": "Bulleted List",
+  "markdownEditor_numberedList": "Numbered List",
+  "markdownEditor_spoiler": "Spoiler"
 }

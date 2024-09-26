@@ -147,13 +147,13 @@ class _MagazineScreenState extends State<MagazineScreen> {
                                   ? '/c/${_data!.name}'
                                   : '/m/${_data!.name}',
                             )),
-                        child: Text(l10n(context).openInBrowser),
+                        child: Text(l(context).openInBrowser),
                       ),
                       MenuItemButton(
                         onPressed: () => showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
-                            title: Text(l10n(context).modsOf(_data!.name)),
+                            title: Text(l(context).modsOf(_data!.name)),
                             content: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: _data!.moderators
@@ -165,7 +165,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                             ),
                           ),
                         ),
-                        child: Text(l10n(context).viewMods),
+                        child: Text(l(context).viewMods),
                       ),
                       if (isModerator)
                         MenuItemButton(
@@ -184,7 +184,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                               ),
                             ),
                           ),
-                          child: Text(l10n(context).modPanel),
+                          child: Text(l(context).modPanel),
                         ),
                       if (_data!.owner != null &&
                           _data!.owner!.name ==
@@ -209,7 +209,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                               ),
                             ),
                           ),
-                          child: Text(l10n(context).ownerPanel),
+                          child: Text(l(context).ownerPanel),
                         ),
                     ],
                   ),
@@ -251,7 +251,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                                   if (!mounted) return;
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text(l10n(context).copied),
+                                      content: Text(l(context).copied),
                                       duration: const Duration(seconds: 2),
                                     ),
                                   );
@@ -293,7 +293,7 @@ class PostingRestrictedIndicator extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(4),
       child: Tooltip(
-        message: l10n(context).postingRestricted,
+        message: l(context).postingRestricted,
         triggerMode: TooltipTriggerMode.tap,
         child: const Icon(Icons.lock, size: 16),
       ),

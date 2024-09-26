@@ -20,26 +20,26 @@ class ExploreScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-              '${l10n(context).explore} ${context.watch<SettingsController>().instanceHost}'),
+              '${l(context).explore} ${context.watch<SettingsController>().instanceHost}'),
           bottom: TabBar(tabs: [
             Tab(
-              text: l10n(context).magazines,
+              text: l(context).magazines,
               icon: const Icon(Icons.article),
             ),
             if (context.watch<SettingsController>().serverSoftware !=
                 ServerSoftware.lemmy)
               Tab(
-                text: l10n(context).people,
+                text: l(context).people,
                 icon: const Icon(Icons.account_circle),
               ),
             if (context.watch<SettingsController>().serverSoftware !=
                 ServerSoftware.lemmy)
               Tab(
-                text: l10n(context).domains,
+                text: l(context).domains,
                 icon: const Icon(Icons.public),
               ),
             Tab(
-              text: l10n(context).search,
+              text: l(context).search,
               icon: const Icon(Icons.search),
             ),
           ]),

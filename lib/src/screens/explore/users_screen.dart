@@ -87,19 +87,19 @@ class _UsersScreenState extends State<UsersScreen> {
                               items: [
                                 DropdownMenuItem(
                                   value: api_users.UsersFilter.all,
-                                  child: Text(l10n(context).filter_all),
+                                  child: Text(l(context).filter_all),
                                 ),
                                 DropdownMenuItem(
                                   value: api_users.UsersFilter.followed,
-                                  child: Text(l10n(context).filter_followed),
+                                  child: Text(l(context).filter_followed),
                                 ),
                                 DropdownMenuItem(
                                   value: api_users.UsersFilter.followers,
-                                  child: Text(l10n(context).filter_followers),
+                                  child: Text(l(context).filter_followers),
                                 ),
                                 DropdownMenuItem(
                                   value: api_users.UsersFilter.blocked,
-                                  child: Text(l10n(context).filter_blocked),
+                                  child: Text(l(context).filter_blocked),
                                 ),
                               ],
                             ),

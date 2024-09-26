@@ -235,7 +235,7 @@ class _FeedScreenState extends State<FeedScreen> {
                   context.watch<SettingsController>().selectedAccount +
                       (context.watch<SettingsController>().isLoggedIn
                           ? ''
-                          : ' (${l10n(context).guest})'),
+                          : ' (${l(context).guest})'),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -378,131 +378,131 @@ class _FeedScreenState extends State<FeedScreen> {
 }
 
 SelectionMenu<PostType> feedTypeSelect(BuildContext context) => SelectionMenu(
-      l10n(context).feedType,
+      l(context).feedType,
       [
         SelectionMenuItem(
           value: PostType.thread,
-          title: l10n(context).threads,
+          title: l(context).threads,
           icon: Icons.feed,
         ),
         SelectionMenuItem(
           value: PostType.microblog,
-          title: l10n(context).microblog,
+          title: l(context).microblog,
           icon: Icons.chat,
         ),
       ],
     );
 
 SelectionMenu<FeedSort> feedSortSelect(BuildContext context) => SelectionMenu(
-      l10n(context).sort,
+      l(context).sort,
       [
         SelectionMenuItem(
           value: FeedSort.hot,
-          title: l10n(context).sort_hot,
+          title: l(context).sort_hot,
           icon: Icons.local_fire_department,
         ),
         SelectionMenuItem(
           value: FeedSort.top,
-          title: l10n(context).sort_top,
+          title: l(context).sort_top,
           icon: Icons.trending_up,
         ),
         SelectionMenuItem(
           value: FeedSort.newest,
-          title: l10n(context).sort_newest,
+          title: l(context).sort_newest,
           icon: Icons.auto_awesome_rounded,
         ),
         SelectionMenuItem(
           value: FeedSort.active,
-          title: l10n(context).sort_active,
+          title: l(context).sort_active,
           icon: Icons.rocket_launch,
         ),
         SelectionMenuItem(
           value: FeedSort.commented,
-          title: l10n(context).sort_commented,
+          title: l(context).sort_commented,
           icon: Icons.chat,
         ),
         SelectionMenuItem(
           value: FeedSort.oldest,
-          title: l10n(context).sort_oldest,
+          title: l(context).sort_oldest,
           icon: Icons.access_time_outlined,
         ),
 
         //lemmy specific
         SelectionMenuItem(
           value: FeedSort.newComments,
-          title: l10n(context).sort_newComments,
+          title: l(context).sort_newComments,
           icon: Icons.mark_chat_unread,
           validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.controversial,
-          title: l10n(context).sort_controversial,
+          title: l(context).sort_controversial,
           icon: Icons.thumbs_up_down,
           validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.scaled,
-          title: l10n(context).sort_scaled,
+          title: l(context).sort_scaled,
           icon: Icons.scale,
           validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topDay,
-          title: l10n(context).sort_topDay,
+          title: l(context).sort_topDay,
           icon: Icons.trending_up,
           validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topWeek,
-          title: l10n(context).sort_topWeek,
+          title: l(context).sort_topWeek,
           icon: Icons.trending_up,
           validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topMonth,
-          title: l10n(context).sort_topMonth,
+          title: l(context).sort_topMonth,
           icon: Icons.trending_up,
           validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topYear,
-          title: l10n(context).sort_topYear,
+          title: l(context).sort_topYear,
           icon: Icons.trending_up,
           validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topHour,
-          title: l10n(context).sort_topHour,
+          title: l(context).sort_topHour,
           icon: Icons.trending_up,
           validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topSixHour,
-          title: l10n(context).sort_topSixHour,
+          title: l(context).sort_topSixHour,
           icon: Icons.trending_up,
           validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topTwelveHour,
-          title: l10n(context).sort_topTwelveHour,
+          title: l(context).sort_topTwelveHour,
           icon: Icons.trending_up,
           validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topThreeMonths,
-          title: l10n(context).sort_topThreeMonths,
+          title: l(context).sort_topThreeMonths,
           icon: Icons.trending_up,
           validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topSixMonths,
-          title: l10n(context).sort_topSixMonths,
+          title: l(context).sort_topSixMonths,
           icon: Icons.trending_up,
           validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topNineMonths,
-          title: l10n(context).sort_topNineMonths,
+          title: l(context).sort_topNineMonths,
           icon: Icons.trending_up,
           validSoftware: ServerSoftware.lemmy,
         ),
@@ -511,26 +511,26 @@ SelectionMenu<FeedSort> feedSortSelect(BuildContext context) => SelectionMenu(
 
 SelectionMenu<FeedSource> feedFilterSelect(BuildContext context) =>
     SelectionMenu(
-      l10n(context).filter,
+      l(context).filter,
       [
         SelectionMenuItem(
           value: FeedSource.subscribed,
-          title: l10n(context).filter_subscribed,
+          title: l(context).filter_subscribed,
           icon: Icons.group,
         ),
         SelectionMenuItem(
           value: FeedSource.moderated,
-          title: l10n(context).filter_moderated,
+          title: l(context).filter_moderated,
           icon: Icons.lock,
         ),
         SelectionMenuItem(
           value: FeedSource.favorited,
-          title: l10n(context).filter_favorited,
+          title: l(context).filter_favorited,
           icon: Icons.favorite,
         ),
         SelectionMenuItem(
           value: FeedSource.all,
-          title: l10n(context).filter_all,
+          title: l(context).filter_all,
           icon: Icons.newspaper,
         ),
       ],

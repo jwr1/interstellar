@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/open_webpage.dart';
 import 'package:interstellar/src/widgets/video.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart'
@@ -89,9 +90,9 @@ class _ContentItemLinkPanelState extends State<ContentItemLinkPanel> {
                 );
               },
               menuChildren: [
-                const Padding(
-                  padding: EdgeInsets.all(8),
-                  child: Text('Alternate Sources'),
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Text(l(context).alternativeSources),
                 ),
                 ...(_youtubeVideoId != null
                         ? _youtubeAltSources

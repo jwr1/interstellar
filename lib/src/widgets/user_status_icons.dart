@@ -22,7 +22,7 @@ class UserStatusIcons extends StatelessWidget {
 
     if (isBot) {
       botWidget = Tooltip(
-        message: l10n(context).botAccount,
+        message: l(context).botAccount,
         child: const Icon(Icons.smart_toy_outlined),
       );
     }
@@ -30,7 +30,7 @@ class UserStatusIcons extends StatelessWidget {
     if (cakeDay == null) {
     } else if (now.difference(cakeDay!).inDays <= 14) {
       cakeDayWidget = Tooltip(
-        message: l10n(context).newUser,
+        message: l(context).newUser,
         child: ShaderMask(
           blendMode: BlendMode.srcIn,
           shaderCallback: (Rect bounds) => const LinearGradient(
@@ -48,7 +48,7 @@ class UserStatusIcons extends StatelessWidget {
       );
     } else if (cakeDay!.day == now.day && cakeDay!.month == now.month) {
       cakeDayWidget = Tooltip(
-        message: l10n(context).cakeDay,
+        message: l(context).cakeDay,
         child: ShaderMask(
           blendMode: BlendMode.srcIn,
           shaderCallback: (Rect bounds) => const LinearGradient(

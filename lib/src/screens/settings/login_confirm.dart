@@ -31,7 +31,7 @@ class _LoginConfirmScreenState extends State<LoginConfirmScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n(context).addAccount),
+        title: Text(l(context).addAccount),
       ),
       body: ListView(
         children: [
@@ -56,21 +56,21 @@ class _LoginConfirmScreenState extends State<LoginConfirmScreen> {
               child: Column(children: [
                 TextEditor(
                   _usernameEmailTextController,
-                  label: l10n(context).usernameOrEmail,
+                  label: l(context).usernameOrEmail,
                   keyboardType: TextInputType.emailAddress,
                   onChanged: (_) => setState(() {}),
                 ),
                 const SizedBox(height: 12),
                 TextEditor(
                   _passwordTextController,
-                  label: l10n(context).password,
+                  label: l(context).password,
                   keyboardType: TextInputType.visiblePassword,
                   onChanged: (_) => setState(() {}),
                 ),
                 const SizedBox(height: 12),
                 TextEditor(
                   _totpTokenTextController,
-                  label: l10n(context).totpToken,
+                  label: l(context).totpToken,
                   keyboardType: TextInputType.visiblePassword,
                 ),
               ]),
@@ -87,7 +87,7 @@ class _LoginConfirmScreenState extends State<LoginConfirmScreen> {
 
                   Navigator.pop(context, true);
                 },
-                child: Text(l10n(context).guest),
+                child: Text(l(context).guest),
               ),
               const SizedBox(width: 12),
               FilledButton(
@@ -186,7 +186,7 @@ class _LoginConfirmScreenState extends State<LoginConfirmScreen> {
 
                         Navigator.pop(context, true);
                       },
-                child: Text(l10n(context).login),
+                child: Text(l(context).login),
               ),
             ],
           ),

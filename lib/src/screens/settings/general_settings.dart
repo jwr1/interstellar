@@ -29,14 +29,14 @@ class GeneralScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n(context).settings_general),
+        title: Text(l(context).settings_general),
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         children: [
-          SettingsHeader(l10n(context).settings_theme),
+          SettingsHeader(l(context).settings_theme),
           ListTile(
-            title: Text(l10n(context).settings_themeMode),
+            title: Text(l(context).settings_themeMode),
             leading: const Icon(Icons.brightness_medium),
             onTap: () async {
               controller.updateThemeMode(
@@ -56,7 +56,7 @@ class GeneralScreen extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: Text(l10n(context).settings_enableTrueBlack),
+            title: Text(l(context).settings_enableTrueBlack),
             leading: const Icon(Icons.brightness_1_outlined),
             onTap: () {
               controller.updateEnableTrueBlack(!controller.enableTrueBlack);
@@ -68,7 +68,7 @@ class GeneralScreen extends StatelessWidget {
             enabled: controller.themeMode != ThemeMode.light,
           ),
           ListTile(
-            title: Text(l10n(context).settings_useDynamicColor),
+            title: Text(l(context).settings_useDynamicColor),
             leading: const Icon(Icons.auto_awesome_rounded),
             onTap: () {
               controller.updateUseDynamicColor(!controller.useDynamicColor);
@@ -79,7 +79,7 @@ class GeneralScreen extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: Text(l10n(context).settings_colorScheme),
+            title: Text(l(context).settings_colorScheme),
             leading: const Icon(Icons.palette),
             onTap: () async {
               controller.updateColorScheme(
@@ -100,7 +100,7 @@ class GeneralScreen extends StatelessWidget {
             ),
             enabled: !controller.useDynamicColor,
           ),
-          SettingsHeader(l10n(context).settings_postAppearance),
+          SettingsHeader(l(context).settings_postAppearance),
           ListTile(
             title: const Text('Image Position'),
             leading: const Icon(Icons.image),
@@ -122,7 +122,7 @@ class GeneralScreen extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: Text(l10n(context).settings_useCompactPreview),
+            title: Text(l(context).settings_useCompactPreview),
             leading: const Icon(Icons.view_agenda),
             onTap: () {
               controller
@@ -133,10 +133,10 @@ class GeneralScreen extends StatelessWidget {
               onChanged: controller.updatePostCompactPreview,
             ),
           ),
-          SettingsHeader(l10n(context).settings_language),
+          SettingsHeader(l(context).settings_language),
           SwitchListTile(
-            title: Text(l10n(context).settings_useAccountLangFilter),
-            subtitle: Text(l10n(context).settings_useAccountLangFilter_help),
+            title: Text(l(context).settings_useAccountLangFilter),
+            subtitle: Text(l(context).settings_useAccountLangFilter_help),
             value: controller.useAccountLangFilter,
             onChanged: !isLemmy ? controller.updateUseAccountLangFilter : null,
           ),
@@ -145,7 +145,7 @@ class GeneralScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: Text(
-                  l10n(context).settings_customLanguageFilter,
+                  l(context).settings_customLanguageFilter,
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                       color: customLanguageFilterEnabled
                           ? null
@@ -187,7 +187,7 @@ class GeneralScreen extends StatelessWidget {
             ],
           ),
           ListTile(
-            title: Text(l10n(context).settings_defaultCreateLanguage),
+            title: Text(l(context).settings_defaultCreateLanguage),
             enabled: !isLemmy,
             onTap: () async {
               controller.updateDefaultCreateLang(
@@ -202,9 +202,9 @@ class GeneralScreen extends StatelessWidget {
               children: [Text(getLangName(controller.defaultCreateLang))],
             ),
           ),
-          SettingsHeader(l10n(context).settings_other),
+          SettingsHeader(l(context).settings_other),
           ListTile(
-            title: Text(l10n(context).settings_alwaysShowInstance),
+            title: Text(l(context).settings_alwaysShowInstance),
             leading: const Icon(Icons.public),
             onTap: () {
               controller
@@ -214,7 +214,7 @@ class GeneralScreen extends StatelessWidget {
               value: controller.alwaysShowInstance,
               onChanged: controller.updateAlwaysShowInstance,
             ),
-            subtitle: Text(l10n(context).settings_alwaysShowInstance_help),
+            subtitle: Text(l(context).settings_alwaysShowInstance_help),
           ),
           Padding(
             padding: const EdgeInsets.all(16),
@@ -225,7 +225,7 @@ class GeneralScreen extends StatelessWidget {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(right: 16),
-                      child: Text(l10n(context).settings_feedFilters,
+                      child: Text(l(context).settings_feedFilters,
                           style: Theme.of(context).textTheme.bodyLarge!),
                     ),
                     Flexible(
@@ -255,8 +255,7 @@ class GeneralScreen extends StatelessWidget {
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           Text(
-                                            l10n(context)
-                                                .settings_feedFilters_add,
+                                            l(context).settings_feedFilters_add,
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .titleLarge,
@@ -285,7 +284,7 @@ class GeneralScreen extends StatelessWidget {
                   ],
                 ),
                 Text(
-                  l10n(context).settings_feedFilters_help,
+                  l(context).settings_feedFilters_help,
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant),
                 ),
@@ -299,66 +298,66 @@ class GeneralScreen extends StatelessWidget {
 }
 
 SelectionMenu<ThemeMode> themeModeSelect(BuildContext context) => SelectionMenu(
-      l10n(context).settings_themeMode,
+      l(context).settings_themeMode,
       [
         SelectionMenuItem(
           value: ThemeMode.system,
-          title: l10n(context).settings_themeMode_system,
+          title: l(context).settings_themeMode_system,
           icon: Icons.auto_mode,
         ),
         SelectionMenuItem(
           value: ThemeMode.light,
-          title: l10n(context).settings_themeMode_light,
+          title: l(context).settings_themeMode_light,
           icon: Icons.light_mode,
         ),
         SelectionMenuItem(
           value: ThemeMode.dark,
-          title: l10n(context).settings_themeMode_dark,
+          title: l(context).settings_themeMode_dark,
           icon: Icons.dark_mode,
         ),
       ],
     );
 
 Map<FlexScheme, String> themeNameMap(BuildContext context) => {
-      FlexScheme.blue: l10n(context).settings_colorScheme_blue,
-      FlexScheme.indigo: l10n(context).settings_colorScheme_indigo,
-      FlexScheme.hippieBlue: l10n(context).settings_colorScheme_hippieBlue,
-      FlexScheme.aquaBlue: l10n(context).settings_colorScheme_aquaBlue,
-      FlexScheme.brandBlue: l10n(context).settings_colorScheme_brandBlue,
-      FlexScheme.deepBlue: l10n(context).settings_colorScheme_deepBlue,
-      FlexScheme.sakura: l10n(context).settings_colorScheme_sakura,
-      FlexScheme.mandyRed: l10n(context).settings_colorScheme_mandyRed,
-      FlexScheme.red: l10n(context).settings_colorScheme_red,
-      FlexScheme.redWine: l10n(context).settings_colorScheme_redWine,
-      FlexScheme.purpleBrown: l10n(context).settings_colorScheme_purpleBrown,
-      FlexScheme.green: l10n(context).settings_colorScheme_green,
-      FlexScheme.money: l10n(context).settings_colorScheme_money,
-      FlexScheme.jungle: l10n(context).settings_colorScheme_jungle,
-      FlexScheme.greyLaw: l10n(context).settings_colorScheme_greyLaw,
-      FlexScheme.wasabi: l10n(context).settings_colorScheme_wasabi,
-      FlexScheme.gold: l10n(context).settings_colorScheme_gold,
-      FlexScheme.mango: l10n(context).settings_colorScheme_mango,
-      FlexScheme.amber: l10n(context).settings_colorScheme_amber,
-      FlexScheme.vesuviusBurn: l10n(context).settings_colorScheme_vesuviusBurn,
-      FlexScheme.deepPurple: l10n(context).settings_colorScheme_deepPurple,
-      FlexScheme.ebonyClay: l10n(context).settings_colorScheme_ebonyClay,
-      FlexScheme.barossa: l10n(context).settings_colorScheme_barossa,
-      FlexScheme.shark: l10n(context).settings_colorScheme_shark,
-      FlexScheme.bigStone: l10n(context).settings_colorScheme_bigStone,
-      FlexScheme.damask: l10n(context).settings_colorScheme_damask,
-      FlexScheme.bahamaBlue: l10n(context).settings_colorScheme_bahamaBlue,
-      FlexScheme.mallardGreen: l10n(context).settings_colorScheme_mallardGreen,
-      FlexScheme.espresso: l10n(context).settings_colorScheme_espresso,
-      FlexScheme.outerSpace: l10n(context).settings_colorScheme_outerSpace,
-      FlexScheme.blueWhale: l10n(context).settings_colorScheme_blueWhale,
-      FlexScheme.sanJuanBlue: l10n(context).settings_colorScheme_sanJuanBlue,
-      FlexScheme.rosewood: l10n(context).settings_colorScheme_rosewood,
-      FlexScheme.blumineBlue: l10n(context).settings_colorScheme_blumineBlue,
-      FlexScheme.flutterDash: l10n(context).settings_colorScheme_flutterDash,
+      FlexScheme.blue: l(context).settings_colorScheme_blue,
+      FlexScheme.indigo: l(context).settings_colorScheme_indigo,
+      FlexScheme.hippieBlue: l(context).settings_colorScheme_hippieBlue,
+      FlexScheme.aquaBlue: l(context).settings_colorScheme_aquaBlue,
+      FlexScheme.brandBlue: l(context).settings_colorScheme_brandBlue,
+      FlexScheme.deepBlue: l(context).settings_colorScheme_deepBlue,
+      FlexScheme.sakura: l(context).settings_colorScheme_sakura,
+      FlexScheme.mandyRed: l(context).settings_colorScheme_mandyRed,
+      FlexScheme.red: l(context).settings_colorScheme_red,
+      FlexScheme.redWine: l(context).settings_colorScheme_redWine,
+      FlexScheme.purpleBrown: l(context).settings_colorScheme_purpleBrown,
+      FlexScheme.green: l(context).settings_colorScheme_green,
+      FlexScheme.money: l(context).settings_colorScheme_money,
+      FlexScheme.jungle: l(context).settings_colorScheme_jungle,
+      FlexScheme.greyLaw: l(context).settings_colorScheme_greyLaw,
+      FlexScheme.wasabi: l(context).settings_colorScheme_wasabi,
+      FlexScheme.gold: l(context).settings_colorScheme_gold,
+      FlexScheme.mango: l(context).settings_colorScheme_mango,
+      FlexScheme.amber: l(context).settings_colorScheme_amber,
+      FlexScheme.vesuviusBurn: l(context).settings_colorScheme_vesuviusBurn,
+      FlexScheme.deepPurple: l(context).settings_colorScheme_deepPurple,
+      FlexScheme.ebonyClay: l(context).settings_colorScheme_ebonyClay,
+      FlexScheme.barossa: l(context).settings_colorScheme_barossa,
+      FlexScheme.shark: l(context).settings_colorScheme_shark,
+      FlexScheme.bigStone: l(context).settings_colorScheme_bigStone,
+      FlexScheme.damask: l(context).settings_colorScheme_damask,
+      FlexScheme.bahamaBlue: l(context).settings_colorScheme_bahamaBlue,
+      FlexScheme.mallardGreen: l(context).settings_colorScheme_mallardGreen,
+      FlexScheme.espresso: l(context).settings_colorScheme_espresso,
+      FlexScheme.outerSpace: l(context).settings_colorScheme_outerSpace,
+      FlexScheme.blueWhale: l(context).settings_colorScheme_blueWhale,
+      FlexScheme.sanJuanBlue: l(context).settings_colorScheme_sanJuanBlue,
+      FlexScheme.rosewood: l(context).settings_colorScheme_rosewood,
+      FlexScheme.blumineBlue: l(context).settings_colorScheme_blumineBlue,
+      FlexScheme.flutterDash: l(context).settings_colorScheme_flutterDash,
     };
 
 SelectionMenu<FlexScheme> themeSelect(BuildContext context) => SelectionMenu(
-      l10n(context).settings_colorScheme,
+      l(context).settings_colorScheme,
       themeNameMap(context)
           .keys
           .map((theme) => SelectionMenuItem(

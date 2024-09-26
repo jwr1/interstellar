@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:interstellar/src/models/message.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/loading_template.dart';
 import 'package:interstellar/src/widgets/markdown/markdown.dart';
@@ -52,14 +53,14 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
         .first;
 
     return Scaffold(
-      appBar: AppBar(title: Text('Messages with ${messageUser.name}')),
+      appBar: AppBar(title: Text(l(context).messagesWith(messageUser.name))),
       body: ListView(children: [
         Padding(
           padding: const EdgeInsets.all(12),
           child: Column(children: [
             MarkdownEditor(
               _controller,
-              label: 'Reply',
+              label: l(context).reply,
             ),
             const SizedBox(height: 8),
             Row(
@@ -86,7 +87,7 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
                         widget.onUpdate!(newThread);
                       }
                     },
-                    child: const Text('Send'))
+                    child: Text(l(context).send))
               ],
             )
           ]),

@@ -17,13 +17,13 @@ class SettingsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n(context).settings),
+        title: Text(l(context).settings),
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         children: [
           ListTile(
-            title: Text(l10n(context).settings_general),
+            title: Text(l(context).settings_general),
             leading: const Icon(Icons.settings),
             onTap: () async {
               await Navigator.push(
@@ -35,7 +35,7 @@ class SettingsScreen extends StatelessWidget {
             },
           ),
           ListTile(
-            title: Text(l10n(context).settings_actionsAndDefaults),
+            title: Text(l(context).settings_actionsAndDefaults),
             leading: const Icon(Icons.toggle_on),
             onTap: () async {
               await Navigator.push(
@@ -46,7 +46,7 @@ class SettingsScreen extends StatelessWidget {
               );
             },
           ),
-          SettingsHeader(l10n(context).accounts),
+          SettingsHeader(l(context).accounts),
           ...(controller.accounts.keys.toList()
                 ..sort((a, b) {
                   final [aLocal, aHost] = a.split('@');
@@ -77,19 +77,19 @@ class SettingsScreen extends StatelessWidget {
                               showDialog<String>(
                                 context: context,
                                 builder: (BuildContext context) => AlertDialog(
-                                  title: Text(l10n(context).removeAccount),
+                                  title: Text(l(context).removeAccount),
                                   content: Text(account),
                                   actions: <Widget>[
                                     OutlinedButton(
                                       onPressed: () => Navigator.pop(context),
-                                      child: Text(l10n(context).cancel),
+                                      child: Text(l(context).cancel),
                                     ),
                                     FilledButton(
                                       onPressed: () {
                                         Navigator.pop(context);
                                         controller.removeAccount(account);
                                       },
-                                      child: Text(l10n(context).remove),
+                                      child: Text(l(context).remove),
                                     ),
                                   ],
                                 ),
@@ -107,7 +107,7 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 );
               },
-              child: Text(l10n(context).addAccount),
+              child: Text(l(context).addAccount),
             ),
           ),
         ],

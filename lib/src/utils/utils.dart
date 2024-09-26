@@ -138,4 +138,4 @@ String readableShortcut(SingleActivator shortcut) {
   return text;
 }
 
-AppLocalizations l10n(BuildContext context) => AppLocalizations.of(context)!;
+AppLocalizations l(BuildContext context) => AppLocalizations.of(context)!;

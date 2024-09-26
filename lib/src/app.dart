@@ -52,8 +52,7 @@ class _AppState extends State<App> {
             restorationScopeId: 'app',
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            onGenerateTitle: (BuildContext context) =>
-                l10n(context).interstellar,
+            onGenerateTitle: (BuildContext context) => l(context).interstellar,
             theme: FlexThemeData.light(
               colorScheme: dynamicLightColorScheme,
               scheme: dynamicLightColorScheme != null
@@ -85,15 +84,15 @@ class _AppState extends State<App> {
                               NavigationDestinationLabelBehavior.alwaysHide,
                           destinations: [
                             NavigationDestination(
-                                label: l10n(context).feed,
+                                label: l(context).feed,
                                 icon: const Icon(Icons.feed_outlined),
                                 selectedIcon: const Icon(Icons.feed)),
                             NavigationDestination(
-                                label: l10n(context).explore,
+                                label: l(context).explore,
                                 icon: const Icon(Icons.explore_outlined),
                                 selectedIcon: const Icon(Icons.explore)),
                             NavigationDestination(
-                              label: l10n(context).profile,
+                              label: l(context).profile,
                               icon: Wrapper(
                                 shouldWrap: context
                                     .watch<SettingsController>()
@@ -112,7 +111,7 @@ class _AppState extends State<App> {
                               ),
                             ),
                             NavigationDestination(
-                                label: l10n(context).settings,
+                                label: l(context).settings,
                                 icon: const Icon(Icons.settings_outlined),
                                 selectedIcon: const Icon(Icons.settings)),
                           ],
@@ -128,15 +127,15 @@ class _AppState extends State<App> {
                         labelType: NavigationRailLabelType.all,
                         destinations: [
                           NavigationRailDestination(
-                              label: Text(l10n(context).feed),
+                              label: Text(l(context).feed),
                               icon: const Icon(Icons.feed_outlined),
                               selectedIcon: const Icon(Icons.feed)),
                           NavigationRailDestination(
-                              label: Text(l10n(context).explore),
+                              label: Text(l(context).explore),
                               icon: const Icon(Icons.explore_outlined),
                               selectedIcon: const Icon(Icons.explore)),
                           NavigationRailDestination(
-                            label: Text(l10n(context).profile),
+                            label: Text(l(context).profile),
                             icon: Wrapper(
                               shouldWrap: context
                                   .watch<SettingsController>()
@@ -155,7 +154,7 @@ class _AppState extends State<App> {
                             ),
                           ),
                           NavigationRailDestination(
-                              label: Text(l10n(context).settings),
+                              label: Text(l(context).settings),
                               icon: const Icon(Icons.settings_outlined),
                               selectedIcon: const Icon(Icons.settings)),
                         ],
