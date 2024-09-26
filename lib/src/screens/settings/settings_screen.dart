@@ -23,7 +23,7 @@ class SettingsScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         children: [
           ListTile(
-            title: Text(l10n(context).generalSettings),
+            title: Text(l10n(context).settings_general),
             leading: const Icon(Icons.settings),
             onTap: () async {
               await Navigator.push(
@@ -35,7 +35,7 @@ class SettingsScreen extends StatelessWidget {
             },
           ),
           ListTile(
-            title: Text(l10n(context).actionsAndDefaults),
+            title: Text(l10n(context).settings_actionsAndDefaults),
             leading: const Icon(Icons.toggle_on),
             onTap: () async {
               await Navigator.push(

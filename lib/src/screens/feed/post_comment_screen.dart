@@ -77,7 +77,7 @@ class _PostCommentScreenState extends State<PostCommentScreen> {
                         }),
                       );
                     },
-                    child: Text(l10n(context).openOP),
+                    child: Text(l10n(context).comment_openOriginalPost),
                   ),
                 ),
                 Padding(
@@ -95,7 +95,7 @@ class _PostCommentScreenState extends State<PostCommentScreen> {
                             );
                           }
                         : null,
-                    child: Text(l10n(context).openRoot),
+                    child: Text(l10n(context).comment_openRoot),
                   ),
                 ),
                 Padding(
@@ -113,7 +113,7 @@ class _PostCommentScreenState extends State<PostCommentScreen> {
                             );
                           }
                         : null,
-                    child: Text(l10n(context).openParent),
+                    child: Text(l10n(context).comment_openParent),
                   ),
                 ),
               ],

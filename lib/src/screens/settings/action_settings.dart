@@ -31,12 +31,12 @@ class ActionSettings extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n(context).actionsAndDefaults),
+        title: Text(l10n(context).settings_actionsAndDefaults),
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         children: [
-          const SettingsHeader('Feed Actions'),
+          SettingsHeader(l10n(context).settings_feedActions),
           ActionSettingsItem(
             metadata: feedActionExpandFab,
             location: controller.feedActionExpandFab,
@@ -72,9 +72,9 @@ class ActionSettings extends StatelessWidget {
             location: controller.feedActionSetType,
             setLocation: controller.updateFeedActionSetType,
           ),
-          const SettingsHeader('Defaults'),
+          SettingsHeader(l10n(context).settings_defaults),
           ListTile(
-            title: const Text('Feed Type'),
+            title: Text(l10n(context).settings_feedType),
             leading: const Icon(Icons.tab),
             enabled: !isLemmy,
             onTap: () async {
@@ -95,7 +95,7 @@ class ActionSettings extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text('Feed Filter'),
+            title: Text(l10n(context).settings_feedFilter),
             leading: const Icon(Icons.filter_alt),
             onTap: () async {
               controller.updateDefaultFeedFilter(
@@ -115,7 +115,7 @@ class ActionSettings extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text('Threads Feed Sort'),
+            title: Text(l10n(context).settings_threadsFeedSort),
             leading: const Icon(Icons.sort),
             onTap: () async {
               controller.updateDefaultThreadsFeedSort(
@@ -135,7 +135,7 @@ class ActionSettings extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text('Microblog Feed Sort'),
+            title: Text(l10n(context).settings_microblogFeedSort),
             leading: const Icon(Icons.sort),
             enabled: !isLemmy,
             onTap: () async {
@@ -156,7 +156,7 @@ class ActionSettings extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text('Explore Feed Sort'),
+            title: Text(l10n(context).settings_exploreFeedSort),
             leading: const Icon(Icons.explore),
             onTap: () async {
               controller.updateDefaultExploreFeedSort(
@@ -176,7 +176,7 @@ class ActionSettings extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text('Comment Sort'),
+            title: Text(l10n(context).settings_commentSort),
             leading: const Icon(Icons.comment),
             onTap: () async {
               controller.updateDefaultCommentSort(

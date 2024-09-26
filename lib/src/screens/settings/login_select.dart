@@ -29,12 +29,13 @@ class _LoginSelectScreenState extends State<LoginSelectScreen> {
 
   Future<void> _initiateLogin(String host) async {
     final software = await getServerSoftware(host);
-    if (software == null) {
-      throw Exception('$host is using unsupported software');
-    }
 
     // Check BuildContext
     if (!mounted) return;
+
+    if (software == null) {
+      throw Exception(l10n(context).unsupportedSoftware(host));
+    }
 
     await context.read<SettingsController>().saveServer(software, host);
 
