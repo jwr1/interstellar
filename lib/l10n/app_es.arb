@@ -182,5 +182,9 @@
   "copied": "Copiado",
   "@copied": {},
   "postingRestricted": "Publicación restringida a moderadores",
-  "@postingRestricted": {}
+  "@postingRestricted": {},
+  "settings_general": "Configuración General",
+  "@settings_general": {},
+  "comment_openOriginalPost": "Abrir OP",
+  "@comment_openOriginalPost": {}
 }
