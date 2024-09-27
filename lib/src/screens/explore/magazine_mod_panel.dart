@@ -4,6 +4,7 @@ import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/screens/explore/user_item.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:provider/provider.dart';
 
 class MagazineModPanel extends StatefulWidget {
@@ -122,21 +123,22 @@ class _MagazineModPanelBansState extends State<MagazineModPanelBans> {
             builderDelegate: PagedChildBuilderDelegate<MagazineBanModel>(
               itemBuilder: (context, item, index) =>
                   UserItemSimple(item.bannedUser, trailingWidgets: [
-                OutlinedButton(
-                    onPressed: () async {
-                      await context
-                          .read<SettingsController>()
-                          .api
-                          .magazineModeration
-                          .removeBan(widget.data.id, item.bannedUser.id);
+                LoadingOutlinedButton(
+                  onPressed: () async {
+                    await context
+                        .read<SettingsController>()
+                        .api
+                        .magazineModeration
+                        .removeBan(widget.data.id, item.bannedUser.id);
 
-                      var newList = _pagingController.itemList;
-                      newList!.removeAt(index);
-                      setState(() {
-                        _pagingController.itemList = newList;
-                      });
-                    },
-                    child: const Text('Unban'))
+                    var newList = _pagingController.itemList;
+                    newList!.removeAt(index);
+                    setState(() {
+                      _pagingController.itemList = newList;
+                    });
+                  },
+                  label: const Text('Unban'),
+                )
               ]),
             ),
           )

@@ -342,5 +342,6 @@
   "action_refresh": "Refresh",
   "action_setFilter": "Set Filter",
   "action_setSort": "Set Sort",
-  "action_setType": "Set Type"
+  "action_setType": "Set Type",
+  "save": "Save"
 }

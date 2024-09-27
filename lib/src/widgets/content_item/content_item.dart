@@ -8,6 +8,7 @@ import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/image.dart';
+import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/markdown/markdown.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:interstellar/src/widgets/open_webpage.dart';
@@ -526,13 +527,14 @@ class _ContentItemState extends State<ContentItem> {
                                                   Navigator.pop(context),
                                               child: Text(l(context).cancel),
                                             ),
-                                            FilledButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
+                                            LoadingFilledButton(
+                                              onPressed: () async {
+                                                await widget.onDelete!();
 
-                                                widget.onDelete!();
+                                                if (!mounted) return;
+                                                Navigator.pop(context);
                                               },
-                                              child: Text(l(context).delete),
+                                              label: Text(l(context).delete),
                                             ),
                                           ],
                                           actionsOverflowAlignment:
@@ -565,16 +567,17 @@ class _ContentItemState extends State<ContentItem> {
                                                   Navigator.pop(context),
                                               child: Text(l(context).close),
                                             ),
-                                            FilledButton.tonal(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-
-                                                Clipboard.setData(
+                                            LoadingTonalButton(
+                                              onPressed: () async {
+                                                await Clipboard.setData(
                                                   ClipboardData(
                                                       text: widget.body!),
                                                 );
+
+                                                if (!mounted) return;
+                                                Navigator.pop(context);
                                               },
-                                              child: Text(l(context).copy),
+                                              label: Text(l(context).copy),
                                             ),
                                           ],
                                         ),
@@ -662,18 +665,18 @@ class _ContentItemState extends State<ContentItem> {
                                           }),
                                       child: Text(l(context).cancel)),
                                   const SizedBox(width: 8),
-                                  FilledButton(
-                                      onPressed: () async {
-                                        // Wait in case of errors before closing
-                                        await widget.onReply!(
-                                            _replyTextController!.text);
+                                  LoadingFilledButton(
+                                    onPressed: () async {
+                                      await widget
+                                          .onReply!(_replyTextController!.text);
 
-                                        setState(() {
-                                          _replyTextController!.dispose();
-                                          _replyTextController = null;
-                                        });
-                                      },
-                                      child: Text(l(context).submit))
+                                      setState(() {
+                                        _replyTextController!.dispose();
+                                        _replyTextController = null;
+                                      });
+                                    },
+                                    label: Text(l(context).submit),
+                                  )
                                 ],
                               )
                             ],
@@ -696,9 +699,8 @@ class _ContentItemState extends State<ContentItem> {
                                           }),
                                       child: Text(l(context).cancel)),
                                   const SizedBox(width: 8),
-                                  FilledButton(
+                                  LoadingFilledButton(
                                     onPressed: () async {
-                                      // Wait in case of errors before closing
                                       await widget
                                           .onEdit!(_editTextController!.text);
 
@@ -707,7 +709,7 @@ class _ContentItemState extends State<ContentItem> {
                                         _editTextController = null;
                                       });
                                     },
-                                    child: Text(l(context).submit),
+                                    label: Text(l(context).submit),
                                   )
                                 ],
                               )

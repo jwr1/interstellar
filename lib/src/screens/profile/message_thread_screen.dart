@@ -4,6 +4,7 @@ import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
+import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/loading_template.dart';
 import 'package:interstellar/src/widgets/markdown/markdown.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
@@ -66,28 +67,29 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                FilledButton(
-                    onPressed: () async {
-                      final newThread = await context
-                          .read<SettingsController>()
-                          .api
-                          .messages
-                          .postThreadReply(
-                            data.threadId,
-                            _controller.text,
-                          );
+                LoadingFilledButton(
+                  onPressed: () async {
+                    final newThread = await context
+                        .read<SettingsController>()
+                        .api
+                        .messages
+                        .postThreadReply(
+                          data.threadId,
+                          _controller.text,
+                        );
 
-                      _controller.text = '';
+                    _controller.text = '';
 
-                      setState(() {
-                        _data = newThread;
-                      });
+                    setState(() {
+                      _data = newThread;
+                    });
 
-                      if (widget.onUpdate != null) {
-                        widget.onUpdate!(newThread);
-                      }
-                    },
-                    child: Text(l(context).send))
+                    if (widget.onUpdate != null) {
+                      widget.onUpdate!(newThread);
+                    }
+                  },
+                  label: Text(l(context).send),
+                )
               ],
             )
           ]),

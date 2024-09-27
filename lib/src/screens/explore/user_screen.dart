@@ -18,6 +18,7 @@ import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
 import 'package:interstellar/src/widgets/image.dart';
+import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/loading_template.dart';
 import 'package:interstellar/src/widgets/markdown/markdown.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
@@ -252,7 +253,7 @@ class _UserScreenState extends State<UserScreen> {
                               ),
                             StarButton(globalName),
                             if (whenLoggedIn(context, true) == true)
-                              IconButton(
+                              LoadingIconButton(
                                 onPressed: () async {
                                   final newValue = await context
                                       .read<SettingsController>()
@@ -311,9 +312,9 @@ class _UserScreenState extends State<UserScreen> {
                                       _messageController = null;
                                     });
                                   },
-                                  child: const Text('Cancel'),
+                                  child: Text(l(context).cancel),
                                 ),
-                                FilledButton(
+                                LoadingFilledButton(
                                   onPressed: () async {
                                     final newThread = await context
                                         .read<SettingsController>()
@@ -337,7 +338,7 @@ class _UserScreenState extends State<UserScreen> {
                                       );
                                     });
                                   },
-                                  child: const Text('Send'),
+                                  label: Text(l(context).send),
                                 )
                               ],
                             )

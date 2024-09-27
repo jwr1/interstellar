@@ -3,6 +3,7 @@ import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:provider/provider.dart';
 
@@ -58,7 +59,7 @@ class _BanDialogState extends State<BanDialog> {
           },
           child: Text(l(context).cancel),
         ),
-        FilledButton(
+        LoadingFilledButton(
           onPressed: _reasonTextEditingController.text.isEmpty
               ? null
               : () async {
@@ -75,7 +76,7 @@ class _BanDialogState extends State<BanDialog> {
                   if (!mounted) return;
                   Navigator.of(context).pop();
                 },
-          child: Text(l(context).banUserX(widget.user.name)),
+          label: Text(l(context).banUserX(widget.user.name)),
         ),
       ],
     );

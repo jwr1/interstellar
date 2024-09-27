@@ -67,7 +67,7 @@ class _PostCommentScreenState extends State<PostCommentScreen> {
                 Padding(
                   padding: const EdgeInsets.all(4),
                   child: OutlinedButton(
-                    onPressed: () async {
+                    onPressed: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(builder: (context) {
                           return PostPage(

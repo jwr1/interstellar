@@ -4,6 +4,7 @@ import 'package:interstellar/src/models/domain.dart';
 import 'package:interstellar/src/screens/feed/feed_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/subscription_button.dart';
 import 'package:provider/provider.dart';
 
@@ -80,7 +81,7 @@ class _DomainScreenState extends State<DomainScreen> {
                         }),
                       ),
                       if (whenLoggedIn(context, true) == true)
-                        IconButton(
+                        LoadingIconButton(
                           onPressed: () async {
                             final newValue = await context
                                 .read<SettingsController>()

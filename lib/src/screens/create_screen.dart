@@ -5,6 +5,7 @@ import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/language_codes.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/image_selector.dart';
+import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:provider/provider.dart';
@@ -52,94 +53,13 @@ class _CreateScreenState extends State<CreateScreen> {
           PostType.thread => l(context).createThread,
           PostType.microblog => l(context).createMicroblog,
         }),
-        actions: [
-          IconButton(
-              onPressed: () async {
-                final api = context.read<SettingsController>().api;
-
-                var magazineName = _magazineTextController.text;
-
-                int? magazineId = widget.magazineId;
-                if (magazineId == null) {
-                  final magazine = await api.magazines.getByName(magazineName);
-                  magazineId = magazine.id;
-                }
-
-                var tags = _tagsTextController.text.isNotEmpty
-                    ? _tagsTextController.text.split(' ')
-                    : <String>[];
-
-                switch (widget.type) {
-                  case PostType.thread:
-                    if (_urlTextController.text.isEmpty) {
-                      if (_imageFile == null) {
-                        await api.threads.createArticle(
-                          magazineId,
-                          title: _titleTextController.text,
-                          isOc: _isOc,
-                          body: _bodyTextController.text,
-                          lang: _lang,
-                          isAdult: _isAdult,
-                          tags: tags,
-                        );
-                      } else {
-                        await api.threads.createImage(
-                          magazineId,
-                          title: _titleTextController.text,
-                          image: _imageFile!,
-                          alt: '',
-                          isOc: _isOc,
-                          body: _bodyTextController.text,
-                          lang: _lang,
-                          isAdult: _isAdult,
-                          tags: tags,
-                        );
-                      }
-                    } else {
-                      await api.threads.createLink(
-                        magazineId,
-                        title: _titleTextController.text,
-                        url: _urlTextController.text,
-                        isOc: _isOc,
-                        body: _bodyTextController.text,
-                        lang: _lang,
-                        isAdult: _isAdult,
-                        tags: tags,
-                      );
-                    }
-                  case PostType.microblog:
-                    if (_imageFile == null) {
-                      await api.microblogs.create(
-                        magazineId,
-                        body: _bodyTextController.text,
-                        lang: _lang,
-                        isAdult: _isAdult,
-                      );
-                    } else {
-                      await api.microblogs.createImage(
-                        magazineId,
-                        image: _imageFile!,
-                        alt: '',
-                        body: _bodyTextController.text,
-                        lang: _lang,
-                        isAdult: _isAdult,
-                      );
-                    }
-                }
-
-                // Check BuildContext
-                if (!mounted) return;
-
-                Navigator.pop(context);
-              },
-              icon: const Icon(Icons.send))
-        ],
       ),
       body: ListView(
         children: [
           Padding(
             padding: const EdgeInsets.all(12),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 if (widget.type != PostType.microblog)
                   Padding(
@@ -240,6 +160,92 @@ class _CreateScreenState extends State<CreateScreen> {
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [Text(getLangName(_lang))],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: LoadingFilledButton(
+                    onPressed: () async {
+                      final api = context.read<SettingsController>().api;
+
+                      var magazineName = _magazineTextController.text;
+
+                      int? magazineId = widget.magazineId;
+                      if (magazineId == null) {
+                        final magazine =
+                            await api.magazines.getByName(magazineName);
+                        magazineId = magazine.id;
+                      }
+
+                      var tags = _tagsTextController.text.isNotEmpty
+                          ? _tagsTextController.text.split(' ')
+                          : <String>[];
+
+                      switch (widget.type) {
+                        case PostType.thread:
+                          if (_urlTextController.text.isEmpty) {
+                            if (_imageFile == null) {
+                              await api.threads.createArticle(
+                                magazineId,
+                                title: _titleTextController.text,
+                                isOc: _isOc,
+                                body: _bodyTextController.text,
+                                lang: _lang,
+                                isAdult: _isAdult,
+                                tags: tags,
+                              );
+                            } else {
+                              await api.threads.createImage(
+                                magazineId,
+                                title: _titleTextController.text,
+                                image: _imageFile!,
+                                alt: '',
+                                isOc: _isOc,
+                                body: _bodyTextController.text,
+                                lang: _lang,
+                                isAdult: _isAdult,
+                                tags: tags,
+                              );
+                            }
+                          } else {
+                            await api.threads.createLink(
+                              magazineId,
+                              title: _titleTextController.text,
+                              url: _urlTextController.text,
+                              isOc: _isOc,
+                              body: _bodyTextController.text,
+                              lang: _lang,
+                              isAdult: _isAdult,
+                              tags: tags,
+                            );
+                          }
+                        case PostType.microblog:
+                          if (_imageFile == null) {
+                            await api.microblogs.create(
+                              magazineId,
+                              body: _bodyTextController.text,
+                              lang: _lang,
+                              isAdult: _isAdult,
+                            );
+                          } else {
+                            await api.microblogs.createImage(
+                              magazineId,
+                              image: _imageFile!,
+                              alt: '',
+                              body: _bodyTextController.text,
+                              lang: _lang,
+                              isAdult: _isAdult,
+                            );
+                          }
+                      }
+
+                      // Check BuildContext
+                      if (!mounted) return;
+
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(Icons.send),
+                    label: Text(l(context).submit),
                   ),
                 ),
               ],

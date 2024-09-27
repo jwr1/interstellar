@@ -6,6 +6,7 @@ import 'package:interstellar/src/api/notifications.dart';
 import 'package:interstellar/src/models/notification.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:provider/provider.dart';
 
 import './notification_count_controller.dart';
@@ -99,7 +100,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       ],
                     ),
                   ),
-                  OutlinedButton(
+                  LoadingOutlinedButton(
                     onPressed: () async {
                       await context
                           .read<SettingsController>()
@@ -111,7 +112,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       if (!mounted) return;
                       context.read<NotificationCountController>().reload();
                     },
-                    child: Text(l(context).notifications_markAllAsRead),
+                    label: Text(l(context).notifications_markAllAsRead),
                   ),
                   // Push notifications only work on Android devices and Mbin servers
                   if (Platform.isAndroid &&
@@ -119,7 +120,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           ServerSoftware.mbin)
                     Padding(
                       padding: const EdgeInsets.only(left: 12),
-                      child: OutlinedButton(
+                      child: LoadingOutlinedButton(
                         onPressed:
                             context.watch<SettingsController>().isPushRegistered
                                 ? () => context
@@ -128,10 +129,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                 : () => context
                                     .read<SettingsController>()
                                     .registerPush(context),
-                        child: Text(
+                        label: Text(
                             context.watch<SettingsController>().isPushRegistered
                                 ? l(context).notifications_unregisterPush
                                 : l(context).notifications_registerPush),
+                        icon: const Icon(Icons.notifications_active),
                       ),
                     ),
                 ],

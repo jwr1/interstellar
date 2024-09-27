@@ -10,6 +10,7 @@ import 'package:interstellar/src/screens/feed/post_page.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
+import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/markdown/markdown.dart';
 import 'package:provider/provider.dart';
 
@@ -148,7 +149,7 @@ class _NotificationItemState extends State<NotificationItem> {
                       ),
                     ),
                   const Spacer(),
-                  IconButton(
+                  LoadingIconButton(
                     onPressed: () async {
                       final newNotification = await context
                           .read<SettingsController>()

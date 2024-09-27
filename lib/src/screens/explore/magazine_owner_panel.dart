@@ -4,6 +4,7 @@ import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/screens/explore/user_item.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:provider/provider.dart';
@@ -147,30 +148,30 @@ class _MagazineOwnerPanelGeneralState extends State<MagazineOwnerPanelGeneral> {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),
-          child: FilledButton(
-              onPressed: _titleController.text == widget.data.title &&
-                      _descriptionController.text == widget.data.description &&
-                      _isAdult == widget.data.isAdult &&
-                      _isPostingRestrictedToMods ==
-                          widget.data.isPostingRestrictedToMods
-                  ? null
-                  : () async {
-                      final result = await context
-                          .read<SettingsController>()
-                          .api
-                          .magazineModeration
-                          .edit(
-                            widget.data.id,
-                            title: _titleController.text,
-                            description: _descriptionController.text,
-                            isAdult: _isAdult,
-                            isPostingRestrictedToMods:
-                                _isPostingRestrictedToMods,
-                          );
+          child: LoadingFilledButton(
+            onPressed: _titleController.text == widget.data.title &&
+                    _descriptionController.text == widget.data.description &&
+                    _isAdult == widget.data.isAdult &&
+                    _isPostingRestrictedToMods ==
+                        widget.data.isPostingRestrictedToMods
+                ? null
+                : () async {
+                    final result = await context
+                        .read<SettingsController>()
+                        .api
+                        .magazineModeration
+                        .edit(
+                          widget.data.id,
+                          title: _titleController.text,
+                          description: _descriptionController.text,
+                          isAdult: _isAdult,
+                          isPostingRestrictedToMods: _isPostingRestrictedToMods,
+                        );
 
-                      widget.onUpdate(result);
-                    },
-              child: const Text('Save')),
+                    widget.onUpdate(result);
+                  },
+            label: Text(l(context).save),
+          ),
         ),
       ],
     );
@@ -237,7 +238,7 @@ class _MagazineOwnerPanelModeratorsState
                               onPressed: () => Navigator.pop(context),
                               child: const Text('Cancel'),
                             ),
-                            FilledButton(
+                            LoadingFilledButton(
                               onPressed: () async {
                                 Navigator.of(context).pop(
                                   await context
@@ -248,7 +249,7 @@ class _MagazineOwnerPanelModeratorsState
                                           widget.data.id, user.id, true),
                                 );
                               },
-                              child: const Text('Add'),
+                              label: const Text('Add'),
                             ),
                           ],
                         ),
@@ -288,7 +289,7 @@ class _MagazineOwnerPanelModeratorsState
                           onPressed: () => Navigator.pop(context),
                           child: const Text('Cancel'),
                         ),
-                        FilledButton(
+                        LoadingFilledButton(
                           onPressed: () async {
                             Navigator.of(context).pop(
                               await context
@@ -299,7 +300,7 @@ class _MagazineOwnerPanelModeratorsState
                                       widget.data.id, mod.id, false),
                             );
                           },
-                          child: const Text('Remove'),
+                          label: const Text('Remove'),
                         ),
                       ],
                     ),
@@ -420,7 +421,7 @@ class _MagazineOwnerPanelDeletionDialogState
           onPressed: () => Navigator.pop(context, false),
           child: const Text('Cancel'),
         ),
-        FilledButton(
+        LoadingFilledButton(
           onPressed: _confirmController.text != magazineName
               ? null
               : () async {
@@ -433,7 +434,7 @@ class _MagazineOwnerPanelDeletionDialogState
                   if (!mounted) return;
                   Navigator.pop(context, true);
                 },
-          child: const Text('DELETE MAGAZINE'),
+          label: const Text('DELETE MAGAZINE'),
         ),
       ],
     );

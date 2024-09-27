@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/loading_button.dart';
 
 class SubscriptionButton extends StatelessWidget {
   final int subsCount;
   final bool isSubed;
-  final void Function()? onPress;
+  final Future<void> Function()? onPress;
 
   const SubscriptionButton({
     required this.subsCount,
@@ -15,21 +16,16 @@ class SubscriptionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final buttonChild = Row(
-      children: [
-        const Icon(Icons.group),
-        Text(' ${intFormat(subsCount)}'),
-      ],
-    );
-
     return isSubed
-        ? FilledButton.tonal(
+        ? LoadingTonalButton(
             onPressed: onPress,
-            child: buttonChild,
+            label: Text(intFormat(subsCount)),
+            icon: const Icon(Icons.group),
           )
-        : OutlinedButton(
+        : LoadingOutlinedButton(
             onPressed: onPress,
-            child: buttonChild,
+            label: Text(intFormat(subsCount)),
+            icon: const Icon(Icons.group),
           );
   }
 }

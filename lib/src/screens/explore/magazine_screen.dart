@@ -9,6 +9,7 @@ import 'package:interstellar/src/screens/feed/feed_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
+import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/markdown/markdown.dart';
 import 'package:interstellar/src/widgets/open_webpage.dart';
 import 'package:interstellar/src/widgets/star_button.dart';
@@ -94,7 +95,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                   ),
                   StarButton(globalName!),
                   if (whenLoggedIn(context, true) == true)
-                    IconButton(
+                    LoadingIconButton(
                       onPressed: () async {
                         final newValue = await context
                             .read<SettingsController>()

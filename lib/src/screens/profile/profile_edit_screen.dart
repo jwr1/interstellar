@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/image.dart';
+import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:provider/provider.dart';
 
@@ -52,7 +53,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          IconButton(
+          LoadingIconButton(
             onPressed: () async {
               if (_settingsChanged) {
                 _settings = await context
