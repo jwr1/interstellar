@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/utils/variables.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -12,12 +13,12 @@ void openWebpageSecondary(BuildContext context, Uri uri) {
   showDialog<String>(
     context: context,
     builder: (BuildContext context) => AlertDialog(
-      title: const Text('Open link'),
+      title: Text(l(context).openLink),
       content: Text(uri.toString()),
       actions: <Widget>[
         OutlinedButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text(l(context).cancel),
         ),
         FilledButton.tonal(
           onPressed: () {
@@ -27,7 +28,7 @@ void openWebpageSecondary(BuildContext context, Uri uri) {
               ClipboardData(text: uri.toString()),
             );
           },
-          child: const Text('Copy'),
+          child: Text(l(context).copy),
         ),
         if (isWebViewSupported)
           FilledButton.tonal(
@@ -47,7 +48,7 @@ void openWebpageSecondary(BuildContext context, Uri uri) {
                 ),
               );
             },
-            child: const Text('WebView'),
+            child: Text(l(context).webView),
           ),
         FilledButton(
           onPressed: () {
@@ -55,7 +56,7 @@ void openWebpageSecondary(BuildContext context, Uri uri) {
 
             launchUrl(uri);
           },
-          child: const Text('Browser'),
+          child: Text(l(context).browser),
         ),
       ],
       actionsOverflowAlignment: OverflowBarAlignment.center,

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/utils/variables.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -24,11 +25,13 @@ class _RedirectListenerState extends State<RedirectListener> {
     HttpServer server = await HttpServer.bind(_redirectHost, _redirectPort);
     launchUrl(widget.initUri);
     final req = await server.first;
+
+    if (!mounted) return Uri();
+
     final result = req.uri;
     req.response.statusCode = 200;
     req.response.headers.set('content-type', 'text/plain');
-    req.response.writeln(
-        'Redirect received. You can close this tab now and return to the app.');
+    req.response.writeln(l(context).redirectReceivedMessage);
     await req.response.close();
     await server.close();
     return result;
@@ -72,7 +75,7 @@ class _RedirectListenerState extends State<RedirectListener> {
 
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
-      body: const Center(child: Text('Continue in browser')),
+      body: Center(child: Text(l(context).continueInBrowser)),
     );
   }
 }

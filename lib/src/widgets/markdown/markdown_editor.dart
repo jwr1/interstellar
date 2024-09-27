@@ -261,7 +261,7 @@ List<_MarkdownEditorActionInfo> _actions(BuildContext context) => [
       _MarkdownEditorActionInfo(
         action: const _MarkdownEditorActionBlock('> '),
         icon: Icons.format_quote,
-        tooltip: l(context).markdownEditor_Quote,
+        tooltip: l(context).markdownEditor_quote,
         shortcut: const SingleActivator(LogicalKeyboardKey.keyQ,
             control: true, alt: true),
       ),

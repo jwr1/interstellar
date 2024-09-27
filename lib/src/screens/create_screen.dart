@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/language_codes.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/image_selector.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
@@ -47,10 +48,10 @@ class _CreateScreenState extends State<CreateScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Create ${switch (widget.type) {
-          PostType.thread => 'thread',
-          PostType.microblog => 'microblog',
-        }}"),
+        title: Text(switch (widget.type) {
+          PostType.thread => l(context).createThread,
+          PostType.microblog => l(context).createMicroblog,
+        }),
         actions: [
           IconButton(
               onPressed: () async {
@@ -145,7 +146,7 @@ class _CreateScreenState extends State<CreateScreen> {
                     padding: const EdgeInsets.all(5),
                     child: TextEditor(
                       _titleTextController,
-                      label: 'Title',
+                      label: l(context).title,
                     ),
                   ),
                 if (_imageFile == null || widget.type == PostType.microblog)
@@ -154,7 +155,7 @@ class _CreateScreenState extends State<CreateScreen> {
                     child: MarkdownEditor(
                       _bodyTextController,
                       onChanged: (_) => setState(() {}),
-                      label: 'Body',
+                      label: l(context).body,
                     ),
                   ),
                 if (widget.type != PostType.microblog)
@@ -167,7 +168,7 @@ class _CreateScreenState extends State<CreateScreen> {
                             child: TextEditor(
                               _urlTextController,
                               keyboardType: TextInputType.url,
-                              label: 'URL',
+                              label: l(context).link,
                               onChanged: (_) => setState(() {}),
                             ),
                           ),
@@ -194,20 +195,20 @@ class _CreateScreenState extends State<CreateScreen> {
                     padding: const EdgeInsets.all(5),
                     child: TextEditor(
                       _tagsTextController,
-                      label: 'Tags',
-                      hint: 'Separate with spaces',
+                      label: l(context).tags,
+                      hint: l(context).tags_hint,
                     ),
                   ),
                 Padding(
                   padding: const EdgeInsets.all(5),
                   child: TextEditor(
                     _magazineTextController,
-                    label: 'Magazine',
+                    label: l(context).magazine,
                   ),
                 ),
                 if (widget.type != PostType.microblog)
                   CheckboxListTile(
-                    title: const Text('Original Content'),
+                    title: Text(l(context).originalContent_long),
                     value: _isOc,
                     onChanged: (newValue) => setState(() {
                       _isOc = newValue!;
@@ -215,7 +216,7 @@ class _CreateScreenState extends State<CreateScreen> {
                     controlAffinity: ListTileControlAffinity.leading,
                   ),
                 CheckboxListTile(
-                  title: const Text('NSFW'),
+                  title: Text(l(context).notSafeForWork_long),
                   value: _isAdult,
                   onChanged: (newValue) => setState(() {
                     _isAdult = newValue!;
@@ -223,7 +224,7 @@ class _CreateScreenState extends State<CreateScreen> {
                   controlAffinity: ListTileControlAffinity.leading,
                 ),
                 ListTile(
-                  title: const Text('Language'),
+                  title: Text(l(context).language),
                   onTap: () async {
                     final newLang = await languageSelectionMenu.askSelection(
                       context,

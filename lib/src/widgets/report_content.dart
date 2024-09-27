@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
 
 Future<String?> reportContent(BuildContext context, String contentTypeName) =>
@@ -23,22 +24,22 @@ class _ReportContentBodyState extends State<ReportContentBody> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Report ${widget.contentTypeName}'),
+      title: Text(l(context).reportX(widget.contentTypeName)),
       content: TextEditor(
         _reasonTextEditingController,
-        label: 'Reason',
+        label: l(context).reason,
         onChanged: (_) => setState(() {}),
       ),
       actions: <Widget>[
         OutlinedButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text(l(context).cancel),
         ),
         FilledButton(
           onPressed: _reasonTextEditingController.text.isEmpty
               ? null
               : () => Navigator.pop(context, _reasonTextEditingController.text),
-          child: const Text('Report'),
+          child: Text(l(context).report),
         ),
       ],
       actionsOverflowAlignment: OverflowBarAlignment.center,

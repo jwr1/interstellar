@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:provider/provider.dart';
 
@@ -37,16 +38,15 @@ class _BanDialogState extends State<BanDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Ban User'),
+      title: Text(l(context).banUser),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-              'You are about to ban ${widget.user.name} from ${widget.magazine.name}.'),
+          Text(l(context).banUser_help(widget.user.name, widget.magazine.name)),
           const SizedBox(height: 16),
           TextEditor(
             _reasonTextEditingController,
-            label: 'Reason',
+            label: l(context).reason,
             onChanged: (_) => setState(() {}),
           )
         ],
@@ -56,7 +56,7 @@ class _BanDialogState extends State<BanDialog> {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: const Text('Cancel'),
+          child: Text(l(context).cancel),
         ),
         FilledButton(
           onPressed: _reasonTextEditingController.text.isEmpty
@@ -75,7 +75,7 @@ class _BanDialogState extends State<BanDialog> {
                   if (!mounted) return;
                   Navigator.of(context).pop();
                 },
-          child: Text('Ban ${widget.user.name}'),
+          child: Text(l(context).banUserX(widget.user.name)),
         ),
       ],
     );

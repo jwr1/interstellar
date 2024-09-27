@@ -73,7 +73,7 @@ class _FeedScreenState extends State<FeedScreen> {
     final currentFeedSortOption = feedSortSelect(context).getOption(_sort);
 
     final actions = [
-      feedActionCreatePost.withProps(
+      feedActionCreatePost(context).withProps(
         context.watch<SettingsController>().isLoggedIn
             ? context.watch<SettingsController>().feedActionCreatePost
             : ActionLocation.hide,
@@ -89,7 +89,7 @@ class _FeedScreenState extends State<FeedScreen> {
           );
         },
       ),
-      feedActionSetFilter.withProps(
+      feedActionSetFilter(context).withProps(
         whenLoggedIn(context, widget.source != null) ?? true
             ? ActionLocation.hide
             : parseEnum(
@@ -108,7 +108,7 @@ class _FeedScreenState extends State<FeedScreen> {
           }
         },
       ),
-      feedActionSetSort.withProps(
+      feedActionSetSort(context).withProps(
         parseEnum(
           ActionLocation.values,
           ActionLocation.hide,
@@ -125,7 +125,7 @@ class _FeedScreenState extends State<FeedScreen> {
           }
         },
       ),
-      feedActionSetType.withProps(
+      feedActionSetType(context).withProps(
         widget.source == FeedSource.domain &&
                 context.watch<SettingsController>().serverSoftware ==
                     ServerSoftware.lemmy
@@ -155,7 +155,7 @@ class _FeedScreenState extends State<FeedScreen> {
           }
         },
       ),
-      feedActionRefresh.withProps(
+      feedActionRefresh(context).withProps(
         context.watch<SettingsController>().feedActionRefresh,
         () {
           for (var key in _feedKeyList) {
@@ -163,7 +163,7 @@ class _FeedScreenState extends State<FeedScreen> {
           }
         },
       ),
-      feedActionBackToTop.withProps(
+      feedActionBackToTop(context).withProps(
         context.watch<SettingsController>().feedActionBackToTop,
         () {
           for (var key in _feedKeyList) {
@@ -171,7 +171,7 @@ class _FeedScreenState extends State<FeedScreen> {
           }
         },
       ),
-      feedActionExpandFab.withProps(
+      feedActionExpandFab(context).withProps(
         context.watch<SettingsController>().feedActionExpandFab,
         () {
           _fabKey.currentState?.toggle();
@@ -184,17 +184,19 @@ class _FeedScreenState extends State<FeedScreen> {
               ActionLocationWithTabs.tabs &&
           widget.source == null &&
           context.watch<SettingsController>().isLoggedIn)
-        actions.firstWhere((action) => action.name == feedActionSetFilter.name),
+        actions.firstWhere(
+            (action) => action.name == feedActionSetFilter(context).name),
       if (context.watch<SettingsController>().feedActionSetType ==
           ActionLocationWithTabs.tabs)
-        actions.firstWhere((action) => action.name == feedActionSetType.name),
+        actions.firstWhere(
+            (action) => action.name == feedActionSetType(context).name),
     ].firstOrNull;
 
     return Wrapper(
       shouldWrap: tabsAction != null,
       parentBuilder: (child) => DefaultTabController(
         initialIndex: switch (tabsAction?.name) {
-          String name when name == feedActionSetFilter.name =>
+          String name when name == feedActionSetFilter(context).name =>
             feedFilterSelect(context)
                 .options
                 .asMap()
@@ -203,7 +205,7 @@ class _FeedScreenState extends State<FeedScreen> {
                     entry.value.value ==
                     context.watch<SettingsController>().defaultFeedFilter)
                 .key,
-          String name when name == feedActionSetType.name =>
+          String name when name == feedActionSetType(context).name =>
             feedTypeSelect(context)
                 .options
                 .asMap()
@@ -218,9 +220,9 @@ class _FeedScreenState extends State<FeedScreen> {
           _ => 0
         },
         length: switch (tabsAction?.name) {
-          String name when name == feedActionSetFilter.name =>
+          String name when name == feedActionSetFilter(context).name =>
             feedFilterSelect(context).options.length,
-          String name when name == feedActionSetType.name =>
+          String name when name == feedActionSetType(context).name =>
             feedTypeSelect(context).options.length,
           _ => 0
         },
@@ -269,7 +271,8 @@ class _FeedScreenState extends State<FeedScreen> {
               ? null
               : TabBar(
                   tabs: switch (tabsAction.name) {
-                    String name when name == feedActionSetFilter.name =>
+                    String name
+                        when name == feedActionSetFilter(context).name =>
                       feedFilterSelect(context)
                           .options
                           .map(
@@ -279,7 +282,7 @@ class _FeedScreenState extends State<FeedScreen> {
                             ),
                           )
                           .toList(),
-                    String name when name == feedActionSetType.name =>
+                    String name when name == feedActionSetType(context).name =>
                       feedTypeSelect(context)
                           .options
                           .map(
@@ -304,7 +307,8 @@ class _FeedScreenState extends State<FeedScreen> {
               )
             : TabBarView(
                 children: switch (tabsAction.name) {
-                  String name when name == feedActionSetFilter.name => [
+                  String name when name == feedActionSetFilter(context).name =>
+                    [
                       FeedScreenBody(
                         key: _getFeedKey(0),
                         source: FeedSource.subscribed,
@@ -334,7 +338,7 @@ class _FeedScreenState extends State<FeedScreen> {
                         details: widget.details,
                       ),
                     ],
-                  String name when name == feedActionSetType.name => [
+                  String name when name == feedActionSetType(context).name => [
                       FeedScreenBody(
                         key: _getFeedKey(0),
                         source: _filter,

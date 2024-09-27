@@ -254,6 +254,14 @@
     }
   },
   "report": "Report",
+  "reportX": "Report {name}",
+  "@reportX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "edit": "Edit",
   "delete": "Delete",
   "deleteX": "Delete {name}",
@@ -267,6 +275,26 @@
   "viewSource": "View Source",
   "close": "Close",
   "banUser": "Ban User",
+  "banUserX": "Ban {user}",
+  "@banUserX": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      }
+    }
+  },
+  "banUser_help": "You are about to ban {user} from {magazine}.",
+  "@banUser_help": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      },
+      "magazine": {
+        "type": "String"
+      }
+    }
+  },
+  "reason": "Reason",
   "moderate": "Moderate",
   "submit": "Submit",
   "alternativeSources": "Alternative Sources",
@@ -280,9 +308,39 @@
   "markdownEditor_image": "Image",
   "markdownEditor_subscript": "Subscript",
   "markdownEditor_superscript": "Superscript",
-  "markdownEditor_Quote": "Quote",
+  "markdownEditor_quote": "Quote",
   "markdownEditor_horizontalRule": "Horizontal Rule",
   "markdownEditor_bulletedList": "Bulleted List",
   "markdownEditor_numberedList": "Numbered List",
-  "markdownEditor_spoiler": "Spoiler"
+  "markdownEditor_spoiler": "Spoiler",
+  "uploadFromGallery": "Upload from gallery",
+  "uploadFromCamera": "Upload from camera",
+  "openLink": "Open link",
+  "webView": "WebView",
+  "browser": "Browser",
+  "continueInBrowser": "Continue in browser",
+  "redirectReceivedMessage": "Redirect received. You can close this tab now and return to the app.",
+  "createThread": "Create thread",
+  "createMicroblog": "Create microblog",
+  "title": "Title",
+  "body": "Body",
+  "link": "Link",
+  "tags": "Tags",
+  "tags_hint": "Separate with spaces",
+  "language": "Language",
+  "magazine": "Magazine",
+  "action_setLocation": "Set Action Location",
+  "action_hide": "Hide",
+  "action_appBar": "App Bar",
+  "action_fabTap": "FAB Tap",
+  "action_fabHold": "FAB Hold",
+  "action_fabMenu": "FAB Menu",
+  "action_tabs": "Tabs",
+  "action_backToTop": "Back To Top",
+  "action_createPost": "Create Post",
+  "action_expandFABMenu": "Expand FAB Menu",
+  "action_refresh": "Refresh",
+  "action_setFilter": "Set Filter",
+  "action_setSort": "Set Sort",
+  "action_setType": "Set Type"
 }

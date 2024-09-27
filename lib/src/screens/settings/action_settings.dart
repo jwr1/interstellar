@@ -38,37 +38,37 @@ class ActionSettings extends StatelessWidget {
         children: [
           SettingsHeader(l(context).settings_feedActions),
           ActionSettingsItem(
-            metadata: feedActionExpandFab,
+            metadata: feedActionExpandFab(context),
             location: controller.feedActionExpandFab,
             setLocation: controller.updateFeedActionExpandFab,
           ),
           ActionSettingsItem(
-            metadata: feedActionBackToTop,
+            metadata: feedActionBackToTop(context),
             location: controller.feedActionBackToTop,
             setLocation: controller.updateFeedActionBackToTop,
           ),
           ActionSettingsItem(
-            metadata: feedActionCreatePost,
+            metadata: feedActionCreatePost(context),
             location: controller.feedActionCreatePost,
             setLocation: controller.updateFeedActionCreatePost,
           ),
           ActionSettingsItem(
-            metadata: feedActionRefresh,
+            metadata: feedActionRefresh(context),
             location: controller.feedActionRefresh,
             setLocation: controller.updateFeedActionRefresh,
           ),
           ActionSettingsWithTabsItem(
-            metadata: feedActionSetFilter,
+            metadata: feedActionSetFilter(context),
             location: controller.feedActionSetFilter,
             setLocation: controller.updateFeedActionSetFilter,
           ),
           ActionSettingsItem(
-            metadata: feedActionSetSort,
+            metadata: feedActionSetSort(context),
             location: controller.feedActionSetSort,
             setLocation: controller.updateFeedActionSetSort,
           ),
           ActionSettingsWithTabsItem(
-            metadata: feedActionSetType,
+            metadata: feedActionSetType(context),
             location: controller.feedActionSetType,
             setLocation: controller.updateFeedActionSetType,
           ),
@@ -215,14 +215,14 @@ class ActionSettingsItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final locationOption = actionLocationSelect.getOption(location);
+    final locationOption = actionLocationSelect(context).getOption(location);
 
     return ListTile(
       title: Text(metadata.name),
       leading: Icon(metadata.icon),
       onTap: () async {
         setLocation(
-          await actionLocationSelect.askSelection(
+          await actionLocationSelect(context).askSelection(
             context,
             location,
           ),
@@ -254,14 +254,15 @@ class ActionSettingsWithTabsItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final locationOption = actionLocationWithTabsSelect.getOption(location);
+    final locationOption =
+        actionLocationWithTabsSelect(context).getOption(location);
 
     return ListTile(
       title: Text(metadata.name),
       leading: Icon(metadata.icon),
       onTap: () async {
         setLocation(
-          await actionLocationWithTabsSelect.askSelection(
+          await actionLocationWithTabsSelect(context).askSelection(
             context,
             location,
           ),

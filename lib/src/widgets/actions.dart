@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/selection_menu.dart';
 
 enum ActionLocation { hide, appBar, fabTap, fabHold, fabMenu }
@@ -23,99 +24,101 @@ class ActionItem {
           name: name, icon: icon, callback: callback, location: location);
 }
 
-const feedActionBackToTop = ActionItem(
-  name: 'Back To Top',
-  icon: Icons.keyboard_double_arrow_up,
-);
-const feedActionCreatePost = ActionItem(
-  name: 'Create Post',
-  icon: Icons.create,
-);
-const feedActionExpandFab = ActionItem(
-  name: 'Expand FAB Menu',
-  icon: Icons.menu,
-);
-const feedActionRefresh = ActionItem(
-  name: 'Refresh',
-  icon: Icons.refresh,
-);
-const feedActionSetFilter = ActionItem(
-  name: 'Set Filter',
-  icon: Icons.filter_alt,
-);
-const feedActionSetSort = ActionItem(
-  name: 'Set Sort',
-  icon: Icons.sort,
-);
-const feedActionSetType = ActionItem(
-  name: 'Set Type',
-  icon: Icons.tab,
-);
-
-const SelectionMenu<ActionLocation> actionLocationSelect = SelectionMenu(
-  'Set Action Location',
-  [
-    SelectionMenuItem(
-      value: ActionLocation.hide,
-      title: 'Hide',
-      icon: Icons.visibility_off,
-    ),
-    SelectionMenuItem(
-      value: ActionLocation.appBar,
-      title: 'App Bar',
-      icon: Icons.web_asset,
-    ),
-    SelectionMenuItem(
-      value: ActionLocation.fabTap,
-      title: 'FAB Tap',
-      icon: Icons.touch_app,
-    ),
-    SelectionMenuItem(
-      value: ActionLocation.fabHold,
-      title: 'FAB Hold',
-      icon: Icons.touch_app,
-    ),
-    SelectionMenuItem(
-      value: ActionLocation.fabMenu,
-      title: 'FAB Menu',
+ActionItem feedActionBackToTop(BuildContext context) => ActionItem(
+      name: l(context).action_backToTop,
+      icon: Icons.keyboard_double_arrow_up,
+    );
+ActionItem feedActionCreatePost(BuildContext context) => ActionItem(
+      name: l(context).action_createPost,
+      icon: Icons.create,
+    );
+ActionItem feedActionExpandFab(BuildContext context) => ActionItem(
+      name: l(context).action_expandFABMenu,
       icon: Icons.menu,
-    ),
-  ],
-);
-
-const SelectionMenu<ActionLocationWithTabs> actionLocationWithTabsSelect =
-    SelectionMenu(
-  'Set Action Location',
-  [
-    SelectionMenuItem(
-      value: ActionLocationWithTabs.hide,
-      title: 'Hide',
-      icon: Icons.visibility_off,
-    ),
-    SelectionMenuItem(
-      value: ActionLocationWithTabs.appBar,
-      title: 'App Bar',
-      icon: Icons.web_asset,
-    ),
-    SelectionMenuItem(
-      value: ActionLocationWithTabs.fabTap,
-      title: 'FAB Tap',
-      icon: Icons.touch_app,
-    ),
-    SelectionMenuItem(
-      value: ActionLocationWithTabs.fabHold,
-      title: 'FAB Hold',
-      icon: Icons.touch_app,
-    ),
-    SelectionMenuItem(
-      value: ActionLocationWithTabs.fabMenu,
-      title: 'FAB Menu',
-      icon: Icons.menu,
-    ),
-    SelectionMenuItem(
-      value: ActionLocationWithTabs.tabs,
-      title: 'Tabs',
+    );
+ActionItem feedActionRefresh(BuildContext context) => ActionItem(
+      name: l(context).action_refresh,
+      icon: Icons.refresh,
+    );
+ActionItem feedActionSetFilter(BuildContext context) => ActionItem(
+      name: l(context).action_setFilter,
+      icon: Icons.filter_alt,
+    );
+ActionItem feedActionSetSort(BuildContext context) => ActionItem(
+      name: l(context).action_setSort,
+      icon: Icons.sort,
+    );
+ActionItem feedActionSetType(BuildContext context) => ActionItem(
+      name: l(context).action_setType,
       icon: Icons.tab,
-    ),
-  ],
-);
+    );
+
+SelectionMenu<ActionLocation> actionLocationSelect(BuildContext context) =>
+    SelectionMenu(
+      l(context).action_setLocation,
+      [
+        SelectionMenuItem(
+          value: ActionLocation.hide,
+          title: l(context).action_hide,
+          icon: Icons.visibility_off,
+        ),
+        SelectionMenuItem(
+          value: ActionLocation.appBar,
+          title: l(context).action_appBar,
+          icon: Icons.web_asset,
+        ),
+        SelectionMenuItem(
+          value: ActionLocation.fabTap,
+          title: l(context).action_fabTap,
+          icon: Icons.touch_app,
+        ),
+        SelectionMenuItem(
+          value: ActionLocation.fabHold,
+          title: l(context).action_fabHold,
+          icon: Icons.touch_app,
+        ),
+        SelectionMenuItem(
+          value: ActionLocation.fabMenu,
+          title: l(context).action_fabMenu,
+          icon: Icons.menu,
+        ),
+      ],
+    );
+
+SelectionMenu<ActionLocationWithTabs> actionLocationWithTabsSelect(
+        BuildContext context) =>
+    SelectionMenu(
+      l(context).action_setLocation,
+      [
+        SelectionMenuItem(
+          value: ActionLocationWithTabs.hide,
+          title: l(context).action_hide,
+          icon: Icons.visibility_off,
+        ),
+        SelectionMenuItem(
+          value: ActionLocationWithTabs.appBar,
+          title: l(context).action_appBar,
+          icon: Icons.web_asset,
+        ),
+        SelectionMenuItem(
+          value: ActionLocationWithTabs.fabTap,
+          title: l(context).action_fabTap,
+          icon: Icons.touch_app,
+        ),
+        SelectionMenuItem(
+          value: ActionLocationWithTabs.fabHold,
+          title: l(context).action_fabHold,
+          icon: Icons.touch_app,
+        ),
+        SelectionMenuItem(
+          value: ActionLocationWithTabs.fabMenu,
+          title: l(context).action_fabMenu,
+          icon: Icons.menu,
+        ),
+        SelectionMenuItem(
+          value: ActionLocationWithTabs.tabs,
+          title: l(context).action_tabs,
+          icon: Icons.tab,
+        ),
+      ],
+    );

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:path/path.dart';
 
 class ImageSelector extends StatefulWidget {
@@ -42,7 +43,7 @@ class _ImageSelectorState extends State<ImageSelector> {
                               }
                             }
                           : null,
-                      tooltip: 'Upload from gallery',
+                      tooltip: l(context).uploadFromGallery,
                       iconSize: 35,
                       icon: const Icon(Icons.image),
                     ),
@@ -60,7 +61,7 @@ class _ImageSelectorState extends State<ImageSelector> {
                                 }
                               }
                             : null,
-                        tooltip: 'Upload from camera',
+                        tooltip: l(context).uploadFromCamera,
                         iconSize: 35,
                         icon: const Icon(Icons.camera),
                       ),
