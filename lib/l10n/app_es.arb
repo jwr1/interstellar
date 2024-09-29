@@ -308,5 +308,7 @@
   "settings_alwaysShowInstance_help": "Cuando se activa, la instancia de un usuario/revista siempre se mostrará en lugar de un botón @",
   "@settings_alwaysShowInstance_help": {},
   "settings_useAccountLangFilter_help": "Tenga en cuenta: los filtros de idioma solo se aplican a \"Todo\" y a los feeds de exploración",
-  "@settings_useAccountLangFilter_help": {}
+  "@settings_useAccountLangFilter_help": {},
+  "save": "Guardar",
+  "@save": {}
 }
