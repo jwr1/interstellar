@@ -1,1 +1,22 @@
-{}
+{
+  "removeAccount": "Fjern konto",
+  "@removeAccount": {},
+  "instanceHost": "Instans-vært",
+  "@instanceHost": {},
+  "interstellar": "Interstellar",
+  "@interstellar": {},
+  "feed": "Foder",
+  "@feed": {},
+  "accounts": "Regnskaber",
+  "@accounts": {},
+  "addAccount": "Tilføj konto",
+  "@addAccount": {},
+  "login": "Login",
+  "@login": {},
+  "recommendedInstances": "Anbefalede instanser",
+  "@recommendedInstances": {},
+  "usernameOrEmail": "Brugernavn eller email",
+  "@usernameOrEmail": {},
+  "password": "Adgangskode",
+  "@password": {}
+}
