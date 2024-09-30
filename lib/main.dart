@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/utils/variables.dart';
+import 'package:interstellar/src/widgets/markdown/drafts_controller.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:provider/provider.dart';
 
@@ -41,8 +42,13 @@ void main() async {
     await initPushNotifications(settingsController);
   }
 
-  runApp(ChangeNotifierProvider.value(
-    value: settingsController,
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider.value(
+        value: settingsController,
+      ),
+      ChangeNotifierProvider(create: (context) => DraftsController())
+    ],
     child: const App(),
   ));
 }

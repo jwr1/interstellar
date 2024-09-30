@@ -5,6 +5,7 @@ import 'package:interstellar/src/screens/explore/user_item.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
+import 'package:interstellar/src/widgets/markdown/drafts_controller.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:provider/provider.dart';
@@ -101,6 +102,10 @@ class _MagazineOwnerPanelGeneralState extends State<MagazineOwnerPanelGeneral> {
 
   @override
   Widget build(BuildContext context) {
+    final descriptionDraftController = context
+        .watch<DraftsController>()
+        .auto('magazine:description:${widget.data.name}');
+
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -116,8 +121,9 @@ class _MagazineOwnerPanelGeneralState extends State<MagazineOwnerPanelGeneral> {
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: MarkdownEditor(
             _descriptionController,
-            label: 'Description',
             originInstance: getNameHost(context, widget.data.name),
+            draftController: descriptionDraftController,
+            label: 'Description',
             onChanged: (_) => setState(() {}),
           ),
         ),
@@ -167,6 +173,8 @@ class _MagazineOwnerPanelGeneralState extends State<MagazineOwnerPanelGeneral> {
                           isAdult: _isAdult,
                           isPostingRestrictedToMods: _isPostingRestrictedToMods,
                         );
+
+                    await descriptionDraftController.discard();
 
                     widget.onUpdate(result);
                   },

@@ -206,6 +206,10 @@ class _PostCommentState extends State<PostComment> {
                         PostType.microblog => 'reply',
                       }}/${widget.comment.id}',
               ),
+              editDraftResourceId:
+                  'edit:${widget.comment.postType.name}:comment:${context.watch<SettingsController>().instanceHost}:${widget.comment.id}',
+              replyDraftResourceId:
+                  'reply:${widget.comment.postType.name}:comment:${context.watch<SettingsController>().instanceHost}:${widget.comment.id}',
             ),
           ),
         ),

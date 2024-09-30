@@ -9,6 +9,7 @@ import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/image.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
+import 'package:interstellar/src/widgets/markdown/drafts_controller.dart';
 import 'package:interstellar/src/widgets/markdown/markdown.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:interstellar/src/widgets/open_webpage.dart';
@@ -79,6 +80,9 @@ class ContentItem extends StatefulWidget {
   final bool isCollapsed;
   final void Function()? onCollapse;
 
+  final String editDraftResourceId;
+  final String replyDraftResourceId;
+
   const ContentItem({
     required this.originInstance,
     this.title,
@@ -125,6 +129,8 @@ class ContentItem extends StatefulWidget {
     this.onModerateBan,
     this.isCollapsed = false,
     this.onCollapse,
+    required this.editDraftResourceId,
+    required this.replyDraftResourceId,
     super.key,
   });
 
@@ -200,6 +206,11 @@ class _ContentItemState extends State<ContentItem> {
             ),
           )
         : null;
+
+    final editDraftController =
+        context.watch<DraftsController>().auto(widget.editDraftResourceId);
+    final replyDraftController =
+        context.watch<DraftsController>().auto(widget.replyDraftResourceId);
 
     return LayoutBuilder(builder: (context, constrains) {
       final hasWideSize = constrains.maxWidth > 800;
@@ -653,7 +664,11 @@ class _ContentItemState extends State<ContentItem> {
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
                             children: [
-                              MarkdownEditor(_replyTextController!),
+                              MarkdownEditor(
+                                _replyTextController!,
+                                originInstance: null,
+                                draftController: replyDraftController,
+                              ),
                               const SizedBox(height: 10),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
@@ -669,6 +684,8 @@ class _ContentItemState extends State<ContentItem> {
                                     onPressed: () async {
                                       await widget
                                           .onReply!(_replyTextController!.text);
+
+                                      await replyDraftController.discard();
 
                                       setState(() {
                                         _replyTextController!.dispose();
@@ -687,7 +704,11 @@ class _ContentItemState extends State<ContentItem> {
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
                             children: [
-                              MarkdownEditor(_editTextController!),
+                              MarkdownEditor(
+                                _editTextController!,
+                                originInstance: null,
+                                draftController: editDraftController,
+                              ),
                               const SizedBox(height: 10),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
@@ -703,6 +724,8 @@ class _ContentItemState extends State<ContentItem> {
                                     onPressed: () async {
                                       await widget
                                           .onEdit!(_editTextController!.text);
+
+                                          await editDraftController.discard();
 
                                       setState(() {
                                         _editTextController!.dispose();

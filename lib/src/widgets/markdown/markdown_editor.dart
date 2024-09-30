@@ -1,21 +1,27 @@
+import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/utils/debouncer.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/loading_button.dart';
+import 'package:interstellar/src/widgets/markdown/drafts_controller.dart';
 import 'package:provider/provider.dart';
 
 import './markdown.dart';
 
 class MarkdownEditor extends StatefulWidget {
   final TextEditingController controller;
+  final String? originInstance;
+  final DraftAutoController draftController;
   final void Function(String)? onChanged;
   final bool? enabled;
   final String? label;
-  final String? originInstance;
 
   const MarkdownEditor(
     this.controller, {
-    this.originInstance,
+    required this.originInstance,
+    required this.draftController,
     this.onChanged,
     this.enabled,
     this.label,
@@ -28,20 +34,10 @@ class MarkdownEditor extends StatefulWidget {
 
 class _MarkdownEditorState extends State<MarkdownEditor> {
   final _focusNodeTextField = FocusNode();
-  final _focusNodePreviewButton = FocusNode();
 
-  bool enablePreview = false;
-
-  final togglePreviewShortcut =
-      const SingleActivator(LogicalKeyboardKey.space, control: true);
-  void togglePreview() {
-    setState(() {
-      enablePreview = !enablePreview;
-
-      (enablePreview ? _focusNodePreviewButton : _focusNodeTextField)
-          .requestFocus();
-    });
-  }
+  final draftsShortcut =
+      const SingleActivator(LogicalKeyboardKey.keyD, control: true);
+  final draftDebounce = Debouncer(duration: const Duration(milliseconds: 1000));
 
   void execAction(_MarkdownEditorActionBase action) {
     final input = _MarkdownEditorData(
@@ -56,6 +52,16 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
       baseOffset: output.selectionStart,
       extentOffset: output.selectionEnd,
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    final draftRead = widget.draftController.read();
+    if (draftRead != null) {
+      widget.controller.text = draftRead.body;
+    }
   }
 
   @override
@@ -75,111 +81,211 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
             borderRadius: const BorderRadius.all(Radius.circular(8)),
             side: BorderSide(color: Theme.of(context).colorScheme.outline),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Wrap(
-                children: [
-                  DecoratedBox(
-                    decoration: BoxDecoration(
-                      border: enablePreview
-                          ? null
-                          : Border(
-                              right: BorderSide(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .outlineVariant),
-                            ),
-                    ),
-                    child: Tooltip(
-                      message: readableShortcut(togglePreviewShortcut),
-                      child: CallbackShortcuts(
-                        bindings: <ShortcutActivator, VoidCallback>{
-                          togglePreviewShortcut: togglePreview,
-                        },
-                        child: SizedBox(
-                          height: 40,
-                          child: TextButton.icon(
-                            label: Text(enablePreview ? 'Edit' : 'Preview'),
-                            icon: Icon(
-                                enablePreview ? Icons.edit : Icons.preview),
-                            onPressed: togglePreview,
-                            style: TextButton.styleFrom(
-                                shape: const LinearBorder()),
-                            focusNode: _focusNodePreviewButton,
-                          ),
-                        ),
+          child: DefaultTabController(
+            length: 3,
+            child: Column(
+              children: [
+                TabBar(
+                  tabs: [
+                    Tab(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.edit),
+                          const SizedBox(width: 8),
+                          Text(l(context).markdownEditor_edit),
+                        ],
                       ),
                     ),
-                  ),
-                  if (!enablePreview)
-                    ..._actions(context).map(
-                      (action) => DecoratedBox(
-                        decoration: BoxDecoration(
-                          border: action.showDivider
-                              ? Border(
-                                  right: BorderSide(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .outlineVariant),
-                                )
-                              : null,
-                        ),
-                        child: SizedBox(
-                          width: 40,
-                          height: 40,
-                          child: IconButton(
-                            onPressed: () {
-                              _focusNodeTextField.requestFocus();
+                    Tab(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.preview),
+                          const SizedBox(width: 8),
+                          Text(l(context).markdownEditor_preview),
+                        ],
+                      ),
+                    ),
+                    Tab(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.drafts),
+                          const SizedBox(width: 8),
+                          Text(l(context).markdownEditor_drafts),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 250,
+                  child: TabBarView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Wrap(
+                            children: [
+                              ..._actions(context).map(
+                                (action) => DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    border: action.showDivider
+                                        ? Border(
+                                            right: BorderSide(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .outlineVariant),
+                                          )
+                                        : null,
+                                  ),
+                                  child: SizedBox(
+                                    width: 40,
+                                    height: 40,
+                                    child: IconButton(
+                                      onPressed: () {
+                                        _focusNodeTextField.requestFocus();
 
-                              execAction(action.action);
-                            },
-                            icon: Icon(action.icon),
-                            tooltip: action.tooltip +
-                                (action.shortcut == null
-                                    ? ''
-                                    : ' (${readableShortcut(action.shortcut!)})'),
-                            style: TextButton.styleFrom(
-                                shape: const LinearBorder()),
+                                        execAction(action.action);
+                                      },
+                                      icon: Icon(action.icon),
+                                      tooltip: action.tooltip +
+                                          (action.shortcut == null
+                                              ? ''
+                                              : ' (${readableShortcut(action.shortcut!)})'),
+                                      style: TextButton.styleFrom(
+                                          shape: const LinearBorder()),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
+                          const Divider(height: 1, thickness: 1),
+                          Expanded(
+                            child: CallbackShortcuts(
+                              bindings: <ShortcutActivator, VoidCallback>{
+                                const SingleActivator(LogicalKeyboardKey.enter):
+                                    () => execAction(
+                                        const _MarkdownEditorActionEnter()),
+                                for (var action in _actions(context)
+                                    .where((action) => action.shortcut != null))
+                                  action.shortcut!: () =>
+                                      execAction(action.action)
+                              },
+                              child: TextField(
+                                controller: widget.controller,
+                                keyboardType: TextInputType.multiline,
+                                minLines: 2,
+                                maxLines: null,
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.all(12),
+                                ),
+                                onChanged: (String value) {
+                                  widget.onChanged?.call(value);
+
+                                  draftDebounce.run(() async {
+                                    if (value.isNotEmpty) {
+                                      await widget.draftController.save(value);
+                                    } else {
+                                      await widget.draftController.discard();
+                                    }
+                                  });
+                                },
+                                enabled: widget.enabled,
+                                focusNode: _focusNodeTextField,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Markdown(
+                              widget.controller.text,
+                              widget.originInstance ??
+                                  context
+                                      .watch<SettingsController>()
+                                      .instanceHost),
                         ),
                       ),
-                    ),
-                ],
-              ),
-              const Divider(height: 1, thickness: 1),
-              enablePreview
-                  ? Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Markdown(
-                          widget.controller.text,
-                          widget.originInstance ??
-                              context.watch<SettingsController>().instanceHost),
-                    )
-                  : CallbackShortcuts(
-                      bindings: <ShortcutActivator, VoidCallback>{
-                        togglePreviewShortcut: togglePreview,
-                        const SingleActivator(LogicalKeyboardKey.enter): () =>
-                            execAction(const _MarkdownEditorActionEnter()),
-                        for (var action in _actions(context)
-                            .where((action) => action.shortcut != null))
-                          action.shortcut!: () => execAction(action.action)
-                      },
-                      child: TextField(
-                        controller: widget.controller,
-                        keyboardType: TextInputType.multiline,
-                        minLines: 2,
-                        maxLines: null,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.all(12),
-                        ),
-                        onChanged: widget.onChanged,
-                        enabled: widget.enabled,
-                        focusNode: _focusNodeTextField,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: LoadingFilledButton(
+                                  onPressed: widget.controller.text.isEmpty
+                                      ? null
+                                      : () async {
+                                          await context
+                                              .read<DraftsController>()
+                                              .manualSave(
+                                                  widget.controller.text);
+                                        },
+                                  label: Text(l(context)
+                                      .markdownEditor_drafts_manuallySave),
+                                  icon: const Icon(Icons.save),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: LoadingOutlinedButton(
+                                  onPressed: context
+                                          .watch<DraftsController>()
+                                          .drafts
+                                          .isEmpty
+                                      ? null
+                                      : () async {
+                                          await context
+                                              .read<DraftsController>()
+                                              .removeAll();
+                                        },
+                                  label: Text(l(context)
+                                      .markdownEditor_drafts_discardAll),
+                                  icon: const Icon(Icons.delete_forever),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Expanded(
+                            child: Builder(builder: (context) {
+                              return ListView(
+                                children: context
+                                    .watch<DraftsController>()
+                                    .drafts
+                                    .reversed
+                                    .map((draft) => _MarkdownEditorDraftItem(
+                                          draft: draft,
+                                          onApply: () {
+                                            widget.controller.text = draft.body;
+
+                                            DefaultTabController.of(context)
+                                                .animateTo(0);
+                                          },
+                                          originInstance: widget
+                                                  .originInstance ??
+                                              context
+                                                  .watch<SettingsController>()
+                                                  .instanceHost,
+                                        ))
+                                    .toList(),
+                              );
+                            }),
+                          ),
+                        ],
                       ),
-                    ),
-            ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -349,11 +455,6 @@ class _MarkdownEditorData {
     required this.selectionStart,
     required this.selectionEnd,
   }) : selectionText = text.substring(selectionStart, selectionEnd);
-
-  @override
-  String toString() {
-    return 'MarkdownEditorData(selectionStart: $selectionStart, selectionEnd: $selectionEnd, selectionText: "$selectionText")';
-  }
 }
 
 class _MarkdownEditorActionInline extends _MarkdownEditorActionBase {
@@ -587,6 +688,116 @@ class _MarkdownEditorActionEnter extends _MarkdownEditorActionBase {
       text: text.replaceRange(input.selectionStart, input.selectionEnd, '\n'),
       selectionStart: input.selectionStart + 1,
       selectionEnd: input.selectionStart + 1,
+    );
+  }
+}
+
+class _MarkdownEditorDraftItem extends StatefulWidget {
+  final Draft draft;
+  final void Function() onApply;
+  final String originInstance;
+
+  const _MarkdownEditorDraftItem({
+    required this.draft,
+    required this.onApply,
+    required this.originInstance,
+  });
+
+  @override
+  State<_MarkdownEditorDraftItem> createState() =>
+      __MarkdownEditorDraftItemState();
+}
+
+class __MarkdownEditorDraftItemState extends State<_MarkdownEditorDraftItem> {
+  final ExpandableController _expandableController =
+      ExpandableController(initialExpanded: false);
+
+  @override
+  Widget build(BuildContext context) {
+    discardDraft() {
+      context.read<DraftsController>().removeByDate(widget.draft.at);
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ListTile(
+          title: Text(widget.draft.body,
+              maxLines: 1, overflow: TextOverflow.ellipsis),
+          subtitle: Text(
+            '${dateTimeFormat(widget.draft.at)}\n${widget.draft.resourceId != null ? l(context).markdownEditor_drafts_savedAutomatically : l(context).markdownEditor_drafts_savedManually}${widget.draft.resourceId != null ? ': ${widget.draft.resourceId}' : ''}',
+          ),
+          leading: Icon(_expandableController.expanded
+              ? Icons.expand_less
+              : Icons.expand_more),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text(l(context).markdownEditor_drafts_apply),
+                        actions: [
+                          OutlinedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(l(context).close),
+                          ),
+                          FilledButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+
+                              widget.onApply();
+                            },
+                            child: Text(
+                                l(context).markdownEditor_drafts_applyAndKeep),
+                          ),
+                          FilledButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+
+                              widget.onApply();
+
+                              discardDraft();
+                            },
+                            child: Text(l(context)
+                                .markdownEditor_drafts_applyAndDiscard),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                icon: const Icon(Icons.check),
+              ),
+              IconButton(
+                onPressed: discardDraft,
+                icon: const Icon(Icons.delete_outline),
+              ),
+            ],
+          ),
+          onTap: () => setState(_expandableController.toggle),
+        ),
+        Expandable(
+          controller: _expandableController,
+          collapsed: const SizedBox(),
+          expanded: SizedBox(
+            width: double.infinity,
+            child: Card.outlined(
+              margin: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: SelectableText(widget.draft.body),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

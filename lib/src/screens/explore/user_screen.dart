@@ -20,6 +20,7 @@ import 'package:interstellar/src/widgets/avatar.dart';
 import 'package:interstellar/src/widgets/image.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/loading_template.dart';
+import 'package:interstellar/src/widgets/markdown/drafts_controller.dart';
 import 'package:interstellar/src/widgets/markdown/markdown.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:interstellar/src/widgets/star_button.dart';
@@ -78,6 +79,9 @@ class _UserScreenState extends State<UserScreen> {
     final globalName = user.name.contains('@')
         ? '@${user.name}'
         : '@${user.name}@${context.watch<SettingsController>().instanceHost}';
+
+    final messageDraftController = context.watch<DraftsController>().auto(
+        'message:${context.watch<SettingsController>().instanceHost}:${user.name}');
 
     return Scaffold(
         appBar: AppBar(
@@ -300,6 +304,8 @@ class _UserScreenState extends State<UserScreen> {
                           Column(children: [
                             MarkdownEditor(
                               _messageController!,
+                              originInstance: null,
+                              draftController: messageDraftController,
                               label: 'Message',
                             ),
                             const SizedBox(height: 8),
@@ -324,6 +330,8 @@ class _UserScreenState extends State<UserScreen> {
                                           user.id,
                                           _messageController!.text,
                                         );
+
+                                    await messageDraftController.discard();
 
                                     setState(() {
                                       _messageController = null;

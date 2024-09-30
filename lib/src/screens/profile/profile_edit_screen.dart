@@ -6,6 +6,7 @@ import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/image.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
+import 'package:interstellar/src/widgets/markdown/drafts_controller.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:provider/provider.dart';
 
@@ -50,6 +51,9 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final aboutDraftController = context.watch<DraftsController>().auto(
+        'profile:about:${context.watch<SettingsController>().selectedAccount}');
+
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -69,6 +73,8 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                   .api
                   .users
                   .updateProfile(_aboutTextController!.text);
+
+              await aboutDraftController.discard();
 
               if (!context.mounted) return;
               if (_deleteAvatar) {
@@ -221,6 +227,8 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                   padding: const EdgeInsets.only(top: 12),
                   child: MarkdownEditor(
                     _aboutTextController!,
+                    originInstance: null,
+                    draftController: aboutDraftController,
                     label: l(context).profile_settings_about,
                   ),
                 ),

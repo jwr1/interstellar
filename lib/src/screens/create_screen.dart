@@ -6,6 +6,7 @@ import 'package:interstellar/src/utils/language_codes.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/image_selector.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
+import 'package:interstellar/src/widgets/markdown/drafts_controller.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:provider/provider.dart';
@@ -47,6 +48,9 @@ class _CreateScreenState extends State<CreateScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bodyDraftController = context.watch<DraftsController>().auto(
+        'create:${widget.type.name}${widget.magazineName == null ? '' : ':${context.watch<SettingsController>().instanceHost}:${widget.magazineName}'}');
+
     return Scaffold(
       appBar: AppBar(
         title: Text(switch (widget.type) {
@@ -74,6 +78,8 @@ class _CreateScreenState extends State<CreateScreen> {
                     padding: const EdgeInsets.all(5),
                     child: MarkdownEditor(
                       _bodyTextController,
+                      originInstance: null,
+                      draftController: bodyDraftController,
                       onChanged: (_) => setState(() {}),
                       label: l(context).body,
                     ),
@@ -238,6 +244,8 @@ class _CreateScreenState extends State<CreateScreen> {
                             );
                           }
                       }
+
+                      await bodyDraftController.discard();
 
                       // Check BuildContext
                       if (!mounted) return;

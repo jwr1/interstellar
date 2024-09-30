@@ -6,6 +6,7 @@ import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/loading_template.dart';
+import 'package:interstellar/src/widgets/markdown/drafts_controller.dart';
 import 'package:interstellar/src/widgets/markdown/markdown.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:provider/provider.dart';
@@ -53,6 +54,9 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
                 .first)
         .first;
 
+    final messageDraftController = context.watch<DraftsController>().auto(
+        'message:${context.watch<SettingsController>().instanceHost}:${messageUser.name}');
+
     return Scaffold(
       appBar: AppBar(title: Text(l(context).messagesWith(messageUser.name))),
       body: ListView(children: [
@@ -61,6 +65,8 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
           child: Column(children: [
             MarkdownEditor(
               _controller,
+              originInstance: null,
+              draftController: messageDraftController,
               label: l(context).reply,
             ),
             const SizedBox(height: 8),
@@ -77,6 +83,8 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
                           data.threadId,
                           _controller.text,
                         );
+
+                    await messageDraftController.discard();
 
                     _controller.text = '';
 

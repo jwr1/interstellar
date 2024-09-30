@@ -158,6 +158,10 @@ class PostItem extends StatelessWidget {
                 PostType.microblog => 'p',
               }}/${item.id}',
       ),
+      editDraftResourceId:
+          'edit:${item.type.name}:${context.watch<SettingsController>().instanceHost}:${item.id}',
+      replyDraftResourceId:
+          'reply:${item.type.name}:${context.watch<SettingsController>().instanceHost}:${item.id}',
     );
   }
 }

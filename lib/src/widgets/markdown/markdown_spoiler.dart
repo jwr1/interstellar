@@ -91,9 +91,7 @@ class _SpoilerWidgetState extends State<SpoilerWidget> {
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: const BorderRadius.all(Radius.circular(8)),
-      onTap: () => setState(() {
-        controller.toggle();
-      }),
+      onTap: () => setState(controller.toggle),
       child: Padding(
         padding: const EdgeInsets.all(8),
         child: Column(
@@ -113,7 +111,7 @@ class _SpoilerWidgetState extends State<SpoilerWidget> {
             ),
             Expandable(
               controller: controller,
-              collapsed: Container(),
+              collapsed: const SizedBox(),
               expanded: Padding(
                 padding: const EdgeInsets.only(top: 4),
                 child: Markdown(widget.body ?? '', widget.originInstance),
