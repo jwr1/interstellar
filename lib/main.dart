@@ -6,6 +6,7 @@ import 'package:interstellar/src/utils/variables.dart';
 import 'package:interstellar/src/widgets/markdown/drafts_controller.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:provider/provider.dart';
+import 'package:window_manager/window_manager.dart';
 
 import 'src/app.dart';
 import 'src/init_push_notifications.dart';
@@ -14,6 +15,20 @@ import 'src/screens/settings/settings_controller.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MediaKit.ensureInitialized();
+
+  if (Platform.isLinux || Platform.isMacOS || Platform.isWindows) {
+    await windowManager.ensureInitialized();
+
+    WindowOptions windowOptions = const WindowOptions(
+      minimumSize: Size(400, 400),
+      center: true,
+    );
+
+    windowManager.waitUntilReadyToShow(windowOptions, () async {
+      await windowManager.show();
+      await windowManager.focus();
+    });
+  }
 
   // Show snackbar on error
   FlutterError.onError = (details) {
