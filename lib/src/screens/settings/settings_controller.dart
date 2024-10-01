@@ -659,7 +659,11 @@ class SettingsController with ChangeNotifier {
   Future<void> removeAccount(String key) async {
     if (!_accounts.containsKey(key)) return;
 
-    if (_pushRegistrations.contains(key)) await unregisterPush(key);
+    try {
+      if (_pushRegistrations.contains(key)) await unregisterPush(key);
+    } catch (e) {
+      // Ignore error in case unregister fails so the account is still removed
+    }
 
     _accounts.remove(key);
     _selectedAccount = _accounts.keys.firstOrNull ?? '@kbin.earth';
