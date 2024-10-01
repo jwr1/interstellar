@@ -17,18 +17,18 @@ dependencies:
   http: ^1.2.2
   http_parser: ^4.0.2
   path: ^1.9.0
-  mime: ^1.0.5
+  mime: ^1.0.6
   infinite_scroll_pagination: ^4.0.0
   intl: any
-  media_kit: ^1.1.10+1
-  media_kit_video: ^1.2.4
-  media_kit_libs_video: ^1.0.4
-  oauth2: ^2.0.2
+  media_kit: ^1.1.11
+  media_kit_video: ^1.2.5
+  media_kit_libs_video: ^1.0.5
+  oauth2: ^2.0.3
   provider: ^6.1.2
-  shared_preferences: ^2.3.1
+  shared_preferences: ^2.3.2
   url_launcher: ^6.3.0
-  webview_flutter: ^4.8.0
-  youtube_explode_dart: ^2.2.1
+  webview_flutter: ^4.9.0
+  youtube_explode_dart: ^2.2.2
   freezed_annotation: ^2.4.4
   badges: ^3.1.2
   image_picker: ^1.1.2
@@ -45,8 +45,10 @@ dependencies:
     git:
       url: https://github.com/UnifiedPush/dart-webpush-encryption.git
       ref: v0.1.0
-  flutter_local_notifications: ^17.2.2
+  flutter_local_notifications: ^17.2.3
   flex_color_scheme: ^7.3.1
+  share_plus: ^10.0.2
+  path_provider: ^2.1.4
 
 dependency_overrides:
   webcrypto: ^0.5.7
@@ -68,7 +70,7 @@ dev_dependencies:
     git:
       url: 'https://github.com/fluttercommunity/flutter_launcher_icons.git'
       ref: '006cb1ed53f969bf11816cde5b16dd520e1ee40e'
-  build_runner: ^2.4.12
+  build_runner: ^2.4.13
   freezed: ^2.5.7
 
 flutter:

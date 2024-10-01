@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/utils/variables.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -14,7 +16,7 @@ void openWebpageSecondary(BuildContext context, Uri uri) {
     context: context,
     builder: (BuildContext context) => AlertDialog(
       title: Text(l(context).openLink),
-      content: Text(uri.toString()),
+      content: SelectableText(uri.toString()),
       actions: <Widget>[
         OutlinedButton(
           onPressed: () => Navigator.pop(context),
@@ -24,11 +26,13 @@ void openWebpageSecondary(BuildContext context, Uri uri) {
           onPressed: () {
             Navigator.pop(context);
 
-            Clipboard.setData(
-              ClipboardData(text: uri.toString()),
-            );
+            if (Platform.isAndroid || Platform.isIOS) {
+              Share.shareUri(uri);
+            } else {
+              Share.share(uri.toString());
+            }
           },
-          child: Text(l(context).copy),
+          child: Text(l(context).share),
         ),
         if (isWebViewSupported)
           FilledButton.tonal(
