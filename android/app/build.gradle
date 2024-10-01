@@ -29,7 +29,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace "one.jwr.interstellar.dev"
+    namespace "one.jwr.interstellar"
     compileSdkVersion flutter.compileSdkVersion
     // ndkVersion flutter.ndkVersion
     ndkVersion = "26.3.11579264"
@@ -48,7 +48,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "one.jwr.interstellar.dev"
+        applicationId "one.jwr.interstellar"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()

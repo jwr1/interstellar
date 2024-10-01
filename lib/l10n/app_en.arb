@@ -354,5 +354,7 @@
   "action_setFilter": "Set Filter",
   "action_setSort": "Set Sort",
   "action_setType": "Set Type",
-  "save": "Save"
+  "save": "Save",
+  "imageSaved": "Image saved",
+  "videoSaved": "Video saved"
 }

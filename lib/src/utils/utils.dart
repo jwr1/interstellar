@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -7,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 String intFormat(int input) {
   return NumberFormat.compact().format(input);
@@ -141,11 +139,3 @@ String readableShortcut(SingleActivator shortcut) {
 }
 
 AppLocalizations l(BuildContext context) => AppLocalizations.of(context)!;
-
-Future<ShareResult> shareUri(Uri uri) async {
-  if (Platform.isAndroid || Platform.isIOS) {
-    return await Share.shareUri(uri);
-  } else {
-    return await Share.share(uri.toString());
-  }
-}

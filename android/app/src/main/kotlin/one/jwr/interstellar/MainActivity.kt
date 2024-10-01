@@ -1,4 +1,4 @@
-package one.jwr.interstellar.dev
+package one.jwr.interstellar
 
 import io.flutter.embedding.android.FlutterActivity
 

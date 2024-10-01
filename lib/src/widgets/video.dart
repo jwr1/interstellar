@@ -1,14 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:interstellar/src/utils/share.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/media_kit_video_controls.dart'
     as media_kit_video_controls;
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart'
     as youtube_explode_dart;
 
@@ -64,23 +63,34 @@ class _VideoPlayerState extends State<VideoPlayer> {
           return Stack(
             children: [
               media_kit_video_controls.AdaptiveVideoControls(state),
-              if (!Platform.isLinux && !state.isFullscreen())
+              if (!state.isFullscreen())
                 Align(
                   alignment: Alignment.topRight,
-                  child: LoadingIconButton(
-                    onPressed: () async {
-                      final response = await http.get(stream.url);
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      LoadingIconButton(
+                        onPressed: () async {
+                          final file = await downloadFile(
+                            stream.url,
+                            'video-${stream.videoId}.${stream.container}',
+                          );
 
-                      final tempDir = await getTemporaryDirectory();
-                      final file = File(
-                          '${tempDir.path}/video-${stream.videoId}.${stream.container}');
-                      await file.writeAsBytes(response.bodyBytes);
-
-                      await Share.shareXFiles([XFile(file.path)]);
-
-                      await file.delete();
-                    },
-                    icon: const Icon(Icons.share),
+                          if (!mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content:
+                                Text('${l(context).videoSaved}: ${file.path}'),
+                          ));
+                        },
+                        icon: const Icon(Icons.download),
+                      ),
+                      if (!Platform.isLinux)
+                        LoadingIconButton(
+                          onPressed: () async => await shareFile(stream.url,
+                              'video-${stream.videoId}.${stream.container}'),
+                          icon: const Icon(Icons.share),
+                        ),
+                    ],
                   ),
                 ),
             ],

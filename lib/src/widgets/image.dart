@@ -3,12 +3,12 @@ import 'dart:math';
 
 import 'package:blurhash_ffi/blurhash_ffi.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:interstellar/src/models/image.dart';
+import 'package:interstellar/src/utils/share.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/blur.dart';
+import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 class AdvancedImage extends StatelessWidget {
   final ImageModel image;
@@ -75,12 +75,17 @@ class AdvancedImage extends StatelessWidget {
   }
 }
 
-class AdvancedImagePage extends StatelessWidget {
+class AdvancedImagePage extends StatefulWidget {
   final ImageModel image;
   final String title;
 
   const AdvancedImagePage(this.image, {super.key, required this.title});
 
+  @override
+  State<AdvancedImagePage> createState() => _AdvancedImagePageState();
+}
+
+class _AdvancedImagePageState extends State<AdvancedImagePage> {
   @override
   Widget build(BuildContext context) {
     const shadows = <Shadow>[
@@ -93,27 +98,33 @@ class AdvancedImagePage extends StatelessWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text(title, style: titleStyle),
+        title: Text(widget.title, style: titleStyle),
         iconTheme: const IconThemeData(
           color: Colors.white,
           shadows: shadows,
         ),
         backgroundColor: Colors.transparent,
         actions: [
+          LoadingIconButton(
+            onPressed: () async {
+              final file = await downloadFile(
+                Uri.parse(widget.image.src),
+                widget.image.src.split('/').last,
+              );
+
+              if (!mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text('${l(context).imageSaved}: ${file.path}'),
+              ));
+            },
+            icon: const Icon(Icons.download),
+          ),
           if (!Platform.isLinux)
-            IconButton(
-              onPressed: () async {
-                final response = await http.get(Uri.parse(image.src));
-
-                final tempDir = await getTemporaryDirectory();
-                final file =
-                    File('${tempDir.path}/${image.src.split('/').last}');
-                await file.writeAsBytes(response.bodyBytes);
-
-                await Share.shareXFiles([XFile(file.path)]);
-
-                await file.delete();
-              },
+            LoadingIconButton(
+              onPressed: () async => await shareFile(
+                Uri.parse(widget.image.src),
+                widget.image.src.split('/').last,
+              ),
               icon: const Icon(Icons.share),
             ),
         ],
@@ -122,16 +133,16 @@ class AdvancedImagePage extends StatelessWidget {
         children: [
           Positioned.fill(
             child: InteractiveViewer(
-              child: AdvancedImage(image),
+              child: AdvancedImage(widget.image),
             ),
           ),
-          if (image.altText != null)
+          if (widget.image.altText != null)
             Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
                 padding: const EdgeInsets.all(8),
                 child: Text(
-                  image.altText!,
+                  widget.image.altText!,
                   textAlign: TextAlign.center,
                   style: titleStyle,
                 ),
