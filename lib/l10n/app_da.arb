@@ -18,5 +18,17 @@
   "usernameOrEmail": "Brugernavn eller email",
   "@usernameOrEmail": {},
   "password": "Adgangskode",
-  "@password": {}
+  "@password": {},
+  "explore": "Udforsk",
+  "@explore": {},
+  "totpToken": "TOTP-token",
+  "@totpToken": {},
+  "cancel": "Annuller",
+  "@cancel": {},
+  "continue_": "Fortsæt",
+  "@continue_": {},
+  "guest": "Gæst",
+  "@guest": {},
+  "remove": "Fjerne",
+  "@remove": {}
 }
