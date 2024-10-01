@@ -1,9 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/utils/variables.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -26,11 +23,7 @@ void openWebpageSecondary(BuildContext context, Uri uri) {
           onPressed: () {
             Navigator.pop(context);
 
-            if (Platform.isAndroid || Platform.isIOS) {
-              Share.shareUri(uri);
-            } else {
-              Share.share(uri.toString());
-            }
+            shareUri(uri);
           },
           child: Text(l(context).share),
         ),

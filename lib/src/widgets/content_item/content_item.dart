@@ -489,6 +489,12 @@ class _ContentItemState extends State<ContentItem> {
                                           context, widget.openLinkUri!),
                                       child: Text(l(context).openInBrowser),
                                     ),
+                                  if (widget.openLinkUri != null)
+                                    MenuItemButton(
+                                      onPressed: () =>
+                                          shareUri(widget.openLinkUri!),
+                                      child: Text(l(context).share),
+                                    ),
                                   if (widget.domain != null)
                                     MenuItemButton(
                                       onPressed: () =>
@@ -725,7 +731,7 @@ class _ContentItemState extends State<ContentItem> {
                                       await widget
                                           .onEdit!(_editTextController!.text);
 
-                                          await editDraftController.discard();
+                                      await editDraftController.discard();
 
                                       setState(() {
                                         _editTextController!.dispose();
