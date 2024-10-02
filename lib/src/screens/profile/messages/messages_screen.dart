@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/models/message.dart';
-import 'package:interstellar/src/screens/profile/message_item.dart';
-import 'package:interstellar/src/screens/profile/message_thread_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:provider/provider.dart';
+
+import './message_item.dart';
+import './message_thread_screen.dart';
 
 class MessagesScreen extends StatefulWidget {
   const MessagesScreen({super.key});

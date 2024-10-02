@@ -19,10 +19,11 @@ class Markdown extends StatelessWidget {
     return mdf.MarkdownBody(
       data: data,
       styleSheet: mdf.MarkdownStyleSheet(
-          blockquoteDecoration: BoxDecoration(
-        color: Colors.blue.shade500.withAlpha(50),
-        borderRadius: BorderRadius.circular(2.0),
-      )),
+        blockquoteDecoration: BoxDecoration(
+          color: Colors.blue.shade500.withAlpha(50),
+          borderRadius: BorderRadius.circular(2.0),
+        ),
+      ),
       onTapLink: (text, href, title) async {
         if (href != null) {
           openWebpageSecondary(context, Uri.parse(href));

@@ -120,7 +120,7 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
                   ],
                 ),
                 SizedBox(
-                  height: 250,
+                  height: 200,
                   child: TabBarView(
                     physics: const NeverScrollableScrollPhysics(),
                     children: [

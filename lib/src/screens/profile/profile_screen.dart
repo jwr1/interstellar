@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/screens/profile/messages_screen.dart';
 import 'package:interstellar/src/screens/profile/notification/notification_badge.dart';
 import 'package:interstellar/src/screens/profile/notification/notification_screen.dart';
 import 'package:interstellar/src/screens/profile/self_feed.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:provider/provider.dart';
+
+import './messages/messages_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

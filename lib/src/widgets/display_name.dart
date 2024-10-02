@@ -18,6 +18,7 @@ class DisplayName extends StatelessWidget {
     String? hostName = nameTuple.length > 1 ? nameTuple[1] : null;
 
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         if (icon != null)
           Padding(
