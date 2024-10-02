@@ -57,7 +57,6 @@ class _MessagesScreenState extends State<MessagesScreen> {
       ),
       child: CustomScrollView(
         slivers: [
-          const SliverToBoxAdapter(child: SizedBox(height: 12)),
           PagedSliverList(
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<MessageThreadModel>(
