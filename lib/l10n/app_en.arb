@@ -133,14 +133,6 @@
   "notifications_registerPush": "Register push",
   "notifications_unregisterPush": "Unregister push",
   "messages": "Messages",
-  "messagesWith": "Messages with {username}",
-  "@messagesWith": {
-    "placeholders": {
-      "username": {
-        "type": "String"
-      }
-    }
-  },
   "reply": "Reply",
   "send": "Send",
   "notLoggedIn": "Not logged in",

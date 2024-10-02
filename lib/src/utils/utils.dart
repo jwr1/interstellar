@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:http/http.dart' as http;
@@ -17,6 +18,10 @@ String dateOnlyFormat(DateTime input) {
 
 String dateTimeFormat(DateTime input) {
   return DateFormat().format(input);
+}
+
+String timeOnlyFormat(DateTime input) {
+  return DateFormat.jms().format(input);
 }
 
 String dateDiffFormat(DateTime input) {

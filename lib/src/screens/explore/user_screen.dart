@@ -12,7 +12,7 @@ import 'package:interstellar/src/screens/feed/post_comment.dart';
 import 'package:interstellar/src/screens/feed/post_comment_screen.dart';
 import 'package:interstellar/src/screens/feed/post_item.dart';
 import 'package:interstellar/src/screens/feed/post_page.dart';
-import 'package:interstellar/src/screens/profile/message_thread_screen.dart';
+import 'package:interstellar/src/screens/profile/messages/message_thread_screen.dart';
 import 'package:interstellar/src/screens/profile/profile_edit_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
