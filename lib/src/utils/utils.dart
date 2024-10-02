@@ -144,3 +144,11 @@ String readableShortcut(SingleActivator shortcut) {
 }
 
 AppLocalizations l(BuildContext context) => AppLocalizations.of(context)!;
+
+List<T> reverseList<T>(List<T> list, bool enabled) {
+  if (enabled) {
+    return list.reversed.toList();
+  }
+
+  return list;
+}

@@ -114,6 +114,9 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
 
           final isMyUser = currMessage.sender.name == myUsername;
 
+          final showDate = prevMessage == null ||
+              !DateUtils.isSameDay(
+                  currMessage.createdAt, prevMessage.createdAt);
           final showTime = prevMessage == null ||
               currMessage.createdAt
                       .difference(prevMessage.createdAt)
@@ -142,28 +145,55 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
                   isMyUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (showTime)
+                if (showDate)
                   Padding(
                     padding: const EdgeInsets.only(top: 16),
-                    child: Center(
-                      child: Text(
-                        prevMessage != null &&
-                                DateUtils.isSameDay(currMessage.createdAt,
-                                    prevMessage.createdAt)
-                            ? timeOnlyFormat(currMessage.createdAt)
-                            : dateTimeFormat(currMessage.createdAt),
-                        style: const TextStyle(fontWeight: FontWeight.w300),
-                      ),
+                    child: Row(
+                      children: [
+                        const Expanded(child: Divider()),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: Text(DateUtils.isSameDay(
+                                  currMessage.createdAt, DateTime.now())
+                              ? 'Today'
+                              : dateOnlyFormat(currMessage.createdAt)),
+                        ),
+                        const Expanded(child: Divider()),
+                      ],
                     ),
                   ),
-                if (showName)
-                  DisplayName(
-                    currMessage.sender.name,
-                    icon: currMessage.sender.avatar,
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => UserScreen(currMessage.sender.id),
-                      ),
+                if (showTime || showName)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: Row(
+                      children: reverseList([
+                        const Spacer(),
+                        if (showTime)
+                          Text(
+                            timeOnlyFormat(currMessage.createdAt),
+                            style: const TextStyle(fontWeight: FontWeight.w300),
+                          ),
+                        if (showName)
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: isMyUser
+                                  ? MainAxisAlignment.end
+                                  : MainAxisAlignment.start,
+                              children: [
+                                DisplayName(
+                                  currMessage.sender.name,
+                                  icon: currMessage.sender.avatar,
+                                  onTap: () => Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          UserScreen(currMessage.sender.id),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ], !isMyUser),
                     ),
                   ),
                 const SizedBox(height: 4),
