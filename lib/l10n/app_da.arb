@@ -44,5 +44,9 @@
   "filter_subscribed": "Abonneret",
   "@filter_subscribed": {},
   "filter_moderated": "Modereret",
-  "@filter_moderated": {}
+  "@filter_moderated": {},
+  "filter_favorited": "Favoriseret",
+  "@filter_favorited": {},
+  "filter_blocked": "Blokeret",
+  "@filter_blocked": {}
 }
