@@ -50,6 +50,7 @@ dependencies:
   share_plus: ^10.0.2
   path_provider: ^2.1.4
   window_manager: ^0.4.2
+  material_symbols_icons: ^4.2785.1
 
 dependency_overrides:
   webcrypto: ^0.5.7

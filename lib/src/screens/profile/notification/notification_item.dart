@@ -12,6 +12,7 @@ import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/markdown/markdown.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:provider/provider.dart';
 
 import './notification_count_controller.dart';
@@ -73,11 +74,12 @@ class _NotificationItemState extends State<NotificationItem> {
         widget.item.subject!['reason'] ??
         '') as String;
 
-    return Card(
+    return Card.outlined(
       clipBehavior: Clip.antiAlias,
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      surfaceTintColor:
-          widget.item.status == NotificationStatus.new_ ? Colors.amber : null,
+      margin: EdgeInsets.zero,
+      color: widget.item.status == NotificationStatus.new_
+          ? null
+          : Colors.transparent,
       child: InkWell(
         onTap: widget.item.subject!.containsKey('commentId')
             ? () {
@@ -115,14 +117,19 @@ class _NotificationItemState extends State<NotificationItem> {
                       }
                     : null,
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.only(
+            top: 4,
+            right: 4,
+            bottom: 8,
+            left: 8,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Row(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(right: 10),
+                    padding: const EdgeInsets.only(right: 8),
                     child: DisplayName(
                       user.name,
                       icon: user.avatar,
@@ -136,7 +143,7 @@ class _NotificationItemState extends State<NotificationItem> {
                   Text(notificationTitle[widget.item.type]!),
                   if (bannedMagazine != null)
                     Padding(
-                      padding: const EdgeInsets.only(left: 10),
+                      padding: const EdgeInsets.only(left: 8),
                       child: DisplayName(
                         bannedMagazine.name,
                         icon: bannedMagazine.icon,
@@ -165,9 +172,12 @@ class _NotificationItemState extends State<NotificationItem> {
                       if (!mounted) return;
                       context.read<NotificationCountController>().reload();
                     },
-                    icon: Icon(widget.item.status == NotificationStatus.new_
-                        ? Icons.mark_email_read
-                        : Icons.mark_email_unread),
+                    icon: Icon(
+                      widget.item.status == NotificationStatus.new_
+                          ? Symbols.mark_chat_read_rounded
+                          : Symbols.mark_chat_unread_rounded,
+                      fill: 0,
+                    ),
                     tooltip: widget.item.status == NotificationStatus.new_
                         ? 'Mark as read'
                         : 'Mark as unread',
@@ -175,10 +185,7 @@ class _NotificationItemState extends State<NotificationItem> {
                 ],
               ),
               if (body.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Markdown(body, getNameHost(context, user.name)),
-                ),
+                Markdown(body, getNameHost(context, user.name)),
             ],
           ),
         ),
