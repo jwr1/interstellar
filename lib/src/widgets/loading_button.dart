@@ -206,3 +206,46 @@ class _LoadingIconButtonState extends State<LoadingIconButton> {
     );
   }
 }
+
+class LoadingChip extends StatefulWidget {
+  final Widget? icon;
+  final Widget label;
+  final bool selected;
+  final Future<void> Function(bool)? onSelected;
+
+  final String? tooltip;
+
+  const LoadingChip({
+    required this.label,
+    required this.selected,
+    this.onSelected,
+    this.icon,
+    this.tooltip,
+    super.key,
+  });
+
+  @override
+  State<LoadingChip> createState() => _LoadingChipState();
+}
+
+class _LoadingChipState extends State<LoadingChip> {
+  bool _isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return FilterChip(
+      selected: widget.selected,
+      showCheckmark: false,
+      avatar: _isLoading ? const _LoadingButtonIndicator() : widget.icon,
+      label: widget.label,
+      onSelected: _isLoading || widget.onSelected == null
+          ? null
+          : (selected) async {
+              setState(() => _isLoading = true);
+              await widget.onSelected!(selected);
+              if (mounted) setState(() => _isLoading = false);
+            },
+      tooltip: widget.tooltip,
+    );
+  }
+}

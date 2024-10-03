@@ -2,11 +2,10 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:interstellar/src/models/magazine.dart';
+import 'package:interstellar/src/screens/explore/explore_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/models.dart';
 import 'package:interstellar/src/utils/utils.dart';
-
-enum APIMagazinesFilter { all, local, subscribed, moderated, blocked }
 
 enum APIMagazinesSort {
   active,
@@ -45,27 +44,26 @@ class APIMagazines {
 
   Future<DetailedMagazineListModel> list({
     String? page,
-    APIMagazinesFilter? filter,
+    ExploreFilter? filter,
     APIMagazinesSort? sort,
     String? search,
   }) async {
     switch (software) {
       case ServerSoftware.mbin:
         final path = (filter == null ||
-                filter == APIMagazinesFilter.all ||
-                filter == APIMagazinesFilter.local)
+                filter == ExploreFilter.all ||
+                filter == ExploreFilter.local)
             ? '/api/magazines'
             : '/api/magazines/${filter.name}';
         final query = queryParams(
           (filter == null ||
-                  filter == APIMagazinesFilter.all ||
-                  filter == APIMagazinesFilter.local)
+                  filter == ExploreFilter.all ||
+                  filter == ExploreFilter.local)
               ? {
                   'p': page,
                   'sort': sort?.name,
                   'q': search,
-                  'federation':
-                      filter == APIMagazinesFilter.local ? 'local' : null,
+                  'federation': filter == ExploreFilter.local ? 'local' : null,
                 }
               : {'p': page},
         );
@@ -82,11 +80,11 @@ class APIMagazines {
           const path = '/api/v3/community/list';
           final query = queryParams({
             'type_': switch (filter) {
-              APIMagazinesFilter.all => 'All',
-              APIMagazinesFilter.local => 'Local',
-              APIMagazinesFilter.moderated => 'ModeratorView',
-              APIMagazinesFilter.subscribed => 'Subscribed',
-              APIMagazinesFilter.blocked =>
+              ExploreFilter.all => 'All',
+              ExploreFilter.local => 'Local',
+              ExploreFilter.moderated => 'ModeratorView',
+              ExploreFilter.subscribed => 'Subscribed',
+              ExploreFilter.blocked =>
                 throw Exception('Can not filter magazines by blocked on Lemmy'),
               null => 'All'
             },
@@ -131,11 +129,11 @@ class APIMagazines {
           final query = queryParams({
             'type_': 'Communities',
             'listing_type': switch (filter) {
-              APIMagazinesFilter.all => 'All',
-              APIMagazinesFilter.local => 'Local',
-              APIMagazinesFilter.moderated => 'ModeratorView',
-              APIMagazinesFilter.subscribed => 'Subscribed',
-              APIMagazinesFilter.blocked =>
+              ExploreFilter.all => 'All',
+              ExploreFilter.local => 'Local',
+              ExploreFilter.moderated => 'ModeratorView',
+              ExploreFilter.subscribed => 'Subscribed',
+              ExploreFilter.blocked =>
                 throw Exception('Can not filter magazines by blocked on Lemmy'),
               null => 'All'
             },
