@@ -20,6 +20,7 @@
   "cakeDay": "Cake Day",
   "filter": "Filter by",
   "filter_all": "All",
+  "filter_allResults": "All results",
   "filter_subscribed": "Subscribed",
   "filter_moderated": "Moderated",
   "filter_favorited": "Favorited",
@@ -348,5 +349,6 @@
   "action_setType": "Set Type",
   "save": "Save",
   "imageSaved": "Image saved",
-  "videoSaved": "Video saved"
+  "videoSaved": "Video saved",
+  "searchTheFediverse": "Search the fediverse"
 }

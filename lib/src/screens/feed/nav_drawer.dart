@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/api/domains.dart';
-import 'package:interstellar/src/api/magazines.dart';
-import 'package:interstellar/src/api/users.dart';
 import 'package:interstellar/src/models/domain.dart';
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/screens/explore/domain_screen.dart';
-import 'package:interstellar/src/screens/explore/domains_screen.dart';
+import 'package:interstellar/src/screens/explore/explore_screen.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
-import 'package:interstellar/src/screens/explore/magazines_screen.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
-import 'package:interstellar/src/screens/explore/users_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
@@ -39,7 +34,7 @@ class _NavDrawerState extends State<NavDrawer> {
           .read<SettingsController>()
           .api
           .magazines
-          .list(filter: APIMagazinesFilter.subscribed)
+          .list(filter: ExploreFilter.subscribed)
           .then((value) => setState(() {
                 if (value.items.isNotEmpty) {
                   subbedMagazines = value.items;
@@ -51,7 +46,7 @@ class _NavDrawerState extends State<NavDrawer> {
             .read<SettingsController>()
             .api
             .users
-            .list(filter: UsersFilter.followed)
+            .list(filter: ExploreFilter.subscribed)
             .then((value) => setState(() {
                   if (value.items.isNotEmpty) {
                     subbedUsers = value.items;
@@ -61,7 +56,7 @@ class _NavDrawerState extends State<NavDrawer> {
             .read<SettingsController>()
             .api
             .domains
-            .list(filter: MbinAPIDomainsFilter.subscribed)
+            .list(filter: ExploreFilter.subscribed)
             .then((value) => setState(() {
                   if (value.items.isNotEmpty) {
                     subbedDomains = value.items;
@@ -195,10 +190,8 @@ class _NavDrawerState extends State<NavDrawer> {
                   child: TextButton(
                     onPressed: () => Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => Scaffold(
-                          appBar: AppBar(
-                              title: Text(l(context).subscriptions_magazine)),
-                          body: const MagazinesScreen(onlySubbed: true),
+                        builder: (context) => const ExploreScreen(
+                          subOnlyMode: ExploreType.magazines,
                         ),
                       ),
                     ),
@@ -247,10 +240,8 @@ class _NavDrawerState extends State<NavDrawer> {
                 child: TextButton(
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => Scaffold(
-                        appBar:
-                            AppBar(title: Text(l(context).subscriptions_user)),
-                        body: const UsersScreen(onlySubbed: true),
+                      builder: (context) => const ExploreScreen(
+                        subOnlyMode: ExploreType.people,
                       ),
                     ),
                   ),
@@ -292,10 +283,8 @@ class _NavDrawerState extends State<NavDrawer> {
                 child: TextButton(
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => Scaffold(
-                        appBar: AppBar(
-                            title: Text(l(context).subscriptions_domain)),
-                        body: const DomainsScreen(onlySubbed: true),
+                      builder: (context) => const ExploreScreen(
+                        subOnlyMode: ExploreType.domains,
                       ),
                     ),
                   ),

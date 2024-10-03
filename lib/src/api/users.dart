@@ -4,12 +4,11 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:interstellar/src/models/user.dart';
+import 'package:interstellar/src/screens/explore/explore_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart';
-
-enum UsersFilter { all, followed, followers, blocked }
 
 class APIUsers {
   final ServerSoftware software;
@@ -24,13 +23,18 @@ class APIUsers {
 
   Future<DetailedUserListModel> list({
     String? page,
-    UsersFilter? filter,
+    ExploreFilter? filter,
   }) async {
     switch (software) {
       case ServerSoftware.mbin:
-        final path = (filter == null || filter == UsersFilter.all)
-            ? '/api/users'
-            : '/api/users/${filter.name}';
+        final path = '/api/users${switch (filter) {
+          null || ExploreFilter.all => '',
+          ExploreFilter.subscribed => '/followed',
+          ExploreFilter.moderated => '/followers',
+          ExploreFilter.blocked => '/blocked',
+          _ => throw Exception('Not allowed filter in users request')
+        }}';
+
         final query = queryParams({
           'p': page,
         });

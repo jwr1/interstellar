@@ -6,7 +6,7 @@ import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/models/comment.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/models/user.dart';
-import 'package:interstellar/src/screens/explore/user_item.dart';
+import 'package:interstellar/src/screens/explore/explore_screen_item.dart';
 import 'package:interstellar/src/screens/feed/feed_screen.dart';
 import 'package:interstellar/src/screens/feed/post_comment.dart';
 import 'package:interstellar/src/screens/feed/post_comment_screen.dart';
@@ -24,8 +24,8 @@ import 'package:interstellar/src/widgets/markdown/drafts_controller.dart';
 import 'package:interstellar/src/widgets/markdown/markdown.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:interstellar/src/widgets/star_button.dart';
-import 'package:interstellar/src/widgets/subscription_button.dart';
 import 'package:interstellar/src/widgets/user_status_icons.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 enum UserFeedType { thread, microblog, comment, reply, follower, following }
@@ -238,15 +238,18 @@ class _UserScreenState extends State<UserScreen> {
                               ),
                             ),
                             if (user.followersCount != null)
-                              SubscriptionButton(
-                                subsCount: user.followersCount!,
-                                isSubed: user.isFollowedByUser == true,
-                                onPress: whenLoggedIn(context, () async {
+                              LoadingChip(
+                                selected: user.isFollowedByUser ?? false,
+                                icon: const Icon(Symbols.people_rounded),
+                                label:
+                                    Text(intFormat(user.followersCount ?? 0)),
+                                onSelected:
+                                    whenLoggedIn(context, (selected) async {
                                   var newValue = await context
                                       .read<SettingsController>()
                                       .api
                                       .users
-                                      .follow(user.id, !user.isFollowedByUser!);
+                                      .follow(user.id, selected);
                                   setState(() {
                                     _data = newValue;
                                   });
@@ -646,7 +649,7 @@ class _UserScreenBodyState extends State<UserScreenBody> {
                   ),
                 UserFeedType.follower ||
                 UserFeedType.following =>
-                  UserItem(item, (newValue) {
+                  ExploreScreenItem(item, (newValue) {
                     var newList = _pagingController.itemList;
                     newList![index] = newValue;
                     setState(() {

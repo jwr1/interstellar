@@ -2,10 +2,9 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:interstellar/src/models/domain.dart';
+import 'package:interstellar/src/screens/explore/explore_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
-
-enum MbinAPIDomainsFilter { all, subscribed, blocked }
 
 class MbinAPIDomains {
   final ServerSoftware software;
@@ -20,16 +19,19 @@ class MbinAPIDomains {
 
   Future<DomainListModel> list({
     String? page,
-    MbinAPIDomainsFilter? filter,
+    ExploreFilter? filter,
     String? search,
   }) async {
-    final path = (filter == null || filter == MbinAPIDomainsFilter.all)
-        ? '/api/domains'
-        : '/api/domains/${filter.name}';
-    final query = queryParams(
-        (filter == null || filter == MbinAPIDomainsFilter.all)
-            ? {'p': page, 'q': search}
-            : {'p': page});
+    final path = '/api/domains${switch (filter) {
+      null || ExploreFilter.all => '',
+      ExploreFilter.subscribed => '/subscribed',
+      ExploreFilter.blocked => '/blocked',
+      _ => throw Exception('Not allowed filter in domains request')
+    }}';
+
+    final query = queryParams((filter == null || filter == ExploreFilter.all)
+        ? {'p': page, 'q': search}
+        : {'p': page});
 
     final response = await httpClient.get(Uri.https(server, path, query));
 

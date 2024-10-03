@@ -5,7 +5,7 @@ import 'package:interstellar/src/screens/feed/feed_screen.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
-import 'package:interstellar/src/widgets/subscription_button.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 class DomainScreen extends StatefulWidget {
@@ -61,24 +61,27 @@ class _DomainScreenState extends State<DomainScreen> {
                           softWrap: true,
                         ),
                       ),
-                      SubscriptionButton(
-                        subsCount: _data!.subscriptionsCount,
-                        isSubed: _data!.isUserSubscribed == true,
-                        onPress: whenLoggedIn(context, () async {
-                          var newValue = await context
-                              .read<SettingsController>()
-                              .api
-                              .domains
-                              .putSubscribe(
-                                  _data!.id, !_data!.isUserSubscribed!);
+                      LoadingChip(
+                        selected: _data!.isUserSubscribed ?? false,
+                        icon: const Icon(Symbols.people_rounded),
+                        label: Text(intFormat(_data!.subscriptionsCount)),
+                        onSelected: whenLoggedIn(
+                          context,
+                          whenLoggedIn(context, (selected) async {
+                            var newValue = await context
+                                .read<SettingsController>()
+                                .api
+                                .domains
+                                .putSubscribe(_data!.id, selected);
 
-                          setState(() {
-                            _data = newValue;
-                          });
-                          if (widget.onUpdate != null) {
-                            widget.onUpdate!(newValue);
-                          }
-                        }),
+                            setState(() {
+                              _data = newValue;
+                            });
+                            if (widget.onUpdate != null) {
+                              widget.onUpdate!(newValue);
+                            }
+                          }),
+                        ),
                       ),
                       if (whenLoggedIn(context, true) == true)
                         LoadingIconButton(

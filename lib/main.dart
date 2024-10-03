@@ -21,7 +21,6 @@ void main() async {
 
     WindowOptions windowOptions = const WindowOptions(
       minimumSize: Size(400, 400),
-      center: true,
     );
 
     windowManager.waitUntilReadyToShow(windowOptions, () async {

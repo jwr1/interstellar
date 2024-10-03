@@ -13,7 +13,7 @@ import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/markdown/markdown.dart';
 import 'package:interstellar/src/widgets/open_webpage.dart';
 import 'package:interstellar/src/widgets/star_button.dart';
-import 'package:interstellar/src/widgets/subscription_button.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 class MagazineScreen extends StatefulWidget {
@@ -75,15 +75,16 @@ class _MagazineScreenState extends State<MagazineScreen> {
               padding: const EdgeInsets.all(12),
               child: LayoutBuilder(builder: (context, constraints) {
                 final actions = [
-                  SubscriptionButton(
-                    subsCount: _data!.subscriptionsCount,
-                    isSubed: _data!.isUserSubscribed == true,
-                    onPress: whenLoggedIn(context, () async {
+                  LoadingChip(
+                    selected: _data!.isUserSubscribed ?? false,
+                    icon: const Icon(Symbols.people_rounded),
+                    label: Text(intFormat(_data!.subscriptionsCount)),
+                    onSelected: whenLoggedIn(context, (selected) async {
                       var newValue = await context
                           .read<SettingsController>()
                           .api
                           .magazines
-                          .subscribe(_data!.id, !_data!.isUserSubscribed!);
+                          .subscribe(_data!.id, selected);
 
                       setState(() {
                         _data = newValue;
