@@ -10,6 +10,7 @@ import 'package:interstellar/src/screens/profile/profile_screen.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/utils/variables.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 import 'screens/settings/settings_controller.dart';
@@ -42,6 +43,10 @@ class _AppState extends State<App> {
         final dynamicDarkColorScheme =
             settingsController.useDynamicColor ? darkColorScheme : null;
 
+        addThemeData(ThemeData theme) => theme.copyWith(
+              iconTheme: theme.iconTheme.copyWith(fill: 1),
+            );
+
         return ChangeNotifierProxyProvider<SettingsController,
             NotificationCountController>(
           create: (_) => NotificationCountController(),
@@ -53,7 +58,7 @@ class _AppState extends State<App> {
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
             onGenerateTitle: (BuildContext context) => l(context).interstellar,
-            theme: FlexThemeData.light(
+            theme: addThemeData(FlexThemeData.light(
               colorScheme: dynamicLightColorScheme,
               scheme: dynamicLightColorScheme != null
                   ? null
@@ -61,8 +66,8 @@ class _AppState extends State<App> {
               surfaceMode: FlexSurfaceMode.highSurfaceLowScaffold,
               blendLevel: 13,
               useMaterial3: true,
-            ),
-            darkTheme: FlexThemeData.dark(
+            )),
+            darkTheme: addThemeData(FlexThemeData.dark(
               colorScheme: dynamicDarkColorScheme,
               scheme: dynamicDarkColorScheme != null
                   ? null
@@ -71,7 +76,7 @@ class _AppState extends State<App> {
               blendLevel: 13,
               useMaterial3: true,
               darkIsTrueBlack: settingsController.enableTrueBlack,
-            ),
+            )),
             themeMode: settingsController.themeMode,
             scaffoldMessengerKey: scaffoldMessengerKey,
             home: OrientationBuilder(
@@ -84,13 +89,18 @@ class _AppState extends State<App> {
                               NavigationDestinationLabelBehavior.alwaysHide,
                           destinations: [
                             NavigationDestination(
-                                label: l(context).feed,
-                                icon: const Icon(Icons.feed_outlined),
-                                selectedIcon: const Icon(Icons.feed)),
+                              label: l(context).feed,
+                              icon: const Icon(Symbols.home_rounded, fill: 0),
+                              selectedIcon:
+                                  const Icon(Symbols.home_rounded, fill: 1),
+                            ),
                             NavigationDestination(
-                                label: l(context).explore,
-                                icon: const Icon(Icons.explore_outlined),
-                                selectedIcon: const Icon(Icons.explore)),
+                              label: l(context).explore,
+                              icon:
+                                  const Icon(Symbols.explore_rounded, fill: 0),
+                              selectedIcon:
+                                  const Icon(Symbols.explore_rounded, fill: 1),
+                            ),
                             NavigationDestination(
                               label: l(context).profile,
                               icon: Wrapper(
@@ -99,7 +109,8 @@ class _AppState extends State<App> {
                                     .isLoggedIn,
                                 parentBuilder: (child) =>
                                     NotificationBadge(child: child),
-                                child: const Icon(Icons.person_outlined),
+                                child:
+                                    const Icon(Symbols.person_rounded, fill: 0),
                               ),
                               selectedIcon: Wrapper(
                                 shouldWrap: context
@@ -107,13 +118,17 @@ class _AppState extends State<App> {
                                     .isLoggedIn,
                                 parentBuilder: (child) =>
                                     NotificationBadge(child: child),
-                                child: const Icon(Icons.person),
+                                child:
+                                    const Icon(Symbols.person_rounded, fill: 1),
                               ),
                             ),
                             NavigationDestination(
-                                label: l(context).settings,
-                                icon: const Icon(Icons.settings_outlined),
-                                selectedIcon: const Icon(Icons.settings)),
+                              label: l(context).settings,
+                              icon:
+                                  const Icon(Symbols.settings_rounded, fill: 0),
+                              selectedIcon:
+                                  const Icon(Symbols.settings_rounded, fill: 1),
+                            ),
                           ],
                           selectedIndex: _navIndex,
                           onDestinationSelected: _changeNav,

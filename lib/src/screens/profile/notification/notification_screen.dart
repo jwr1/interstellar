@@ -7,6 +7,8 @@ import 'package:interstellar/src/models/notification.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
+import 'package:interstellar/src/widgets/selection_menu.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:provider/provider.dart';
 
 import './notification_count_controller.dart';
@@ -61,6 +63,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final currentNotificationFilter =
+        notificationFilterSelect(context).getOption(filter);
+
     return RefreshIndicator(
       onRefresh: () => Future.sync(
         () => _pagingController.refresh(),
@@ -69,35 +74,37 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         slivers: [
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(16),
               child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(right: 12),
-                    child: DropdownButton<NotificationsFilter>(
-                      value: filter,
-                      onChanged: (newFilter) {
-                        if (newFilter != null) {
+                    padding: const EdgeInsets.only(right: 8),
+                    child: ActionChip(
+                      padding: const EdgeInsets.only(
+                        left: 4,
+                        top: 6,
+                        right: 0,
+                        bottom: 6,
+                      ),
+                      label: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(currentNotificationFilter.title),
+                          const Icon(Symbols.arrow_drop_down_rounded),
+                        ],
+                      ),
+                      onPressed: () async {
+                        final result = await notificationFilterSelect(context)
+                            .askSelection(context, filter);
+
+                        if (result != null) {
                           setState(() {
-                            filter = newFilter;
+                            filter = result;
                             _pagingController.refresh();
                           });
                         }
                       },
-                      items: [
-                        DropdownMenuItem(
-                          value: NotificationsFilter.all,
-                          child: Text(l(context).filter_all),
-                        ),
-                        DropdownMenuItem(
-                          value: NotificationsFilter.new_,
-                          child: Text(l(context).filter_new),
-                        ),
-                        DropdownMenuItem(
-                          value: NotificationsFilter.read,
-                          child: Text(l(context).filter_read),
-                        ),
-                      ],
                     ),
                   ),
                   LoadingOutlinedButton(
@@ -113,13 +120,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       context.read<NotificationCountController>().reload();
                     },
                     label: Text(l(context).notifications_markAllAsRead),
+                    icon: const Icon(Symbols.mark_chat_read, size: 20),
                   ),
                   // Push notifications only work on Android devices and Mbin servers
                   if (Platform.isAndroid &&
                       context.read<SettingsController>().serverSoftware ==
                           ServerSoftware.mbin)
                     Padding(
-                      padding: const EdgeInsets.only(left: 12),
+                      padding: const EdgeInsets.only(left: 8),
                       child: LoadingOutlinedButton(
                         onPressed:
                             context.watch<SettingsController>().isPushRegistered
@@ -133,7 +141,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             context.watch<SettingsController>().isPushRegistered
                                 ? l(context).notifications_unregisterPush
                                 : l(context).notifications_registerPush),
-                        icon: const Icon(Icons.notifications_active),
+                        icon: const Icon(Symbols.notifications_active_rounded),
                       ),
                     ),
                 ],
@@ -143,14 +151,20 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           PagedSliverList(
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<NotificationModel>(
-              itemBuilder: (context, item, index) =>
-                  NotificationItem(item, (newValue) {
-                var newList = _pagingController.itemList;
-                newList![index] = newValue;
-                setState(() {
-                  _pagingController.itemList = newList;
-                });
-              }),
+              itemBuilder: (context, item, index) => Padding(
+                padding: const EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  bottom: 8,
+                ),
+                child: NotificationItem(item, (newValue) {
+                  var newList = _pagingController.itemList;
+                  newList![index] = newValue;
+                  setState(() {
+                    _pagingController.itemList = newList;
+                  });
+                }),
+              ),
             ),
           )
         ],
@@ -164,3 +178,26 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     super.dispose();
   }
 }
+
+SelectionMenu<NotificationsFilter> notificationFilterSelect(
+        BuildContext context) =>
+    SelectionMenu(
+      l(context).feedType,
+      [
+        SelectionMenuItem(
+          value: NotificationsFilter.all,
+          title: l(context).filter_all,
+          icon: Symbols.filter_list_rounded,
+        ),
+        SelectionMenuItem(
+          value: NotificationsFilter.new_,
+          title: l(context).filter_new,
+          icon: Symbols.nest_eco_leaf_rounded,
+        ),
+        SelectionMenuItem(
+          value: NotificationsFilter.read,
+          title: l(context).filter_read,
+          icon: Symbols.mark_chat_read_rounded,
+        ),
+      ],
+    );

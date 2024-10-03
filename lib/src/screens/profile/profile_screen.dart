@@ -4,6 +4,7 @@ import 'package:interstellar/src/screens/profile/notification/notification_scree
 import 'package:interstellar/src/screens/profile/self_feed.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:provider/provider.dart';
 
 import './messages/messages_screen.dart';
@@ -33,22 +34,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Tab(
                           text: l(context).notifications,
                           icon: const NotificationBadge(
-                              child: Icon(Icons.notifications)),
-                        ),
-                        Tab(
-                          text: l(context).profile_overview,
-                          icon: const Icon(Icons.person),
+                              child: Icon(Symbols.notifications_rounded)),
                         ),
                         Tab(
                           text: l(context).messages,
-                          icon: const Icon(Icons.message),
+                          icon: const Icon(Symbols.message_rounded),
+                        ),
+                        Tab(
+                          text: l(context).profile_overview,
+                          icon: const Icon(Symbols.person_rounded),
                         ),
                       ]),
                     ),
                     body: const TabBarView(children: [
                       NotificationsScreen(),
-                      SelfFeed(),
                       MessagesScreen(),
+                      SelfFeed(),
                     ]),
                   ),
                 ),
