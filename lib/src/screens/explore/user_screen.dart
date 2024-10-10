@@ -288,56 +288,59 @@ class _UserScreenState extends State<UserScreen> {
                             ],
                           ),
                           if (_messageController != null)
-                            Column(children: [
-                              MarkdownEditor(
-                                _messageController!,
-                                originInstance: null,
-                                draftController: messageDraftController,
-                                label: 'Message',
-                              ),
-                              const SizedBox(height: 8),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  OutlinedButton(
-                                    onPressed: () async {
-                                      setState(() {
-                                        _messageController = null;
-                                      });
-                                    },
-                                    child: Text(l(context).cancel),
-                                  ),
-                                  LoadingFilledButton(
-                                    onPressed: () async {
-                                      final newThread = await context
-                                          .read<SettingsController>()
-                                          .api
-                                          .messages
-                                          .create(
-                                            user.id,
-                                            _messageController!.text,
-                                          );
+                            Padding(
+                              padding: const EdgeInsets.only(top: 16),
+                              child: Column(children: [
+                                MarkdownEditor(
+                                  _messageController!,
+                                  originInstance: null,
+                                  draftController: messageDraftController,
+                                  label: 'Message',
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    OutlinedButton(
+                                      onPressed: () async {
+                                        setState(() {
+                                          _messageController = null;
+                                        });
+                                      },
+                                      child: Text(l(context).cancel),
+                                    ),
+                                    LoadingFilledButton(
+                                      onPressed: () async {
+                                        final newThread = await context
+                                            .read<SettingsController>()
+                                            .api
+                                            .messages
+                                            .create(
+                                              user.id,
+                                              _messageController!.text,
+                                            );
 
-                                      await messageDraftController.discard();
+                                        await messageDraftController.discard();
 
-                                      setState(() {
-                                        _messageController = null;
+                                        setState(() {
+                                          _messageController = null;
 
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                MessageThreadScreen(
-                                              initData: newThread,
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  MessageThreadScreen(
+                                                initData: newThread,
+                                              ),
                                             ),
-                                          ),
-                                        );
-                                      });
-                                    },
-                                    label: Text(l(context).send),
-                                  )
-                                ],
-                              )
-                            ]),
+                                          );
+                                        });
+                                      },
+                                      label: Text(l(context).send),
+                                    )
+                                  ],
+                                )
+                              ]),
+                            ),
                           if (user.about != null)
                             Padding(
                               padding: const EdgeInsets.only(top: 16),

@@ -771,6 +771,9 @@ class __MarkdownEditorDraftItemState extends State<_MarkdownEditorDraftItem> {
                                 .markdownEditor_drafts_applyAndDiscard),
                           ),
                         ],
+                        actionsOverflowAlignment: OverflowBarAlignment.center,
+                        actionsOverflowButtonSpacing: 8,
+                        actionsOverflowDirection: VerticalDirection.up,
                       );
                     },
                   );
