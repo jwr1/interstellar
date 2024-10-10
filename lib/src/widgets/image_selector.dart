@@ -23,8 +23,6 @@ class ImageSelector extends StatefulWidget {
 }
 
 class _ImageSelectorState extends State<ImageSelector> {
-  final ImagePicker _imagePicker = ImagePicker();
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -37,8 +35,8 @@ class _ImageSelectorState extends State<ImageSelector> {
                     child: IconButton(
                       onPressed: widget.enabled
                           ? () async {
-                              XFile? image = await _imagePicker.pickImage(
-                                  source: ImageSource.gallery);
+                              XFile? image = await ImagePicker()
+                                  .pickImage(source: ImageSource.gallery);
                               if (image != null) {
                                 widget.onSelected(image);
                               }
@@ -55,11 +53,9 @@ class _ImageSelectorState extends State<ImageSelector> {
                       child: IconButton(
                         onPressed: widget.enabled
                             ? () async {
-                                XFile? image = await _imagePicker.pickImage(
-                                    source: ImageSource.camera);
-                                if (image != null) {
-                                  widget.onSelected(image);
-                                }
+                                XFile? image = await ImagePicker()
+                                    .pickImage(source: ImageSource.camera);
+                                widget.onSelected(image);
                               }
                             : null,
                         tooltip: l(context).uploadFromCamera,

@@ -81,12 +81,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: ActionChip(
-                      padding: const EdgeInsets.only(
-                        left: 4,
-                        top: 6,
-                        right: 0,
-                        bottom: 6,
-                      ),
+                      padding: chipDropdownPadding,
                       label: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -119,7 +114,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       if (!mounted) return;
                       context.read<NotificationCountController>().reload();
                     },
-                    label: Text(l(context).notifications_markAllAsRead),
+                    label: Text(l(context).notifications_readAll),
                     icon: const Icon(Symbols.mark_chat_read, size: 20),
                   ),
                   // Push notifications only work on Android devices and Mbin servers
