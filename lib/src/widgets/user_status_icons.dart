@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class UserStatusIcons extends StatelessWidget {
   final DateTime? cakeDay;
@@ -23,7 +24,7 @@ class UserStatusIcons extends StatelessWidget {
     if (isBot) {
       botWidget = Tooltip(
         message: l(context).botAccount,
-        child: const Icon(Icons.smart_toy_outlined),
+        child: const Icon(Symbols.smart_toy_rounded, fill: 0),
       );
     }
 
@@ -41,9 +42,7 @@ class UserStatusIcons extends StatelessWidget {
               Colors.lightGreen,
             ],
           ).createShader(bounds),
-          child: const ImageIcon(
-            AssetImage('assets/icons/plant.png'),
-          ),
+          child: const Icon(Symbols.psychiatry_rounded),
         ),
       );
     } else if (cakeDay!.day == now.day && cakeDay!.month == now.month) {
@@ -60,7 +59,7 @@ class UserStatusIcons extends StatelessWidget {
               Colors.blue,
             ],
           ).createShader(bounds),
-          child: const Icon(Icons.cake),
+          child: const Icon(Symbols.cake_rounded),
         ),
       );
     }

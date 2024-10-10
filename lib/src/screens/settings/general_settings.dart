@@ -4,6 +4,7 @@ import 'package:interstellar/src/utils/language_codes.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/selection_menu.dart';
 import 'package:interstellar/src/widgets/settings_header.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import 'settings_controller.dart';
 
@@ -37,7 +38,7 @@ class GeneralScreen extends StatelessWidget {
           SettingsHeader(l(context).settings_theme),
           ListTile(
             title: Text(l(context).settings_themeMode),
-            leading: const Icon(Icons.brightness_medium),
+            leading: const Icon(Symbols.brightness_medium_rounded),
             onTap: () async {
               controller.updateThemeMode(
                 await themeModeSelect(context).askSelection(
@@ -57,7 +58,7 @@ class GeneralScreen extends StatelessWidget {
           ),
           ListTile(
             title: Text(l(context).settings_enableTrueBlack),
-            leading: const Icon(Icons.brightness_1_outlined),
+            leading: const Icon(Symbols.brightness_1_rounded),
             onTap: () {
               controller.updateEnableTrueBlack(!controller.enableTrueBlack);
             },
@@ -69,7 +70,7 @@ class GeneralScreen extends StatelessWidget {
           ),
           ListTile(
             title: Text(l(context).settings_useDynamicColor),
-            leading: const Icon(Icons.auto_awesome_rounded),
+            leading: const Icon(Symbols.auto_awesome_rounded),
             onTap: () {
               controller.updateUseDynamicColor(!controller.useDynamicColor);
             },
@@ -80,7 +81,7 @@ class GeneralScreen extends StatelessWidget {
           ),
           ListTile(
             title: Text(l(context).settings_colorScheme),
-            leading: const Icon(Icons.palette),
+            leading: const Icon(Symbols.palette_rounded),
             onTap: () async {
               controller.updateColorScheme(
                 await themeSelect(context).askSelection(
@@ -103,7 +104,7 @@ class GeneralScreen extends StatelessWidget {
           SettingsHeader(l(context).settings_postAppearance),
           ListTile(
             title: const Text('Image Position'),
-            leading: const Icon(Icons.image),
+            leading: const Icon(Symbols.image_rounded),
             onTap: () async {
               controller.updatePostImagePosition(
                 await postLayoutSelect.askSelection(
@@ -123,7 +124,7 @@ class GeneralScreen extends StatelessWidget {
           ),
           ListTile(
             title: Text(l(context).settings_useCompactPreview),
-            leading: const Icon(Icons.view_agenda),
+            leading: const Icon(Symbols.view_agenda_rounded),
             onTap: () {
               controller
                   .updatePostCompactPreview(!controller.postCompactPreview);
@@ -178,7 +179,7 @@ class GeneralScreen extends StatelessWidget {
                                       context, null),
                                 );
                               },
-                        icon: const Icon(Icons.add),
+                        icon: const Icon(Symbols.add_rounded),
                       ),
                     )
                   ],
@@ -205,7 +206,7 @@ class GeneralScreen extends StatelessWidget {
           SettingsHeader(l(context).settings_other),
           ListTile(
             title: Text(l(context).settings_alwaysShowInstance),
-            leading: const Icon(Icons.public),
+            leading: const Icon(Symbols.public_rounded),
             onTap: () {
               controller
                   .updateAlwaysShowInstance(!controller.alwaysShowInstance);
@@ -275,7 +276,7 @@ class GeneralScreen extends StatelessWidget {
                                   },
                                 );
                               },
-                              icon: const Icon(Icons.add),
+                              icon: const Icon(Symbols.add_rounded),
                             ),
                           )
                         ],
@@ -303,17 +304,17 @@ SelectionMenu<ThemeMode> themeModeSelect(BuildContext context) => SelectionMenu(
         SelectionMenuItem(
           value: ThemeMode.system,
           title: l(context).settings_themeMode_system,
-          icon: Icons.auto_mode,
+          icon: Symbols.auto_mode_rounded,
         ),
         SelectionMenuItem(
           value: ThemeMode.light,
           title: l(context).settings_themeMode_light,
-          icon: Icons.light_mode,
+          icon: Symbols.light_mode_rounded,
         ),
         SelectionMenuItem(
           value: ThemeMode.dark,
           title: l(context).settings_themeMode_dark,
-          icon: Icons.dark_mode,
+          icon: Symbols.dark_mode_rounded,
         ),
       ],
     );
@@ -363,7 +364,7 @@ SelectionMenu<FlexScheme> themeSelect(BuildContext context) => SelectionMenu(
           .map((theme) => SelectionMenuItem(
                 value: theme,
                 title: themeNameMap(context)[theme]!,
-                icon: Icons.brightness_1,
+                icon: Symbols.brightness_1_rounded,
                 iconColor: FlexColor.schemesWithCustom[theme]!.light.primary,
               ))
           .toList(),
@@ -375,17 +376,17 @@ const SelectionMenu<PostImagePosition> postLayoutSelect = SelectionMenu(
     SelectionMenuItem(
       value: PostImagePosition.auto,
       title: 'Auto',
-      icon: Icons.auto_mode,
+      icon: Symbols.auto_mode_rounded,
     ),
     SelectionMenuItem(
       value: PostImagePosition.top,
       title: 'Top',
-      icon: Icons.smartphone,
+      icon: Symbols.smartphone_rounded,
     ),
     SelectionMenuItem(
       value: PostImagePosition.right,
       title: 'Right',
-      icon: Icons.tablet,
+      icon: Symbols.tablet_rounded,
     ),
   ],
 );

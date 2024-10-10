@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:interstellar/src/models/comment.dart';
 import 'package:interstellar/src/models/post.dart';
@@ -8,6 +7,7 @@ import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/models.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/selection_menu.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 enum CommentSort { newest, top, hot, active, oldest }
 
@@ -25,27 +25,27 @@ const SelectionMenu<CommentSort> commentSortSelect = SelectionMenu(
     SelectionMenuItem(
       value: CommentSort.hot,
       title: 'Hot',
-      icon: Icons.local_fire_department,
+      icon: Symbols.local_fire_department_rounded,
     ),
     SelectionMenuItem(
       value: CommentSort.top,
       title: 'Top',
-      icon: Icons.trending_up,
+      icon: Symbols.trending_up_rounded,
     ),
     SelectionMenuItem(
       value: CommentSort.newest,
       title: 'Newest',
-      icon: Icons.auto_awesome_rounded,
+      icon: Symbols.auto_awesome_rounded,
     ),
     SelectionMenuItem(
       value: CommentSort.active,
       title: 'Active',
-      icon: Icons.rocket_launch,
+      icon: Symbols.rocket_launch_rounded,
     ),
     SelectionMenuItem(
       value: CommentSort.oldest,
       title: 'Oldest',
-      icon: Icons.access_time_outlined,
+      icon: Symbols.access_time_rounded,
     ),
   ],
 );

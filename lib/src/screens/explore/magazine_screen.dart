@@ -114,7 +114,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                           widget.onUpdate!(newValue);
                         }
                       },
-                      icon: const Icon(Icons.block),
+                      icon: const Icon(Symbols.block_rounded),
                       style: ButtonStyle(
                         foregroundColor: WidgetStatePropertyAll(
                             _data!.isBlockedByUser == true
@@ -126,7 +126,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                     builder: (BuildContext context, MenuController controller,
                         Widget? child) {
                       return IconButton(
-                        icon: const Icon(Icons.more_vert),
+                        icon: const Icon(Symbols.more_vert_rounded),
                         onPressed: () {
                           if (controller.isOpen) {
                             controller.close();
@@ -297,7 +297,7 @@ class PostingRestrictedIndicator extends StatelessWidget {
       child: Tooltip(
         message: l(context).postingRestricted,
         triggerMode: TooltipTriggerMode.tap,
-        child: const Icon(Icons.lock, size: 16),
+        child: const Icon(Symbols.lock_rounded, size: 16),
       ),
     );
   }

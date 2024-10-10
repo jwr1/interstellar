@@ -9,6 +9,7 @@ import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/blur.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class AdvancedImage extends StatelessWidget {
   final ImageModel image;
@@ -117,7 +118,7 @@ class _AdvancedImagePageState extends State<AdvancedImagePage> {
                 content: Text('${l(context).imageSaved}: ${file.path}'),
               ));
             },
-            icon: const Icon(Icons.download),
+            icon: const Icon(Symbols.download_rounded),
           ),
           if (!Platform.isLinux)
             LoadingIconButton(
@@ -125,7 +126,7 @@ class _AdvancedImagePageState extends State<AdvancedImagePage> {
                 Uri.parse(widget.image.src),
                 widget.image.src.split('/').last,
               ),
-              icon: const Icon(Icons.share),
+              icon: const Icon(Symbols.share_rounded),
             ),
         ],
       ),

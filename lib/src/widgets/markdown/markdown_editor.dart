@@ -6,6 +6,7 @@ import 'package:interstellar/src/utils/debouncer.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/markdown/drafts_controller.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 import './markdown.dart';
@@ -91,7 +92,7 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.edit),
+                          const Icon(Symbols.edit_rounded),
                           const SizedBox(width: 8),
                           Text(l(context).markdownEditor_edit),
                         ],
@@ -101,7 +102,7 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.preview),
+                          const Icon(Symbols.preview_rounded),
                           const SizedBox(width: 8),
                           Text(l(context).markdownEditor_preview),
                         ],
@@ -111,7 +112,7 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.drafts),
+                          const Icon(Symbols.drafts_rounded),
                           const SizedBox(width: 8),
                           Text(l(context).markdownEditor_drafts),
                         ],
@@ -231,7 +232,7 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
                                         },
                                   label: Text(l(context)
                                       .markdownEditor_drafts_manuallySave),
-                                  icon: const Icon(Icons.save),
+                                  icon: const Icon(Symbols.save_rounded),
                                 ),
                               ),
                               Padding(
@@ -249,7 +250,8 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
                                         },
                                   label: Text(l(context)
                                       .markdownEditor_drafts_discardAll),
-                                  icon: const Icon(Icons.delete_forever),
+                                  icon: const Icon(
+                                      Symbols.delete_forever_rounded),
                                 ),
                               ),
                             ],
@@ -296,26 +298,26 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
 List<_MarkdownEditorActionInfo> _actions(BuildContext context) => [
       _MarkdownEditorActionInfo(
         action: const _MarkdownEditorActionBlock('### '),
-        icon: Icons.title,
+        icon: Symbols.title_rounded,
         tooltip: l(context).markdownEditor_heading,
         shortcut: const SingleActivator(LogicalKeyboardKey.keyH, control: true),
         showDivider: true,
       ),
       _MarkdownEditorActionInfo(
         action: const _MarkdownEditorActionInline('**'),
-        icon: Icons.format_bold,
+        icon: Symbols.format_bold_rounded,
         tooltip: l(context).markdownEditor_bold,
         shortcut: const SingleActivator(LogicalKeyboardKey.keyB, control: true),
       ),
       _MarkdownEditorActionInfo(
         action: const _MarkdownEditorActionInline('_'),
-        icon: Icons.format_italic,
+        icon: Symbols.format_italic_rounded,
         tooltip: l(context).markdownEditor_italic,
         shortcut: const SingleActivator(LogicalKeyboardKey.keyI, control: true),
       ),
       _MarkdownEditorActionInfo(
         action: const _MarkdownEditorActionInline('~~'),
-        icon: Icons.strikethrough_s,
+        icon: Symbols.strikethrough_s_rounded,
         tooltip: l(context).markdownEditor_strikethrough,
         shortcut: const SingleActivator(LogicalKeyboardKey.keyX,
             control: true, alt: true),
@@ -323,13 +325,13 @@ List<_MarkdownEditorActionInfo> _actions(BuildContext context) => [
       ),
       _MarkdownEditorActionInfo(
         action: const _MarkdownEditorActionInline('`'),
-        icon: Icons.code,
+        icon: Symbols.code_rounded,
         tooltip: l(context).markdownEditor_inlineCode,
         shortcut: const SingleActivator(LogicalKeyboardKey.keyE, control: true),
       ),
       _MarkdownEditorActionInfo(
         action: const _MarkdownEditorActionInline('\n```\n'),
-        icon: Icons.segment,
+        icon: Symbols.segment_rounded,
         tooltip: l(context).markdownEditor_codeBlock,
         shortcut: const SingleActivator(LogicalKeyboardKey.keyE,
             control: true, alt: true),
@@ -337,13 +339,13 @@ List<_MarkdownEditorActionInfo> _actions(BuildContext context) => [
       ),
       _MarkdownEditorActionInfo(
         action: const _MarkdownEditorActionLink(),
-        icon: Icons.link,
+        icon: Symbols.link_rounded,
         tooltip: l(context).markdownEditor_link,
         shortcut: const SingleActivator(LogicalKeyboardKey.keyK, control: true),
       ),
       _MarkdownEditorActionInfo(
         action: const _MarkdownEditorActionLink(isImage: true),
-        icon: Icons.image,
+        icon: Symbols.image_rounded,
         tooltip: l(context).markdownEditor_image,
         shortcut: const SingleActivator(LogicalKeyboardKey.keyK,
             control: true, alt: true),
@@ -351,14 +353,14 @@ List<_MarkdownEditorActionInfo> _actions(BuildContext context) => [
       ),
       _MarkdownEditorActionInfo(
         action: const _MarkdownEditorActionInline('~'),
-        icon: Icons.subscript,
+        icon: Symbols.subscript_rounded,
         tooltip: l(context).markdownEditor_subscript,
         shortcut:
             const SingleActivator(LogicalKeyboardKey.comma, control: true),
       ),
       _MarkdownEditorActionInfo(
         action: const _MarkdownEditorActionInline('^'),
-        icon: Icons.superscript,
+        icon: Symbols.superscript_rounded,
         tooltip: l(context).markdownEditor_superscript,
         shortcut:
             const SingleActivator(LogicalKeyboardKey.period, control: true),
@@ -366,14 +368,14 @@ List<_MarkdownEditorActionInfo> _actions(BuildContext context) => [
       ),
       _MarkdownEditorActionInfo(
         action: const _MarkdownEditorActionBlock('> '),
-        icon: Icons.format_quote,
+        icon: Symbols.format_quote_rounded,
         tooltip: l(context).markdownEditor_quote,
         shortcut: const SingleActivator(LogicalKeyboardKey.keyQ,
             control: true, alt: true),
       ),
       _MarkdownEditorActionInfo(
         action: const _MarkdownEditorActionHorizontalRule(),
-        icon: Icons.horizontal_rule,
+        icon: Symbols.horizontal_rule_rounded,
         tooltip: l(context).markdownEditor_horizontalRule,
         shortcut: const SingleActivator(LogicalKeyboardKey.keyH,
             control: true, alt: true),
@@ -381,13 +383,13 @@ List<_MarkdownEditorActionInfo> _actions(BuildContext context) => [
       ),
       _MarkdownEditorActionInfo(
         action: const _MarkdownEditorActionBlock('- '),
-        icon: Icons.format_list_bulleted,
+        icon: Symbols.format_list_bulleted_rounded,
         tooltip: l(context).markdownEditor_bulletedList,
         shortcut: const SingleActivator(LogicalKeyboardKey.keyL, control: true),
       ),
       _MarkdownEditorActionInfo(
         action: const _MarkdownEditorActionBlock('1. '),
-        icon: Icons.format_list_numbered,
+        icon: Symbols.format_list_numbered_rounded,
         tooltip: l(context).markdownEditor_numberedList,
         shortcut: const SingleActivator(LogicalKeyboardKey.keyL,
             control: true, alt: true),
@@ -396,7 +398,7 @@ List<_MarkdownEditorActionInfo> _actions(BuildContext context) => [
       _MarkdownEditorActionInfo(
         action: const _MarkdownEditorActionBlock(
             '\n::: spoiler PREVIEW_HERE\n', '\n:::\n'),
-        icon: Icons.warning,
+        icon: Symbols.warning_rounded,
         tooltip: l(context).markdownEditor_spoiler,
         shortcut: const SingleActivator(LogicalKeyboardKey.keyS,
             control: true, alt: true),
@@ -729,8 +731,8 @@ class __MarkdownEditorDraftItemState extends State<_MarkdownEditorDraftItem> {
             '${dateTimeFormat(widget.draft.at)}\n${widget.draft.resourceId != null ? l(context).markdownEditor_drafts_savedAutomatically : l(context).markdownEditor_drafts_savedManually}${widget.draft.resourceId != null ? ': ${widget.draft.resourceId}' : ''}',
           ),
           leading: Icon(_expandableController.expanded
-              ? Icons.expand_less
-              : Icons.expand_more),
+              ? Symbols.expand_less_rounded
+              : Symbols.expand_more_rounded),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -773,11 +775,11 @@ class __MarkdownEditorDraftItemState extends State<_MarkdownEditorDraftItem> {
                     },
                   );
                 },
-                icon: const Icon(Icons.check),
+                icon: const Icon(Symbols.check_rounded),
               ),
               IconButton(
                 onPressed: discardDraft,
-                icon: const Icon(Icons.delete_outline),
+                icon: const Icon(Symbols.delete_outline_rounded),
               ),
             ],
           ),

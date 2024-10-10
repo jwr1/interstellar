@@ -8,6 +8,7 @@ import 'package:interstellar/src/screens/feed/post_item.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/loading_template.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 class PostPage extends StatefulWidget {
@@ -143,7 +144,7 @@ class _PostPageState extends State<PostPage> {
                   });
                 }
               },
-              icon: const Icon(Icons.sort),
+              icon: const Icon(Symbols.sort_rounded),
             ),
           ),
         ],

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart' as mdf;
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:markdown/markdown.dart' as md;
+import 'package:material_symbols_icons/symbols.dart';
 
 import './markdown.dart';
 
@@ -101,8 +102,8 @@ class _SpoilerWidgetState extends State<SpoilerWidget> {
               children: [
                 Icon(
                   controller.expanded
-                      ? Icons.expand_more_rounded
-                      : Icons.chevron_right_rounded,
+                      ? Symbols.expand_more_rounded
+                      : Symbols.chevron_right_rounded,
                   size: 20,
                 ),
                 const SizedBox(width: 4),

@@ -143,12 +143,14 @@ class _AppState extends State<App> {
                         destinations: [
                           NavigationRailDestination(
                               label: Text(l(context).feed),
-                              icon: const Icon(Icons.feed_outlined),
-                              selectedIcon: const Icon(Icons.feed)),
+                              icon: const Icon(Symbols.feed_rounded, fill: 0),
+                              selectedIcon: const Icon(Symbols.feed_rounded)),
                           NavigationRailDestination(
                               label: Text(l(context).explore),
-                              icon: const Icon(Icons.explore_outlined),
-                              selectedIcon: const Icon(Icons.explore)),
+                              icon:
+                                  const Icon(Symbols.explore_rounded, fill: 0),
+                              selectedIcon:
+                                  const Icon(Symbols.explore_rounded)),
                           NavigationRailDestination(
                             label: Text(l(context).profile),
                             icon: Wrapper(
@@ -157,7 +159,8 @@ class _AppState extends State<App> {
                                   .isLoggedIn,
                               parentBuilder: (child) =>
                                   NotificationBadge(child: child),
-                              child: const Icon(Icons.person_outlined),
+                              child:
+                                  const Icon(Symbols.person_rounded, fill: 0),
                             ),
                             selectedIcon: Wrapper(
                               shouldWrap: context
@@ -165,13 +168,15 @@ class _AppState extends State<App> {
                                   .isLoggedIn,
                               parentBuilder: (child) =>
                                   NotificationBadge(child: child),
-                              child: const Icon(Icons.person),
+                              child: const Icon(Symbols.person_rounded),
                             ),
                           ),
                           NavigationRailDestination(
                               label: Text(l(context).settings),
-                              icon: const Icon(Icons.settings_outlined),
-                              selectedIcon: const Icon(Icons.settings)),
+                              icon:
+                                  const Icon(Symbols.settings_rounded, fill: 0),
+                              selectedIcon:
+                                  const Icon(Symbols.settings_rounded)),
                         ],
                       ),
                     if (orientation == Orientation.landscape)

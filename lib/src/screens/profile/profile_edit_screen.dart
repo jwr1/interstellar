@@ -8,6 +8,7 @@ import 'package:interstellar/src/widgets/image.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/markdown/drafts_controller.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 import '../../widgets/avatar.dart';
@@ -114,7 +115,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
               widget.onUpdate(user);
               Navigator.of(context).pop();
             },
-            icon: const Icon(Icons.send),
+            icon: const Icon(Symbols.send_rounded),
           )
         ],
       ),

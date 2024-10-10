@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/selection_menu.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 enum ActionLocation { hide, appBar, fabTap, fabHold, fabMenu }
 
@@ -26,31 +27,31 @@ class ActionItem {
 
 ActionItem feedActionBackToTop(BuildContext context) => ActionItem(
       name: l(context).action_backToTop,
-      icon: Icons.keyboard_double_arrow_up,
+      icon: Symbols.keyboard_double_arrow_up_rounded,
     );
 ActionItem feedActionCreatePost(BuildContext context) => ActionItem(
       name: l(context).action_createPost,
-      icon: Icons.create,
+      icon: Symbols.create_rounded,
     );
 ActionItem feedActionExpandFab(BuildContext context) => ActionItem(
       name: l(context).action_expandFABMenu,
-      icon: Icons.menu,
+      icon: Symbols.menu_rounded,
     );
 ActionItem feedActionRefresh(BuildContext context) => ActionItem(
       name: l(context).action_refresh,
-      icon: Icons.refresh,
+      icon: Symbols.refresh_rounded,
     );
 ActionItem feedActionSetFilter(BuildContext context) => ActionItem(
       name: l(context).action_setFilter,
-      icon: Icons.filter_alt,
+      icon: Symbols.filter_alt_rounded,
     );
 ActionItem feedActionSetSort(BuildContext context) => ActionItem(
       name: l(context).action_setSort,
-      icon: Icons.sort,
+      icon: Symbols.sort_rounded,
     );
 ActionItem feedActionSetType(BuildContext context) => ActionItem(
       name: l(context).action_setType,
-      icon: Icons.tab,
+      icon: Symbols.tab_rounded,
     );
 
 SelectionMenu<ActionLocation> actionLocationSelect(BuildContext context) =>
@@ -60,27 +61,27 @@ SelectionMenu<ActionLocation> actionLocationSelect(BuildContext context) =>
         SelectionMenuItem(
           value: ActionLocation.hide,
           title: l(context).action_hide,
-          icon: Icons.visibility_off,
+          icon: Symbols.visibility_off_rounded,
         ),
         SelectionMenuItem(
           value: ActionLocation.appBar,
           title: l(context).action_appBar,
-          icon: Icons.web_asset,
+          icon: Symbols.web_asset_rounded,
         ),
         SelectionMenuItem(
           value: ActionLocation.fabTap,
           title: l(context).action_fabTap,
-          icon: Icons.touch_app,
+          icon: Symbols.touch_app_rounded,
         ),
         SelectionMenuItem(
           value: ActionLocation.fabHold,
           title: l(context).action_fabHold,
-          icon: Icons.touch_app,
+          icon: Symbols.touch_app_rounded,
         ),
         SelectionMenuItem(
           value: ActionLocation.fabMenu,
           title: l(context).action_fabMenu,
-          icon: Icons.menu,
+          icon: Symbols.menu_rounded,
         ),
       ],
     );
@@ -93,32 +94,32 @@ SelectionMenu<ActionLocationWithTabs> actionLocationWithTabsSelect(
         SelectionMenuItem(
           value: ActionLocationWithTabs.hide,
           title: l(context).action_hide,
-          icon: Icons.visibility_off,
+          icon: Symbols.visibility_off_rounded,
         ),
         SelectionMenuItem(
           value: ActionLocationWithTabs.appBar,
           title: l(context).action_appBar,
-          icon: Icons.web_asset,
+          icon: Symbols.web_asset_rounded,
         ),
         SelectionMenuItem(
           value: ActionLocationWithTabs.fabTap,
           title: l(context).action_fabTap,
-          icon: Icons.touch_app,
+          icon: Symbols.touch_app_rounded,
         ),
         SelectionMenuItem(
           value: ActionLocationWithTabs.fabHold,
           title: l(context).action_fabHold,
-          icon: Icons.touch_app,
+          icon: Symbols.touch_app_rounded,
         ),
         SelectionMenuItem(
           value: ActionLocationWithTabs.fabMenu,
           title: l(context).action_fabMenu,
-          icon: Icons.menu,
+          icon: Symbols.menu_rounded,
         ),
         SelectionMenuItem(
           value: ActionLocationWithTabs.tabs,
           title: l(context).action_tabs,
-          icon: Icons.tab,
+          icon: Symbols.tab_rounded,
         ),
       ],
     );

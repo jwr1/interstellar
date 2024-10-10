@@ -8,6 +8,7 @@ import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/markdown/drafts_controller.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 class MagazineOwnerPanel extends StatefulWidget {
@@ -266,7 +267,7 @@ class _MagazineOwnerPanelModeratorsState
                       if (result != null) widget.onUpdate(result);
                     },
               label: const Text('Add'),
-              icon: const Icon(Icons.add),
+              icon: const Icon(Symbols.add_rounded),
             )
           ],
         ),
@@ -277,7 +278,7 @@ class _MagazineOwnerPanelModeratorsState
             isOwner: mod.id == widget.data.owner?.id,
             trailingWidgets: [
               IconButton(
-                icon: const Icon(Icons.delete_outline),
+                icon: const Icon(Symbols.delete_outline_rounded),
                 onPressed: () async {
                   final result = await showDialog<DetailedMagazineModel>(
                     context: context,

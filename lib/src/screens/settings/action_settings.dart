@@ -4,6 +4,7 @@ import 'package:interstellar/src/screens/feed/feed_screen.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/actions.dart';
 import 'package:interstellar/src/widgets/settings_header.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import 'settings_controller.dart';
 
@@ -75,7 +76,7 @@ class ActionSettings extends StatelessWidget {
           SettingsHeader(l(context).settings_defaults),
           ListTile(
             title: Text(l(context).settings_feedType),
-            leading: const Icon(Icons.tab),
+            leading: const Icon(Symbols.tab_rounded),
             enabled: !isLemmy,
             onTap: () async {
               controller.updateDefaultFeedType(
@@ -96,7 +97,7 @@ class ActionSettings extends StatelessWidget {
           ),
           ListTile(
             title: Text(l(context).settings_feedFilter),
-            leading: const Icon(Icons.filter_alt),
+            leading: const Icon(Symbols.filter_alt_rounded),
             onTap: () async {
               controller.updateDefaultFeedFilter(
                 await feedFilterSelect(context).askSelection(
@@ -116,7 +117,7 @@ class ActionSettings extends StatelessWidget {
           ),
           ListTile(
             title: Text(l(context).settings_threadsFeedSort),
-            leading: const Icon(Icons.sort),
+            leading: const Icon(Symbols.sort_rounded),
             onTap: () async {
               controller.updateDefaultThreadsFeedSort(
                 await feedSortSelect(context).askSelection(
@@ -136,7 +137,7 @@ class ActionSettings extends StatelessWidget {
           ),
           ListTile(
             title: Text(l(context).settings_microblogFeedSort),
-            leading: const Icon(Icons.sort),
+            leading: const Icon(Symbols.sort_rounded),
             enabled: !isLemmy,
             onTap: () async {
               controller.updateDefaultMicroblogFeedSort(
@@ -157,7 +158,7 @@ class ActionSettings extends StatelessWidget {
           ),
           ListTile(
             title: Text(l(context).settings_exploreFeedSort),
-            leading: const Icon(Icons.explore),
+            leading: const Icon(Symbols.explore_rounded),
             onTap: () async {
               controller.updateDefaultExploreFeedSort(
                 await feedSortSelect(context).askSelection(
@@ -177,7 +178,7 @@ class ActionSettings extends StatelessWidget {
           ),
           ListTile(
             title: Text(l(context).settings_commentSort),
-            leading: const Icon(Icons.comment),
+            leading: const Icon(Symbols.comment_rounded),
             onTap: () async {
               controller.updateDefaultCommentSort(
                 await commentSortSelect.askSelection(

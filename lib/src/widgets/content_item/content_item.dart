@@ -18,6 +18,7 @@ import 'package:interstellar/src/widgets/report_content.dart';
 import 'package:interstellar/src/widgets/user_status_icons.dart';
 import 'package:interstellar/src/widgets/video.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 import './content_item_link_panel.dart';
@@ -308,7 +309,8 @@ class _ContentItemState extends State<ContentItem> {
                               child: Tooltip(
                                 message: l(context).pinnedInMagazine,
                                 triggerMode: TooltipTriggerMode.tap,
-                                child: const Icon(Icons.push_pin, size: 20),
+                                child: const Icon(Symbols.push_pin_rounded,
+                                    size: 20),
                               ),
                             ),
                           if (widget.isNSFW)
@@ -396,7 +398,8 @@ class _ContentItemState extends State<ContentItem> {
                                 child: Row(
                                   children: [
                                     IconButton(
-                                      icon: const Icon(Icons.rocket_launch),
+                                      icon: const Icon(
+                                          Symbols.rocket_launch_rounded),
                                       color: widget.isBoosted
                                           ? Colors.purple.shade400
                                           : null,
@@ -412,7 +415,8 @@ class _ContentItemState extends State<ContentItem> {
                                 children: [
                                   if (widget.upVotes != null)
                                     IconButton(
-                                      icon: const Icon(Icons.arrow_upward),
+                                      icon: const Icon(
+                                          Symbols.arrow_upward_rounded),
                                       color: widget.isUpVoted
                                           ? Colors.green.shade400
                                           : null,
@@ -422,7 +426,8 @@ class _ContentItemState extends State<ContentItem> {
                                       (widget.downVotes ?? 0))),
                                   if (widget.downVotes != null)
                                     IconButton(
-                                      icon: const Icon(Icons.arrow_downward),
+                                      icon: const Icon(
+                                          Symbols.arrow_downward_rounded),
                                       color: widget.isDownVoted
                                           ? Colors.red.shade400
                                           : null,
@@ -437,7 +442,7 @@ class _ContentItemState extends State<ContentItem> {
                                 padding: const EdgeInsets.only(right: 8),
                                 child: Row(
                                   children: [
-                                    const Icon(Icons.comment),
+                                    const Icon(Symbols.comment_rounded),
                                     const SizedBox(width: 4),
                                     Text(intFormat(widget.numComments!))
                                   ],
@@ -447,7 +452,7 @@ class _ContentItemState extends State<ContentItem> {
                               Padding(
                                 padding: const EdgeInsets.only(right: 8),
                                 child: IconButton(
-                                  icon: const Icon(Icons.reply),
+                                  icon: const Icon(Symbols.reply_rounded),
                                   onPressed: () => setState(() {
                                     _replyTextController =
                                         TextEditingController();
@@ -461,8 +466,9 @@ class _ContentItemState extends State<ContentItem> {
                                       : l(context).collapse,
                                   onPressed: widget.onCollapse,
                                   icon: widget.isCollapsed
-                                      ? const Icon(Icons.expand_more)
-                                      : const Icon(Icons.expand_less)),
+                                      ? const Icon(Symbols.expand_more_rounded)
+                                      : const Icon(
+                                          Symbols.expand_less_rounded)),
                           ];
                           final menuWidgets = [
                             if (widget.openLinkUri != null ||
@@ -473,7 +479,7 @@ class _ContentItemState extends State<ContentItem> {
                                 builder: (BuildContext context,
                                     MenuController controller, Widget? child) {
                                   return IconButton(
-                                    icon: const Icon(Icons.more_vert),
+                                    icon: const Icon(Symbols.more_vert_rounded),
                                     onPressed: () {
                                       if (controller.isOpen) {
                                         controller.close();

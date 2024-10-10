@@ -102,7 +102,7 @@ class _DomainScreenState extends State<DomainScreen> {
                               widget.onUpdate!(newValue);
                             }
                           },
-                          icon: const Icon(Icons.block),
+                          icon: const Icon(Symbols.block_rounded),
                           style: ButtonStyle(
                             foregroundColor: WidgetStatePropertyAll(
                                 _data!.isBlockedByUser == true
