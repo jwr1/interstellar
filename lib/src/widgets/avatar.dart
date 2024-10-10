@@ -4,10 +4,19 @@ import 'package:interstellar/src/models/image.dart';
 
 class Avatar extends StatelessWidget {
   final ImageModel? image;
+  final ImageProvider<Object>? overrideImageProvider;
   final double? radius;
   final double? borderRadius;
+  final Color? backgroundColor;
 
-  const Avatar(this.image, {super.key, this.radius, this.borderRadius});
+  const Avatar(
+    this.image, {
+    super.key,
+    this.overrideImageProvider,
+    this.radius,
+    this.borderRadius,
+    this.backgroundColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -15,11 +24,12 @@ class Avatar extends StatelessWidget {
       radius: radius != null && borderRadius != null
           ? radius! + borderRadius!
           : radius,
-      backgroundColor:
-          radius == null || borderRadius == null ? Colors.transparent : null,
+      backgroundColor: backgroundColor ??
+          (radius == null || borderRadius == null ? Colors.transparent : null),
       child: CircleAvatar(
         backgroundColor: Colors.transparent,
-        foregroundImage: image == null ? null : NetworkImage(image!.src),
+        foregroundImage: overrideImageProvider ??
+            (image == null ? null : NetworkImage(image!.src)),
         backgroundImage: image == null
             ? const AssetImage('assets/icons/logo.png')
             : (image!.blurHash != null

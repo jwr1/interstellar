@@ -152,3 +152,10 @@ List<T> reverseList<T>(List<T> list, bool enabled) {
 
   return list;
 }
+
+const chipDropdownPadding = EdgeInsets.only(
+  left: 4,
+  top: 6,
+  right: 0,
+  bottom: 6,
+);

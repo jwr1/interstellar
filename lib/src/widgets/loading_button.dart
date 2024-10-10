@@ -45,8 +45,13 @@ class _LoadingFilledButtonState extends State<LoadingFilledButton> {
           ? null
           : () async {
               setState(() => _isLoading = true);
-              await widget.onPressed!();
-              if (mounted) setState(() => _isLoading = false);
+              try {
+                await widget.onPressed!();
+              } catch (e) {
+                rethrow;
+              } finally {
+                if (mounted) setState(() => _isLoading = false);
+              }
             },
       label: widget.label,
       icon: _isLoading ? const _LoadingButtonIndicator() : widget.icon,
@@ -83,8 +88,13 @@ class _LoadingTonalButtonState extends State<LoadingTonalButton> {
           ? null
           : () async {
               setState(() => _isLoading = true);
-              await widget.onPressed!();
-              if (mounted) setState(() => _isLoading = false);
+              try {
+                await widget.onPressed!();
+              } catch (e) {
+                rethrow;
+              } finally {
+                if (mounted) setState(() => _isLoading = false);
+              }
             },
       label: widget.label,
       icon: _isLoading ? const _LoadingButtonIndicator() : widget.icon,
@@ -121,8 +131,13 @@ class _LoadingOutlinedButtonState extends State<LoadingOutlinedButton> {
           ? null
           : () async {
               setState(() => _isLoading = true);
-              await widget.onPressed!();
-              if (mounted) setState(() => _isLoading = false);
+              try {
+                await widget.onPressed!();
+              } catch (e) {
+                rethrow;
+              } finally {
+                if (mounted) setState(() => _isLoading = false);
+              }
             },
       label: widget.label,
       icon: _isLoading ? const _LoadingButtonIndicator() : widget.icon,
@@ -159,8 +174,13 @@ class _LoadingTextButtonState extends State<LoadingTextButton> {
           ? null
           : () async {
               setState(() => _isLoading = true);
-              await widget.onPressed!();
-              if (mounted) setState(() => _isLoading = false);
+              try {
+                await widget.onPressed!();
+              } catch (e) {
+                rethrow;
+              } finally {
+                if (mounted) setState(() => _isLoading = false);
+              }
             },
       label: widget.label,
       icon: _isLoading ? const _LoadingButtonIndicator() : widget.icon,
@@ -197,8 +217,13 @@ class _LoadingIconButtonState extends State<LoadingIconButton> {
           ? null
           : () async {
               setState(() => _isLoading = true);
-              await widget.onPressed!();
-              if (mounted) setState(() => _isLoading = false);
+              try {
+                await widget.onPressed!();
+              } catch (e) {
+                rethrow;
+              } finally {
+                if (mounted) setState(() => _isLoading = false);
+              }
             },
       icon: _isLoading ? const _LoadingButtonIndicator() : widget.icon,
       style: widget.style,
@@ -242,8 +267,13 @@ class _LoadingChipState extends State<LoadingChip> {
           ? null
           : (selected) async {
               setState(() => _isLoading = true);
-              await widget.onSelected!(selected);
-              if (mounted) setState(() => _isLoading = false);
+              try {
+                await widget.onSelected!(selected);
+              } catch (e) {
+                rethrow;
+              } finally {
+                if (mounted) setState(() => _isLoading = false);
+              }
             },
       tooltip: widget.tooltip,
     );

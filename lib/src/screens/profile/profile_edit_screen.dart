@@ -12,7 +12,6 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 import '../../widgets/avatar.dart';
-import '../../widgets/image_selector.dart';
 import '../settings/settings_controller.dart';
 
 class ProfileEditScreen extends StatefulWidget {
@@ -55,108 +54,187 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
     final aboutDraftController = context.watch<DraftsController>().auto(
         'profile:about:${context.watch<SettingsController>().selectedAccount}');
 
+    onSave() async {
+      if (_settingsChanged) {
+        _settings = await context
+            .read<SettingsController>()
+            .api
+            .users
+            .saveUserSettings(_settings!);
+      }
+      if (!context.mounted) return;
+
+      var user = await context
+          .read<SettingsController>()
+          .api
+          .users
+          .updateProfile(_aboutTextController!.text);
+
+      await aboutDraftController.discard();
+
+      if (!context.mounted) return;
+      if (_deleteAvatar) {
+        user =
+            await context.read<SettingsController>().api.users.deleteAvatar();
+      }
+      if (!context.mounted) return;
+      if (_deleteCover) {
+        user = await context.read<SettingsController>().api.users.deleteCover();
+      }
+
+      if (!context.mounted) return;
+      if (_avatarFile != null) {
+        user = await context
+            .read<SettingsController>()
+            .api
+            .users
+            .updateAvatar(_avatarFile!);
+      }
+      if (!context.mounted) return;
+      if (_coverFile != null) {
+        user = await context
+            .read<SettingsController>()
+            .api
+            .users
+            .updateCover(_coverFile!);
+      }
+      if (!context.mounted) return;
+
+      widget.onUpdate(user);
+      Navigator.of(context).pop();
+    }
+
+    final avatarPresent =
+        !_deleteAvatar && (widget.user.avatar != null || _avatarFile != null);
+    final coverPresent =
+        !_deleteCover && (widget.user.cover != null || _coverFile != null);
+
     return Scaffold(
       appBar: AppBar(
-        actions: [
-          LoadingIconButton(
-            onPressed: () async {
-              if (_settingsChanged) {
-                _settings = await context
-                    .read<SettingsController>()
-                    .api
-                    .users
-                    .saveUserSettings(_settings!);
-              }
-              if (!context.mounted) return;
-
-              var user = await context
-                  .read<SettingsController>()
-                  .api
-                  .users
-                  .updateProfile(_aboutTextController!.text);
-
-              await aboutDraftController.discard();
-
-              if (!context.mounted) return;
-              if (_deleteAvatar) {
-                user = await context
-                    .read<SettingsController>()
-                    .api
-                    .users
-                    .deleteAvatar();
-              }
-              if (!context.mounted) return;
-              if (_deleteCover) {
-                user = await context
-                    .read<SettingsController>()
-                    .api
-                    .users
-                    .deleteCover();
-              }
-
-              if (!context.mounted) return;
-              if (_avatarFile != null) {
-                user = await context
-                    .read<SettingsController>()
-                    .api
-                    .users
-                    .updateAvatar(_avatarFile!);
-              }
-              if (!context.mounted) return;
-              if (_coverFile != null) {
-                user = await context
-                    .read<SettingsController>()
-                    .api
-                    .users
-                    .updateCover(_coverFile!);
-              }
-              if (!context.mounted) return;
-
-              widget.onUpdate(user);
-              Navigator.of(context).pop();
-            },
-            icon: const Icon(Symbols.send_rounded),
-          )
-        ],
+        title: Text(l(context).profile_edit),
       ),
       body: SingleChildScrollView(
           child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Stack(
             alignment: Alignment.center,
+            fit: StackFit.passthrough,
             children: [
-              Container(
-                constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height / 3,
-                ),
-                height: widget.user.cover == null ? 100 : null,
-                child: _coverFile != null
-                    ? Image.file(File(_coverFile!.path))
-                    : widget.user.cover != null
-                        ? _deleteCover
-                            ? null
+              Stack(
+                children: [
+                  Container(
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height / 3,
+                    ),
+                    height: coverPresent ? null : 128,
+                    margin: const EdgeInsets.only(bottom: 48),
+                    child: !coverPresent
+                        ? null
+                        : _coverFile != null
+                            ? Image.file(
+                                File(_coverFile!.path),
+                                fit: BoxFit.cover,
+                              )
                             : AdvancedImage(
                                 widget.user.cover!,
-                                fit: BoxFit.fitWidth,
-                              )
-                        : null,
+                                fit: BoxFit.cover,
+                              ),
+                  ),
+                  Positioned.fill(
+                    bottom: 48,
+                    child: Material(
+                      color: Colors.black.withAlpha(64),
+                      child: InkWell(
+                        onTap: coverPresent
+                            ? () async {
+                                setState(() {
+                                  _deleteCover = true;
+                                  _coverFile = null;
+                                });
+                              }
+                            : () async {
+                                final image = await ImagePicker()
+                                    .pickImage(source: ImageSource.gallery);
+
+                                setState(() {
+                                  _deleteCover = false;
+                                  _coverFile = image;
+                                });
+                              },
+                        child: Icon(
+                          coverPresent
+                              ? Symbols.delete_rounded
+                              : Symbols.add_photo_alternate_rounded,
+                          size: 36,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               Positioned(
-                left: 0,
                 bottom: 0,
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Avatar(
-                    _deleteAvatar ? null : widget.user.avatar,
-                    radius: 32,
-                    borderRadius: 4,
-                  ),
+                left: 12,
+                child: Stack(
+                  children: [
+                    Avatar(
+                      avatarPresent ? widget.user.avatar : null,
+                      radius: 36,
+                      borderRadius: 4,
+                      backgroundColor:
+                          Theme.of(context).scaffoldBackgroundColor,
+                      overrideImageProvider: _avatarFile == null
+                          ? null
+                          : FileImage(File(_avatarFile!.path)),
+                    ),
+                    Positioned.fill(
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: LoadingIconButton(
+                          style: ButtonStyle(
+                            fixedSize: const WidgetStatePropertyAll(
+                                Size.fromRadius(36)),
+                            iconSize: const WidgetStatePropertyAll(36),
+                            backgroundColor: WidgetStatePropertyAll(
+                                Colors.black.withAlpha(64)),
+                          ),
+                          onPressed: avatarPresent
+                              ? () async {
+                                  setState(() {
+                                    _deleteAvatar = true;
+                                    _avatarFile = null;
+                                  });
+                                }
+                              : () async {
+                                  final image = await ImagePicker()
+                                      .pickImage(source: ImageSource.gallery);
+
+                                  setState(() {
+                                    _deleteAvatar = false;
+                                    _avatarFile = image;
+                                  });
+                                },
+                          icon: Icon(avatarPresent
+                              ? Symbols.delete_rounded
+                              : Symbols.add_photo_alternate_rounded),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
+              Positioned(
+                  bottom: 0,
+                  right: 16,
+                  child: FilledButton(
+                    onPressed: onSave,
+                    child: Text(l(context).saveChanges),
+                  )),
             ],
           ),
           Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -179,51 +257,6 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                     ),
                   ),
                 ]),
-                Row(
-                  children: [
-                    Text(l(context).profile_settings_selectAvatar),
-                    Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: ImageSelector(
-                          _avatarFile,
-                          (file) => setState(() {
-                                _avatarFile = file;
-                              })),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          _deleteAvatar = true;
-                        });
-                      },
-                      child:
-                          Text(l(context).profile_settings_selectAvatar_Delete),
-                    )
-                  ],
-                ),
-                Row(
-                  children: [
-                    Text(l(context).profile_settings_selectCover),
-                    Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: ImageSelector(
-                        _coverFile,
-                        (file) => setState(() {
-                          _coverFile = file;
-                        }),
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          _deleteCover = true;
-                        });
-                      },
-                      child:
-                          Text(l(context).profile_settings_selectCover_delete),
-                    )
-                  ],
-                ),
                 Padding(
                   padding: const EdgeInsets.only(top: 12),
                   child: MarkdownEditor(

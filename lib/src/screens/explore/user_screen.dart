@@ -74,6 +74,11 @@ class _UserScreenState extends State<UserScreen> {
     }
 
     final user = _data!;
+
+    final isLoggedIn = context.watch<SettingsController>().isLoggedIn;
+    final isMyUser = isLoggedIn &&
+        whenLoggedIn(context, true, matchesUsername: user.name) == true;
+
     final currentFeedSortOption = feedSortSelect(context).getOption(_sort);
 
     final globalName = user.name.contains('@')
@@ -85,30 +90,21 @@ class _UserScreenState extends State<UserScreen> {
 
     return Scaffold(
         appBar: AppBar(
-          title: Row(
-            children: [
-              Flexible(child: Text(user.name)),
-              DefaultTextStyle(
-                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: Theme.of(context).textTheme.bodySmall!.color),
-                child: Row(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
-                      child: Text('•'),
-                    ),
-                    Icon(currentFeedSortOption.icon, size: 20),
-                    const SizedBox(width: 2),
-                    Text(currentFeedSortOption.title),
-                  ],
-                ),
-              ),
-            ],
-          ),
+          title: Text(user.name),
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 8),
-              child: IconButton(
+              child: ActionChip(
+                padding: chipDropdownPadding,
+                label: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(currentFeedSortOption.icon, size: 20),
+                    const SizedBox(width: 4),
+                    Text(currentFeedSortOption.title),
+                    const Icon(Symbols.arrow_drop_down_rounded),
+                  ],
+                ),
                 onPressed: () async {
                   final newSort = await feedSortSelect(context)
                       .askSelection(context, _sort);
@@ -119,7 +115,6 @@ class _UserScreenState extends State<UserScreen> {
                     });
                   }
                 },
-                icon: const Icon(Symbols.sort_rounded),
               ),
             ),
           ],
@@ -132,278 +127,251 @@ class _UserScreenState extends State<UserScreen> {
           child: NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) => [
               SliverToBoxAdapter(
-                  child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Stack(
-                    alignment: Alignment.center,
-                    fit: StackFit.passthrough,
-                    children: [
-                      Container(
-                        constraints: BoxConstraints(
-                          maxHeight: MediaQuery.of(context).size.height / 3,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Stack(
+                      alignment: Alignment.center,
+                      fit: StackFit.passthrough,
+                      children: [
+                        Container(
+                          constraints: BoxConstraints(
+                            maxHeight: MediaQuery.of(context).size.height / 3,
+                          ),
+                          height: user.cover == null ? 48 : null,
+                          margin: const EdgeInsets.only(bottom: 48),
+                          child: user.cover != null
+                              ? AdvancedImage(
+                                  user.cover!,
+                                  fit: BoxFit.cover,
+                                )
+                              : null,
                         ),
-                        height: user.cover == null ? 100 : null,
-                        child: user.cover != null
-                            ? AdvancedImage(
-                                user.cover!,
-                                fit: BoxFit.cover,
-                              )
-                            : null,
-                      ),
-                      Positioned(
-                        left: 0,
-                        bottom: 0,
-                        child: Padding(
-                          padding: const EdgeInsets.all(12),
+                        Positioned(
+                          bottom: 0,
+                          left: 12,
                           child: Avatar(
                             user.avatar,
-                            radius: 32,
+                            radius: 36,
                             borderRadius: 4,
+                            backgroundColor:
+                                Theme.of(context).scaffoldBackgroundColor,
                           ),
                         ),
-                      ),
-                      if (whenLoggedIn(context, true,
-                              matchesUsername: user.name) !=
-                          null)
                         Positioned(
-                          right: 0,
-                          top: 0,
-                          child: Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: TextButton(
-                              onPressed: () => Navigator.of(context)
-                                  .push(MaterialPageRoute(builder: (context) {
-                                return ProfileEditScreen(_data!,
-                                    (DetailedUserModel? user) {
-                                  setState(() {
-                                    _data = user;
-                                  });
-                                });
-                              })),
-                              child: const Text('Edit'),
-                            ),
-                          ),
-                        )
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                            bottom: 0,
+                            right: 16,
+                            child: Row(
+                              children: [
+                                if (isMyUser)
+                                  FilledButton(
+                                    onPressed: () => Navigator.of(context).push(
+                                        MaterialPageRoute(builder: (context) {
+                                      return ProfileEditScreen(_data!,
+                                          (DetailedUserModel? user) {
+                                        setState(() {
+                                          _data = user;
+                                        });
+                                      });
+                                    })),
+                                    child: Text(l(context).profile_edit),
+                                  ),
+                                if (!isMyUser)
+                                  LoadingChip(
+                                    selected: user.isFollowedByUser ?? false,
+                                    icon: const Icon(Symbols.people_rounded),
+                                    label: Text(
+                                        intFormat(user.followersCount ?? 0)),
+                                    onSelected:
+                                        whenLoggedIn(context, (selected) async {
+                                      var newValue = await context
+                                          .read<SettingsController>()
+                                          .api
+                                          .users
+                                          .follow(user.id, selected);
+                                      setState(() {
+                                        _data = newValue;
+                                      });
+                                      if (widget.onUpdate != null) {
+                                        widget.onUpdate!(newValue);
+                                      }
+                                    }),
+                                  ),
+                                StarButton(globalName),
+                                if (isLoggedIn && !isMyUser)
+                                  LoadingIconButton(
+                                    onPressed: () async {
+                                      final newValue = await context
+                                          .read<SettingsController>()
+                                          .api
+                                          .users
+                                          .putBlock(
+                                            user.id,
+                                            !user.isBlockedByUser!,
+                                          );
+
+                                      setState(() {
+                                        _data = newValue;
+                                      });
+                                      if (widget.onUpdate != null) {
+                                        widget.onUpdate!(newValue);
+                                      }
+                                    },
+                                    icon: const Icon(Symbols.block_rounded),
+                                    style: ButtonStyle(
+                                      foregroundColor: WidgetStatePropertyAll(
+                                          user.isBlockedByUser == true
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .error
+                                              : Theme.of(context)
+                                                  .disabledColor),
+                                    ),
+                                  ),
+                                if (isLoggedIn && !isMyUser)
+                                  IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        _messageController =
+                                            TextEditingController();
+                                      });
+                                    },
+                                    icon: const Icon(Symbols.mail_rounded),
+                                    tooltip: 'Send message',
+                                  ),
+                              ],
+                            )),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                user.displayName ?? user.name.split('@').first,
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                              InkWell(
+                                onTap: () async {
+                                  await Clipboard.setData(
+                                    ClipboardData(
+                                        text: user.name.contains('@')
+                                            ? '@${user.name}'
+                                            : '@${user.name}@${context.read<SettingsController>().instanceHost}'),
+                                  );
+
+                                  if (!mounted) return;
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(l(context).copied),
+                                      duration: const Duration(seconds: 2),
+                                    ),
+                                  );
+                                },
+                                child: Text(globalName),
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
                                 children: [
                                   Text(
-                                    user.displayName ??
-                                        user.name.split('@').first,
-                                    style:
-                                        Theme.of(context).textTheme.titleLarge,
-                                  ),
-                                  InkWell(
-                                    onTap: () async {
-                                      await Clipboard.setData(
-                                        ClipboardData(
-                                            text: user.name.contains('@')
-                                                ? '@${user.name}'
-                                                : '@${user.name}@${context.read<SettingsController>().instanceHost}'),
-                                      );
-
-                                      if (!mounted) return;
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content: Text(l(context).copied),
-                                          duration: const Duration(seconds: 2),
-                                        ),
-                                      );
-                                    },
-                                    child: Text(globalName),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                          'Joined: ${dateOnlyFormat(user.createdAt)}'),
-                                      UserStatusIcons(
-                                        cakeDay: user.createdAt,
-                                        isBot: user.isBot,
-                                      ),
-                                    ],
+                                      'Joined: ${dateOnlyFormat(user.createdAt)}'),
+                                  UserStatusIcons(
+                                    cakeDay: user.createdAt,
+                                    isBot: user.isBot,
                                   ),
                                 ],
                               ),
-                            ),
-                            if (user.followersCount != null)
-                              LoadingChip(
-                                selected: user.isFollowedByUser ?? false,
-                                icon: const Icon(Symbols.people_rounded),
-                                label:
-                                    Text(intFormat(user.followersCount ?? 0)),
-                                onSelected:
-                                    whenLoggedIn(context, (selected) async {
-                                  var newValue = await context
-                                      .read<SettingsController>()
-                                      .api
-                                      .users
-                                      .follow(user.id, selected);
-                                  setState(() {
-                                    _data = newValue;
-                                  });
-                                  if (widget.onUpdate != null) {
-                                    widget.onUpdate!(newValue);
-                                  }
-                                }),
+                            ],
+                          ),
+                          if (_messageController != null)
+                            Column(children: [
+                              MarkdownEditor(
+                                _messageController!,
+                                originInstance: null,
+                                draftController: messageDraftController,
+                                label: 'Message',
                               ),
-                            StarButton(globalName),
-                            if (whenLoggedIn(context, true) == true)
-                              LoadingIconButton(
-                                onPressed: () async {
-                                  final newValue = await context
-                                      .read<SettingsController>()
-                                      .api
-                                      .users
-                                      .putBlock(
-                                        user.id,
-                                        !user.isBlockedByUser!,
-                                      );
+                              const SizedBox(height: 8),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  OutlinedButton(
+                                    onPressed: () async {
+                                      setState(() {
+                                        _messageController = null;
+                                      });
+                                    },
+                                    child: Text(l(context).cancel),
+                                  ),
+                                  LoadingFilledButton(
+                                    onPressed: () async {
+                                      final newThread = await context
+                                          .read<SettingsController>()
+                                          .api
+                                          .messages
+                                          .create(
+                                            user.id,
+                                            _messageController!.text,
+                                          );
 
-                                  setState(() {
-                                    _data = newValue;
-                                  });
-                                  if (widget.onUpdate != null) {
-                                    widget.onUpdate!(newValue);
-                                  }
-                                },
-                                icon: const Icon(Symbols.block_rounded),
-                                style: ButtonStyle(
-                                  foregroundColor: WidgetStatePropertyAll(
-                                      user.isBlockedByUser == true
-                                          ? Theme.of(context).colorScheme.error
-                                          : Theme.of(context).disabledColor),
-                                ),
-                              ),
-                            if (!user.name.contains('@') &&
-                                context
-                                        .read<SettingsController>()
-                                        .serverSoftware !=
-                                    ServerSoftware.lemmy)
-                              IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _messageController =
-                                        TextEditingController();
-                                  });
-                                },
-                                icon: const Icon(Symbols.mail_rounded),
-                                tooltip: 'Send message',
-                              )
-                          ],
-                        ),
-                        if (_messageController != null)
-                          Column(children: [
-                            MarkdownEditor(
-                              _messageController!,
-                              originInstance: null,
-                              draftController: messageDraftController,
-                              label: 'Message',
-                            ),
-                            const SizedBox(height: 8),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                OutlinedButton(
-                                  onPressed: () async {
-                                    setState(() {
-                                      _messageController = null;
-                                    });
-                                  },
-                                  child: Text(l(context).cancel),
-                                ),
-                                LoadingFilledButton(
-                                  onPressed: () async {
-                                    final newThread = await context
-                                        .read<SettingsController>()
-                                        .api
-                                        .messages
-                                        .create(
-                                          user.id,
-                                          _messageController!.text,
-                                        );
+                                      await messageDraftController.discard();
 
-                                    await messageDraftController.discard();
+                                      setState(() {
+                                        _messageController = null;
 
-                                    setState(() {
-                                      _messageController = null;
-
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              MessageThreadScreen(
-                                            initData: newThread,
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                MessageThreadScreen(
+                                              initData: newThread,
+                                            ),
                                           ),
-                                        ),
-                                      );
-                                    });
-                                  },
-                                  label: Text(l(context).send),
-                                )
-                              ],
-                            )
-                          ]),
-                        if (user.about != null)
-                          Padding(
-                              padding: const EdgeInsets.only(top: 12),
+                                        );
+                                      });
+                                    },
+                                    label: Text(l(context).send),
+                                  )
+                                ],
+                              )
+                            ]),
+                          if (user.about != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 16),
                               child: Markdown(
                                 user.about!,
                                 getNameHost(context, user.name),
-                              )),
-                      ],
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              )),
+                  ],
+                ),
+              ),
               SliverAppBar(
                 automaticallyImplyLeading: false,
                 title: TabBar(
                   isScrollable: true,
                   tabAlignment: TabAlignment.start,
                   tabs: [
-                    const Tab(
-                      text: 'Threads',
-                      icon: Icon(Symbols.feed_rounded),
-                    ),
+                    const Tab(text: 'Threads'),
                     if (context.watch<SettingsController>().serverSoftware !=
                         ServerSoftware.lemmy)
-                      const Tab(
-                        text: 'Microblogs',
-                        icon: Icon(Symbols.chat_rounded),
-                      ),
-                    const Tab(
-                      text: 'Comments',
-                      icon: Icon(Symbols.comment_rounded),
-                    ),
+                      const Tab(text: 'Microblogs'),
+                    const Tab(text: 'Comments'),
                     if (context.watch<SettingsController>().serverSoftware !=
                         ServerSoftware.lemmy)
-                      const Tab(
-                        text: 'Replies',
-                        icon: Icon(Symbols.comment_rounded),
-                      ),
+                      const Tab(text: 'Replies'),
                     if (context.watch<SettingsController>().serverSoftware !=
                         ServerSoftware.lemmy)
-                      const Tab(
-                        text: 'Followers',
-                        icon: Icon(Symbols.people_rounded),
-                      ),
+                      const Tab(text: 'Followers'),
                     if (context.watch<SettingsController>().serverSoftware !=
                         ServerSoftware.lemmy)
-                      const Tab(
-                        text: 'Following',
-                        icon: Icon(Symbols.groups_rounded),
-                      )
+                      const Tab(text: 'Following')
                   ],
                 ),
                 pinned: true,

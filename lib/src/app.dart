@@ -144,13 +144,14 @@ class _AppState extends State<App> {
                           NavigationRailDestination(
                               label: Text(l(context).feed),
                               icon: const Icon(Symbols.feed_rounded, fill: 0),
-                              selectedIcon: const Icon(Symbols.feed_rounded)),
+                              selectedIcon:
+                                  const Icon(Symbols.feed_rounded, fill: 1)),
                           NavigationRailDestination(
                               label: Text(l(context).explore),
                               icon:
                                   const Icon(Symbols.explore_rounded, fill: 0),
                               selectedIcon:
-                                  const Icon(Symbols.explore_rounded)),
+                                  const Icon(Symbols.explore_rounded, fill: 1)),
                           NavigationRailDestination(
                             label: Text(l(context).profile),
                             icon: Wrapper(
@@ -168,15 +169,16 @@ class _AppState extends State<App> {
                                   .isLoggedIn,
                               parentBuilder: (child) =>
                                   NotificationBadge(child: child),
-                              child: const Icon(Symbols.person_rounded),
+                              child:
+                                  const Icon(Symbols.person_rounded, fill: 1),
                             ),
                           ),
                           NavigationRailDestination(
                               label: Text(l(context).settings),
                               icon:
                                   const Icon(Symbols.settings_rounded, fill: 0),
-                              selectedIcon:
-                                  const Icon(Symbols.settings_rounded)),
+                              selectedIcon: const Icon(Symbols.settings_rounded,
+                                  fill: 1)),
                         ],
                       ),
                     if (orientation == Orientation.landscape)

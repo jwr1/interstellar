@@ -135,12 +135,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
   @override
   Widget build(BuildContext context) {
     const chipPadding = EdgeInsets.symmetric(vertical: 6, horizontal: 4);
-    const chipDropdownPadding = EdgeInsets.only(
-      left: 4,
-      top: 6,
-      right: 0,
-      bottom: 6,
-    );
 
     final currentExploreSort = exploreSortSelection(context).getOption(sort);
     final currentExploreFilter =
