@@ -443,7 +443,7 @@ SelectionMenu<APIMagazinesSort> exploreSortSelection(BuildContext context) =>
         SelectionMenuItem(
           value: APIMagazinesSort.newest,
           title: l(context).sort_newest,
-          icon: Symbols.auto_awesome_rounded,
+          icon: Symbols.nest_eco_leaf_rounded,
         ),
         SelectionMenuItem(
           value: APIMagazinesSort.active,

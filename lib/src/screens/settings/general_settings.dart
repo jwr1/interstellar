@@ -70,7 +70,7 @@ class GeneralScreen extends StatelessWidget {
           ),
           ListTile(
             title: Text(l(context).settings_useDynamicColor),
-            leading: const Icon(Symbols.auto_awesome_rounded),
+            leading: const Icon(Symbols.nest_eco_leaf_rounded),
             onTap: () {
               controller.updateUseDynamicColor(!controller.useDynamicColor);
             },

@@ -35,7 +35,7 @@ const SelectionMenu<CommentSort> commentSortSelect = SelectionMenu(
     SelectionMenuItem(
       value: CommentSort.newest,
       title: 'Newest',
-      icon: Symbols.auto_awesome_rounded,
+      icon: Symbols.nest_eco_leaf_rounded,
     ),
     SelectionMenuItem(
       value: CommentSort.active,
