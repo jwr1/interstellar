@@ -14,15 +14,12 @@ class MessageItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final messageUser = item.participants
-        .where((user) =>
-            user.name !=
-            context
-                .watch<SettingsController>()
-                .selectedAccount
-                .split('@')
-                .first)
-        .first;
+    final messageUser = item.participants.firstWhere(
+      (user) =>
+          user.name !=
+          context.watch<SettingsController>().selectedAccount.split('@').first,
+      orElse: () => item.participants.first,
+    );
 
     return ListTile(
       title: Text(messageUser.name),

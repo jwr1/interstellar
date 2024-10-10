@@ -48,8 +48,10 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
     final myUsername =
         context.watch<SettingsController>().selectedAccount.split('@').first;
 
-    final messageUser =
-        data.participants.where((user) => user.name != myUsername).first;
+    final messageUser = data.participants.firstWhere(
+      (user) => user.name != myUsername,
+      orElse: () => data.participants.first,
+    );
 
     final messageDraftController = context.watch<DraftsController>().auto(
         'message:${context.watch<SettingsController>().instanceHost}:${messageUser.name}');
