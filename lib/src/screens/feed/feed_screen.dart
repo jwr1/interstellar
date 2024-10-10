@@ -414,7 +414,7 @@ SelectionMenu<FeedSort> feedSortSelect(BuildContext context) => SelectionMenu(
         SelectionMenuItem(
           value: FeedSort.newest,
           title: l(context).sort_newest,
-          icon: Symbols.auto_awesome_rounded,
+          icon: Symbols.nest_eco_leaf_rounded,
         ),
         SelectionMenuItem(
           value: FeedSort.active,
