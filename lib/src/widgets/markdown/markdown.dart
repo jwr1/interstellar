@@ -11,19 +11,27 @@ import './markdown_subscript_superscript.dart';
 class Markdown extends StatelessWidget {
   final String data;
   final String originInstance;
+  final ThemeData? themeData;
 
-  const Markdown(this.data, this.originInstance, {super.key});
+  const Markdown(
+    this.data,
+    this.originInstance, {
+    this.themeData,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return mdf.MarkdownBody(
       data: data,
-      styleSheet: mdf.MarkdownStyleSheet(
+      styleSheet:
+          mdf.MarkdownStyleSheet.fromTheme(themeData ?? Theme.of(context))
+              .merge(mdf.MarkdownStyleSheet(
         blockquoteDecoration: BoxDecoration(
           color: Colors.blue.shade500.withAlpha(50),
           borderRadius: BorderRadius.circular(2.0),
         ),
-      ),
+      )),
       onTapLink: (text, href, title) async {
         if (href != null) {
           openWebpageSecondary(context, Uri.parse(href));

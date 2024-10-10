@@ -214,19 +214,19 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
                     ),
                     clipBehavior: Clip.antiAlias,
                     margin: EdgeInsets.zero,
-                    child: Theme(
-                      data: Theme.of(context).copyWith(
-                        textTheme: isMyUser
-                            ? Theme.of(context).primaryTextTheme
-                            : Theme.of(context).textTheme,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
+                      child: Markdown(
+                        currMessage.body,
+                        context.read<SettingsController>().instanceHost,
+                        themeData: Theme.of(context).copyWith(
+                          textTheme: isMyUser
+                              ? Theme.of(context).primaryTextTheme
+                              : Theme.of(context).textTheme,
                         ),
-                        child: Markdown(currMessage.body,
-                            context.read<SettingsController>().instanceHost),
                       ),
                     ),
                   ),
