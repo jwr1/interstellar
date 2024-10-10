@@ -119,7 +119,7 @@ class _UserScreenState extends State<UserScreen> {
                     });
                   }
                 },
-                icon: const Icon(Icons.sort),
+                icon: const Icon(Symbols.sort_rounded),
               ),
             ),
           ],
@@ -278,7 +278,7 @@ class _UserScreenState extends State<UserScreen> {
                                     widget.onUpdate!(newValue);
                                   }
                                 },
-                                icon: const Icon(Icons.block),
+                                icon: const Icon(Symbols.block_rounded),
                                 style: ButtonStyle(
                                   foregroundColor: WidgetStatePropertyAll(
                                       user.isBlockedByUser == true
@@ -298,7 +298,7 @@ class _UserScreenState extends State<UserScreen> {
                                         TextEditingController();
                                   });
                                 },
-                                icon: const Icon(Icons.mail),
+                                icon: const Icon(Symbols.mail_rounded),
                                 tooltip: 'Send message',
                               )
                           ],
@@ -374,35 +374,35 @@ class _UserScreenState extends State<UserScreen> {
                   tabs: [
                     const Tab(
                       text: 'Threads',
-                      icon: Icon(Icons.feed),
+                      icon: Icon(Symbols.feed_rounded),
                     ),
                     if (context.watch<SettingsController>().serverSoftware !=
                         ServerSoftware.lemmy)
                       const Tab(
                         text: 'Microblogs',
-                        icon: Icon(Icons.chat),
+                        icon: Icon(Symbols.chat_rounded),
                       ),
                     const Tab(
                       text: 'Comments',
-                      icon: Icon(Icons.comment),
+                      icon: Icon(Symbols.comment_rounded),
                     ),
                     if (context.watch<SettingsController>().serverSoftware !=
                         ServerSoftware.lemmy)
                       const Tab(
                         text: 'Replies',
-                        icon: Icon(Icons.comment),
+                        icon: Icon(Symbols.comment_rounded),
                       ),
                     if (context.watch<SettingsController>().serverSoftware !=
                         ServerSoftware.lemmy)
                       const Tab(
                         text: 'Followers',
-                        icon: Icon(Icons.people),
+                        icon: Icon(Symbols.people_rounded),
                       ),
                     if (context.watch<SettingsController>().serverSoftware !=
                         ServerSoftware.lemmy)
                       const Tab(
                         text: 'Following',
-                        icon: Icon(Icons.groups),
+                        icon: Icon(Symbols.groups_rounded),
                       )
                   ],
                 ),

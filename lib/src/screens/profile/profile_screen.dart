@@ -4,7 +4,7 @@ import 'package:interstellar/src/screens/profile/notification/notification_scree
 import 'package:interstellar/src/screens/profile/self_feed.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
-import 'package:material_symbols_icons/material_symbols_icons.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 import './messages/messages_screen.dart';

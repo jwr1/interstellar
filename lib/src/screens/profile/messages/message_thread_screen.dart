@@ -11,6 +11,7 @@ import 'package:interstellar/src/widgets/loading_template.dart';
 import 'package:interstellar/src/widgets/markdown/drafts_controller.dart';
 import 'package:interstellar/src/widgets/markdown/markdown.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 class MessageThreadScreen extends StatefulWidget {
@@ -96,7 +97,7 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
                         }
                       },
                       label: Text(l(context).send),
-                      icon: const Icon(Icons.send))
+                      icon: const Icon(Symbols.send_rounded))
                 ],
               )
             ]);

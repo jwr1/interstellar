@@ -4,6 +4,7 @@ import 'package:interstellar/src/screens/settings/general_settings.dart';
 import 'package:interstellar/src/screens/settings/login_select.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/settings_header.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 import 'settings_controller.dart';
@@ -24,7 +25,7 @@ class SettingsScreen extends StatelessWidget {
         children: [
           ListTile(
             title: Text(l(context).settings_general),
-            leading: const Icon(Icons.settings),
+            leading: const Icon(Symbols.settings_rounded),
             onTap: () async {
               await Navigator.push(
                 context,
@@ -36,7 +37,7 @@ class SettingsScreen extends StatelessWidget {
           ),
           ListTile(
             title: Text(l(context).settings_actionsAndDefaults),
-            leading: const Icon(Icons.toggle_on),
+            leading: const Icon(Symbols.toggle_on_rounded),
             onTap: () async {
               await Navigator.push(
                 context,
@@ -70,7 +71,7 @@ class SettingsScreen extends StatelessWidget {
                         .servers[account.split('@').last]!.software.name),
                     onTap: () => controller.setSelectedAccount(account),
                     trailing: IconButton(
-                      icon: const Icon(Icons.delete_outline),
+                      icon: const Icon(Symbols.delete_outline_rounded),
                       onPressed: controller.selectedAccount == account
                           ? null
                           : () {

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:path/path.dart';
 
 class ImageSelector extends StatefulWidget {
@@ -45,7 +46,7 @@ class _ImageSelectorState extends State<ImageSelector> {
                           : null,
                       tooltip: l(context).uploadFromGallery,
                       iconSize: 35,
-                      icon: const Icon(Icons.image),
+                      icon: const Icon(Symbols.image_rounded),
                     ),
                   ),
                   if (Platform.isAndroid || Platform.isIOS)
@@ -63,7 +64,7 @@ class _ImageSelectorState extends State<ImageSelector> {
                             : null,
                         tooltip: l(context).uploadFromCamera,
                         iconSize: 35,
-                        icon: const Icon(Icons.camera),
+                        icon: const Icon(Symbols.camera_rounded),
                       ),
                     )
                 ],
@@ -79,7 +80,7 @@ class _ImageSelectorState extends State<ImageSelector> {
                               widget.onSelected(null);
                             });
                           },
-                          icon: const Icon(Icons.close)))
+                          icon: const Icon(Symbols.close_rounded)))
                 ],
               ));
   }

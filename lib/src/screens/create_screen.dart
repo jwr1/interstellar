@@ -9,6 +9,7 @@ import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/markdown/drafts_controller.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 class CreateScreen extends StatefulWidget {
@@ -252,7 +253,7 @@ class _CreateScreenState extends State<CreateScreen> {
 
                       Navigator.pop(context);
                     },
-                    icon: const Icon(Icons.send),
+                    icon: const Icon(Symbols.send_rounded),
                     label: Text(l(context).submit),
                   ),
                 ),

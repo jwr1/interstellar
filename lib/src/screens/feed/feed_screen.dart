@@ -13,6 +13,7 @@ import 'package:interstellar/src/widgets/actions.dart';
 import 'package:interstellar/src/widgets/floating_menu.dart';
 import 'package:interstellar/src/widgets/selection_menu.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 class FeedScreen extends StatefulWidget {
@@ -387,12 +388,12 @@ SelectionMenu<PostType> feedTypeSelect(BuildContext context) => SelectionMenu(
         SelectionMenuItem(
           value: PostType.thread,
           title: l(context).threads,
-          icon: Icons.feed,
+          icon: Symbols.feed_rounded,
         ),
         SelectionMenuItem(
           value: PostType.microblog,
           title: l(context).microblog,
-          icon: Icons.chat,
+          icon: Symbols.chat_rounded,
         ),
       ],
     );
@@ -403,111 +404,111 @@ SelectionMenu<FeedSort> feedSortSelect(BuildContext context) => SelectionMenu(
         SelectionMenuItem(
           value: FeedSort.hot,
           title: l(context).sort_hot,
-          icon: Icons.local_fire_department,
+          icon: Symbols.local_fire_department_rounded,
         ),
         SelectionMenuItem(
           value: FeedSort.top,
           title: l(context).sort_top,
-          icon: Icons.trending_up,
+          icon: Symbols.trending_up_rounded,
         ),
         SelectionMenuItem(
           value: FeedSort.newest,
           title: l(context).sort_newest,
-          icon: Icons.auto_awesome_rounded,
+          icon: Symbols.auto_awesome_rounded,
         ),
         SelectionMenuItem(
           value: FeedSort.active,
           title: l(context).sort_active,
-          icon: Icons.rocket_launch,
+          icon: Symbols.rocket_launch_rounded,
         ),
         SelectionMenuItem(
           value: FeedSort.commented,
           title: l(context).sort_commented,
-          icon: Icons.chat,
+          icon: Symbols.chat_rounded,
         ),
         SelectionMenuItem(
           value: FeedSort.oldest,
           title: l(context).sort_oldest,
-          icon: Icons.access_time_outlined,
+          icon: Symbols.access_time_rounded,
         ),
 
         //lemmy specific
         SelectionMenuItem(
           value: FeedSort.newComments,
           title: l(context).sort_newComments,
-          icon: Icons.mark_chat_unread,
+          icon: Symbols.mark_chat_unread_rounded,
           validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.controversial,
           title: l(context).sort_controversial,
-          icon: Icons.thumbs_up_down,
+          icon: Symbols.thumbs_up_down_rounded,
           validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.scaled,
           title: l(context).sort_scaled,
-          icon: Icons.scale,
+          icon: Symbols.scale_rounded,
           validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topDay,
           title: l(context).sort_topDay,
-          icon: Icons.trending_up,
+          icon: Symbols.trending_up_rounded,
           validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topWeek,
           title: l(context).sort_topWeek,
-          icon: Icons.trending_up,
+          icon: Symbols.trending_up_rounded,
           validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topMonth,
           title: l(context).sort_topMonth,
-          icon: Icons.trending_up,
+          icon: Symbols.trending_up_rounded,
           validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topYear,
           title: l(context).sort_topYear,
-          icon: Icons.trending_up,
+          icon: Symbols.trending_up_rounded,
           validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topHour,
           title: l(context).sort_topHour,
-          icon: Icons.trending_up,
+          icon: Symbols.trending_up_rounded,
           validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topSixHour,
           title: l(context).sort_topSixHour,
-          icon: Icons.trending_up,
+          icon: Symbols.trending_up_rounded,
           validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topTwelveHour,
           title: l(context).sort_topTwelveHour,
-          icon: Icons.trending_up,
+          icon: Symbols.trending_up_rounded,
           validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topThreeMonths,
           title: l(context).sort_topThreeMonths,
-          icon: Icons.trending_up,
+          icon: Symbols.trending_up_rounded,
           validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topSixMonths,
           title: l(context).sort_topSixMonths,
-          icon: Icons.trending_up,
+          icon: Symbols.trending_up_rounded,
           validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topNineMonths,
           title: l(context).sort_topNineMonths,
-          icon: Icons.trending_up,
+          icon: Symbols.trending_up_rounded,
           validSoftware: ServerSoftware.lemmy,
         ),
       ],
@@ -520,22 +521,22 @@ SelectionMenu<FeedSource> feedFilterSelect(BuildContext context) =>
         SelectionMenuItem(
           value: FeedSource.subscribed,
           title: l(context).filter_subscribed,
-          icon: Icons.group,
+          icon: Symbols.group_rounded,
         ),
         SelectionMenuItem(
           value: FeedSource.moderated,
           title: l(context).filter_moderated,
-          icon: Icons.lock,
+          icon: Symbols.lock_rounded,
         ),
         SelectionMenuItem(
           value: FeedSource.favorited,
           title: l(context).filter_favorited,
-          icon: Icons.favorite,
+          icon: Symbols.favorite_rounded,
         ),
         SelectionMenuItem(
           value: FeedSource.all,
           title: l(context).filter_all,
-          icon: Icons.newspaper,
+          icon: Symbols.newspaper_rounded,
         ),
       ],
     );

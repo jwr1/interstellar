@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 class StarButton extends StatelessWidget {
@@ -19,8 +20,8 @@ class StarButton extends StatelessWidget {
           ? () => context.read<SettingsController>().removeStar(name)
           : () => context.read<SettingsController>().addStar(name),
       icon: context.read<SettingsController>().stars.contains(name)
-          ? const Icon(Icons.star)
-          : const Icon(Icons.star_border),
+          ? const Icon(Symbols.star_rounded)
+          : const Icon(Symbols.star_border_rounded),
       color: isStarred ? Colors.yellow : null,
     );
   }

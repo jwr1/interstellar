@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/open_webpage.dart';
 import 'package:interstellar/src/widgets/video.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart'
     as youtube_explode_dart;
 
@@ -76,8 +77,8 @@ class _ContentItemLinkPanelState extends State<ContentItemLinkPanel> {
                   height: 40,
                   child: IconButton(
                     icon: Icon(_youtubeVideoId != null
-                        ? Icons.play_circle
-                        : Icons.link),
+                        ? Symbols.play_circle_rounded
+                        : Symbols.link_rounded),
                     onPressed: () {
                       if (controller.isOpen) {
                         controller.close();

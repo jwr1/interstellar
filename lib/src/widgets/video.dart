@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:interstellar/src/utils/share.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/media_kit_video_controls.dart'
@@ -82,13 +83,13 @@ class _VideoPlayerState extends State<VideoPlayer> {
                                 Text('${l(context).videoSaved}: ${file.path}'),
                           ));
                         },
-                        icon: const Icon(Icons.download),
+                        icon: const Icon(Symbols.download_rounded),
                       ),
                       if (!Platform.isLinux)
                         LoadingIconButton(
                           onPressed: () async => await shareFile(stream.url,
                               'video-${stream.videoId}.${stream.container}'),
-                          icon: const Icon(Icons.share),
+                          icon: const Icon(Symbols.share_rounded),
                         ),
                     ],
                   ),
