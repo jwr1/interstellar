@@ -1,0 +1,158 @@
+import 'package:flutter/material.dart';
+import 'package:interstellar/src/controller/controller.dart';
+import 'package:interstellar/src/controller/server.dart';
+import 'package:interstellar/src/utils/language_codes.dart';
+import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/list_tile_switch.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:provider/provider.dart';
+
+class BehaviorSettingsScreen extends StatelessWidget {
+  const BehaviorSettingsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final ac = context.watch<AppController>();
+
+    final customLanguageFilterEnabled =
+        ac.serverSoftware == ServerSoftware.mbin &&
+            !ac.profile.useAccountLanguageFilter;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l(context).settings_behavior),
+      ),
+      body: ListView(
+        children: [
+          ListTile(
+            leading: const Icon(Symbols.translate_rounded, fill: 0),
+            title: Text(l(context).settings_defaultPostLanguage),
+            subtitle: Text(getLangName(ac.profile.defaultPostLanguage)),
+            onTap: () async {
+              final langCode =
+                  await languageSelectionMenu.askSelection(context, null);
+
+              if (langCode == null) return;
+
+              ac.updateProfile(
+                ac.selectedProfileValue.copyWith(defaultPostLanguage: langCode),
+              );
+            },
+          ),
+          ListTileSwitch(
+            leading: const Icon(Symbols.filter_list_rounded, fill: 0),
+            title: Text(l(context).settings_useAccountLanguageFilter),
+            subtitle: Text(l(context).settings_useAccountLanguageFilter_help),
+            value: ac.profile.useAccountLanguageFilter,
+            onChanged: ac.serverSoftware == ServerSoftware.lemmy
+                ? null
+                : (newValue) => ac.updateProfile(
+                      ac.selectedProfileValue
+                          .copyWith(useAccountLanguageFilter: newValue),
+                    ),
+          ),
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  l(context).settings_customLanguageFilter,
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      color: customLanguageFilterEnabled
+                          ? null
+                          : Theme.of(context).disabledColor),
+                ),
+              ),
+              Flexible(
+                child: Wrap(
+                  children: [
+                    ...(ac.profile.customLanguageFilter.map(
+                      (langCode) => Padding(
+                        padding: const EdgeInsets.all(2),
+                        child: InputChip(
+                          isEnabled: customLanguageFilterEnabled,
+                          label: Text(getLangName(langCode)),
+                          onDeleted: () async {
+                            final newLanguageFilter =
+                                ac.profile.customLanguageFilter.toSet();
+
+                            newLanguageFilter.remove(langCode);
+
+                            ac.updateProfile(
+                              ac.selectedProfileValue.copyWith(
+                                  customLanguageFilter:
+                                      newLanguageFilter.toList()),
+                            );
+                          },
+                        ),
+                      ),
+                    )),
+                    Padding(
+                      padding: const EdgeInsets.all(2),
+                      child: IconButton(
+                        onPressed: !customLanguageFilterEnabled
+                            ? null
+                            : () async {
+                                final langCode = await languageSelectionMenu
+                                    .askSelection(context, null);
+
+                                if (langCode == null) return;
+
+                                final newLanguageFilter =
+                                    ac.profile.customLanguageFilter.toSet();
+
+                                newLanguageFilter.add(langCode);
+
+                                ac.updateProfile(
+                                  ac.selectedProfileValue.copyWith(
+                                      customLanguageFilter:
+                                          newLanguageFilter.toList()),
+                                );
+                              },
+                        icon: const Icon(Icons.add),
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+          ListTileSwitch(
+            leading: const Icon(Symbols.description_rounded, fill: 0),
+            title: Text(l(context).settings_addAltTextReminders),
+            value: ac.profile.addAltTextReminders,
+            onChanged: (newValue) => ac.updateProfile(
+              ac.selectedProfileValue.copyWith(addAltTextReminders: newValue),
+            ),
+          ),
+          ListTileSwitch(
+            leading: const Icon(Symbols.animated_images_rounded, fill: 0),
+            title: Text(l(context).settings_autoplayAnimatedImages),
+            value: ac.profile.autoplayAnimatedImages,
+            onChanged: (newValue) => ac.updateProfile(
+              ac.selectedProfileValue
+                  .copyWith(autoplayAnimatedImages: newValue),
+            ),
+          ),
+          ListTileSwitch(
+            leading: const Icon(Symbols.person_remove_rounded, fill: 0),
+            title: Text(l(context).settings_askBeforeUnsubscribing),
+            value: ac.profile.askBeforeUnsubscribing,
+            onChanged: (newValue) => ac.updateProfile(
+              ac.selectedProfileValue
+                  .copyWith(askBeforeUnsubscribing: newValue),
+            ),
+          ),
+          ListTileSwitch(
+            leading: const Icon(Symbols.delete_rounded, fill: 0),
+            title: Text(l(context).settings_askBeforeDeleting),
+            value: ac.profile.askBeforeDeleting,
+            onChanged: (newValue) => ac.updateProfile(
+              ac.selectedProfileValue.copyWith(askBeforeDeleting: newValue),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

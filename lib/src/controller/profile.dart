@@ -23,14 +23,11 @@ class ProfileRequired with _$ProfileRequired {
     required String defaultPostLanguage,
     required bool useAccountLanguageFilter,
     required List<String> customLanguageFilter,
-    required OpenLinksIn openLinksIn,
     required bool addAltTextReminders,
     required bool autoplayAnimatedImages,
     required bool disableTabSwiping,
     required bool askBeforeUnsubscribing,
-    required bool askBeforeBoosting,
     required bool askBeforeDeleting,
-    required bool hapticFeedback,
     // Display settings
     required ThemeMode themeMode,
     required FlexScheme colorPalette,
@@ -39,7 +36,6 @@ class ProfileRequired with _$ProfileRequired {
     required bool alwaysShowInstance,
     required bool alwaysRevealContentWarnings,
     required bool coverMediaMarkedSensitive,
-    required bool reduceAnimationMotion,
     // Feed defaults
     required PostType feedDefaultType,
     required FeedSource feedDefaultFilter,
@@ -69,7 +65,6 @@ class ProfileRequired with _$ProfileRequired {
             defaultProfile.useAccountLanguageFilter,
         customLanguageFilter: profile?.customLanguageFilter ??
             defaultProfile.customLanguageFilter,
-        openLinksIn: profile?.openLinksIn ?? defaultProfile.openLinksIn,
         addAltTextReminders:
             profile?.addAltTextReminders ?? defaultProfile.addAltTextReminders,
         autoplayAnimatedImages: profile?.autoplayAnimatedImages ??
@@ -78,12 +73,8 @@ class ProfileRequired with _$ProfileRequired {
             profile?.disableTabSwiping ?? defaultProfile.disableTabSwiping,
         askBeforeUnsubscribing: profile?.askBeforeUnsubscribing ??
             defaultProfile.askBeforeUnsubscribing,
-        askBeforeBoosting:
-            profile?.askBeforeBoosting ?? defaultProfile.askBeforeBoosting,
         askBeforeDeleting:
             profile?.askBeforeDeleting ?? defaultProfile.askBeforeDeleting,
-        hapticFeedback:
-            profile?.hapticFeedback ?? defaultProfile.hapticFeedback,
         themeMode: profile?.themeMode ?? defaultProfile.themeMode,
         colorPalette: profile?.colorPalette ?? defaultProfile.colorPalette,
         enableTrueBlack:
@@ -95,8 +86,6 @@ class ProfileRequired with _$ProfileRequired {
             defaultProfile.alwaysRevealContentWarnings,
         coverMediaMarkedSensitive: profile?.coverMediaMarkedSensitive ??
             defaultProfile.coverMediaMarkedSensitive,
-        reduceAnimationMotion: profile?.reduceAnimationMotion ??
-            defaultProfile.reduceAnimationMotion,
         feedDefaultType:
             profile?.feedDefaultType ?? defaultProfile.feedDefaultType,
         feedDefaultFilter:
@@ -130,14 +119,11 @@ class ProfileRequired with _$ProfileRequired {
     defaultPostLanguage: 'en',
     useAccountLanguageFilter: true,
     customLanguageFilter: [],
-    openLinksIn: OpenLinksIn.inAppBrowser,
     addAltTextReminders: true,
     autoplayAnimatedImages: true,
     disableTabSwiping: false,
     askBeforeUnsubscribing: false,
-    askBeforeBoosting: false,
     askBeforeDeleting: true,
-    hapticFeedback: true,
     themeMode: ThemeMode.system,
     colorPalette: FlexScheme.custom,
     enableTrueBlack: false,
@@ -145,7 +131,6 @@ class ProfileRequired with _$ProfileRequired {
     alwaysShowInstance: false,
     alwaysRevealContentWarnings: false,
     coverMediaMarkedSensitive: true,
-    reduceAnimationMotion: false,
     feedDefaultType: PostType.thread,
     feedDefaultFilter: FeedSource.subscribed,
     feedDefaultThreadsSort: FeedSort.hot,
@@ -174,14 +159,11 @@ class ProfileOptional with _$ProfileOptional {
     required String? defaultPostLanguage,
     required bool? useAccountLanguageFilter,
     required List<String>? customLanguageFilter,
-    required OpenLinksIn? openLinksIn,
     required bool? addAltTextReminders,
     required bool? autoplayAnimatedImages,
     required bool? disableTabSwiping,
     required bool? askBeforeUnsubscribing,
-    required bool? askBeforeBoosting,
     required bool? askBeforeDeleting,
-    required bool? hapticFeedback,
     // Display settings
     required ThemeMode? themeMode,
     required FlexScheme? colorPalette,
@@ -190,7 +172,6 @@ class ProfileOptional with _$ProfileOptional {
     required bool? alwaysShowInstance,
     required bool? alwaysRevealContentWarnings,
     required bool? coverMediaMarkedSensitive,
-    required bool? reduceAnimationMotion,
     // Feed defaults
     required PostType? feedDefaultType,
     required FeedSource? feedDefaultFilter,
@@ -211,6 +192,38 @@ class ProfileOptional with _$ProfileOptional {
   factory ProfileOptional.fromJson(Map<String, Object?> json) =>
       _$ProfileOptionalFromJson(json);
 
+  static const nullProfile = ProfileOptional(
+    autoSwitchAccount: null,
+    defaultPostLanguage: null,
+    useAccountLanguageFilter: null,
+    customLanguageFilter: null,
+    addAltTextReminders: null,
+    autoplayAnimatedImages: null,
+    disableTabSwiping: null,
+    askBeforeUnsubscribing: null,
+    askBeforeDeleting: null,
+    themeMode: null,
+    colorPalette: null,
+    enableTrueBlack: null,
+    compactMode: null,
+    alwaysShowInstance: null,
+    alwaysRevealContentWarnings: null,
+    coverMediaMarkedSensitive: null,
+    feedDefaultType: null,
+    feedDefaultFilter: null,
+    feedDefaultThreadsSort: null,
+    feedDefaultMicroblogSort: null,
+    feedDefaultExploreSort: null,
+    feedDefaultCommentSort: null,
+    feedActionBackToTop: null,
+    feedActionCreatePost: null,
+    feedActionExpandFab: null,
+    feedActionRefresh: null,
+    feedActionSetFilter: null,
+    feedActionSetSort: null,
+    feedActionSetType: null,
+  );
+
   ProfileOptional merge(ProfileOptional? other) {
     if (other == null) return this;
 
@@ -220,16 +233,13 @@ class ProfileOptional with _$ProfileOptional {
       useAccountLanguageFilter:
           other.useAccountLanguageFilter ?? useAccountLanguageFilter,
       customLanguageFilter: other.customLanguageFilter ?? customLanguageFilter,
-      openLinksIn: other.openLinksIn ?? openLinksIn,
       addAltTextReminders: other.addAltTextReminders ?? addAltTextReminders,
       autoplayAnimatedImages:
           other.autoplayAnimatedImages ?? autoplayAnimatedImages,
       disableTabSwiping: other.disableTabSwiping ?? disableTabSwiping,
       askBeforeUnsubscribing:
           other.askBeforeUnsubscribing ?? askBeforeUnsubscribing,
-      askBeforeBoosting: other.askBeforeBoosting ?? askBeforeBoosting,
       askBeforeDeleting: other.askBeforeDeleting ?? askBeforeDeleting,
-      hapticFeedback: other.hapticFeedback ?? hapticFeedback,
       themeMode: other.themeMode ?? themeMode,
       colorPalette: other.colorPalette ?? colorPalette,
       enableTrueBlack: other.enableTrueBlack ?? enableTrueBlack,
@@ -239,8 +249,6 @@ class ProfileOptional with _$ProfileOptional {
           other.alwaysRevealContentWarnings ?? alwaysRevealContentWarnings,
       coverMediaMarkedSensitive:
           other.coverMediaMarkedSensitive ?? coverMediaMarkedSensitive,
-      reduceAnimationMotion:
-          other.reduceAnimationMotion ?? reduceAnimationMotion,
       feedDefaultType: other.feedDefaultType ?? feedDefaultType,
       feedDefaultFilter: other.feedDefaultFilter ?? feedDefaultFilter,
       feedDefaultThreadsSort:

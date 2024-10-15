@@ -31,7 +31,7 @@ class DraftAutoController {
 }
 
 class DraftsController with ChangeNotifier {
-  final _draftsStore = StoreRef<int, Map<String, Object?>>('drafts');
+  final _draftsStore = StoreRef<int, Map<String, Object?>>('draft');
 
   List<Draft> _drafts = [];
   List<Draft> get drafts => _drafts;

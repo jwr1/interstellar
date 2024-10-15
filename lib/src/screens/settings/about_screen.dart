@@ -35,7 +35,7 @@ class _AboutScreenState extends State<AboutScreen> {
 
   Future<void> _initPackageInfo() async {
     final newPackageInfo = await PackageInfo.fromPlatform();
-    print(newPackageInfo.version);
+
     setState(() {
       packageInfo = newPackageInfo;
     });
@@ -45,41 +45,41 @@ class _AboutScreenState extends State<AboutScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(l(context).settings_about_interstellar),
+        title: Text(l(context).settings_aboutInterstellar),
       ),
       body: ListView(
         children: [
           ListTile(
             leading: const Icon(Symbols.favorite_rounded, fill: 0),
-            title: Text(l(context).settings_about_donate),
+            title: Text(l(context).settings_donate),
             onTap: () => openWebpagePrimary(context, Uri.parse(_donateLink)),
           ),
           ListTile(
             leading: const ImageIcon(AssetImage('assets/icons/github.png')),
-            title: Text(l(context).settings_about_contribute),
+            title: Text(l(context).settings_contribute),
             onTap: () =>
                 openWebpagePrimary(context, Uri.parse(_contributeLink)),
           ),
           ListTile(
             leading: const Icon(Symbols.translate_rounded, fill: 0),
-            title: Text(l(context).settings_about_translate),
+            title: Text(l(context).settings_translate),
             onTap: () => openWebpagePrimary(context, Uri.parse(_translateLink)),
           ),
           ListTile(
             leading: const Icon(Symbols.bug_report_rounded, fill: 0),
-            title: Text(l(context).settings_about_reportIssue),
+            title: Text(l(context).settings_reportIssue),
             onTap: () =>
                 openWebpagePrimary(context, Uri.parse(_reportIssueLink)),
           ),
           ListTile(
             leading: const ImageIcon(AssetImage('assets/icons/matrix.png')),
-            title: Text(l(context).settings_about_matrixSpace),
+            title: Text(l(context).settings_matrixSpace),
             onTap: () =>
                 openWebpagePrimary(context, Uri.parse(_matrixSpaceLink)),
           ),
           ListTile(
             leading: const ImageIcon(AssetImage('assets/icons/mbin.png')),
-            title: Text(l(context).settings_about_mbinMagazine),
+            title: Text(l(context).settings_mbinMagazine),
             onTap: () async {
               try {
                 String name = _mbinMagazineName;
