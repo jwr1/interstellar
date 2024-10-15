@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:interstellar/src/api/feed_source.dart';
+import 'package:interstellar/src/controller/controller.dart';
+import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/screens/explore/magazine_mod_panel.dart';
 import 'package:interstellar/src/screens/explore/magazine_owner_panel.dart';
 import 'package:interstellar/src/screens/explore/user_item.dart';
 import 'package:interstellar/src/screens/feed/feed_screen.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
@@ -39,7 +40,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
 
     if (_data == null) {
       context
-          .read<SettingsController>()
+          .read<AppController>()
           .api
           .magazines
           .get(widget.magazineId)
@@ -55,10 +56,10 @@ class _MagazineScreenState extends State<MagazineScreen> {
         ? null
         : _data!.name.contains('@')
             ? '!${_data!.name}'
-            : '!${_data!.name}@${context.watch<SettingsController>().instanceHost}';
+            : '!${_data!.name}@${context.watch<AppController>().instanceHost}';
 
     final loggedInUser =
-        context.watch<SettingsController>().selectedAccount.split('@').first;
+        context.watch<AppController>().selectedAccount.split('@').first;
 
     final isModerator = _data == null
         ? false
@@ -81,7 +82,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                     label: Text(intFormat(_data!.subscriptionsCount)),
                     onSelected: whenLoggedIn(context, (selected) async {
                       var newValue = await context
-                          .read<SettingsController>()
+                          .read<AppController>()
                           .api
                           .magazines
                           .subscribe(_data!.id, selected);
@@ -99,7 +100,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                     LoadingIconButton(
                       onPressed: () async {
                         final newValue = await context
-                            .read<SettingsController>()
+                            .read<AppController>()
                             .api
                             .magazines
                             .block(
@@ -141,10 +142,8 @@ class _MagazineScreenState extends State<MagazineScreen> {
                         onPressed: () => openWebpagePrimary(
                             context,
                             Uri.https(
-                              context.read<SettingsController>().instanceHost,
-                              context
-                                          .read<SettingsController>()
-                                          .serverSoftware ==
+                              context.read<AppController>().instanceHost,
+                              context.read<AppController>().serverSoftware ==
                                       ServerSoftware.lemmy
                                   ? '/c/${_data!.name}'
                                   : '/m/${_data!.name}',
@@ -191,7 +190,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                       if (_data!.owner != null &&
                           _data!.owner!.name ==
                               context
-                                  .watch<SettingsController>()
+                                  .watch<AppController>()
                                   .selectedAccount
                                   .split('@')
                                   .first)
@@ -247,7 +246,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                                     ClipboardData(
                                         text: _data!.name.contains('@')
                                             ? '!${_data!.name}'
-                                            : '!${_data!.name}@${context.read<SettingsController>().instanceHost}'),
+                                            : '!${_data!.name}@${context.read<AppController>().instanceHost}'),
                                   );
 
                                   if (!mounted) return;

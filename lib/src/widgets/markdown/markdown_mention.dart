@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart' as mdf;
+import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/models/image.dart';
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:provider/provider.dart';
@@ -151,7 +151,7 @@ class MentionWidgetState extends State<MentionWidget> {
     final split = widget.name.substring(1).split('@');
     final name = split[0];
     final host = (split.length > 1) ? split[1] : widget.originInstance;
-    final cacheKey = host == context.read<SettingsController>().instanceHost
+    final cacheKey = host == context.read<AppController>().instanceHost
         ? name
         : '$name@$host';
 
@@ -163,8 +163,8 @@ class MentionWidgetState extends State<MentionWidget> {
       if (modifier == '@') {
         if (!userMentionCache.containsKey(cacheKey)) {
           userMentionCache[cacheKey] =
-              await context.read<SettingsController>().api.users.getByName(
-                    host == context.read<SettingsController>().instanceHost
+              await context.read<AppController>().api.users.getByName(
+                    host == context.read<AppController>().instanceHost
                         ? name
                         : '$name@$host',
                   );
@@ -184,8 +184,8 @@ class MentionWidgetState extends State<MentionWidget> {
       } else if (modifier == '!') {
         if (!magazineMentionCache.containsKey(cacheKey)) {
           magazineMentionCache[cacheKey] =
-              await context.read<SettingsController>().api.magazines.getByName(
-                    host == context.read<SettingsController>().instanceHost
+              await context.read<AppController>().api.magazines.getByName(
+                    host == context.read<AppController>().instanceHost
                         ? name
                         : '$name@$host',
                   );

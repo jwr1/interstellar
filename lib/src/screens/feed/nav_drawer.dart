@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/controller/controller.dart';
+import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/domain.dart';
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/models/user.dart';
@@ -6,7 +8,6 @@ import 'package:interstellar/src/screens/explore/domain_screen.dart';
 import 'package:interstellar/src/screens/explore/explore_screen.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
 import 'package:interstellar/src/widgets/settings_header.dart';
@@ -29,9 +30,9 @@ class _NavDrawerState extends State<NavDrawer> {
   void initState() {
     super.initState();
 
-    if (context.read<SettingsController>().isLoggedIn) {
+    if (context.read<AppController>().isLoggedIn) {
       context
-          .read<SettingsController>()
+          .read<AppController>()
           .api
           .magazines
           .list(filter: ExploreFilter.subscribed)
@@ -40,10 +41,10 @@ class _NavDrawerState extends State<NavDrawer> {
                   subbedMagazines = value.items;
                 }
               }));
-      if (context.read<SettingsController>().serverSoftware !=
+      if (context.read<AppController>().serverSoftware !=
           ServerSoftware.lemmy) {
         context
-            .read<SettingsController>()
+            .read<AppController>()
             .api
             .users
             .list(filter: ExploreFilter.subscribed)
@@ -53,7 +54,7 @@ class _NavDrawerState extends State<NavDrawer> {
                   }
                 }));
         context
-            .read<SettingsController>()
+            .read<AppController>()
             .api
             .domains
             .list(filter: ExploreFilter.subscribed)
@@ -77,7 +78,7 @@ class _NavDrawerState extends State<NavDrawer> {
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: SettingsHeader(l(context).stars),
             ),
-            if (context.watch<SettingsController>().stars.isEmpty)
+            if (context.watch<AppController>().stars.isEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Text(
@@ -85,20 +86,20 @@ class _NavDrawerState extends State<NavDrawer> {
                   style: const TextStyle(fontWeight: FontWeight.w300),
                 ),
               ),
-            ...(context.watch<SettingsController>().stars.toList()..sort()).map(
+            ...(context.watch<AppController>().stars.toList()..sort()).map(
               (star) => ListTile(
                 title: Text(star),
                 onTap: () async {
                   String name = star.substring(1);
-                  if (name.endsWith(
-                      context.read<SettingsController>().instanceHost)) {
+                  if (name
+                      .endsWith(context.read<AppController>().instanceHost)) {
                     name = name.split('@').first;
                   }
 
                   switch (star[0]) {
                     case '@':
                       final user = await context
-                          .read<SettingsController>()
+                          .read<AppController>()
                           .api
                           .users
                           .getByName(name);
@@ -115,7 +116,7 @@ class _NavDrawerState extends State<NavDrawer> {
 
                     case '!':
                       final magazine = await context
-                          .read<SettingsController>()
+                          .read<AppController>()
                           .api
                           .magazines
                           .getByName(name);
@@ -134,7 +135,7 @@ class _NavDrawerState extends State<NavDrawer> {
                 trailing: StarButton(star),
               ),
             ),
-            if (context.read<SettingsController>().isLoggedIn &&
+            if (context.read<AppController>().isLoggedIn &&
                 subbedMagazines == null &&
                 subbedUsers == null &&
                 subbedDomains == null)
@@ -144,7 +145,7 @@ class _NavDrawerState extends State<NavDrawer> {
                   CircularProgressIndicator(),
                 ],
               ),
-            if (context.watch<SettingsController>().isLoggedIn &&
+            if (context.watch<AppController>().isLoggedIn &&
                 (subbedMagazines != null ||
                     subbedUsers != null ||
                     subbedDomains != null)) ...[
@@ -165,7 +166,7 @@ class _NavDrawerState extends State<NavDrawer> {
                               : Avatar(magazine.icon, radius: 16),
                           trailing: StarButton(magazine.name.contains('@')
                               ? '!${magazine.name}'
-                              : '!${magazine.name}@${context.watch<SettingsController>().instanceHost}'),
+                              : '!${magazine.name}@${context.watch<AppController>().instanceHost}'),
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
@@ -200,7 +201,7 @@ class _NavDrawerState extends State<NavDrawer> {
                 ),
               ],
             ],
-            if (context.read<SettingsController>().serverSoftware !=
+            if (context.read<AppController>().serverSoftware !=
                     ServerSoftware.lemmy &&
                 subbedUsers != null) ...[
               ...subbedUsers!
@@ -215,7 +216,7 @@ class _NavDrawerState extends State<NavDrawer> {
                             : Avatar(user.avatar, radius: 16),
                         trailing: StarButton(user.name.contains('@')
                             ? '@${user.name}'
-                            : '@${user.name}@${context.watch<SettingsController>().instanceHost}'),
+                            : '@${user.name}@${context.watch<AppController>().instanceHost}'),
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
@@ -249,7 +250,7 @@ class _NavDrawerState extends State<NavDrawer> {
                 ),
               ),
             ],
-            if (context.read<SettingsController>().serverSoftware !=
+            if (context.read<AppController>().serverSoftware !=
                     ServerSoftware.lemmy &&
                 subbedDomains != null) ...[
               ...subbedDomains!

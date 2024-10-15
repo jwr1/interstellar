@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/models/message.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
@@ -46,7 +46,7 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
     final data = _data!;
 
     final myUsername =
-        context.watch<SettingsController>().selectedAccount.split('@').first;
+        context.watch<AppController>().selectedAccount.split('@').first;
 
     final messageUser = data.participants.firstWhere(
       (user) => user.name != myUsername,
@@ -54,7 +54,7 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
     );
 
     final messageDraftController = context.watch<DraftsController>().auto(
-        'message:${context.watch<SettingsController>().instanceHost}:${messageUser.name}');
+        'message:${context.watch<AppController>().instanceHost}:${messageUser.name}');
 
     return Scaffold(
       appBar: AppBar(title: Text(messageUser.name)),
@@ -78,7 +78,7 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
                   LoadingFilledButton(
                       onPressed: () async {
                         final newThread = await context
-                            .read<SettingsController>()
+                            .read<AppController>()
                             .api
                             .messages
                             .postThreadReply(
@@ -224,7 +224,7 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
                       ),
                       child: Markdown(
                         currMessage.body,
-                        context.read<SettingsController>().instanceHost,
+                        context.watch<AppController>().instanceHost,
                         themeData: Theme.of(context).copyWith(
                           textTheme: isMyUser
                               ? Theme.of(context).primaryTextTheme

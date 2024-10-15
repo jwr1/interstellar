@@ -25,7 +25,6 @@ dependencies:
   media_kit_libs_video: ^1.0.5
   oauth2: ^2.0.3
   provider: ^6.1.2
-  shared_preferences: ^2.3.2
   url_launcher: ^6.3.1
   webview_flutter: ^4.9.0
   youtube_explode_dart: ^2.2.3
@@ -51,6 +50,8 @@ dependencies:
   path_provider: ^2.1.4
   window_manager: ^0.4.2
   material_symbols_icons: ^4.2788.0
+  json_annotation: ^4.9.0
+  sembast: ^3.7.5
 
 dependency_overrides:
   webcrypto: ^0.5.7
@@ -74,6 +75,7 @@ dev_dependencies:
       ref: '006cb1ed53f969bf11816cde5b16dd520e1ee40e'
   build_runner: ^2.4.13
   freezed: ^2.5.7
+  json_serializable: ^6.8.0
 
 flutter:
   uses-material-design: true

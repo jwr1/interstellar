@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/controller/controller.dart';
+import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/post.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/ban_dialog.dart';
 import 'package:interstellar/src/widgets/content_item/content_item.dart';
@@ -56,12 +57,9 @@ class PostItem extends StatelessWidget {
       onBoost: whenLoggedIn(context, () async {
         onUpdate(await switch (item.type) {
           PostType.thread =>
-            context.read<SettingsController>().api.threads.boost(item.id),
-          PostType.microblog => context
-              .read<SettingsController>()
-              .api
-              .microblogs
-              .putVote(item.id, 1),
+            context.read<AppController>().api.threads.boost(item.id),
+          PostType.microblog =>
+            context.read<AppController>().api.microblogs.putVote(item.id, 1),
         });
       }),
       upVotes: item.upvotes,
@@ -69,15 +67,12 @@ class PostItem extends StatelessWidget {
       onUpVote: whenLoggedIn(context, () async {
         onUpdate(await switch (item.type) {
           PostType.thread => context
-              .read<SettingsController>()
+              .read<AppController>()
               .api
               .threads
               .vote(item.id, 1, item.myVote == 1 ? 0 : 1),
-          PostType.microblog => context
-              .read<SettingsController>()
-              .api
-              .microblogs
-              .putFavorite(item.id),
+          PostType.microblog =>
+            context.read<AppController>().api.microblogs.putFavorite(item.id),
         });
       }),
       downVotes: item.downvotes,
@@ -85,28 +80,22 @@ class PostItem extends StatelessWidget {
       onDownVote: whenLoggedIn(context, () async {
         onUpdate(await switch (item.type) {
           PostType.thread => context
-              .read<SettingsController>()
+              .read<AppController>()
               .api
               .threads
               .vote(item.id, -1, item.myVote == -1 ? 0 : -1),
-          PostType.microblog => context
-              .read<SettingsController>()
-              .api
-              .microblogs
-              .putVote(item.id, -1),
+          PostType.microblog =>
+            context.read<AppController>().api.microblogs.putVote(item.id, -1),
         });
       }),
       contentTypeName: l(context).post,
       onReply: onReply,
       onReport: whenLoggedIn(context, (reason) async {
         await switch (item.type) {
-          PostType.thread => context
-              .read<SettingsController>()
-              .api
-              .threads
-              .report(item.id, reason),
+          PostType.thread =>
+            context.read<AppController>().api.threads.report(item.id, reason),
           PostType.microblog => context
-              .read<SettingsController>()
+              .read<AppController>()
               .api
               .microblogs
               .report(item.id, reason),
@@ -118,7 +107,7 @@ class PostItem extends StatelessWidget {
           ? null
           : () async {
               onUpdate(await context
-                  .read<SettingsController>()
+                  .read<AppController>()
                   .api
                   .moderation
                   .postPin(item.type, item.id));
@@ -127,7 +116,7 @@ class PostItem extends StatelessWidget {
           ? null
           : () async {
               onUpdate(await context
-                  .read<SettingsController>()
+                  .read<AppController>()
                   .api
                   .moderation
                   .postMarkNSFW(item.type, item.id, !item.isNSFW));
@@ -136,7 +125,7 @@ class PostItem extends StatelessWidget {
           ? null
           : () async {
               onUpdate(await context
-                  .read<SettingsController>()
+                  .read<AppController>()
                   .api
                   .moderation
                   .postDelete(item.type, item.id, true));
@@ -149,9 +138,8 @@ class PostItem extends StatelessWidget {
             },
       numComments: item.numComments,
       openLinkUri: Uri.https(
-        context.watch<SettingsController>().instanceHost,
-        context.watch<SettingsController>().serverSoftware ==
-                ServerSoftware.lemmy
+        context.watch<AppController>().instanceHost,
+        context.watch<AppController>().serverSoftware == ServerSoftware.lemmy
             ? '/post/${item.id}'
             : '/m/${item.magazine.name}/${switch (item.type) {
                 PostType.thread => 't',
@@ -159,9 +147,9 @@ class PostItem extends StatelessWidget {
               }}/${item.id}',
       ),
       editDraftResourceId:
-          'edit:${item.type.name}:${context.watch<SettingsController>().instanceHost}:${item.id}',
+          'edit:${item.type.name}:${context.watch<AppController>().instanceHost}:${item.id}',
       replyDraftResourceId:
-          'reply:${item.type.name}:${context.watch<SettingsController>().instanceHost}:${item.id}',
+          'reply:${item.type.name}:${context.watch<AppController>().instanceHost}:${item.id}',
     );
   }
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/screens/explore/user_item.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:provider/provider.dart';
@@ -87,14 +87,11 @@ class _MagazineModPanelBansState extends State<MagazineModPanelBans> {
 
   Future<void> _fetchPage(String pageKey) async {
     try {
-      final newPage = await context
-          .read<SettingsController>()
-          .api
-          .magazineModeration
-          .listBans(
-            widget.data.id,
-            page: nullIfEmpty(pageKey),
-          );
+      final newPage =
+          await context.read<AppController>().api.magazineModeration.listBans(
+                widget.data.id,
+                page: nullIfEmpty(pageKey),
+              );
 
       // Check BuildContext
       if (!mounted) return;
@@ -126,7 +123,7 @@ class _MagazineModPanelBansState extends State<MagazineModPanelBans> {
                 LoadingOutlinedButton(
                   onPressed: () async {
                     await context
-                        .read<SettingsController>()
+                        .read<AppController>()
                         .api
                         .magazineModeration
                         .removeBan(widget.data.id, item.bannedUser.id);

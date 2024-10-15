@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/controller/controller.dart';
+import 'package:interstellar/src/controller/server.dart';
 import 'package:provider/provider.dart';
 
 class SelectionMenuItem<T> {
@@ -45,18 +46,23 @@ class SelectionMenu<T> {
               ),
               Flexible(
                 child: ListView(shrinkWrap: true, children: [
-                  ...options.where((element) => element.validSoftware == null || element.validSoftware == context.watch<SettingsController>().serverSoftware).map(
-                    (option) => ListTile(
-                      title: Text(option.title),
-                      onTap: () => Navigator.pop(context, option.value),
-                      leading: Icon(option.icon, color: option.iconColor),
-                      selected: oldSelection == option.value,
-                      selectedTileColor: Theme.of(context)
-                          .colorScheme
-                          .primaryContainer
-                          .withOpacity(0.2),
-                    ),
-                  ),
+                  ...options
+                      .where((element) =>
+                          element.validSoftware == null ||
+                          element.validSoftware ==
+                              context.watch<AppController>().serverSoftware)
+                      .map(
+                        (option) => ListTile(
+                          title: Text(option.title),
+                          onTap: () => Navigator.pop(context, option.value),
+                          leading: Icon(option.icon, color: option.iconColor),
+                          selected: oldSelection == option.value,
+                          selectedTileColor: Theme.of(context)
+                              .colorScheme
+                              .primaryContainer
+                              .withOpacity(0.2),
+                        ),
+                      ),
                   const SizedBox(height: 16),
                 ]),
               ),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/feed_source.dart';
+import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/models/domain.dart';
 import 'package:interstellar/src/screens/feed/feed_screen.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -30,7 +30,7 @@ class _DomainScreenState extends State<DomainScreen> {
 
     if (_data == null) {
       context
-          .read<SettingsController>()
+          .read<AppController>()
           .api
           .domains
           .get(widget.domainId)
@@ -69,7 +69,7 @@ class _DomainScreenState extends State<DomainScreen> {
                           context,
                           whenLoggedIn(context, (selected) async {
                             var newValue = await context
-                                .read<SettingsController>()
+                                .read<AppController>()
                                 .api
                                 .domains
                                 .putSubscribe(_data!.id, selected);
@@ -87,7 +87,7 @@ class _DomainScreenState extends State<DomainScreen> {
                         LoadingIconButton(
                           onPressed: () async {
                             final newValue = await context
-                                .read<SettingsController>()
+                                .read<AppController>()
                                 .api
                                 .domains
                                 .putBlock(

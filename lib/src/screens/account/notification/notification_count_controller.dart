@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/api.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/controller/controller.dart';
 
 class NotificationCountController with ChangeNotifier {
   int _value = 0;
@@ -12,12 +12,11 @@ class NotificationCountController with ChangeNotifier {
   late API _api;
   Timer? _timer;
 
-  void updateSettingsController(SettingsController settingsController) {
-    _api = settingsController.api;
+  void updateAppController(AppController appController) {
+    _api = appController.api;
 
-    final newAccount = settingsController.isLoggedIn
-        ? settingsController.selectedAccount
-        : null;
+    final newAccount =
+        appController.isLoggedIn ? appController.selectedAccount : null;
 
     if (_account != newAccount) {
       _account = newAccount;

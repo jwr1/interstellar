@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/screens/explore/user_item.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/markdown/drafts_controller.dart';
@@ -164,7 +164,7 @@ class _MagazineOwnerPanelGeneralState extends State<MagazineOwnerPanelGeneral> {
                 ? null
                 : () async {
                     final result = await context
-                        .read<SettingsController>()
+                        .read<AppController>()
                         .api
                         .magazineModeration
                         .edit(
@@ -226,7 +226,7 @@ class _MagazineOwnerPanelModeratorsState
                   ? null
                   : () async {
                       final user = await context
-                          .read<SettingsController>()
+                          .read<AppController>()
                           .api
                           .users
                           .getByName(_addModController.text);
@@ -251,7 +251,7 @@ class _MagazineOwnerPanelModeratorsState
                               onPressed: () async {
                                 Navigator.of(context).pop(
                                   await context
-                                      .read<SettingsController>()
+                                      .read<AppController>()
                                       .api
                                       .magazineModeration
                                       .updateModerator(
@@ -302,7 +302,7 @@ class _MagazineOwnerPanelModeratorsState
                           onPressed: () async {
                             Navigator.of(context).pop(
                               await context
-                                  .read<SettingsController>()
+                                  .read<AppController>()
                                   .api
                                   .magazineModeration
                                   .updateModerator(
@@ -355,7 +355,7 @@ class _MagazineOwnerPanelDeletionState
                 ? null
                 : () async {
                     await context
-                        .read<SettingsController>()
+                        .read<AppController>()
                         .api
                         .magazineModeration
                         .removeIcon(widget.data.id);
@@ -435,7 +435,7 @@ class _MagazineOwnerPanelDeletionDialogState
               ? null
               : () async {
                   await context
-                      .read<SettingsController>()
+                      .read<AppController>()
                       .api
                       .magazineModeration
                       .delete(widget.data.id);

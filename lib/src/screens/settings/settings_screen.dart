@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/screens/settings/action_settings.dart';
-import 'package:interstellar/src/screens/settings/general_settings.dart';
+import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/screens/settings/login_select.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/settings_header.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
-import 'settings_controller.dart';
-
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<SettingsController>();
+    final controller = context.watch<AppController>();
 
     return Scaffold(
       appBar: AppBar(
@@ -23,30 +20,6 @@ class SettingsScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         children: [
-          ListTile(
-            title: Text(l(context).settings_general),
-            leading: const Icon(Symbols.settings_rounded),
-            onTap: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => GeneralScreen(controller: controller),
-                ),
-              );
-            },
-          ),
-          ListTile(
-            title: Text(l(context).settings_actionsAndDefaults),
-            leading: const Icon(Symbols.toggle_on_rounded),
-            onTap: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ActionSettings(controller: controller),
-                ),
-              );
-            },
-          ),
           SettingsHeader(l(context).accounts),
           ...(controller.accounts.keys.toList()
                 ..sort((a, b) {
@@ -69,7 +42,7 @@ class SettingsScreen extends StatelessWidget {
                     ),
                     subtitle: Text(controller
                         .servers[account.split('@').last]!.software.name),
-                    onTap: () => controller.setSelectedAccount(account),
+                    onTap: () => controller.switchAccounts(account),
                     trailing: IconButton(
                       icon: const Icon(Symbols.delete_outline_rounded),
                       onPressed: controller.selectedAccount == account

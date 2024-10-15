@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/models/image.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
 import 'package:provider/provider.dart';
 
@@ -30,14 +30,14 @@ class DisplayName extends StatelessWidget {
             padding: const EdgeInsets.all(3.0),
             child: Text(
               localName +
-                  (context.watch<SettingsController>().alwaysShowInstance
-                      ? '@${hostName ?? context.watch<SettingsController>().instanceHost}'
+                  (context.watch<AppController>().profile.alwaysShowInstance
+                      ? '@${hostName ?? context.watch<AppController>().instanceHost}'
                       : ''),
               style: Theme.of(context).textTheme.labelLarge,
             ),
           ),
         ),
-        if (!context.watch<SettingsController>().alwaysShowInstance &&
+        if (!context.watch<AppController>().profile.alwaysShowInstance &&
             hostName != null)
           Tooltip(
             message: hostName,

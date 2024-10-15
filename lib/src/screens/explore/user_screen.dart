@@ -3,18 +3,19 @@ import 'package:flutter/services.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/comments.dart';
 import 'package:interstellar/src/api/feed_source.dart';
+import 'package:interstellar/src/controller/controller.dart';
+import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/comment.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/models/user.dart';
+import 'package:interstellar/src/screens/account/messages/message_thread_screen.dart';
+import 'package:interstellar/src/screens/account/profile_edit_screen.dart';
 import 'package:interstellar/src/screens/explore/explore_screen_item.dart';
 import 'package:interstellar/src/screens/feed/feed_screen.dart';
 import 'package:interstellar/src/screens/feed/post_comment.dart';
 import 'package:interstellar/src/screens/feed/post_comment_screen.dart';
 import 'package:interstellar/src/screens/feed/post_item.dart';
 import 'package:interstellar/src/screens/feed/post_page.dart';
-import 'package:interstellar/src/screens/profile/messages/message_thread_screen.dart';
-import 'package:interstellar/src/screens/profile/profile_edit_screen.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
 import 'package:interstellar/src/widgets/image.dart';
@@ -51,11 +52,11 @@ class _UserScreenState extends State<UserScreen> {
     super.initState();
 
     _data = widget.initData;
-    _sort = context.read<SettingsController>().defaultExploreFeedSort;
+    _sort = context.read<AppController>().profile.feedDefaultExploreSort;
 
     if (_data == null) {
       context
-          .read<SettingsController>()
+          .read<AppController>()
           .api
           .users
           .get(
@@ -75,7 +76,7 @@ class _UserScreenState extends State<UserScreen> {
 
     final user = _data!;
 
-    final isLoggedIn = context.watch<SettingsController>().isLoggedIn;
+    final isLoggedIn = context.watch<AppController>().isLoggedIn;
     final isMyUser = isLoggedIn &&
         whenLoggedIn(context, true, matchesUsername: user.name) == true;
 
@@ -83,10 +84,10 @@ class _UserScreenState extends State<UserScreen> {
 
     final globalName = user.name.contains('@')
         ? '@${user.name}'
-        : '@${user.name}@${context.watch<SettingsController>().instanceHost}';
+        : '@${user.name}@${context.watch<AppController>().instanceHost}';
 
     final messageDraftController = context.watch<DraftsController>().auto(
-        'message:${context.watch<SettingsController>().instanceHost}:${user.name}');
+        'message:${context.watch<AppController>().instanceHost}:${user.name}');
 
     return Scaffold(
         appBar: AppBar(
@@ -120,7 +121,7 @@ class _UserScreenState extends State<UserScreen> {
           ],
         ),
         body: DefaultTabController(
-          length: context.watch<SettingsController>().serverSoftware ==
+          length: context.watch<AppController>().serverSoftware ==
                   ServerSoftware.lemmy
               ? 2
               : 6,
@@ -185,7 +186,7 @@ class _UserScreenState extends State<UserScreen> {
                                     onSelected:
                                         whenLoggedIn(context, (selected) async {
                                       var newValue = await context
-                                          .read<SettingsController>()
+                                          .read<AppController>()
                                           .api
                                           .users
                                           .follow(user.id, selected);
@@ -202,7 +203,7 @@ class _UserScreenState extends State<UserScreen> {
                                   LoadingIconButton(
                                     onPressed: () async {
                                       final newValue = await context
-                                          .read<SettingsController>()
+                                          .read<AppController>()
                                           .api
                                           .users
                                           .putBlock(
@@ -261,7 +262,7 @@ class _UserScreenState extends State<UserScreen> {
                                     ClipboardData(
                                         text: user.name.contains('@')
                                             ? '@${user.name}'
-                                            : '@${user.name}@${context.read<SettingsController>().instanceHost}'),
+                                            : '@${user.name}@${context.read<AppController>().instanceHost}'),
                                   );
 
                                   if (!mounted) return;
@@ -312,7 +313,7 @@ class _UserScreenState extends State<UserScreen> {
                                     LoadingFilledButton(
                                       onPressed: () async {
                                         final newThread = await context
-                                            .read<SettingsController>()
+                                            .read<AppController>()
                                             .api
                                             .messages
                                             .create(
@@ -362,17 +363,17 @@ class _UserScreenState extends State<UserScreen> {
                   tabAlignment: TabAlignment.start,
                   tabs: [
                     const Tab(text: 'Threads'),
-                    if (context.watch<SettingsController>().serverSoftware !=
+                    if (context.watch<AppController>().serverSoftware !=
                         ServerSoftware.lemmy)
                       const Tab(text: 'Microblogs'),
                     const Tab(text: 'Comments'),
-                    if (context.watch<SettingsController>().serverSoftware !=
+                    if (context.watch<AppController>().serverSoftware !=
                         ServerSoftware.lemmy)
                       const Tab(text: 'Replies'),
-                    if (context.watch<SettingsController>().serverSoftware !=
+                    if (context.watch<AppController>().serverSoftware !=
                         ServerSoftware.lemmy)
                       const Tab(text: 'Followers'),
-                    if (context.watch<SettingsController>().serverSoftware !=
+                    if (context.watch<AppController>().serverSoftware !=
                         ServerSoftware.lemmy)
                       const Tab(text: 'Following')
                   ],
@@ -386,7 +387,7 @@ class _UserScreenState extends State<UserScreen> {
                 sort: _sort,
                 data: _data,
               ),
-              if (context.watch<SettingsController>().serverSoftware !=
+              if (context.watch<AppController>().serverSoftware !=
                   ServerSoftware.lemmy)
                 UserScreenBody(
                   mode: UserFeedType.microblog,
@@ -398,21 +399,21 @@ class _UserScreenState extends State<UserScreen> {
                 sort: _sort,
                 data: _data,
               ),
-              if (context.watch<SettingsController>().serverSoftware !=
+              if (context.watch<AppController>().serverSoftware !=
                   ServerSoftware.lemmy)
                 UserScreenBody(
                   mode: UserFeedType.reply,
                   sort: _sort,
                   data: _data,
                 ),
-              if (context.watch<SettingsController>().serverSoftware !=
+              if (context.watch<AppController>().serverSoftware !=
                   ServerSoftware.lemmy)
                 UserScreenBody(
                   mode: UserFeedType.follower,
                   sort: _sort,
                   data: _data,
                 ),
-              if (context.watch<SettingsController>().serverSoftware !=
+              if (context.watch<AppController>().serverSoftware !=
                   ServerSoftware.lemmy)
                 UserScreenBody(
                   mode: UserFeedType.following,
@@ -472,53 +473,77 @@ class _UserScreenBodyState extends State<UserScreenBody> {
 
     try {
       final newPage = await (switch (widget.mode) {
-        UserFeedType.thread =>
-          context.read<SettingsController>().api.threads.list(
-                FeedSource.user,
-                sourceId: widget.data!.id,
-                page: nullIfEmpty(pageKey),
-                sort: widget.sort,
-                usePreferredLangs: whenLoggedIn(context,
-                    context.read<SettingsController>().useAccountLangFilter),
-                langs: context.read<SettingsController>().langFilter.toList(),
-              ),
-        UserFeedType.microblog =>
-          context.read<SettingsController>().api.microblogs.list(
-                FeedSource.user,
-                sourceId: widget.data!.id,
-                page: nullIfEmpty(pageKey),
-                sort: widget.sort,
-                usePreferredLangs: whenLoggedIn(context,
-                    context.read<SettingsController>().useAccountLangFilter),
-                langs: context.read<SettingsController>().langFilter.toList(),
-              ),
-        UserFeedType.comment =>
-          context.read<SettingsController>().api.comments.listFromUser(
-                PostType.thread,
-                widget.data!.id,
-                page: nullIfEmpty(pageKey),
-                sort: feedToCommentSortMap[widget.sort],
-                usePreferredLangs: whenLoggedIn(context,
-                    context.read<SettingsController>().useAccountLangFilter),
-                langs: context.read<SettingsController>().langFilter.toList(),
-              ),
-        UserFeedType.reply =>
-          context.read<SettingsController>().api.comments.listFromUser(
-                PostType.microblog,
-                widget.data!.id,
-                page: nullIfEmpty(pageKey),
-                sort: feedToCommentSortMap[widget.sort],
-                usePreferredLangs: whenLoggedIn(context,
-                    context.read<SettingsController>().useAccountLangFilter),
-                langs: context.read<SettingsController>().langFilter.toList(),
-              ),
+        UserFeedType.thread => context.read<AppController>().api.threads.list(
+              FeedSource.user,
+              sourceId: widget.data!.id,
+              page: nullIfEmpty(pageKey),
+              sort: widget.sort,
+              usePreferredLangs: whenLoggedIn(
+                  context,
+                  context
+                      .read<AppController>()
+                      .profile
+                      .useAccountLanguageFilter),
+              langs: context.read<AppController>().profile.customLanguageFilter,
+            ),
+        UserFeedType.microblog => context
+            .read<AppController>()
+            .api
+            .microblogs
+            .list(
+              FeedSource.user,
+              sourceId: widget.data!.id,
+              page: nullIfEmpty(pageKey),
+              sort: widget.sort,
+              usePreferredLangs: whenLoggedIn(
+                  context,
+                  context
+                      .read<AppController>()
+                      .profile
+                      .useAccountLanguageFilter),
+              langs: context.read<AppController>().profile.customLanguageFilter,
+            ),
+        UserFeedType.comment => context
+            .read<AppController>()
+            .api
+            .comments
+            .listFromUser(
+              PostType.thread,
+              widget.data!.id,
+              page: nullIfEmpty(pageKey),
+              sort: feedToCommentSortMap[widget.sort],
+              usePreferredLangs: whenLoggedIn(
+                  context,
+                  context
+                      .read<AppController>()
+                      .profile
+                      .useAccountLanguageFilter),
+              langs: context.read<AppController>().profile.customLanguageFilter,
+            ),
+        UserFeedType.reply => context
+            .read<AppController>()
+            .api
+            .comments
+            .listFromUser(
+              PostType.microblog,
+              widget.data!.id,
+              page: nullIfEmpty(pageKey),
+              sort: feedToCommentSortMap[widget.sort],
+              usePreferredLangs: whenLoggedIn(
+                  context,
+                  context
+                      .read<AppController>()
+                      .profile
+                      .useAccountLanguageFilter),
+              langs: context.read<AppController>().profile.customLanguageFilter,
+            ),
         UserFeedType.follower =>
-          context.read<SettingsController>().api.users.listFollowers(
+          context.read<AppController>().api.users.listFollowers(
                 widget.data!.id,
                 page: nullIfEmpty(pageKey),
               ),
         UserFeedType.following =>
-          context.read<SettingsController>().api.users.listFollowing(
+          context.read<AppController>().api.users.listFollowing(
                 widget.data!.id,
                 page: nullIfEmpty(pageKey),
               ),

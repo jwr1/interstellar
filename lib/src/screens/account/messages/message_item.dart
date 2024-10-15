@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/models/message.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +17,7 @@ class MessageItem extends StatelessWidget {
     final messageUser = item.participants.firstWhere(
       (user) =>
           user.name !=
-          context.watch<SettingsController>().selectedAccount.split('@').first,
+          context.watch<AppController>().selectedAccount.split('@').first,
       orElse: () => item.participants.first,
     );
 

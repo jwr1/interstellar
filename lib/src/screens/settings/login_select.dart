@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/api.dart';
+import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/screens/settings/login_confirm.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:provider/provider.dart';
@@ -37,7 +37,7 @@ class _LoginSelectScreenState extends State<LoginSelectScreen> {
       throw Exception(l(context).unsupportedSoftware(host));
     }
 
-    await context.read<SettingsController>().saveServer(software, host);
+    await context.read<AppController>().saveServer(software, host);
 
     // Check BuildContext
     if (!mounted) return;

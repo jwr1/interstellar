@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/image.dart';
@@ -12,7 +13,6 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 import '../../widgets/avatar.dart';
-import '../settings/settings_controller.dart';
 
 class ProfileEditScreen extends StatefulWidget {
   final DetailedUserModel user;
@@ -43,7 +43,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
 
   void _initSettings() async {
     final settings =
-        await context.read<SettingsController>().api.users.getUserSettings();
+        await context.read<AppController>().api.users.getUserSettings();
     setState(() {
       _settings = settings;
     });
@@ -52,12 +52,12 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
   @override
   Widget build(BuildContext context) {
     final aboutDraftController = context.watch<DraftsController>().auto(
-        'profile:about:${context.watch<SettingsController>().selectedAccount}');
+        'profile:about:${context.watch<AppController>().selectedAccount}');
 
     onSave() async {
       if (_settingsChanged) {
         _settings = await context
-            .read<SettingsController>()
+            .read<AppController>()
             .api
             .users
             .saveUserSettings(_settings!);
@@ -65,7 +65,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
       if (!context.mounted) return;
 
       var user = await context
-          .read<SettingsController>()
+          .read<AppController>()
           .api
           .users
           .updateProfile(_aboutTextController!.text);
@@ -74,18 +74,17 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
 
       if (!context.mounted) return;
       if (_deleteAvatar) {
-        user =
-            await context.read<SettingsController>().api.users.deleteAvatar();
+        user = await context.read<AppController>().api.users.deleteAvatar();
       }
       if (!context.mounted) return;
       if (_deleteCover) {
-        user = await context.read<SettingsController>().api.users.deleteCover();
+        user = await context.read<AppController>().api.users.deleteCover();
       }
 
       if (!context.mounted) return;
       if (_avatarFile != null) {
         user = await context
-            .read<SettingsController>()
+            .read<AppController>()
             .api
             .users
             .updateAvatar(_avatarFile!);
@@ -93,7 +92,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
       if (!context.mounted) return;
       if (_coverFile != null) {
         user = await context
-            .read<SettingsController>()
+            .read<AppController>()
             .api
             .users
             .updateCover(_coverFile!);
@@ -251,7 +250,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                         Text(
                           widget.user.name.contains('@')
                               ? '@${widget.user.name}'
-                              : '@${widget.user.name}@${context.watch<SettingsController>().instanceHost}',
+                              : '@${widget.user.name}@${context.watch<AppController>().instanceHost}',
                         ),
                       ],
                     ),

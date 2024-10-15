@@ -3,16 +3,17 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/notifications.dart';
+import 'package:interstellar/src/controller/controller.dart';
+import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/notification.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/selection_menu.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
-import './notification_count_controller.dart';
-import './notification_item.dart';
+import 'notification_count_controller.dart';
+import 'notification_item.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -42,7 +43,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
     try {
       final newPage = await context
-          .read<SettingsController>()
+          .read<AppController>()
           .api
           .notifications
           .list(page: nullIfEmpty(pageKey), filter: filter);
@@ -105,7 +106,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   LoadingOutlinedButton(
                     onPressed: () async {
                       await context
-                          .read<SettingsController>()
+                          .read<AppController>()
                           .api
                           .notifications
                           .putReadAll();
@@ -119,21 +120,21 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   ),
                   // Push notifications only work on Android devices and Mbin servers
                   if (Platform.isAndroid &&
-                      context.read<SettingsController>().serverSoftware ==
+                      context.read<AppController>().serverSoftware ==
                           ServerSoftware.mbin)
                     Padding(
                       padding: const EdgeInsets.only(left: 8),
                       child: LoadingOutlinedButton(
-                        onPressed:
-                            context.watch<SettingsController>().isPushRegistered
-                                ? () => context
-                                    .read<SettingsController>()
-                                    .unregisterPush()
-                                : () => context
-                                    .read<SettingsController>()
-                                    .registerPush(context),
+                        onPressed: context
+                                .watch<AppController>()
+                                .isPushRegistered
+                            ? () =>
+                                context.read<AppController>().unregisterPush()
+                            : () => context
+                                .read<AppController>()
+                                .registerPush(context),
                         label: Text(
-                            context.watch<SettingsController>().isPushRegistered
+                            context.watch<AppController>().isPushRegistered
                                 ? l(context).notifications_unregisterPush
                                 : l(context).notifications_registerPush),
                         icon: const Icon(Symbols.notifications_active_rounded),
