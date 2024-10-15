@@ -34,6 +34,9 @@ class AppController with ChangeNotifier {
   late ProfileRequired _builtProfile;
   ProfileRequired get profile => _builtProfile;
 
+  late ProfileOptional _selectedProfileValue;
+  ProfileOptional get selectedProfileValue => _selectedProfileValue;
+
   late List<String> _stars;
   List<String> get stars => _stars;
 
@@ -103,8 +106,31 @@ class AppController with ChangeNotifier {
         ? null
         : ProfileOptional.fromJson(selectedRecord);
 
+    _selectedProfileValue = selectedProfile ?? ProfileOptional.nullProfile;
+
     _builtProfile =
         ProfileRequired.fromOptional(mainProfile?.merge(selectedProfile));
+  }
+
+  Future<void> updateProfile(ProfileOptional value) async {
+    final record = _profileStore.record(FieldKey.escape(_selectedProfile));
+    await record.put(db, value.toJson());
+
+    await _rebuildProfile();
+
+    notifyListeners();
+  }
+
+  Future<void> switchProfiles(String? newProfile) async {
+    if (newProfile == null) return;
+    if (newProfile == _selectedProfile) return;
+
+    _selectedProfile = newProfile;
+    await _selectedProfileRecord.put(db, _selectedProfile);
+
+    await _rebuildProfile();
+
+    notifyListeners();
   }
 
   Future<void> saveServer(ServerSoftware software, String server) async {

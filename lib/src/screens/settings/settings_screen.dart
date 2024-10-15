@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/screens/settings/about_screen.dart';
+import 'package:interstellar/src/screens/settings/behavior_screen.dart';
 import 'package:interstellar/src/screens/settings/login_select.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/settings_header.dart';
@@ -12,7 +13,7 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<AppController>();
+    final ac = context.watch<AppController>();
 
     return Scaffold(
       appBar: AppBar(
@@ -23,11 +24,11 @@ class SettingsScreen extends StatelessWidget {
           ListTile(
             leading: const Icon(Symbols.settings_rounded, fill: 0),
             title: Text(l(context).settings_behavior),
-            // onTap: () => Navigator.of(context).push(
-            //   MaterialPageRoute(
-            //     builder: (context) => const SettingsScreen(),
-            //   ),
-            // ),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const BehaviorSettingsScreen(),
+              ),
+            ),
           ),
           ListTile(
             leading: const Icon(Symbols.palette_rounded, fill: 0),
@@ -76,7 +77,7 @@ class SettingsScreen extends StatelessWidget {
           ),
           const Divider(),
           SettingsHeader(l(context).accounts),
-          ...(controller.accounts.keys.toList()
+          ...(ac.accounts.keys.toList()
                 ..sort((a, b) {
                   final [aLocal, aHost] = a.split('@');
                   final [bLocal, bHost] = b.split('@');
@@ -90,17 +91,17 @@ class SettingsScreen extends StatelessWidget {
                     title: Text(
                       account,
                       style: TextStyle(
-                        fontWeight: account == controller.selectedAccount
+                        fontWeight: account == ac.selectedAccount
                             ? FontWeight.w800
                             : FontWeight.normal,
                       ),
                     ),
-                    subtitle: Text(controller
-                        .servers[account.split('@').last]!.software.name),
-                    onTap: () => controller.switchAccounts(account),
+                    subtitle: Text(
+                        ac.servers[account.split('@').last]!.software.name),
+                    onTap: () => ac.switchAccounts(account),
                     trailing: IconButton(
                       icon: const Icon(Symbols.delete_rounded, fill: 0),
-                      onPressed: controller.selectedAccount == account
+                      onPressed: ac.selectedAccount == account
                           ? null
                           : () {
                               showDialog<String>(
@@ -116,7 +117,7 @@ class SettingsScreen extends StatelessWidget {
                                     FilledButton(
                                       onPressed: () {
                                         Navigator.pop(context);
-                                        controller.removeAccount(account);
+                                        ac.removeAccount(account);
                                       },
                                       child: Text(l(context).remove),
                                     ),

@@ -535,35 +535,46 @@ class _ContentItemState extends State<ContentItem> {
                                     ),
                                   if (widget.onDelete != null)
                                     MenuItemButton(
-                                      onPressed: () => showDialog<String>(
-                                        context: context,
-                                        builder: (BuildContext context) =>
-                                            AlertDialog(
-                                          title: Text(l(context)
-                                              .deleteX(widget.contentTypeName)),
-                                          actions: <Widget>[
-                                            OutlinedButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context),
-                                              child: Text(l(context).cancel),
-                                            ),
-                                            LoadingFilledButton(
-                                              onPressed: () async {
-                                                await widget.onDelete!();
+                                      onPressed: () {
+                                        // Don't show dialog if askBeforeDeleting is disabled
+                                        if (!context
+                                            .read<AppController>()
+                                            .profile
+                                            .askBeforeDeleting) {
+                                          widget.onDelete!();
+                                          return;
+                                        }
 
-                                                if (!mounted) return;
-                                                Navigator.pop(context);
-                                              },
-                                              label: Text(l(context).delete),
-                                            ),
-                                          ],
-                                          actionsOverflowAlignment:
-                                              OverflowBarAlignment.center,
-                                          actionsOverflowButtonSpacing: 8,
-                                          actionsOverflowDirection:
-                                              VerticalDirection.up,
-                                        ),
-                                      ),
+                                        showDialog<bool>(
+                                          context: context,
+                                          builder: (BuildContext context) =>
+                                              AlertDialog(
+                                            title: Text(l(context).deleteX(
+                                                widget.contentTypeName)),
+                                            actions: <Widget>[
+                                              OutlinedButton(
+                                                onPressed: () =>
+                                                    Navigator.pop(context),
+                                                child: Text(l(context).cancel),
+                                              ),
+                                              LoadingFilledButton(
+                                                onPressed: () async {
+                                                  await widget.onDelete!();
+
+                                                  if (!mounted) return;
+                                                  Navigator.pop(context);
+                                                },
+                                                label: Text(l(context).delete),
+                                              ),
+                                            ],
+                                            actionsOverflowAlignment:
+                                                OverflowBarAlignment.center,
+                                            actionsOverflowButtonSpacing: 8,
+                                            actionsOverflowDirection:
+                                                VerticalDirection.up,
+                                          ),
+                                        );
+                                      },
                                       child: Text(l(context).delete),
                                     ),
                                   if (widget.body != null)
