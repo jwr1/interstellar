@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/notification.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 
 // new_ is used because new is a reserved keyword

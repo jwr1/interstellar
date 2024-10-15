@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/comments.dart';
+import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/models/comment.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/screens/feed/post_comment.dart';
 import 'package:interstellar/src/screens/feed/post_item.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/loading_template.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -41,7 +41,7 @@ class _PostPageState extends State<PostPage> {
   void initState() {
     super.initState();
 
-    commentSort = context.read<SettingsController>().defaultCommentSort;
+    commentSort = context.read<AppController>().profile.feedDefaultCommentSort;
 
     _initData();
   }
@@ -52,9 +52,9 @@ class _PostPageState extends State<PostPage> {
     } else if (widget.postType != null && widget.postId != null) {
       final newPost = await switch (widget.postType!) {
         PostType.thread =>
-          context.read<SettingsController>().api.threads.get(widget.postId!),
+          context.read<AppController>().api.threads.get(widget.postId!),
         PostType.microblog =>
-          context.read<SettingsController>().api.microblogs.get(widget.postId!),
+          context.read<AppController>().api.microblogs.get(widget.postId!),
       };
       setState(() {
         _data = newPost;
@@ -75,16 +75,19 @@ class _PostPageState extends State<PostPage> {
 
   Future<void> _fetchPage(String pageKey) async {
     try {
-      final newPage =
-          await context.read<SettingsController>().api.comments.list(
-                _data!.type,
-                _data!.id,
-                page: nullIfEmpty(pageKey),
-                sort: commentSort,
-                usePreferredLangs: whenLoggedIn(context,
-                    context.read<SettingsController>().useAccountLangFilter),
-                langs: context.read<SettingsController>().langFilter.toList(),
-              );
+      final newPage = await context.read<AppController>().api.comments.list(
+            _data!.type,
+            _data!.id,
+            page: nullIfEmpty(pageKey),
+            sort: commentSort,
+            usePreferredLangs: whenLoggedIn(context,
+                context.read<AppController>().profile.useAccountLanguageFilter),
+            langs: context
+                .read<AppController>()
+                .profile
+                .customLanguageFilter
+                .toList(),
+          );
 
       // Check BuildContext
       if (!mounted) return;
@@ -160,15 +163,12 @@ class _PostPageState extends State<PostPage> {
                 post,
                 _onUpdate,
                 onReply: whenLoggedIn(context, (body) async {
-                  var newComment = await context
-                      .read<SettingsController>()
-                      .api
-                      .comments
-                      .create(
-                        post.type,
-                        post.id,
-                        body,
-                      );
+                  var newComment =
+                      await context.read<AppController>().api.comments.create(
+                            post.type,
+                            post.id,
+                            body,
+                          );
                   var newList = _pagingController.itemList;
                   newList?.insert(0, newComment);
                   setState(() {
@@ -180,28 +180,22 @@ class _PostPageState extends State<PostPage> {
                         context,
                         (body) async {
                           final newPost = await switch (post.type) {
-                            PostType.thread => context
-                                .read<SettingsController>()
-                                .api
-                                .threads
-                                .edit(
-                                  post.id,
-                                  post.title!,
-                                  post.isOC,
-                                  body,
-                                  post.lang,
-                                  post.isNSFW,
-                                ),
-                            PostType.microblog => context
-                                .read<SettingsController>()
-                                .api
-                                .microblogs
-                                .edit(
-                                  post.id,
-                                  body,
-                                  post.lang!,
-                                  post.isNSFW,
-                                ),
+                            PostType.thread =>
+                              context.read<AppController>().api.threads.edit(
+                                    post.id,
+                                    post.title!,
+                                    post.isOC,
+                                    body,
+                                    post.lang,
+                                    post.isNSFW,
+                                  ),
+                            PostType.microblog =>
+                              context.read<AppController>().api.microblogs.edit(
+                                    post.id,
+                                    body,
+                                    post.lang!,
+                                    post.isNSFW,
+                                  ),
                           };
                           _onUpdate(newPost);
                         },
@@ -214,12 +208,12 @@ class _PostPageState extends State<PostPage> {
                         () async {
                           await switch (post.type) {
                             PostType.thread => context
-                                .read<SettingsController>()
+                                .read<AppController>()
                                 .api
                                 .threads
                                 .delete(post.id),
                             PostType.microblog => context
-                                .read<SettingsController>()
+                                .read<AppController>()
                                 .api
                                 .microblogs
                                 .delete(post.id),

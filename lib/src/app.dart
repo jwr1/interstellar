@@ -2,19 +2,18 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:interstellar/src/controller/controller.dart';
+import 'package:interstellar/src/screens/account/account_screen.dart';
+import 'package:interstellar/src/screens/account/notification/notification_badge.dart';
+import 'package:interstellar/src/screens/account/notification/notification_count_controller.dart';
 import 'package:interstellar/src/screens/explore/explore_screen.dart';
 import 'package:interstellar/src/screens/feed/feed_screen.dart';
-import 'package:interstellar/src/screens/profile/notification/notification_badge.dart';
-import 'package:interstellar/src/screens/profile/notification/notification_count_controller.dart';
-import 'package:interstellar/src/screens/profile/profile_screen.dart';
+import 'package:interstellar/src/screens/settings/settings_screen.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/utils/variables.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
-
-import 'screens/settings/settings_controller.dart';
-import 'screens/settings/settings_screen.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -34,25 +33,28 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    final settingsController = context.watch<SettingsController>();
+    final appController = context.watch<AppController>();
 
     return DynamicColorBuilder(
       builder: (lightColorScheme, darkColorScheme) {
         final dynamicLightColorScheme =
-            settingsController.useDynamicColor ? lightColorScheme : null;
+            appController.profile.colorPalette == FlexScheme.custom
+                ? lightColorScheme
+                : null;
         final dynamicDarkColorScheme =
-            settingsController.useDynamicColor ? darkColorScheme : null;
+            appController.profile.colorPalette == FlexScheme.custom
+                ? darkColorScheme
+                : null;
 
         addThemeData(ThemeData theme) => theme.copyWith(
               iconTheme: theme.iconTheme.copyWith(fill: 1),
             );
 
-        return ChangeNotifierProxyProvider<SettingsController,
+        return ChangeNotifierProxyProvider<AppController,
             NotificationCountController>(
           create: (_) => NotificationCountController(),
-          update: (_, settingsController, notificationCountController) =>
-              notificationCountController!
-                ..updateSettingsController(settingsController),
+          update: (_, appController, notificationCountController) =>
+              notificationCountController!..updateAppController(appController),
           child: MaterialApp(
             restorationScopeId: 'app',
             localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -62,7 +64,7 @@ class _AppState extends State<App> {
               colorScheme: dynamicLightColorScheme,
               scheme: dynamicLightColorScheme != null
                   ? null
-                  : settingsController.colorScheme,
+                  : appController.profile.colorPalette,
               surfaceMode: FlexSurfaceMode.highSurfaceLowScaffold,
               blendLevel: 13,
               useMaterial3: true,
@@ -71,13 +73,13 @@ class _AppState extends State<App> {
               colorScheme: dynamicDarkColorScheme,
               scheme: dynamicDarkColorScheme != null
                   ? null
-                  : settingsController.colorScheme,
+                  : appController.profile.colorPalette,
               surfaceMode: FlexSurfaceMode.highSurfaceLowScaffold,
               blendLevel: 13,
               useMaterial3: true,
-              darkIsTrueBlack: settingsController.enableTrueBlack,
+              darkIsTrueBlack: appController.profile.enableTrueBlack,
             )),
-            themeMode: settingsController.themeMode,
+            themeMode: appController.profile.themeMode,
             scaffoldMessengerKey: scaffoldMessengerKey,
             home: OrientationBuilder(
               builder: (context, orientation) {
@@ -102,20 +104,18 @@ class _AppState extends State<App> {
                                   const Icon(Symbols.explore_rounded, fill: 1),
                             ),
                             NavigationDestination(
-                              label: l(context).profile,
+                              label: l(context).account,
                               icon: Wrapper(
-                                shouldWrap: context
-                                    .watch<SettingsController>()
-                                    .isLoggedIn,
+                                shouldWrap:
+                                    context.watch<AppController>().isLoggedIn,
                                 parentBuilder: (child) =>
                                     NotificationBadge(child: child),
                                 child:
                                     const Icon(Symbols.person_rounded, fill: 0),
                               ),
                               selectedIcon: Wrapper(
-                                shouldWrap: context
-                                    .watch<SettingsController>()
-                                    .isLoggedIn,
+                                shouldWrap:
+                                    context.watch<AppController>().isLoggedIn,
                                 parentBuilder: (child) =>
                                     NotificationBadge(child: child),
                                 child:
@@ -153,20 +153,18 @@ class _AppState extends State<App> {
                               selectedIcon:
                                   const Icon(Symbols.explore_rounded, fill: 1)),
                           NavigationRailDestination(
-                            label: Text(l(context).profile),
+                            label: Text(l(context).account),
                             icon: Wrapper(
-                              shouldWrap: context
-                                  .watch<SettingsController>()
-                                  .isLoggedIn,
+                              shouldWrap:
+                                  context.watch<AppController>().isLoggedIn,
                               parentBuilder: (child) =>
                                   NotificationBadge(child: child),
                               child:
                                   const Icon(Symbols.person_rounded, fill: 0),
                             ),
                             selectedIcon: Wrapper(
-                              shouldWrap: context
-                                  .watch<SettingsController>()
-                                  .isLoggedIn,
+                              shouldWrap:
+                                  context.watch<AppController>().isLoggedIn,
                               parentBuilder: (child) =>
                                   NotificationBadge(child: child),
                               child:
@@ -190,7 +188,7 @@ class _AppState extends State<App> {
                         child: const [
                       FeedScreen(),
                       ExploreScreen(),
-                      ProfileScreen(),
+                      AccountScreen(),
                       SettingsScreen(),
                     ][_navIndex]),
                   ]),

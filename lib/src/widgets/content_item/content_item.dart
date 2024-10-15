@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/models/image.dart';
 import 'package:interstellar/src/screens/explore/domain_screen.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/share.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
@@ -216,12 +216,7 @@ class _ContentItemState extends State<ContentItem> {
 
     return LayoutBuilder(builder: (context, constrains) {
       final hasWideSize = constrains.maxWidth > 800;
-      final isRightImage =
-          switch (context.watch<SettingsController>().postImagePosition) {
-        PostImagePosition.auto => hasWideSize,
-        PostImagePosition.top => false,
-        PostImagePosition.right => true,
-      };
+      final isRightImage = hasWideSize;
 
       final double rightImageSize = hasWideSize ? 128 : 64;
 
@@ -261,10 +256,10 @@ class _ContentItemState extends State<ContentItem> {
       final titleStyle = hasWideSize
           ? Theme.of(context).textTheme.titleLarge!
           : Theme.of(context).textTheme.titleMedium!;
-      final titleOverflow = widget.isPreview &&
-              context.watch<SettingsController>().postCompactPreview
-          ? TextOverflow.ellipsis
-          : null;
+      final titleOverflow =
+          widget.isPreview && context.watch<AppController>().profile.compactMode
+              ? TextOverflow.ellipsis
+              : null;
 
       return Column(
         children: <Widget>[
@@ -376,8 +371,9 @@ class _ContentItemState extends State<ContentItem> {
                           widget.body!.isNotEmpty &&
                           !(widget.isPreview &&
                               context
-                                  .watch<SettingsController>()
-                                  .postCompactPreview))
+                                  .watch<AppController>()
+                                  .profile
+                                  .compactMode))
                         Padding(
                             padding: const EdgeInsets.only(top: 10),
                             child: widget.isPreview

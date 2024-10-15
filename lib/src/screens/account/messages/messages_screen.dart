@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/models/message.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:provider/provider.dart';
 
-import './message_item.dart';
-import './message_thread_screen.dart';
+import 'message_item.dart';
+import 'message_thread_screen.dart';
 
 class MessagesScreen extends StatefulWidget {
   const MessagesScreen({super.key});
@@ -28,10 +28,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
 
   Future<void> _fetchPage(String pageKey) async {
     try {
-      final newPage =
-          await context.read<SettingsController>().api.messages.list(
-                page: nullIfEmpty(pageKey),
-              );
+      final newPage = await context.read<AppController>().api.messages.list(
+            page: nullIfEmpty(pageKey),
+          );
 
       // Check BuildContext
       if (!mounted) return;

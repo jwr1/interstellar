@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
 import 'package:provider/provider.dart';
 
-import './notification_count_controller.dart';
+import 'notification_count_controller.dart';
 
 class NotificationBadge extends StatefulWidget {
   final Widget child;

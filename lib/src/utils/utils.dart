@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:http/http.dart' as http;
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/controller/controller.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -92,10 +92,10 @@ T? whenLoggedIn<T>(
   String? matchesUsername,
   T? otherwise,
 }) =>
-    context.read<SettingsController>().isLoggedIn &&
+    context.read<AppController>().isLoggedIn &&
             (matchesUsername == null ||
                 context
-                        .read<SettingsController>()
+                        .read<AppController>()
                         .selectedAccount
                         .split('@')
                         .first ==
@@ -108,7 +108,7 @@ String getNameHost(BuildContext context, String username) {
 
   return split.length > 1
       ? split[1]
-      : context.read<SettingsController>().instanceHost;
+      : context.read<AppController>().instanceHost;
 }
 
 String? nullIfEmpty(String value) => value.isEmpty ? null : value;

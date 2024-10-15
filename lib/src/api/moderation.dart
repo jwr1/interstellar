@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/comment.dart';
 import 'package:interstellar/src/models/post.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 
 const _postTypeMbin = {

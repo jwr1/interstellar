@@ -1,9 +1,10 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/controller/controller.dart';
+import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/comment.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/screens/feed/post_comment_screen.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/ban_dialog.dart';
 import 'package:interstellar/src/widgets/content_item/content_item.dart';
@@ -63,7 +64,7 @@ class _PostCommentState extends State<PostComment> {
               isBoosted: widget.comment.myBoost == true,
               onBoost: whenLoggedIn(context, () async {
                 var newValue = await context
-                    .read<SettingsController>()
+                    .read<AppController>()
                     .api
                     .comments
                     .boost(widget.comment.postType, widget.comment.id);
@@ -75,7 +76,7 @@ class _PostCommentState extends State<PostComment> {
               upVotes: widget.comment.upvotes,
               onUpVote: whenLoggedIn(context, () async {
                 var newValue = await context
-                    .read<SettingsController>()
+                    .read<AppController>()
                     .api
                     .comments
                     .vote(widget.comment.postType, widget.comment.id, 1,
@@ -90,7 +91,7 @@ class _PostCommentState extends State<PostComment> {
               isDownVoted: widget.comment.myVote == -1,
               onDownVote: whenLoggedIn(context, () async {
                 var newValue = await context
-                    .read<SettingsController>()
+                    .read<AppController>()
                     .api
                     .comments
                     .vote(widget.comment.postType, widget.comment.id, -1,
@@ -102,16 +103,13 @@ class _PostCommentState extends State<PostComment> {
               }),
               contentTypeName: l(context).comment,
               onReply: whenLoggedIn(context, (body) async {
-                var newSubComment = await context
-                    .read<SettingsController>()
-                    .api
-                    .comments
-                    .create(
-                      widget.comment.postType,
-                      widget.comment.postId,
-                      body,
-                      parentCommentId: widget.comment.id,
-                    );
+                var newSubComment =
+                    await context.read<AppController>().api.comments.create(
+                          widget.comment.postType,
+                          widget.comment.postId,
+                          body,
+                          parentCommentId: widget.comment.id,
+                        );
 
                 widget.onUpdate(widget.comment.copyWith(
                   childCount: widget.comment.childCount + 1,
@@ -120,22 +118,19 @@ class _PostCommentState extends State<PostComment> {
               }),
               onReport: whenLoggedIn(context, (reason) async {
                 await context
-                    .read<SettingsController>()
+                    .read<AppController>()
                     .api
                     .comments
                     .report(widget.comment.postType, widget.comment.id, reason);
               }),
               onEdit: widget.comment.visibility != 'soft_deleted'
                   ? whenLoggedIn(context, (body) async {
-                      var newValue = await context
-                          .read<SettingsController>()
-                          .api
-                          .comments
-                          .edit(
-                            widget.comment.postType,
-                            widget.comment.id,
-                            body,
-                          );
+                      var newValue =
+                          await context.read<AppController>().api.comments.edit(
+                                widget.comment.postType,
+                                widget.comment.id,
+                                body,
+                              );
 
                       widget.onUpdate(newValue.copyWith(
                         childCount: widget.comment.childCount,
@@ -146,7 +141,7 @@ class _PostCommentState extends State<PostComment> {
               onDelete: widget.comment.visibility != 'soft_deleted'
                   ? whenLoggedIn(context, () async {
                       await context
-                          .read<SettingsController>()
+                          .read<AppController>()
                           .api
                           .comments
                           .delete(widget.comment.postType, widget.comment.id);
@@ -166,7 +161,7 @@ class _PostCommentState extends State<PostComment> {
                   ? null
                   : () async {
                       final newValue = await context
-                          .read<SettingsController>()
+                          .read<AppController>()
                           .api
                           .moderation
                           .commentDelete(
@@ -194,8 +189,8 @@ class _PostCommentState extends State<PostComment> {
                       })
                   : null,
               openLinkUri: Uri.https(
-                context.watch<SettingsController>().instanceHost,
-                context.watch<SettingsController>().serverSoftware ==
+                context.watch<AppController>().instanceHost,
+                context.watch<AppController>().serverSoftware ==
                         ServerSoftware.lemmy
                     ? '/comment/${widget.comment.id}'
                     : '/m/${widget.comment.magazine.name}/${switch (widget.comment.postType) {
@@ -207,9 +202,9 @@ class _PostCommentState extends State<PostComment> {
                       }}/${widget.comment.id}',
               ),
               editDraftResourceId:
-                  'edit:${widget.comment.postType.name}:comment:${context.watch<SettingsController>().instanceHost}:${widget.comment.id}',
+                  'edit:${widget.comment.postType.name}:comment:${context.watch<AppController>().instanceHost}:${widget.comment.id}',
               replyDraftResourceId:
-                  'reply:${widget.comment.postType.name}:comment:${context.watch<SettingsController>().instanceHost}:${widget.comment.id}',
+                  'reply:${widget.comment.postType.name}:comment:${context.watch<AppController>().instanceHost}:${widget.comment.id}',
             ),
           ),
         ),

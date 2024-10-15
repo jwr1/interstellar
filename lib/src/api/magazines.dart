@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/screens/explore/explore_screen.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/models.dart';
 import 'package:interstellar/src/utils/utils.dart';
 

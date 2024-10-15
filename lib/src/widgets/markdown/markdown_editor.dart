@@ -1,7 +1,7 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/utils/debouncer.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
@@ -36,8 +36,6 @@ class MarkdownEditor extends StatefulWidget {
 class _MarkdownEditorState extends State<MarkdownEditor> {
   final _focusNodeTextField = FocusNode();
 
-  final draftsShortcut =
-      const SingleActivator(LogicalKeyboardKey.keyD, control: true);
   final draftDebounce = Debouncer(duration: const Duration(milliseconds: 1000));
 
   void execAction(_MarkdownEditorActionBase action) {
@@ -209,9 +207,7 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
                           child: Markdown(
                               widget.controller.text,
                               widget.originInstance ??
-                                  context
-                                      .watch<SettingsController>()
-                                      .instanceHost),
+                                  context.watch<AppController>().instanceHost),
                         ),
                       ),
                       Column(
@@ -271,11 +267,11 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
                                             DefaultTabController.of(context)
                                                 .animateTo(0);
                                           },
-                                          originInstance: widget
-                                                  .originInstance ??
-                                              context
-                                                  .watch<SettingsController>()
-                                                  .instanceHost,
+                                          originInstance:
+                                              widget.originInstance ??
+                                                  context
+                                                      .watch<AppController>()
+                                                      .instanceHost,
                                         ))
                                     .toList(),
                               );

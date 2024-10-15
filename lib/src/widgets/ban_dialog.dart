@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/models/user.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
@@ -64,7 +64,7 @@ class _BanDialogState extends State<BanDialog> {
               ? null
               : () async {
                   await context
-                      .read<SettingsController>()
+                      .read<AppController>()
                       .api
                       .magazineModeration
                       .createBan(

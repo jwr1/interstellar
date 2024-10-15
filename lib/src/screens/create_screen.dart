@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/models/post.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/language_codes.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/image_selector.dart';
@@ -43,14 +43,14 @@ class _CreateScreenState extends State<CreateScreen> {
   void initState() {
     super.initState();
 
-    _lang = context.read<SettingsController>().defaultCreateLang;
+    _lang = context.read<AppController>().profile.defaultPostLanguage;
     _magazineTextController.text = widget.magazineName ?? '';
   }
 
   @override
   Widget build(BuildContext context) {
     final bodyDraftController = context.watch<DraftsController>().auto(
-        'create:${widget.type.name}${widget.magazineName == null ? '' : ':${context.watch<SettingsController>().instanceHost}:${widget.magazineName}'}');
+        'create:${widget.type.name}${widget.magazineName == null ? '' : ':${context.watch<AppController>().instanceHost}:${widget.magazineName}'}');
 
     return Scaffold(
       appBar: AppBar(
@@ -173,7 +173,7 @@ class _CreateScreenState extends State<CreateScreen> {
                   padding: const EdgeInsets.all(8),
                   child: LoadingFilledButton(
                     onPressed: () async {
-                      final api = context.read<SettingsController>().api;
+                      final api = context.read<AppController>().api;
 
                       var magazineName = _magazineTextController.text;
 

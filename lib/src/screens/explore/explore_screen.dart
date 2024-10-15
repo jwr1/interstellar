@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/magazines.dart';
+import 'package:interstellar/src/controller/controller.dart';
+import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/screens/explore/explore_screen_item.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/debouncer.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/selection_menu.dart';
@@ -52,7 +53,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
       switch (type) {
         case ExploreType.magazines:
           final newPage =
-              await context.read<SettingsController>().api.magazines.list(
+              await context.read<AppController>().api.magazines.list(
                     page: nullIfEmpty(pageKey),
                     filter: filter,
                     sort: sort,
@@ -73,11 +74,10 @@ class _ExploreScreenState extends State<ExploreScreen> {
           break;
 
         case ExploreType.people:
-          final newPage =
-              await context.read<SettingsController>().api.users.list(
-                    page: nullIfEmpty(pageKey),
-                    filter: filter,
-                  );
+          final newPage = await context.read<AppController>().api.users.list(
+                page: nullIfEmpty(pageKey),
+                filter: filter,
+              );
 
           // Check BuildContext
           if (!mounted) return;
@@ -93,12 +93,11 @@ class _ExploreScreenState extends State<ExploreScreen> {
           break;
 
         case ExploreType.domains:
-          final newPage =
-              await context.read<SettingsController>().api.domains.list(
-                    page: nullIfEmpty(pageKey),
-                    filter: filter,
-                    search: nullIfEmpty(search),
-                  );
+          final newPage = await context.read<AppController>().api.domains.list(
+                page: nullIfEmpty(pageKey),
+                filter: filter,
+                search: nullIfEmpty(search),
+              );
 
           // Check BuildContext
           if (!mounted) return;
@@ -114,11 +113,10 @@ class _ExploreScreenState extends State<ExploreScreen> {
           break;
 
         case ExploreType.all:
-          final newPage =
-              await context.read<SettingsController>().api.search.get(
-                    page: nullIfEmpty(pageKey),
-                    search: search,
-                  );
+          final newPage = await context.read<AppController>().api.search.get(
+                page: nullIfEmpty(pageKey),
+                search: search,
+              );
 
           if (!mounted) return;
 
@@ -147,7 +145,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
           ExploreType.people => l(context).subscriptions_user,
           ExploreType.domains => l(context).subscriptions_domain,
           _ =>
-            '${l(context).explore} ${context.watch<SettingsController>().instanceHost}',
+            '${l(context).explore} ${context.watch<AppController>().instanceHost}',
         }),
       ),
       body: RefreshIndicator(
@@ -171,13 +169,12 @@ class _ExploreScreenState extends State<ExploreScreen> {
                             _pagingController.refresh();
                           });
                         },
-                        enabled: !(context
-                                        .watch<SettingsController>()
-                                        .serverSoftware ==
-                                    ServerSoftware.mbin &&
-                                (filter != ExploreFilter.all &&
-                                    filter != ExploreFilter.local)) &&
-                            type != ExploreType.people,
+                        enabled:
+                            !(context.watch<AppController>().serverSoftware ==
+                                        ServerSoftware.mbin &&
+                                    (filter != ExploreFilter.all &&
+                                        filter != ExploreFilter.local)) &&
+                                type != ExploreType.people,
                         decoration: InputDecoration(
                           prefixIcon: const Icon(Symbols.search_rounded),
                           border: const OutlineInputBorder(
@@ -204,9 +201,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                             },
                             padding: chipPadding,
                           ),
-                          if (context
-                                  .read<SettingsController>()
-                                  .serverSoftware ==
+                          if (context.read<AppController>().serverSoftware ==
                               ServerSoftware.mbin) ...[
                             const SizedBox(width: 4),
                             ChoiceChip(
@@ -307,7 +302,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                             // For Mbin, sorting only works for magazines, and only
                             // when the all or local filters are enabled
                             onPressed: context
-                                            .watch<SettingsController>()
+                                            .watch<AppController>()
                                             .serverSoftware ==
                                         ServerSoftware.mbin &&
                                     ((filter != ExploreFilter.all &&
@@ -384,7 +379,7 @@ SelectionMenu<ExploreFilter> exploreFilterSelection(
           title: l(context).filter_allResults,
           icon: Symbols.newspaper_rounded,
         ),
-        if (context.read<SettingsController>().serverSoftware ==
+        if (context.read<AppController>().serverSoftware ==
                 ServerSoftware.lemmy ||
             type == ExploreType.magazines)
           SelectionMenuItem(

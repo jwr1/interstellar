@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:interstellar/src/api/api.dart';
 import 'package:interstellar/src/api/oauth.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/controller/account.dart';
+import 'package:interstellar/src/controller/controller.dart';
+import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/utils/jwt_http_client.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/redirect_listen.dart';
@@ -82,8 +84,8 @@ class _LoginConfirmScreenState extends State<LoginConfirmScreen> {
                 onPressed: () {
                   String account = '@${widget.server}';
                   context
-                      .read<SettingsController>()
-                      .setAccount(account, Account(), switchNow: true);
+                      .read<AppController>()
+                      .setAccount(account, const Account(), switchNow: true);
 
                   Navigator.pop(context, true);
                 },
@@ -122,7 +124,7 @@ class _LoginConfirmScreenState extends State<LoginConfirmScreen> {
 
                           // Check BuildContext
                           if (!mounted) return;
-                          context.read<SettingsController>().setAccount(
+                          context.read<AppController>().setAccount(
                               '${user.name}@${widget.server}',
                               Account(jwt: jsonDecode(response.body)['jwt']));
                         } else {
@@ -132,7 +134,7 @@ class _LoginConfirmScreenState extends State<LoginConfirmScreen> {
                               Uri.https(widget.server, '/token');
 
                           String identifier = await context
-                              .read<SettingsController>()
+                              .read<AppController>()
                               .getMbinOAuthIdentifier(
                                   widget.software, widget.server);
 
@@ -177,7 +179,7 @@ class _LoginConfirmScreenState extends State<LoginConfirmScreen> {
                           // Check BuildContext
                           if (!mounted) return;
 
-                          context.read<SettingsController>().setAccount(
+                          context.read<AppController>().setAccount(
                                 '${user.name}@${widget.server}',
                                 Account(oauth: client.credentials),
                                 switchNow: true,

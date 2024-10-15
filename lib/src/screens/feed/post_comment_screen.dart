@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/models/comment.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/screens/feed/post_comment.dart';
 import 'package:interstellar/src/screens/feed/post_page.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/loading_template.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +32,7 @@ class _PostCommentScreenState extends State<PostCommentScreen> {
     super.initState();
 
     context
-        .read<SettingsController>()
+        .read<AppController>()
         .api
         .comments
         .get(widget.postType, widget.commentId)

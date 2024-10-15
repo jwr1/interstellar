@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/feed_source.dart';
+import 'package:interstellar/src/controller/controller.dart';
+import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/screens/create_screen.dart';
 import 'package:interstellar/src/screens/feed/nav_drawer.dart';
 import 'package:interstellar/src/screens/feed/post_item.dart';
 import 'package:interstellar/src/screens/feed/post_page.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/actions.dart';
 import 'package:interstellar/src/widgets/floating_menu.dart';
@@ -55,17 +56,16 @@ class _FeedScreenState extends State<FeedScreen> {
     super.initState();
 
     _filter = whenLoggedIn(
-            context, context.read<SettingsController>().defaultFeedFilter) ??
+            context, context.read<AppController>().profile.feedDefaultFilter) ??
         FeedSource.all;
-    _mode = context.read<SettingsController>().serverSoftware !=
-            ServerSoftware.lemmy
-        ? context.read<SettingsController>().defaultFeedType
+    _mode = context.read<AppController>().serverSoftware != ServerSoftware.lemmy
+        ? context.read<AppController>().profile.feedDefaultType
         : PostType.thread;
     _sort = widget.source == null
         ? _mode == PostType.thread
-            ? context.read<SettingsController>().defaultThreadsFeedSort
-            : context.read<SettingsController>().defaultMicroblogFeedSort
-        : context.read<SettingsController>().defaultExploreFeedSort;
+            ? context.read<AppController>().profile.feedDefaultThreadsSort
+            : context.read<AppController>().profile.feedDefaultMicroblogSort
+        : context.read<AppController>().profile.feedDefaultExploreSort;
   }
 
   @override
@@ -75,8 +75,8 @@ class _FeedScreenState extends State<FeedScreen> {
 
     final actions = [
       feedActionCreatePost(context).withProps(
-        context.watch<SettingsController>().isLoggedIn
-            ? context.watch<SettingsController>().feedActionCreatePost
+        context.watch<AppController>().isLoggedIn
+            ? context.watch<AppController>().profile.feedActionCreatePost
             : ActionLocation.hide,
         () async {
           await Navigator.of(context).push(
@@ -96,7 +96,7 @@ class _FeedScreenState extends State<FeedScreen> {
             : parseEnum(
                 ActionLocation.values,
                 ActionLocation.hide,
-                context.watch<SettingsController>().feedActionSetFilter.name,
+                context.watch<AppController>().profile.feedActionSetFilter.name,
               ),
         () async {
           final newFilter =
@@ -113,7 +113,7 @@ class _FeedScreenState extends State<FeedScreen> {
         parseEnum(
           ActionLocation.values,
           ActionLocation.hide,
-          context.watch<SettingsController>().feedActionSetSort.name,
+          context.watch<AppController>().profile.feedActionSetSort.name,
         ),
         () async {
           final newSort =
@@ -128,13 +128,13 @@ class _FeedScreenState extends State<FeedScreen> {
       ),
       feedActionSetType(context).withProps(
         widget.source == FeedSource.domain &&
-                context.watch<SettingsController>().serverSoftware ==
+                context.watch<AppController>().serverSoftware ==
                     ServerSoftware.lemmy
             ? ActionLocation.hide
             : parseEnum(
                 ActionLocation.values,
                 ActionLocation.hide,
-                context.watch<SettingsController>().feedActionSetType.name,
+                context.watch<AppController>().profile.feedActionSetType.name,
               ),
         () async {
           final newMode =
@@ -146,18 +146,23 @@ class _FeedScreenState extends State<FeedScreen> {
               _sort = widget.source == null
                   ? _mode == PostType.thread
                       ? context
-                          .read<SettingsController>()
-                          .defaultThreadsFeedSort
+                          .read<AppController>()
+                          .profile
+                          .feedDefaultThreadsSort
                       : context
-                          .read<SettingsController>()
-                          .defaultMicroblogFeedSort
-                  : context.read<SettingsController>().defaultExploreFeedSort;
+                          .read<AppController>()
+                          .profile
+                          .feedDefaultMicroblogSort
+                  : context
+                      .read<AppController>()
+                      .profile
+                      .feedDefaultExploreSort;
             });
           }
         },
       ),
       feedActionRefresh(context).withProps(
-        context.watch<SettingsController>().feedActionRefresh,
+        context.watch<AppController>().profile.feedActionRefresh,
         () {
           for (var key in _feedKeyList) {
             key.currentState?.refresh();
@@ -165,7 +170,7 @@ class _FeedScreenState extends State<FeedScreen> {
         },
       ),
       feedActionBackToTop(context).withProps(
-        context.watch<SettingsController>().feedActionBackToTop,
+        context.watch<AppController>().profile.feedActionBackToTop,
         () {
           for (var key in _feedKeyList) {
             key.currentState?.backToTop();
@@ -173,7 +178,7 @@ class _FeedScreenState extends State<FeedScreen> {
         },
       ),
       feedActionExpandFab(context).withProps(
-        context.watch<SettingsController>().feedActionExpandFab,
+        context.watch<AppController>().profile.feedActionExpandFab,
         () {
           _fabKey.currentState?.toggle();
         },
@@ -181,13 +186,13 @@ class _FeedScreenState extends State<FeedScreen> {
     ];
 
     final tabsAction = [
-      if (context.watch<SettingsController>().feedActionSetFilter ==
+      if (context.watch<AppController>().profile.feedActionSetFilter ==
               ActionLocationWithTabs.tabs &&
           widget.source == null &&
-          context.watch<SettingsController>().isLoggedIn)
+          context.watch<AppController>().isLoggedIn)
         actions.firstWhere(
             (action) => action.name == feedActionSetFilter(context).name),
-      if (context.watch<SettingsController>().feedActionSetType ==
+      if (context.watch<AppController>().profile.feedActionSetType ==
           ActionLocationWithTabs.tabs)
         actions.firstWhere(
             (action) => action.name == feedActionSetType(context).name),
@@ -204,7 +209,7 @@ class _FeedScreenState extends State<FeedScreen> {
                 .entries
                 .firstWhere((entry) =>
                     entry.value.value ==
-                    context.watch<SettingsController>().defaultFeedFilter)
+                    context.watch<AppController>().profile.feedDefaultFilter)
                 .key,
           String name when name == feedActionSetType(context).name =>
             feedTypeSelect(context)
@@ -213,9 +218,9 @@ class _FeedScreenState extends State<FeedScreen> {
                 .entries
                 .firstWhere((entry) =>
                     entry.value.value ==
-                    (context.watch<SettingsController>().serverSoftware !=
+                    (context.watch<AppController>().serverSoftware !=
                             ServerSoftware.lemmy
-                        ? context.watch<SettingsController>().defaultFeedType
+                        ? context.watch<AppController>().profile.feedDefaultType
                         : PostType.thread))
                 .key,
           _ => 0
@@ -235,8 +240,8 @@ class _FeedScreenState extends State<FeedScreen> {
             contentPadding: EdgeInsets.zero,
             title: Text(
               widget.title ??
-                  context.watch<SettingsController>().selectedAccount +
-                      (context.watch<SettingsController>().isLoggedIn
+                  context.watch<AppController>().selectedAccount +
+                      (context.watch<AppController>().isLoggedIn
                           ? ''
                           : ' (${l(context).guest})'),
               maxLines: 1,
@@ -576,25 +581,40 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
   Future<void> _fetchPage(String pageKey) async {
     try {
       PostListModel newPage = await (switch (widget.mode) {
-        PostType.thread => context.read<SettingsController>().api.threads.list(
+        PostType.thread => context.read<AppController>().api.threads.list(
               widget.source,
               sourceId: widget.sourceId,
               page: nullIfEmpty(pageKey),
               sort: widget.sort,
-              usePreferredLangs: whenLoggedIn(context,
-                  context.read<SettingsController>().useAccountLangFilter),
-              langs: context.read<SettingsController>().langFilter.toList(),
+              usePreferredLangs: whenLoggedIn(
+                  context,
+                  context
+                      .read<AppController>()
+                      .profile
+                      .useAccountLanguageFilter),
+              langs: context
+                  .read<AppController>()
+                  .profile
+                  .customLanguageFilter
+                  .toList(),
             ),
-        PostType.microblog =>
-          context.read<SettingsController>().api.microblogs.list(
-                widget.source,
-                sourceId: widget.sourceId,
-                page: nullIfEmpty(pageKey),
-                sort: widget.sort,
-                usePreferredLangs: whenLoggedIn(context,
-                    context.read<SettingsController>().useAccountLangFilter),
-                langs: context.read<SettingsController>().langFilter.toList(),
-              ),
+        PostType.microblog => context.read<AppController>().api.microblogs.list(
+              widget.source,
+              sourceId: widget.sourceId,
+              page: nullIfEmpty(pageKey),
+              sort: widget.sort,
+              usePreferredLangs: whenLoggedIn(
+                  context,
+                  context
+                      .read<AppController>()
+                      .profile
+                      .useAccountLanguageFilter),
+              langs: context
+                  .read<AppController>()
+                  .profile
+                  .customLanguageFilter
+                  .toList(),
+            ),
       });
 
       // Check BuildContext
@@ -610,13 +630,12 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
         // Skip feed filters if it's an explore page
         if (widget.sourceId != null) return true;
 
-        for (var filter
-            in context.read<SettingsController>().feedFiltersRegExp) {
-          if ((post.title != null && filter.hasMatch(post.title!)) ||
-              (post.body != null && filter.hasMatch(post.body!))) {
-            return false;
-          }
-        }
+        // for (var filter in context.read<AppController>().feedFiltersRegExp) {
+        //   if ((post.title != null && filter.hasMatch(post.title!)) ||
+        //       (post.body != null && filter.hasMatch(post.body!))) {
+        //     return false;
+        //   }
+        // }
 
         return true;
       }).toList();

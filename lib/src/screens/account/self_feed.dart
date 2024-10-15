@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
 import 'package:interstellar/src/widgets/loading_template.dart';
 import 'package:provider/provider.dart';
 
@@ -19,9 +19,9 @@ class _SelfFeedState extends State<SelfFeed> {
   void initState() {
     super.initState();
 
-    if (context.read<SettingsController>().isLoggedIn) {
+    if (context.read<AppController>().isLoggedIn) {
       context
-          .read<SettingsController>()
+          .read<AppController>()
           .api
           .users
           .getMe()

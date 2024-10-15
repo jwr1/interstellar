@@ -12,7 +12,7 @@ import 'package:interstellar/src/api/notifications.dart';
 import 'package:interstellar/src/api/search.dart';
 import 'package:interstellar/src/api/threads.dart';
 import 'package:interstellar/src/api/users.dart';
-import 'package:interstellar/src/screens/settings/settings_controller.dart';
+import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/utils/utils.dart';
 
 class API {
