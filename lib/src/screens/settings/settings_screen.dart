@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/controller/controller.dart';
+import 'package:interstellar/src/screens/settings/about_screen.dart';
 import 'package:interstellar/src/screens/settings/login_select.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/settings_header.dart';
@@ -18,8 +19,62 @@ class SettingsScreen extends StatelessWidget {
         title: Text(l(context).settings),
       ),
       body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
         children: [
+          ListTile(
+            leading: const Icon(Symbols.settings_rounded, fill: 0),
+            title: Text(l(context).settings_behavior),
+            // onTap: () => Navigator.of(context).push(
+            //   MaterialPageRoute(
+            //     builder: (context) => const SettingsScreen(),
+            //   ),
+            // ),
+          ),
+          ListTile(
+            leading: const Icon(Symbols.palette_rounded, fill: 0),
+            title: Text(l(context).settings_display),
+            // onTap: () => Navigator.of(context).push(
+            //   MaterialPageRoute(
+            //     builder: (context) => const SettingsScreen(),
+            //   ),
+            // ),
+          ),
+          ListTile(
+            leading: const Icon(Symbols.filter_list_rounded, fill: 0),
+            title: Text(l(context).settings_feedActions),
+            // onTap: () => Navigator.of(context).push(
+            //   MaterialPageRoute(
+            //     builder: (context) => const SettingsScreen(),
+            //   ),
+            // ),
+          ),
+          ListTile(
+            leading: const Icon(Symbols.tune_rounded, fill: 0),
+            title: Text(l(context).settings_feedDefaults),
+            // onTap: () => Navigator.of(context).push(
+            //   MaterialPageRoute(
+            //     builder: (context) => const SettingsScreen(),
+            //   ),
+            // ),
+          ),
+          ListTile(
+            leading: const Icon(Symbols.notifications_rounded, fill: 0),
+            title: Text(l(context).settings_notifications),
+            // onTap: () => Navigator.of(context).push(
+            //   MaterialPageRoute(
+            //     builder: (context) => const SettingsScreen(),
+            //   ),
+            // ),
+          ),
+          ListTile(
+            leading: const Icon(Symbols.info_rounded, fill: 0),
+            title: Text(l(context).settings_about),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const AboutScreen(),
+              ),
+            ),
+          ),
+          const Divider(),
           SettingsHeader(l(context).accounts),
           ...(controller.accounts.keys.toList()
                 ..sort((a, b) {
@@ -44,7 +99,7 @@ class SettingsScreen extends StatelessWidget {
                         .servers[account.split('@').last]!.software.name),
                     onTap: () => controller.switchAccounts(account),
                     trailing: IconButton(
-                      icon: const Icon(Symbols.delete_outline_rounded),
+                      icon: const Icon(Symbols.delete_rounded, fill: 0),
                       onPressed: controller.selectedAccount == account
                           ? null
                           : () {
@@ -74,13 +129,11 @@ class SettingsScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(12),
             child: OutlinedButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const LoginSelectScreen(),
-                  ),
-                );
-              },
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const LoginSelectScreen(),
+                ),
+              ),
               child: Text(l(context).addAccount),
             ),
           ),

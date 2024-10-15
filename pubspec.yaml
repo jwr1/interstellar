@@ -52,6 +52,7 @@ dependencies:
   material_symbols_icons: ^4.2788.0
   json_annotation: ^4.9.0
   sembast: ^3.7.5
+  package_info_plus: ^8.0.3
 
 dependency_overrides:
   webcrypto: ^0.5.7
