@@ -323,7 +323,7 @@
   "@close": {},
   "reason": "Powód",
   "@reason": {},
-  "moderate": "Umiarkowane",
+  "moderate": "Moderacja",
   "@moderate": {},
   "markdownEditor_image": "Obraz",
   "@markdownEditor_image": {},
@@ -337,7 +337,7 @@
   "@title": {},
   "language": "Język",
   "@language": {},
-  "markdownEditor_edit": "Edytuj",
+  "markdownEditor_edit": "Edycja",
   "@markdownEditor_edit": {},
   "markdownEditor_italic": "Kursywa",
   "@markdownEditor_italic": {},
@@ -468,5 +468,152 @@
   "notSafeForWork_long": "Not Safe For Work (NSFW)",
   "@notSafeForWork_long": {},
   "settings_feedFilters_help": "Użyj tego, aby odfiltrować posty w \"Feed\" (nie Eksploruj), które zawierają którykolwiek z tych wzorców w tytule lub treści. Dozwolone są proste słowa lub frazy, takie jak \"hello world\", ale można również użyć wyrażeń regularnych (bez rozróżniania wielkości liter), aby dopasować tekst ze złożonym wzorcem.",
-  "@settings_feedFilters_help": {}
+  "@settings_feedFilters_help": {},
+  "notSafeForWork_mark": "Oznacz jako NSFW",
+  "@notSafeForWork_mark": {},
+  "originalContent_short": "OC",
+  "@originalContent_short": {},
+  "originalContent_long": "Treść oryginalna",
+  "@originalContent_long": {},
+  "createdAt": "Utworzono {datetime}",
+  "@createdAt": {
+    "placeholders": {
+      "datetime": {
+        "type": "String"
+      }
+    }
+  },
+  "editedAt": "Edutowano {datetime}",
+  "@editedAt": {
+    "placeholders": {
+      "datetime": {
+        "type": "String"
+      }
+    }
+  },
+  "moreFrom": "Więcej od {name}",
+  "@moreFrom": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "reportX": "Zgłoś {name}",
+  "@reportX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteX": "Usuń {name}",
+  "@deleteX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "viewSource": "Pokaż źródło",
+  "@viewSource": {},
+  "banUser": "Banuj profil",
+  "@banUser": {},
+  "banUserX": "Banuj {user}",
+  "@banUserX": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      }
+    }
+  },
+  "banUser_help": "Zamierzasz zbanować {user} w {magazine}.",
+  "@banUser_help": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      },
+      "magazine": {
+        "type": "String"
+      }
+    }
+  },
+  "alternativeSources": "Alternatywne źródła",
+  "@alternativeSources": {},
+  "markdownEditor_heading": "Nagłówek",
+  "@markdownEditor_heading": {},
+  "markdownEditor_strikethrough": "Przekreślenie",
+  "@markdownEditor_strikethrough": {},
+  "markdownEditor_inlineCode": "Kod inline",
+  "@markdownEditor_inlineCode": {},
+  "markdownEditor_codeBlock": "Blok kodu",
+  "@markdownEditor_codeBlock": {},
+  "markdownEditor_subscript": "Indeks dolny",
+  "@markdownEditor_subscript": {},
+  "markdownEditor_superscript": "Indeks górny",
+  "@markdownEditor_superscript": {},
+  "markdownEditor_horizontalRule": "Linia pozioma",
+  "@markdownEditor_horizontalRule": {},
+  "markdownEditor_bulletedList": "Lista wypunktowana",
+  "@markdownEditor_bulletedList": {},
+  "markdownEditor_numberedList": "Lista numerowana",
+  "@markdownEditor_numberedList": {},
+  "markdownEditor_drafts_manuallySave": "Zapis ręczny",
+  "@markdownEditor_drafts_manuallySave": {},
+  "markdownEditor_drafts_discardAll": "Odrzuć wszystko",
+  "@markdownEditor_drafts_discardAll": {},
+  "markdownEditor_drafts_apply": "Zastosuj wersję roboczą",
+  "@markdownEditor_drafts_apply": {},
+  "markdownEditor_drafts_applyAndKeep": "Zastosuj",
+  "@markdownEditor_drafts_applyAndKeep": {},
+  "markdownEditor_drafts_applyAndDiscard": "Zastosuj i odrzuć",
+  "@markdownEditor_drafts_applyAndDiscard": {},
+  "markdownEditor_drafts_savedAutomatically": "Automatycznie zapisany",
+  "@markdownEditor_drafts_savedAutomatically": {},
+  "markdownEditor_drafts_savedManually": "Zapisany ręcznie",
+  "@markdownEditor_drafts_savedManually": {},
+  "uploadFromGallery": "Wgraj z galerii",
+  "@uploadFromGallery": {},
+  "uploadFromCamera": "Wgraj z aparatu",
+  "@uploadFromCamera": {},
+  "openLink": "Otwórz link",
+  "@openLink": {},
+  "continueInBrowser": "Kontynuuj w przeglądarce",
+  "@continueInBrowser": {},
+  "redirectReceivedMessage": "Otrzymano przekierowanie. Możesz teraz zamknąć tę kartę i powrócić do aplikacji.",
+  "@redirectReceivedMessage": {},
+  "createThread": "Nowy wątek",
+  "@createThread": {},
+  "createMicroblog": "Nowy tootek",
+  "@createMicroblog": {},
+  "body": "Treść",
+  "@body": {},
+  "tags_hint": "Oddzielone spacjami",
+  "@tags_hint": {},
+  "action_setLocation": "Ustaw lokalizację akcji",
+  "@action_setLocation": {},
+  "action_appBar": "Nagłówek apki",
+  "@action_appBar": {},
+  "action_fabTap": "Kliknięcie FAB",
+  "@action_fabTap": {},
+  "action_fabHold": "Przytrzymanie FAB",
+  "@action_fabHold": {},
+  "action_fabMenu": "Menu FAB",
+  "@action_fabMenu": {},
+  "action_backToTop": "Wróć na górę",
+  "@action_backToTop": {},
+  "action_createPost": "Nowy wpis",
+  "@action_createPost": {},
+  "action_expandFABMenu": "Rozwiń menu FAB",
+  "@action_expandFABMenu": {},
+  "action_setFilter": "Ustaw filtr",
+  "@action_setFilter": {},
+  "action_setSort": "Ustaw sortowanie",
+  "@action_setSort": {},
+  "action_setType": "Ustaw typ",
+  "@action_setType": {},
+  "imageSaved": "Obrazek zapisany",
+  "@imageSaved": {},
+  "videoSaved": "Wideo zapisane",
+  "@videoSaved": {}
 }
