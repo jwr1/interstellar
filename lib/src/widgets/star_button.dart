@@ -21,7 +21,7 @@ class StarButton extends StatelessWidget {
           : () => context.read<AppController>().addStar(name),
       icon: context.read<AppController>().stars.contains(name)
           ? const Icon(Symbols.star_rounded)
-          : const Icon(Symbols.star_rounded, fill: 0),
+          : const Icon(Symbols.star_rounded),
       color: isStarred ? Colors.yellow : null,
     );
   }

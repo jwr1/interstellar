@@ -46,10 +46,6 @@ class _AppState extends State<App> {
                 ? darkColorScheme
                 : null;
 
-        addThemeData(ThemeData theme) => theme.copyWith(
-              iconTheme: theme.iconTheme.copyWith(fill: 1),
-            );
-
         return ChangeNotifierProxyProvider<AppController,
             NotificationCountController>(
           create: (_) => NotificationCountController(),
@@ -60,7 +56,7 @@ class _AppState extends State<App> {
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
             onGenerateTitle: (BuildContext context) => l(context).interstellar,
-            theme: addThemeData(FlexThemeData.light(
+            theme: FlexThemeData.light(
               colorScheme: dynamicLightColorScheme,
               scheme: dynamicLightColorScheme != null
                   ? null
@@ -68,8 +64,8 @@ class _AppState extends State<App> {
               surfaceMode: FlexSurfaceMode.highSurfaceLowScaffold,
               blendLevel: 13,
               useMaterial3: true,
-            )),
-            darkTheme: addThemeData(FlexThemeData.dark(
+            ),
+            darkTheme: FlexThemeData.dark(
               colorScheme: dynamicDarkColorScheme,
               scheme: dynamicDarkColorScheme != null
                   ? null
@@ -78,7 +74,7 @@ class _AppState extends State<App> {
               blendLevel: 13,
               useMaterial3: true,
               darkIsTrueBlack: appController.profile.enableTrueBlack,
-            )),
+            ),
             themeMode: appController.profile.themeMode,
             scaffoldMessengerKey: scaffoldMessengerKey,
             home: OrientationBuilder(
@@ -92,14 +88,13 @@ class _AppState extends State<App> {
                           destinations: [
                             NavigationDestination(
                               label: l(context).feed,
-                              icon: const Icon(Symbols.home_rounded, fill: 0),
+                              icon: const Icon(Symbols.home_rounded),
                               selectedIcon:
                                   const Icon(Symbols.home_rounded, fill: 1),
                             ),
                             NavigationDestination(
                               label: l(context).explore,
-                              icon:
-                                  const Icon(Symbols.explore_rounded, fill: 0),
+                              icon: const Icon(Symbols.explore_rounded),
                               selectedIcon:
                                   const Icon(Symbols.explore_rounded, fill: 1),
                             ),
@@ -110,8 +105,7 @@ class _AppState extends State<App> {
                                     context.watch<AppController>().isLoggedIn,
                                 parentBuilder: (child) =>
                                     NotificationBadge(child: child),
-                                child:
-                                    const Icon(Symbols.person_rounded, fill: 0),
+                                child: const Icon(Symbols.person_rounded),
                               ),
                               selectedIcon: Wrapper(
                                 shouldWrap:
@@ -124,8 +118,7 @@ class _AppState extends State<App> {
                             ),
                             NavigationDestination(
                               label: l(context).settings,
-                              icon:
-                                  const Icon(Symbols.settings_rounded, fill: 0),
+                              icon: const Icon(Symbols.settings_rounded),
                               selectedIcon:
                                   const Icon(Symbols.settings_rounded, fill: 1),
                             ),
@@ -143,13 +136,12 @@ class _AppState extends State<App> {
                         destinations: [
                           NavigationRailDestination(
                               label: Text(l(context).feed),
-                              icon: const Icon(Symbols.feed_rounded, fill: 0),
+                              icon: const Icon(Symbols.feed_rounded),
                               selectedIcon:
                                   const Icon(Symbols.feed_rounded, fill: 1)),
                           NavigationRailDestination(
                               label: Text(l(context).explore),
-                              icon:
-                                  const Icon(Symbols.explore_rounded, fill: 0),
+                              icon: const Icon(Symbols.explore_rounded),
                               selectedIcon:
                                   const Icon(Symbols.explore_rounded, fill: 1)),
                           NavigationRailDestination(
@@ -159,8 +151,7 @@ class _AppState extends State<App> {
                                   context.watch<AppController>().isLoggedIn,
                               parentBuilder: (child) =>
                                   NotificationBadge(child: child),
-                              child:
-                                  const Icon(Symbols.person_rounded, fill: 0),
+                              child: const Icon(Symbols.person_rounded),
                             ),
                             selectedIcon: Wrapper(
                               shouldWrap:
@@ -172,11 +163,11 @@ class _AppState extends State<App> {
                             ),
                           ),
                           NavigationRailDestination(
-                              label: Text(l(context).settings),
-                              icon:
-                                  const Icon(Symbols.settings_rounded, fill: 0),
-                              selectedIcon: const Icon(Symbols.settings_rounded,
-                                  fill: 1)),
+                            label: Text(l(context).settings),
+                            icon: const Icon(Symbols.settings_rounded),
+                            selectedIcon:
+                                const Icon(Symbols.settings_rounded, fill: 1),
+                          ),
                         ],
                       ),
                     if (orientation == Orientation.landscape)

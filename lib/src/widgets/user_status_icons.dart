@@ -24,7 +24,7 @@ class UserStatusIcons extends StatelessWidget {
     if (isBot) {
       botWidget = Tooltip(
         message: l(context).botAccount,
-        child: const Icon(Symbols.smart_toy_rounded, fill: 0),
+        child: const Icon(Symbols.smart_toy_rounded),
       );
     }
 

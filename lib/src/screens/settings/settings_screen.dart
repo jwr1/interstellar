@@ -23,7 +23,7 @@ class SettingsScreen extends StatelessWidget {
       body: ListView(
         children: [
           ListTile(
-            leading: const Icon(Symbols.settings_rounded, fill: 0),
+            leading: const Icon(Symbols.settings_rounded),
             title: Text(l(context).settings_behavior),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(
@@ -32,7 +32,7 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: const Icon(Symbols.palette_rounded, fill: 0),
+            leading: const Icon(Symbols.palette_rounded),
             title: Text(l(context).settings_display),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(
@@ -41,7 +41,7 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: const Icon(Symbols.filter_list_rounded, fill: 0),
+            leading: const Icon(Symbols.filter_list_rounded),
             title: Text(l(context).settings_feedActions),
             // onTap: () => Navigator.of(context).push(
             //   MaterialPageRoute(
@@ -50,7 +50,7 @@ class SettingsScreen extends StatelessWidget {
             // ),
           ),
           ListTile(
-            leading: const Icon(Symbols.tune_rounded, fill: 0),
+            leading: const Icon(Symbols.tune_rounded),
             title: Text(l(context).settings_feedDefaults),
             // onTap: () => Navigator.of(context).push(
             //   MaterialPageRoute(
@@ -59,7 +59,7 @@ class SettingsScreen extends StatelessWidget {
             // ),
           ),
           ListTile(
-            leading: const Icon(Symbols.notifications_rounded, fill: 0),
+            leading: const Icon(Symbols.notifications_rounded),
             title: Text(l(context).settings_notifications),
             // onTap: () => Navigator.of(context).push(
             //   MaterialPageRoute(
@@ -68,7 +68,7 @@ class SettingsScreen extends StatelessWidget {
             // ),
           ),
           ListTile(
-            leading: const Icon(Symbols.info_rounded, fill: 0),
+            leading: const Icon(Symbols.info_rounded),
             title: Text(l(context).settings_about),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(
@@ -101,7 +101,7 @@ class SettingsScreen extends StatelessWidget {
                         ac.servers[account.split('@').last]!.software.name),
                     onTap: () => ac.switchAccounts(account),
                     trailing: IconButton(
-                      icon: const Icon(Symbols.delete_rounded, fill: 0),
+                      icon: const Icon(Symbols.delete_rounded),
                       onPressed: ac.selectedAccount == account
                           ? null
                           : () {

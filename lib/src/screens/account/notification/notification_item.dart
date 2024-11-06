@@ -176,7 +176,6 @@ class _NotificationItemState extends State<NotificationItem> {
                       widget.item.status == NotificationStatus.new_
                           ? Symbols.mark_chat_read_rounded
                           : Symbols.mark_chat_unread_rounded,
-                      fill: 0,
                     ),
                     tooltip: widget.item.status == NotificationStatus.new_
                         ? 'Mark as read'
