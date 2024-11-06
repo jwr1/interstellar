@@ -50,7 +50,7 @@ class _AboutScreenState extends State<AboutScreen> {
       body: ListView(
         children: [
           ListTile(
-            leading: const Icon(Symbols.favorite_rounded, fill: 0),
+            leading: const Icon(Symbols.favorite_rounded),
             title: Text(l(context).settings_donate),
             onTap: () => openWebpagePrimary(context, Uri.parse(_donateLink)),
           ),
@@ -61,12 +61,12 @@ class _AboutScreenState extends State<AboutScreen> {
                 openWebpagePrimary(context, Uri.parse(_contributeLink)),
           ),
           ListTile(
-            leading: const Icon(Symbols.translate_rounded, fill: 0),
+            leading: const Icon(Symbols.translate_rounded),
             title: Text(l(context).settings_translate),
             onTap: () => openWebpagePrimary(context, Uri.parse(_translateLink)),
           ),
           ListTile(
-            leading: const Icon(Symbols.bug_report_rounded, fill: 0),
+            leading: const Icon(Symbols.bug_report_rounded),
             title: Text(l(context).settings_reportIssue),
             onTap: () =>
                 openWebpagePrimary(context, Uri.parse(_reportIssueLink)),

@@ -21,7 +21,7 @@ class DisplaySettingsScreen extends StatelessWidget {
       body: ListView(
         children: [
           ListTile(
-            leading: const Icon(Symbols.bedtime_rounded, fill: 0),
+            leading: const Icon(Symbols.bedtime_rounded),
             title: Text(l(context).settings_themeMode),
             subtitle: Text(
                 themeModeSelect(context).getOption(ac.profile.themeMode).title),
@@ -37,7 +37,7 @@ class DisplaySettingsScreen extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Symbols.palette_rounded, fill: 0),
+            leading: const Icon(Symbols.palette_rounded),
             title: Text(l(context).settings_colorScheme),
             subtitle:
                 Text(colorSchemeNameMap(context)[ac.profile.colorScheme]!),
@@ -53,7 +53,7 @@ class DisplaySettingsScreen extends StatelessWidget {
             },
           ),
           ListTileSwitch(
-            leading: const Icon(Symbols.contrast_rounded, fill: 0),
+            leading: const Icon(Symbols.contrast_rounded),
             title: Text(l(context).settings_enableTrueBlack),
             subtitle: Text(l(context).settings_enableTrueBlack_help),
             value: ac.profile.enableTrueBlack,
@@ -65,7 +65,7 @@ class DisplaySettingsScreen extends StatelessWidget {
                     ),
           ),
           ListTileSwitch(
-            leading: const Icon(Symbols.view_agenda_rounded, fill: 0),
+            leading: const Icon(Symbols.view_agenda_rounded),
             title: Text(l(context).settings_compactMode),
             value: ac.profile.compactMode,
             onChanged: (newValue) => ac.updateProfile(
@@ -74,7 +74,7 @@ class DisplaySettingsScreen extends StatelessWidget {
           ),
           const Divider(),
           ListTileSwitch(
-            leading: const Icon(Symbols.globe, fill: 0),
+            leading: const Icon(Symbols.globe),
             title: Text(l(context).settings_alwaysShowInstance),
             subtitle: Text(l(context).settings_alwaysShowInstance_help),
             value: ac.profile.alwaysShowInstance,
@@ -83,7 +83,7 @@ class DisplaySettingsScreen extends StatelessWidget {
             ),
           ),
           ListTileSwitch(
-            leading: const Icon(Symbols.warning_rounded, fill: 0),
+            leading: const Icon(Symbols.warning_rounded),
             title: Text(l(context).settings_alwaysRevealContentWarnings),
             value: ac.profile.alwaysRevealContentWarnings,
             onChanged: (newValue) => ac.updateProfile(
@@ -92,7 +92,7 @@ class DisplaySettingsScreen extends StatelessWidget {
             ),
           ),
           ListTileSwitch(
-            leading: const Icon(Symbols.flag_2_rounded, fill: 0),
+            leading: const Icon(Symbols.flag_2_rounded),
             title: Text(l(context).settings_coverMediaMarkedSensitive),
             value: ac.profile.coverMediaMarkedSensitive,
             onChanged: (newValue) => ac.updateProfile(

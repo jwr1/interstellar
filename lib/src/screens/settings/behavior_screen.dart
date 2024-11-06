@@ -25,7 +25,7 @@ class BehaviorSettingsScreen extends StatelessWidget {
       body: ListView(
         children: [
           ListTile(
-            leading: const Icon(Symbols.translate_rounded, fill: 0),
+            leading: const Icon(Symbols.translate_rounded),
             title: Text(l(context).settings_defaultPostLanguage),
             subtitle: Text(getLangName(ac.profile.defaultPostLanguage)),
             onTap: () async {
@@ -40,7 +40,7 @@ class BehaviorSettingsScreen extends StatelessWidget {
             },
           ),
           ListTileSwitch(
-            leading: const Icon(Symbols.filter_list_rounded, fill: 0),
+            leading: const Icon(Symbols.filter_list_rounded),
             title: Text(l(context).settings_useAccountLanguageFilter),
             subtitle: Text(l(context).settings_useAccountLanguageFilter_help),
             value: ac.profile.useAccountLanguageFilter,
@@ -118,7 +118,7 @@ class BehaviorSettingsScreen extends StatelessWidget {
             ],
           ),
           ListTileSwitch(
-            leading: const Icon(Symbols.description_rounded, fill: 0),
+            leading: const Icon(Symbols.description_rounded),
             title: Text(l(context).settings_addAltTextReminders),
             value: ac.profile.addAltTextReminders,
             onChanged: (newValue) => ac.updateProfile(
@@ -126,7 +126,7 @@ class BehaviorSettingsScreen extends StatelessWidget {
             ),
           ),
           ListTileSwitch(
-            leading: const Icon(Symbols.animated_images_rounded, fill: 0),
+            leading: const Icon(Symbols.animated_images_rounded),
             title: Text(l(context).settings_autoplayAnimatedImages),
             value: ac.profile.autoplayAnimatedImages,
             onChanged: (newValue) => ac.updateProfile(
@@ -135,7 +135,7 @@ class BehaviorSettingsScreen extends StatelessWidget {
             ),
           ),
           ListTileSwitch(
-            leading: const Icon(Symbols.person_remove_rounded, fill: 0),
+            leading: const Icon(Symbols.person_remove_rounded),
             title: Text(l(context).settings_askBeforeUnsubscribing),
             value: ac.profile.askBeforeUnsubscribing,
             onChanged: (newValue) => ac.updateProfile(
@@ -144,7 +144,7 @@ class BehaviorSettingsScreen extends StatelessWidget {
             ),
           ),
           ListTileSwitch(
-            leading: const Icon(Symbols.delete_rounded, fill: 0),
+            leading: const Icon(Symbols.delete_rounded),
             title: Text(l(context).settings_askBeforeDeleting),
             value: ac.profile.askBeforeDeleting,
             onChanged: (newValue) => ac.updateProfile(
