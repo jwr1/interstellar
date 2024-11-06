@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/comment.dart';
@@ -19,36 +20,37 @@ const Map<CommentSort, String> lemmyCommentSortMap = {
   CommentSort.top: 'Top',
 };
 
-const SelectionMenu<CommentSort> commentSortSelect = SelectionMenu(
-  'Sort Comments',
-  [
-    SelectionMenuItem(
-      value: CommentSort.hot,
-      title: 'Hot',
-      icon: Symbols.local_fire_department_rounded,
-    ),
-    SelectionMenuItem(
-      value: CommentSort.top,
-      title: 'Top',
-      icon: Symbols.trending_up_rounded,
-    ),
-    SelectionMenuItem(
-      value: CommentSort.newest,
-      title: 'Newest',
-      icon: Symbols.nest_eco_leaf_rounded,
-    ),
-    SelectionMenuItem(
-      value: CommentSort.active,
-      title: 'Active',
-      icon: Symbols.rocket_launch_rounded,
-    ),
-    SelectionMenuItem(
-      value: CommentSort.oldest,
-      title: 'Oldest',
-      icon: Symbols.access_time_rounded,
-    ),
-  ],
-);
+SelectionMenu<CommentSort> commentSortSelect(BuildContext context) =>
+    SelectionMenu(
+      l(context).sortComments,
+      [
+        SelectionMenuItem(
+          value: CommentSort.hot,
+          title: l(context).sort_hot,
+          icon: Symbols.local_fire_department_rounded,
+        ),
+        SelectionMenuItem(
+          value: CommentSort.top,
+          title: l(context).sort_top,
+          icon: Symbols.trending_up_rounded,
+        ),
+        SelectionMenuItem(
+          value: CommentSort.newest,
+          title: l(context).sort_newest,
+          icon: Symbols.nest_eco_leaf_rounded,
+        ),
+        SelectionMenuItem(
+          value: CommentSort.active,
+          title: l(context).sort_active,
+          icon: Symbols.rocket_launch_rounded,
+        ),
+        SelectionMenuItem(
+          value: CommentSort.oldest,
+          title: l(context).sort_oldest,
+          icon: Symbols.access_time_rounded,
+        ),
+      ],
+    );
 
 const _postTypeMbin = {
   PostType.thread: 'entry',
