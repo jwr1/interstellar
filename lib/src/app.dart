@@ -38,11 +38,11 @@ class _AppState extends State<App> {
     return DynamicColorBuilder(
       builder: (lightColorScheme, darkColorScheme) {
         final dynamicLightColorScheme =
-            appController.profile.colorPalette == FlexScheme.custom
+            appController.profile.colorScheme == FlexScheme.custom
                 ? lightColorScheme
                 : null;
         final dynamicDarkColorScheme =
-            appController.profile.colorPalette == FlexScheme.custom
+            appController.profile.colorScheme == FlexScheme.custom
                 ? darkColorScheme
                 : null;
 
@@ -64,7 +64,7 @@ class _AppState extends State<App> {
               colorScheme: dynamicLightColorScheme,
               scheme: dynamicLightColorScheme != null
                   ? null
-                  : appController.profile.colorPalette,
+                  : appController.profile.colorScheme,
               surfaceMode: FlexSurfaceMode.highSurfaceLowScaffold,
               blendLevel: 13,
               useMaterial3: true,
@@ -73,7 +73,7 @@ class _AppState extends State<App> {
               colorScheme: dynamicDarkColorScheme,
               scheme: dynamicDarkColorScheme != null
                   ? null
-                  : appController.profile.colorPalette,
+                  : appController.profile.colorScheme,
               surfaceMode: FlexSurfaceMode.highSurfaceLowScaffold,
               blendLevel: 13,
               useMaterial3: true,
