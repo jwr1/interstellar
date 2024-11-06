@@ -29,8 +29,8 @@ class BehaviorSettingsScreen extends StatelessWidget {
             title: Text(l(context).settings_defaultPostLanguage),
             subtitle: Text(getLangName(ac.profile.defaultPostLanguage)),
             onTap: () async {
-              final langCode =
-                  await languageSelectionMenu.askSelection(context, null);
+              final langCode = await languageSelectionMenu.askSelection(
+                  context, ac.selectedProfileValue.defaultPostLanguage);
 
               if (langCode == null) return;
 

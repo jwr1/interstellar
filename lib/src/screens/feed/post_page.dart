@@ -105,7 +105,8 @@ class _PostPageState extends State<PostPage> {
 
   @override
   Widget build(BuildContext context) {
-    final currentCommentSortOption = commentSortSelect.getOption(commentSort);
+    final currentCommentSortOption =
+        commentSortSelect(context).getOption(commentSort);
 
     if (_data == null) {
       return const LoadingTemplate();
@@ -137,8 +138,8 @@ class _PostPageState extends State<PostPage> {
             padding: const EdgeInsets.only(right: 8),
             child: IconButton(
               onPressed: () async {
-                final newSort =
-                    await commentSortSelect.askSelection(context, commentSort);
+                final newSort = await commentSortSelect(context)
+                    .askSelection(context, commentSort);
 
                 if (newSort != null && newSort != commentSort) {
                   setState(() {

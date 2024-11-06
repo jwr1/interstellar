@@ -32,6 +32,7 @@
   "filter_new": "New",
   "filter_read": "Read",
   "sort": "Sort by",
+  "sortComments": "Sort comments",
   "sort_active": "Active",
   "sort_hot": "Hot",
   "sort_newest": "Newest",
@@ -208,6 +209,12 @@
   "settings_colorScheme_rosewood": "Rosewood",
   "settings_colorScheme_blumineBlue": "Blumine Blue",
   "settings_colorScheme_flutterDash": "Flutter Dash",
+  "settings_feedDefaults_type": "Type",
+  "settings_feedDefaults_filter": "Filter",
+  "settings_feedDefaults_threadsSort": "Threads Sort",
+  "settings_feedDefaults_microblogSort": "Microblog Sort",
+  "settings_feedDefaults_exploreSort": "Explore Sort",
+  "settings_feedDefaults_commentSort": "Comment Sort",
   "unsupportedSoftware": "{host} is using unsupported software",
   "@unsupportedSoftware": {
     "placeholders": {

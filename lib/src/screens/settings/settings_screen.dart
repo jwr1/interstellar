@@ -3,6 +3,7 @@ import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/screens/settings/about_screen.dart';
 import 'package:interstellar/src/screens/settings/behavior_screen.dart';
 import 'package:interstellar/src/screens/settings/display_screen.dart';
+import 'package:interstellar/src/screens/settings/feed_defaults_screen.dart';
 import 'package:interstellar/src/screens/settings/login_select.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/settings_header.dart';
@@ -52,11 +53,11 @@ class SettingsScreen extends StatelessWidget {
           ListTile(
             leading: const Icon(Symbols.tune_rounded),
             title: Text(l(context).settings_feedDefaults),
-            // onTap: () => Navigator.of(context).push(
-            //   MaterialPageRoute(
-            //     builder: (context) => const SettingsScreen(),
-            //   ),
-            // ),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const FeedDefaultSettingsScreen(),
+              ),
+            ),
           ),
           ListTile(
             leading: const Icon(Symbols.notifications_rounded),
