@@ -30,7 +30,7 @@ class ProfileRequired with _$ProfileRequired {
     required bool askBeforeDeleting,
     // Display settings
     required ThemeMode themeMode,
-    required FlexScheme colorPalette,
+    required FlexScheme colorScheme,
     required bool enableTrueBlack,
     required bool compactMode,
     required bool alwaysShowInstance,
@@ -76,7 +76,7 @@ class ProfileRequired with _$ProfileRequired {
         askBeforeDeleting:
             profile?.askBeforeDeleting ?? defaultProfile.askBeforeDeleting,
         themeMode: profile?.themeMode ?? defaultProfile.themeMode,
-        colorPalette: profile?.colorPalette ?? defaultProfile.colorPalette,
+        colorScheme: profile?.colorScheme ?? defaultProfile.colorScheme,
         enableTrueBlack:
             profile?.enableTrueBlack ?? defaultProfile.enableTrueBlack,
         compactMode: profile?.compactMode ?? defaultProfile.compactMode,
@@ -125,7 +125,7 @@ class ProfileRequired with _$ProfileRequired {
     askBeforeUnsubscribing: false,
     askBeforeDeleting: true,
     themeMode: ThemeMode.system,
-    colorPalette: FlexScheme.custom,
+    colorScheme: FlexScheme.custom,
     enableTrueBlack: false,
     compactMode: false,
     alwaysShowInstance: false,
@@ -166,7 +166,7 @@ class ProfileOptional with _$ProfileOptional {
     required bool? askBeforeDeleting,
     // Display settings
     required ThemeMode? themeMode,
-    required FlexScheme? colorPalette,
+    required FlexScheme? colorScheme,
     required bool? enableTrueBlack,
     required bool? compactMode,
     required bool? alwaysShowInstance,
@@ -203,7 +203,7 @@ class ProfileOptional with _$ProfileOptional {
     askBeforeUnsubscribing: null,
     askBeforeDeleting: null,
     themeMode: null,
-    colorPalette: null,
+    colorScheme: null,
     enableTrueBlack: null,
     compactMode: null,
     alwaysShowInstance: null,
@@ -241,7 +241,7 @@ class ProfileOptional with _$ProfileOptional {
           other.askBeforeUnsubscribing ?? askBeforeUnsubscribing,
       askBeforeDeleting: other.askBeforeDeleting ?? askBeforeDeleting,
       themeMode: other.themeMode ?? themeMode,
-      colorPalette: other.colorPalette ?? colorPalette,
+      colorScheme: other.colorScheme ?? colorScheme,
       enableTrueBlack: other.enableTrueBlack ?? enableTrueBlack,
       compactMode: other.compactMode ?? compactMode,
       alwaysShowInstance: other.alwaysShowInstance ?? alwaysShowInstance,

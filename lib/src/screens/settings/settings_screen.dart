@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/screens/settings/about_screen.dart';
 import 'package:interstellar/src/screens/settings/behavior_screen.dart';
+import 'package:interstellar/src/screens/settings/display_screen.dart';
 import 'package:interstellar/src/screens/settings/login_select.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/settings_header.dart';
@@ -33,11 +34,11 @@ class SettingsScreen extends StatelessWidget {
           ListTile(
             leading: const Icon(Symbols.palette_rounded, fill: 0),
             title: Text(l(context).settings_display),
-            // onTap: () => Navigator.of(context).push(
-            //   MaterialPageRoute(
-            //     builder: (context) => const SettingsScreen(),
-            //   ),
-            // ),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const DisplaySettingsScreen(),
+              ),
+            ),
           ),
           ListTile(
             leading: const Icon(Symbols.filter_list_rounded, fill: 0),
