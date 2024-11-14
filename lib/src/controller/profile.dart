@@ -18,6 +18,7 @@ class ProfileRequired with _$ProfileRequired {
 
   @JsonSerializable(explicitToJson: true, includeIfNull: false)
   const factory ProfileRequired({
+    // If the autoSwitchAccount key is ever changed, be sure to update the AppController code that removes accounts, which references this key.
     required String? autoSwitchAccount,
     // Behavior settings
     required String defaultPostLanguage,

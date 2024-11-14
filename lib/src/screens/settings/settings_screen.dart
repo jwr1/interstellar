@@ -82,6 +82,7 @@ class SettingsScreen extends StatelessWidget {
           ListTile(
             leading: const Icon(Symbols.tune_rounded),
             title: Text(l(context).profile_switch),
+            subtitle: Text(ac.selectedProfile),
             onTap: () => switchProfileSelect(context),
           ),
           SettingsHeader(l(context).accounts),
