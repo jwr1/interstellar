@@ -41,7 +41,7 @@ class _AccountScreenState extends State<AccountScreen> {
                           icon: const Icon(Symbols.message_rounded),
                         ),
                         Tab(
-                          text: l(context).profile_overview,
+                          text: l(context).account_overview,
                           icon: const Icon(Symbols.person_rounded),
                         ),
                       ]),

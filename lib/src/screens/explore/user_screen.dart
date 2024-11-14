@@ -175,7 +175,7 @@ class _UserScreenState extends State<UserScreen> {
                                         });
                                       });
                                     })),
-                                    child: Text(l(context).profile_edit),
+                                    child: Text(l(context).account_edit),
                                   ),
                                 if (!isMyUser)
                                   LoadingChip(
