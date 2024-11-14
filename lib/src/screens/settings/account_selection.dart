@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/controller/controller.dart';
+import 'package:interstellar/src/screens/settings/login_select.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
-Future<void> switchAccount(BuildContext context, String oldAccount) async {
-  await showModalBottomSheet(
+Future<String?> switchAccount(BuildContext context, String oldAccount) async {
+  return await showModalBottomSheet(
     context: context,
     builder: (BuildContext context) {
-      return AccountSelectWidget(oldAccount: oldAccount);
+      return AccountSelectWidget(
+          oldAccount: oldAccount, showAccountControls: true);
     },
   );
 }
@@ -62,15 +65,18 @@ class _AccountSelectWidgetState extends State<AccountSelectWidget> {
         ),
         Flexible(
           child: ListView(shrinkWrap: true, children: [
-            ListTile(
-              title: Text(l(context).profile_autoSelectAccount_none),
-              onTap: () async {
-                Navigator.of(context).pop('');
-              },
-            ),
+            if (widget.showNoneOption)
+              ListTile(
+                title: Text(l(context).profile_autoSelectAccount_none),
+                onTap: () async {
+                  Navigator.of(context).pop('');
+                },
+              ),
             ...ac.accounts.keys.map(
               (account) => ListTile(
                 title: Text(account),
+                subtitle:
+                    Text(ac.servers[account.split('@').last]!.software.name),
                 onTap: () async {
                   Navigator.of(context).pop(account);
                 },
@@ -79,8 +85,48 @@ class _AccountSelectWidgetState extends State<AccountSelectWidget> {
                     .colorScheme
                     .primaryContainer
                     .withOpacity(0.2),
+                trailing: widget.showAccountControls
+                    ? IconButton(
+                        icon: const Icon(Symbols.delete_rounded),
+                        onPressed: ac.selectedAccount == account
+                            ? null
+                            : () {
+                                showDialog<String>(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                    title: Text(l(context).removeAccount),
+                                    content: Text(account),
+                                    actions: <Widget>[
+                                      OutlinedButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: Text(l(context).cancel),
+                                      ),
+                                      FilledButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          ac.removeAccount(account);
+                                        },
+                                        child: Text(l(context).remove),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                      )
+                    : null,
               ),
             ),
+            if (widget.showAccountControls)
+              ListTile(
+                title: Text(l(context).addAccount),
+                leading: const Icon(Symbols.login_rounded),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const LoginSelectScreen(),
+                  ),
+                ),
+              ),
             const SizedBox(height: 16),
           ]),
         ),

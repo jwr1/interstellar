@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/screens/settings/about_screen.dart';
+import 'package:interstellar/src/screens/settings/account_selection.dart';
 import 'package:interstellar/src/screens/settings/behavior_screen.dart';
 import 'package:interstellar/src/screens/settings/display_screen.dart';
 import 'package:interstellar/src/screens/settings/feed_defaults_screen.dart';
-import 'package:interstellar/src/screens/settings/login_select.dart';
 import 'package:interstellar/src/screens/settings/profile_selection.dart';
 import 'package:interstellar/src/utils/utils.dart';
-import 'package:interstellar/src/widgets/settings_header.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
@@ -85,67 +84,20 @@ class SettingsScreen extends StatelessWidget {
             subtitle: Text(ac.selectedProfile),
             onTap: () => switchProfileSelect(context),
           ),
-          SettingsHeader(l(context).accounts),
-          ...(ac.accounts.keys.toList()
-                ..sort((a, b) {
-                  final [aLocal, aHost] = a.split('@');
-                  final [bLocal, bHost] = b.split('@');
+          ListTile(
+            leading: const Icon(Symbols.person_rounded),
+            title: Text(l(context).account_switch),
+            subtitle: Text(ac.selectedAccount),
+            onTap: () async {
+              final newAccount =
+                  await switchAccount(context, ac.selectedAccount);
 
-                  final hostCompare = aHost.compareTo(bHost);
-                  if (hostCompare != 0) return hostCompare;
+              if (newAccount == null || newAccount == ac.selectedAccount) {
+                return;
+              }
 
-                  return aLocal.compareTo(bLocal);
-                }))
-              .map((account) => ListTile(
-                    title: Text(
-                      account,
-                      style: TextStyle(
-                        fontWeight: account == ac.selectedAccount
-                            ? FontWeight.w800
-                            : FontWeight.normal,
-                      ),
-                    ),
-                    subtitle: Text(
-                        ac.servers[account.split('@').last]!.software.name),
-                    onTap: () => ac.switchAccounts(account),
-                    trailing: IconButton(
-                      icon: const Icon(Symbols.delete_rounded),
-                      onPressed: ac.selectedAccount == account
-                          ? null
-                          : () {
-                              showDialog<String>(
-                                context: context,
-                                builder: (BuildContext context) => AlertDialog(
-                                  title: Text(l(context).removeAccount),
-                                  content: Text(account),
-                                  actions: <Widget>[
-                                    OutlinedButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: Text(l(context).cancel),
-                                    ),
-                                    FilledButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                        ac.removeAccount(account);
-                                      },
-                                      child: Text(l(context).remove),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                    ),
-                  )),
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: OutlinedButton(
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const LoginSelectScreen(),
-                ),
-              ),
-              child: Text(l(context).addAccount),
-            ),
+              await ac.switchAccounts(newAccount);
+            },
           ),
         ],
       ),
