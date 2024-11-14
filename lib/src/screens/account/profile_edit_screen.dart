@@ -110,7 +110,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l(context).profile_edit),
+        title: Text(l(context).account_edit),
       ),
       body: SingleChildScrollView(
           child: Column(
@@ -262,7 +262,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                     _aboutTextController!,
                     originInstance: null,
                     draftController: aboutDraftController,
-                    label: l(context).profile_settings_about,
+                    label: l(context).account_settings_about,
                   ),
                 ),
                 if (_settings != null)
@@ -272,11 +272,11 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
-                            l(context).profile_settings_settings,
+                            l(context).account_settings_settings,
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                           SwitchListTile(
-                            title: Text(l(context).profile_settings_showNSFW),
+                            title: Text(l(context).account_settings_showNSFW),
                             value: _settings!.showNSFW,
                             onChanged: (bool value) {
                               setState(() {
@@ -287,7 +287,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                           ),
                           if (_settings!.blurNSFW != null)
                             SwitchListTile(
-                              title: Text(l(context).profile_settings_blurNSFW),
+                              title: Text(l(context).account_settings_blurNSFW),
                               value: _settings!.blurNSFW!,
                               onChanged: (bool? value) {
                                 setState(() {
@@ -299,7 +299,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                           if (_settings!.showReadPosts != null)
                             SwitchListTile(
                               title: Text(
-                                  l(context).profile_settings_showReadPosts),
+                                  l(context).account_settings_showReadPosts),
                               value: _settings!.showReadPosts!,
                               onChanged: (bool? value) {
                                 setState(() {
@@ -311,7 +311,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                           if (_settings!.showSubscribedUsers != null)
                             SwitchListTile(
                               title: Text(l(context)
-                                  .profile_settings_showSubscribedUsers),
+                                  .account_settings_showSubscribedUsers),
                               value: _settings!.showSubscribedUsers!,
                               onChanged: (bool? value) {
                                 setState(() {
@@ -323,7 +323,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                           if (_settings!.showSubscribedMagazines != null)
                             SwitchListTile(
                               title: Text(l(context)
-                                  .profile_settings_showSubscribedMagazines),
+                                  .account_settings_showSubscribedMagazines),
                               value: _settings!.showSubscribedMagazines!,
                               onChanged: (bool? value) {
                                 setState(() {
@@ -335,7 +335,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                           if (_settings!.showSubscribedDomains != null)
                             SwitchListTile(
                               title: Text(l(context)
-                                  .profile_settings_showSubscribedDomains),
+                                  .account_settings_showSubscribedDomains),
                               value: _settings!.showSubscribedDomains!,
                               onChanged: (bool? value) {
                                 setState(() {
@@ -347,7 +347,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                           if (_settings!.showProfileSubscriptions != null)
                             SwitchListTile(
                               title: Text(l(context)
-                                  .profile_settings_showProfileSubscriptions),
+                                  .account_settings_showProfileSubscriptions),
                               value: _settings!.showProfileSubscriptions!,
                               onChanged: (bool? value) {
                                 setState(() {
@@ -359,7 +359,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                           if (_settings!.showProfileFollowings != null)
                             SwitchListTile(
                               title: Text(l(context)
-                                  .profile_settings_showProfileFollowings),
+                                  .account_settings_showProfileFollowings),
                               value: _settings!.showProfileFollowings!,
                               onChanged: (bool? value) {
                                 setState(() {
@@ -371,7 +371,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                           if (_settings!.notifyOnNewEntry != null)
                             SwitchListTile(
                               title: Text(
-                                  l(context).profile_settings_notifyOnThread),
+                                  l(context).account_settings_notifyOnThread),
                               value: _settings!.notifyOnNewEntry!,
                               onChanged: (bool? value) {
                                 setState(() {
@@ -383,7 +383,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                           if (_settings!.notifyOnNewPost != null)
                             SwitchListTile(
                               title: Text(l(context)
-                                  .profile_settings_notifyOnMicroblog),
+                                  .account_settings_notifyOnMicroblog),
                               value: _settings!.notifyOnNewPost!,
                               onChanged: (bool? value) {
                                 setState(() {
@@ -395,7 +395,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                           if (_settings!.notifyOnNewEntryReply != null)
                             SwitchListTile(
                               title: Text(l(context)
-                                  .profile_settings_notifyOnThreadReply),
+                                  .account_settings_notifyOnThreadReply),
                               value: _settings!.notifyOnNewEntryReply!,
                               onChanged: (bool? value) {
                                 setState(() {
@@ -407,7 +407,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                           if (_settings!.notifyOnNewEntryCommentReply != null)
                             SwitchListTile(
                               title: Text(l(context)
-                                  .profile_settings_notifyOnThreadCommentReply),
+                                  .account_settings_notifyOnThreadCommentReply),
                               value: _settings!.notifyOnNewEntryCommentReply!,
                               onChanged: (bool? value) {
                                 setState(() {
@@ -420,7 +420,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                           if (_settings!.notifyOnNewPostReply != null)
                             SwitchListTile(
                               title: Text(l(context)
-                                  .profile_settings_notifyOnMicroblogReply),
+                                  .account_settings_notifyOnMicroblogReply),
                               value: _settings!.notifyOnNewPostReply!,
                               onChanged: (bool? value) {
                                 setState(() {
@@ -432,7 +432,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                           if (_settings!.notifyOnNewPostCommentReply != null)
                             SwitchListTile(
                               title: Text(l(context)
-                                  .profile_settings_notifyOnMicroblogCommentReply),
+                                  .account_settings_notifyOnMicroblogCommentReply),
                               value: _settings!.notifyOnNewPostCommentReply!,
                               onChanged: (bool? value) {
                                 setState(() {

@@ -5,6 +5,7 @@ import 'package:interstellar/src/screens/settings/behavior_screen.dart';
 import 'package:interstellar/src/screens/settings/display_screen.dart';
 import 'package:interstellar/src/screens/settings/feed_defaults_screen.dart';
 import 'package:interstellar/src/screens/settings/login_select.dart';
+import 'package:interstellar/src/screens/settings/profile_selection.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/settings_header.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -78,6 +79,11 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
           const Divider(),
+          ListTile(
+            leading: const Icon(Symbols.tune_rounded),
+            title: Text(l(context).profile_switch),
+            onTap: () => switchProfileSelect(context),
+          ),
           SettingsHeader(l(context).accounts),
           ...(ac.accounts.keys.toList()
                 ..sort((a, b) {

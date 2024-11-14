@@ -23,13 +23,21 @@ class AppController with ChangeNotifier {
 
   late final _mainProfileRecord = _mainStore.record('mainProfile');
   late final _selectedProfileRecord = _mainStore.record('selectedProfile');
+  late final _autoSelectProfileRecord = _mainStore.record('autoSelectProfile');
 
   late final _selectedAccountRecord = _mainStore.record('selectedAccount');
   late final _starsRecord = _mainStore.record('stars');
   late final _webPushKeysRecord = _mainStore.record('webPushKeys');
 
+  RecordRef<String, Map<String, Object?>> _profileRecord(String name) =>
+      _profileStore.record(FieldKey.escape(name));
+
   late String _mainProfile;
+  String get mainProfile => _mainProfile;
   late String _selectedProfile;
+  String get selectedProfile => _selectedProfile;
+  late String? _autoSelectProfile;
+  String? get autoSelectProfile => _autoSelectProfile;
 
   late ProfileRequired _builtProfile;
   ProfileRequired get profile => _builtProfile;
@@ -61,8 +69,13 @@ class AppController with ChangeNotifier {
 
   Future<void> init() async {
     _mainProfile = await _mainProfileRecord.get(db) as String? ?? 'Default';
-    _selectedProfile =
-        await _selectedProfileRecord.get(db) as String? ?? 'Default';
+    _autoSelectProfile = await _autoSelectProfileRecord.get(db) as String?;
+    if (_autoSelectProfile != null) {
+      _selectedProfile = _autoSelectProfile!;
+    } else {
+      _selectedProfile =
+          await _selectedProfileRecord.get(db) as String? ?? 'Default';
+    }
 
     _rebuildProfile();
 
@@ -96,24 +109,28 @@ class AppController with ChangeNotifier {
   }
 
   Future<void> _rebuildProfile() async {
-    final records = _profileStore.records(
-        [FieldKey.escape(_mainProfile), FieldKey.escape(_selectedProfile)]);
-
-    final [mainRecord, selectedRecord] = await records.get(db);
-    final mainProfile =
-        mainRecord == null ? null : ProfileOptional.fromJson(mainRecord);
-    final selectedProfile = selectedRecord == null
-        ? null
-        : ProfileOptional.fromJson(selectedRecord);
-
-    _selectedProfileValue = selectedProfile ?? ProfileOptional.nullProfile;
-
-    _builtProfile =
-        ProfileRequired.fromOptional(mainProfile?.merge(selectedProfile));
+    _builtProfile = ProfileRequired.fromOptional(
+      (await getProfile(_mainProfile))
+          .merge(await getProfile(_selectedProfile)),
+    );
   }
 
   Future<void> updateProfile(ProfileOptional value) async {
-    final record = _profileStore.record(FieldKey.escape(_selectedProfile));
+    setProfile(_selectedProfile, value);
+  }
+
+  Future<ProfileOptional> getProfile(String profile) async {
+    final record = _profileRecord(profile);
+
+    final profileValue = await record.get(db);
+
+    return profileValue == null
+        ? ProfileOptional.nullProfile
+        : ProfileOptional.fromJson(profileValue);
+  }
+
+  Future<void> setProfile(String profile, ProfileOptional value) async {
+    final record = _profileRecord(profile);
     await record.put(db, value.toJson());
 
     await _rebuildProfile();
@@ -131,6 +148,69 @@ class AppController with ChangeNotifier {
     await _rebuildProfile();
 
     notifyListeners();
+  }
+
+  Future<void> setMainProfile(String? newProfile) async {
+    if (newProfile == null) return;
+    if (newProfile == _mainProfile) return;
+
+    _mainProfile = newProfile;
+    await _mainProfileRecord.put(db, _mainProfile);
+
+    await _rebuildProfile();
+
+    notifyListeners();
+  }
+
+  Future<void> setAutoSelectProfile(String? newProfile) async {
+    if (newProfile == _autoSelectProfile) return;
+
+    _autoSelectProfile = newProfile;
+    if (_autoSelectProfile != null) {
+      await _autoSelectProfileRecord.put(db, _autoSelectProfile);
+    } else {
+      await _autoSelectProfileRecord.delete(db);
+    }
+
+    notifyListeners();
+  }
+
+  Future<List<String>> getProfileNames() async {
+    final list = await _profileStore.findKeys(db);
+    list.sort(
+      (a, b) {
+        // Main profile should be in the front
+        if (a == _mainProfile) return -1;
+        if (b == _mainProfile) return 1;
+
+        return a.compareTo(b);
+      },
+    );
+    return list;
+  }
+
+  Future<void> deleteProfile(String profileName) async {
+    if (profileName == _mainProfile) return;
+
+    if (profileName == _autoSelectProfile) await setAutoSelectProfile(null);
+    if (profileName == _selectedProfile) await switchProfiles(_mainProfile);
+
+    final record = _profileRecord(profileName);
+    await record.delete(db);
+  }
+
+  Future<void> renameProfile(
+    String oldProfileName,
+    String newProfileName,
+  ) async {
+    await setProfile(newProfileName, await getProfile(oldProfileName));
+
+    if (_mainProfile == oldProfileName) await setMainProfile(newProfileName);
+    if (_selectedProfile == oldProfileName) {
+      await switchProfiles(newProfileName);
+    }
+
+    await deleteProfile(oldProfileName);
   }
 
   Future<void> saveServer(ServerSoftware software, String server) async {
