@@ -96,8 +96,12 @@ class AppController with ChangeNotifier {
     if (_servers.isEmpty) {
       _servers['kbin.earth'] = const Server(software: ServerSoftware.mbin);
     }
-    _selectedAccount =
-        await _selectedAccountRecord.get(db) as String? ?? '@kbin.earth';
+    if (_autoSelectProfile != null && _builtProfile.autoSwitchAccount != null) {
+      _selectedAccount = _builtProfile.autoSwitchAccount!;
+    } else {
+      _selectedAccount =
+          await _selectedAccountRecord.get(db) as String? ?? '@kbin.earth';
+    }
 
     _accounts = Map.fromEntries((await _accountStore.find(db))
         .map((record) => MapEntry(record.key, Account.fromJson(record.value))));
@@ -109,9 +113,10 @@ class AppController with ChangeNotifier {
   }
 
   Future<void> _rebuildProfile() async {
+    _selectedProfileValue = await getProfile(_selectedProfile);
+
     _builtProfile = ProfileRequired.fromOptional(
-      (await getProfile(_mainProfile))
-          .merge(await getProfile(_selectedProfile)),
+      (await getProfile(_mainProfile)).merge(_selectedProfileValue),
     );
   }
 
@@ -147,7 +152,14 @@ class AppController with ChangeNotifier {
 
     await _rebuildProfile();
 
-    notifyListeners();
+    if (_builtProfile.autoSwitchAccount != null &&
+        _builtProfile.autoSwitchAccount != _selectedAccount) {
+      await switchAccounts(_builtProfile.autoSwitchAccount);
+    } else {
+      // switchAccounts() already calls notifyListeners(),
+      // so it's only necessary to run if switchAccounts() is not run.
+      notifyListeners();
+    }
   }
 
   Future<void> setMainProfile(String? newProfile) async {
@@ -270,6 +282,17 @@ class AppController with ChangeNotifier {
       if (_accounts[key]!.isPushRegistered ?? false) await unregisterPush(key);
     } catch (e) {
       // Ignore error in case unregister fails so the account is still removed
+    }
+
+    // Remove a profile's autoSwitchAccount value if it is for this account
+    final autoSwitchAccountProfiles = await _profileStore.find(db,
+        finder: Finder(filter: Filter.equals('autoSwitchAccount', key)));
+    for (var record in autoSwitchAccountProfiles) {
+      await _profileRecord(record.key).put(
+          db,
+          ProfileOptional.fromJson(record.value)
+              .copyWith(autoSwitchAccount: null)
+              .toJson());
     }
 
     _accounts.remove(key);

@@ -144,9 +144,16 @@ class _EditProfileScreenState extends State<_EditProfileScreen> {
 
     if (widget.profile != null) {
       nameController.text = widget.profile!;
+
       newAutoSelect =
           widget.profile == context.read<AppController>().autoSelectProfile;
       oldAutoSelect = newAutoSelect;
+
+      context.read<AppController>().getProfile(widget.profile!).then((value) {
+        setState(() {
+          autoSelectAccount = value.autoSwitchAccount;
+        });
+      });
     }
   }
 
@@ -211,23 +218,33 @@ class _EditProfileScreenState extends State<_EditProfileScreen> {
                           widget.profileList.contains(nameController.text))
                   ? null
                   : () async {
+                      final name = nameController.text;
+
                       if (widget.profile == null) {
                         await ac.setProfile(
-                          nameController.text,
+                          name,
                           ProfileOptional.nullProfile,
                         );
-                      } else if (nameController.text != widget.profile) {
-                        await ac.renameProfile(
-                            widget.profile!, nameController.text);
+                      } else if (name != widget.profile) {
+                        await ac.renameProfile(widget.profile!, name);
                       }
 
                       if (setAsMain) {
-                        await ac.setMainProfile(nameController.text);
+                        await ac.setMainProfile(name);
                       }
 
                       if (oldAutoSelect != newAutoSelect) {
-                        await ac.setAutoSelectProfile(
-                            newAutoSelect ? nameController.text : null);
+                        await ac
+                            .setAutoSelectProfile(newAutoSelect ? name : null);
+                      }
+
+                      final newProfileValue = await ac.getProfile(name);
+                      if (autoSelectAccount !=
+                          newProfileValue.autoSwitchAccount) {
+                        await ac.setProfile(
+                            name,
+                            newProfileValue.copyWith(
+                                autoSwitchAccount: autoSelectAccount));
                       }
 
                       if (!context.mounted) return;
