@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/models/post.dart';
-import 'package:interstellar/src/utils/language_codes.dart';
+import 'package:interstellar/src/utils/language.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/image_selector.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
@@ -153,7 +153,8 @@ class _CreateScreenState extends State<CreateScreen> {
                 ListTile(
                   title: Text(l(context).language),
                   onTap: () async {
-                    final newLang = await languageSelectionMenu.askSelection(
+                    final newLang =
+                        await languageSelectionMenu(context).askSelection(
                       context,
                       _lang,
                     );
@@ -166,7 +167,7 @@ class _CreateScreenState extends State<CreateScreen> {
                   },
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: [Text(getLangName(_lang))],
+                    children: [Text(getLanguageName(context, _lang))],
                   ),
                 ),
                 Padding(

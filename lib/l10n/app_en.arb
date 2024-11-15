@@ -373,5 +373,8 @@
   "saveChanges": "Save changes",
   "imageSaved": "Image saved",
   "videoSaved": "Video saved",
-  "searchTheFediverse": "Search the fediverse"
+  "searchTheFediverse": "Search the fediverse",
+  "languages": "Languages",
+  "systemLanguage": "System language",
+  "settings_appLanguage": "App language"
 }

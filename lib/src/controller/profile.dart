@@ -30,6 +30,7 @@ class ProfileRequired with _$ProfileRequired {
     required bool askBeforeUnsubscribing,
     required bool askBeforeDeleting,
     // Display settings
+    required String appLanguage,
     required ThemeMode themeMode,
     required FlexScheme colorScheme,
     required bool enableTrueBlack,
@@ -76,6 +77,7 @@ class ProfileRequired with _$ProfileRequired {
             defaultProfile.askBeforeUnsubscribing,
         askBeforeDeleting:
             profile?.askBeforeDeleting ?? defaultProfile.askBeforeDeleting,
+        appLanguage: profile?.appLanguage ?? defaultProfile.appLanguage,
         themeMode: profile?.themeMode ?? defaultProfile.themeMode,
         colorScheme: profile?.colorScheme ?? defaultProfile.colorScheme,
         enableTrueBlack:
@@ -125,6 +127,7 @@ class ProfileRequired with _$ProfileRequired {
     disableTabSwiping: false,
     askBeforeUnsubscribing: false,
     askBeforeDeleting: true,
+    appLanguage: '',
     themeMode: ThemeMode.system,
     colorScheme: FlexScheme.custom,
     enableTrueBlack: false,
@@ -166,6 +169,7 @@ class ProfileOptional with _$ProfileOptional {
     required bool? askBeforeUnsubscribing,
     required bool? askBeforeDeleting,
     // Display settings
+    required String? appLanguage,
     required ThemeMode? themeMode,
     required FlexScheme? colorScheme,
     required bool? enableTrueBlack,
@@ -203,6 +207,7 @@ class ProfileOptional with _$ProfileOptional {
     disableTabSwiping: null,
     askBeforeUnsubscribing: null,
     askBeforeDeleting: null,
+    appLanguage: null,
     themeMode: null,
     colorScheme: null,
     enableTrueBlack: null,
@@ -241,6 +246,7 @@ class ProfileOptional with _$ProfileOptional {
       askBeforeUnsubscribing:
           other.askBeforeUnsubscribing ?? askBeforeUnsubscribing,
       askBeforeDeleting: other.askBeforeDeleting ?? askBeforeDeleting,
+      appLanguage: other.appLanguage ?? appLanguage,
       themeMode: other.themeMode ?? themeMode,
       colorScheme: other.colorScheme ?? colorScheme,
       enableTrueBlack: other.enableTrueBlack ?? enableTrueBlack,
