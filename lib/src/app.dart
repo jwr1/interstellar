@@ -2,6 +2,7 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/screens/account/account_screen.dart';
 import 'package:interstellar/src/screens/account/notification/notification_badge.dart';
@@ -12,6 +13,7 @@ import 'package:interstellar/src/screens/settings/settings_screen.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/utils/variables.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
+import 'package:intl/locale.dart' as intl_locale;
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
@@ -35,6 +37,9 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     final appController = context.watch<AppController>();
 
+    final intlLocale =
+        intl_locale.Locale.tryParse(appController.profile.appLanguage);
+
     return DynamicColorBuilder(
       builder: (lightColorScheme, darkColorScheme) {
         final dynamicLightColorScheme =
@@ -53,9 +58,19 @@ class _AppState extends State<App> {
               notificationCountController!..updateAppController(appController),
           child: MaterialApp(
             restorationScopeId: 'app',
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            localizationsDelegates: const [
+              ...AppLocalizations.localizationsDelegates,
+              LocaleNamesLocalizationsDelegate(),
+            ],
             supportedLocales: AppLocalizations.supportedLocales,
             onGenerateTitle: (BuildContext context) => l(context).interstellar,
+            locale: intlLocale == null
+                ? null
+                : Locale.fromSubtags(
+                    languageCode: intlLocale.languageCode,
+                    countryCode: intlLocale.countryCode,
+                    scriptCode: intlLocale.scriptCode,
+                  ),
             theme: FlexThemeData.light(
               colorScheme: dynamicLightColorScheme,
               scheme: dynamicLightColorScheme != null

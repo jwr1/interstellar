@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/controller/server.dart';
-import 'package:interstellar/src/utils/language_codes.dart';
+import 'package:interstellar/src/utils/language.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/list_tile_switch.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -27,10 +27,12 @@ class BehaviorSettingsScreen extends StatelessWidget {
           ListTile(
             leading: const Icon(Symbols.translate_rounded),
             title: Text(l(context).settings_defaultPostLanguage),
-            subtitle: Text(getLangName(ac.profile.defaultPostLanguage)),
+            subtitle:
+                Text(getLanguageName(context, ac.profile.defaultPostLanguage)),
             onTap: () async {
-              final langCode = await languageSelectionMenu.askSelection(
-                  context, ac.selectedProfileValue.defaultPostLanguage);
+              final langCode = await languageSelectionMenu(context)
+                  .askSelection(
+                      context, ac.selectedProfileValue.defaultPostLanguage);
 
               if (langCode == null) return;
 
@@ -71,7 +73,7 @@ class BehaviorSettingsScreen extends StatelessWidget {
                         padding: const EdgeInsets.all(2),
                         child: InputChip(
                           isEnabled: customLanguageFilterEnabled,
-                          label: Text(getLangName(langCode)),
+                          label: Text(getLanguageName(context, langCode)),
                           onDeleted: () async {
                             final newLanguageFilter =
                                 ac.profile.customLanguageFilter.toSet();
@@ -93,8 +95,9 @@ class BehaviorSettingsScreen extends StatelessWidget {
                         onPressed: !customLanguageFilterEnabled
                             ? null
                             : () async {
-                                final langCode = await languageSelectionMenu
-                                    .askSelection(context, null);
+                                final langCode =
+                                    await languageSelectionMenu(context)
+                                        .askSelection(context, null);
 
                                 if (langCode == null) return;
 

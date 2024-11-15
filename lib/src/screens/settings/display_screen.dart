@@ -1,6 +1,7 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/controller/controller.dart';
+import 'package:interstellar/src/utils/language.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/list_tile_switch.dart';
 import 'package:interstellar/src/widgets/selection_menu.dart';
@@ -20,6 +21,22 @@ class DisplaySettingsScreen extends StatelessWidget {
       ),
       body: ListView(
         children: [
+          ListTile(
+            leading: const Icon(Symbols.translate_rounded),
+            title: Text(l(context).settings_appLanguage),
+            subtitle:
+                Text(getLanguageName(context, ac.profile.appLanguage, true)),
+            onTap: () async {
+              final langCode = await languageSelectionMenuAppSupported(context)
+                  .askSelection(context, ac.selectedProfileValue.appLanguage);
+
+              if (langCode == null) return;
+
+              ac.updateProfile(
+                ac.selectedProfileValue.copyWith(appLanguage: langCode),
+              );
+            },
+          ),
           ListTile(
             leading: const Icon(Symbols.bedtime_rounded),
             title: Text(l(context).settings_themeMode),
