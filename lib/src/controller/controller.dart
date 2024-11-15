@@ -68,13 +68,21 @@ class AppController with ChangeNotifier {
   API get api => _api;
 
   Future<void> init() async {
-    _mainProfile = await _mainProfileRecord.get(db) as String? ?? 'Default';
+    final mainProfileTemp = await _mainProfileRecord.get(db) as String?;
+    if (mainProfileTemp != null) {
+      _mainProfile = mainProfileTemp;
+    } else {
+      _mainProfile = 'Default';
+      await _profileRecord(_mainProfile)
+          .put(db, ProfileOptional.nullProfile.toJson());
+      await _mainProfileRecord.put(db, _mainProfile);
+    }
     _autoSelectProfile = await _autoSelectProfileRecord.get(db) as String?;
     if (_autoSelectProfile != null) {
       _selectedProfile = _autoSelectProfile!;
     } else {
       _selectedProfile =
-          await _selectedProfileRecord.get(db) as String? ?? 'Default';
+          await _selectedProfileRecord.get(db) as String? ?? _mainProfile;
     }
 
     _rebuildProfile();
