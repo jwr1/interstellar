@@ -1,1 +1,14 @@
-{}
+{
+  "interstellar": "Interstellar",
+  "@interstellar": {},
+  "explore": "Jelajah",
+  "@explore": {},
+  "feed": "Linimasa",
+  "@feed": {},
+  "accounts": "Akun-akun",
+  "@accounts": {},
+  "addAccount": "Tambahkan Akun",
+  "@addAccount": {},
+  "removeAccount": "Hapus Akun",
+  "@removeAccount": {}
+}
