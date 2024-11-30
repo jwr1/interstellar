@@ -3,7 +3,7 @@ import 'package:interstellar/src/api/comments.dart';
 import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/screens/feed/feed_screen.dart';
 import 'package:interstellar/src/utils/utils.dart';
-import 'package:interstellar/src/widgets/selection_menu.dart';
+import 'package:interstellar/src/widgets/list_tile_select.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
@@ -20,7 +20,7 @@ class FeedDefaultSettingsScreen extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          _FeedDefaultListTile(
+          ListTileSelect(
             title: l(context).settings_feedDefaults_type,
             icon: Symbols.tab,
             selectionMenu: feedTypeSelect(context),
@@ -30,7 +30,7 @@ class FeedDefaultSettingsScreen extends StatelessWidget {
               ac.selectedProfileValue.copyWith(feedDefaultType: newValue),
             ),
           ),
-          _FeedDefaultListTile(
+          ListTileSelect(
             title: l(context).settings_feedDefaults_filter,
             icon: Symbols.filter_list_rounded,
             selectionMenu: feedFilterSelect(context),
@@ -40,7 +40,7 @@ class FeedDefaultSettingsScreen extends StatelessWidget {
               ac.selectedProfileValue.copyWith(feedDefaultFilter: newValue),
             ),
           ),
-          _FeedDefaultListTile(
+          ListTileSelect(
             title: l(context).settings_feedDefaults_threadsSort,
             icon: Symbols.newsmode_rounded,
             selectionMenu: feedSortSelect(context),
@@ -51,7 +51,7 @@ class FeedDefaultSettingsScreen extends StatelessWidget {
                   .copyWith(feedDefaultThreadsSort: newValue),
             ),
           ),
-          _FeedDefaultListTile(
+          ListTileSelect(
             title: l(context).settings_feedDefaults_microblogSort,
             icon: Symbols.article_rounded,
             selectionMenu: feedSortSelect(context),
@@ -62,7 +62,7 @@ class FeedDefaultSettingsScreen extends StatelessWidget {
                   .copyWith(feedDefaultMicroblogSort: newValue),
             ),
           ),
-          _FeedDefaultListTile(
+          ListTileSelect(
             title: l(context).settings_feedDefaults_exploreSort,
             icon: Symbols.explore_rounded,
             selectionMenu: feedSortSelect(context),
@@ -73,7 +73,7 @@ class FeedDefaultSettingsScreen extends StatelessWidget {
                   .copyWith(feedDefaultExploreSort: newValue),
             ),
           ),
-          _FeedDefaultListTile(
+          ListTileSelect(
             title: l(context).settings_feedDefaults_commentSort,
             icon: Symbols.comment_rounded,
             selectionMenu: commentSortSelect(context),
@@ -86,51 +86,6 @@ class FeedDefaultSettingsScreen extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _FeedDefaultListTile<T> extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  final SelectionMenu<T> selectionMenu;
-  final T value;
-  final T? oldValue;
-  final void Function(T newValue) onChange;
-
-  const _FeedDefaultListTile({
-    super.key,
-    required this.title,
-    required this.icon,
-    required this.selectionMenu,
-    required this.value,
-    required this.oldValue,
-    required this.onChange,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final curOption = selectionMenu.getOption(value);
-
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(curOption.icon, size: 20),
-          const SizedBox(width: 4),
-          Text(curOption.title),
-          const Icon(Symbols.arrow_drop_down_rounded),
-        ],
-      ),
-      onTap: () async {
-        final newValue = await selectionMenu.askSelection(context, oldValue);
-
-        if (newValue == null) return;
-
-        onChange(newValue);
-      },
     );
   }
 }

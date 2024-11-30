@@ -1,10 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/notifications.dart';
 import 'package:interstellar/src/controller/controller.dart';
-import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/notification.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
@@ -118,28 +115,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     label: Text(l(context).notifications_readAll),
                     icon: const Icon(Symbols.mark_chat_read, size: 20),
                   ),
-                  // Push notifications only work on Android devices and Mbin servers
-                  if (Platform.isAndroid &&
-                      context.read<AppController>().serverSoftware ==
-                          ServerSoftware.mbin)
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: LoadingOutlinedButton(
-                        onPressed: context
-                                .watch<AppController>()
-                                .isPushRegistered
-                            ? () =>
-                                context.read<AppController>().unregisterPush()
-                            : () => context
-                                .read<AppController>()
-                                .registerPush(context),
-                        label: Text(
-                            context.watch<AppController>().isPushRegistered
-                                ? l(context).notifications_unregisterPush
-                                : l(context).notifications_registerPush),
-                        icon: const Icon(Symbols.notifications_active_rounded),
-                      ),
-                    ),
                 ],
               ),
             ),
