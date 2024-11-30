@@ -120,18 +120,18 @@
   "account_settings_showSubscribedUsers": "Show subscribed users",
   "account_settings_showSubscribedMagazines": "Show subscribed magazines",
   "account_settings_showSubscribedDomains": "Show subscribed domains",
-  "account_settings_showProfileSubscriptions": "Show profile subscriptions",
-  "account_settings_showProfileFollowings": "Show profile followings",
+  "account_settings_showProfileSubscriptions": "Show profile subscriptions publicly",
+  "account_settings_showProfileFollowings": "Show profile followings publicly",
   "account_settings_notifyOnThread": "Notify on new threads in subscribed magazines",
-  "account_settings_notifyOnMicroblog": "Notify on new microblog in subscribed magazines",
+  "account_settings_notifyOnMicroblog": "Notify on new microblogs in subscribed magazines",
   "account_settings_notifyOnThreadReply": "Notify on comments in authored threads",
   "account_settings_notifyOnThreadCommentReply": "Notify on thread comment reply",
   "account_settings_notifyOnMicroblogReply": "Notify on comments in authored microblogs",
   "account_settings_notifyOnMicroblogCommentReply": "Notify on microblog comment reply",
   "notifications": "Notifications",
-  "notifications_readAll": "Read all",
-  "notifications_registerPush": "Register push",
-  "notifications_unregisterPush": "Unregister push",
+  "notifications_readAll": "Mark all as read",
+  "notifications_registerPush": "Register for push notifications",
+  "notifications_unregisterPush": "Unregister push notifications",
   "messages": "Messages",
   "reply": "Reply",
   "send": "Send",
@@ -139,9 +139,17 @@
   "settings": "Settings",
   "settings_behavior": "Behavior",
   "settings_display": "Display",
-  "settings_feedActions": "Feed Action",
+  "settings_feedActions": "Feed Actions",
   "settings_feedDefaults": "Feed Defaults",
   "settings_notifications": "Notifications",
+  "settings_notificationsForX": "Notifications for {account}",
+  "@settings_notificationsForX": {
+    "placeholders": {
+      "account": {
+        "type": "String"
+      }
+    }
+  },
   "settings_about": "About",
   "settings_defaultPostLanguage": "Default post language",
   "settings_useAccountLanguageFilter": "Use account language filter",

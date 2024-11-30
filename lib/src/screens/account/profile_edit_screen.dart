@@ -113,96 +113,43 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
         title: Text(l(context).account_edit),
       ),
       body: SingleChildScrollView(
-          child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Stack(
-            alignment: Alignment.center,
-            fit: StackFit.passthrough,
-            children: [
-              Stack(
-                children: [
-                  Container(
-                    constraints: BoxConstraints(
-                      maxHeight: MediaQuery.of(context).size.height / 3,
-                    ),
-                    height: coverPresent ? null : 128,
-                    margin: const EdgeInsets.only(bottom: 48),
-                    child: !coverPresent
-                        ? null
-                        : _coverFile != null
-                            ? Image.file(
-                                File(_coverFile!.path),
-                                fit: BoxFit.cover,
-                              )
-                            : AdvancedImage(
-                                widget.user.cover!,
-                                fit: BoxFit.cover,
-                              ),
-                  ),
-                  Positioned.fill(
-                    bottom: 48,
-                    child: Material(
-                      color: Colors.black.withAlpha(64),
-                      child: InkWell(
-                        onTap: coverPresent
-                            ? () async {
-                                setState(() {
-                                  _deleteCover = true;
-                                  _coverFile = null;
-                                });
-                              }
-                            : () async {
-                                final image = await ImagePicker()
-                                    .pickImage(source: ImageSource.gallery);
-
-                                setState(() {
-                                  _deleteCover = false;
-                                  _coverFile = image;
-                                });
-                              },
-                        child: Icon(
-                          coverPresent
-                              ? Symbols.delete_rounded
-                              : Symbols.add_photo_alternate_rounded,
-                          size: 36,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Positioned(
-                bottom: 0,
-                left: 12,
-                child: Stack(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Stack(
+              alignment: Alignment.center,
+              fit: StackFit.passthrough,
+              children: [
+                Stack(
                   children: [
-                    Avatar(
-                      avatarPresent ? widget.user.avatar : null,
-                      radius: 36,
-                      borderRadius: 4,
-                      backgroundColor:
-                          Theme.of(context).scaffoldBackgroundColor,
-                      overrideImageProvider: _avatarFile == null
+                    Container(
+                      constraints: BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.height / 3,
+                      ),
+                      height: coverPresent ? null : 128,
+                      margin: const EdgeInsets.only(bottom: 48),
+                      child: !coverPresent
                           ? null
-                          : FileImage(File(_avatarFile!.path)),
+                          : _coverFile != null
+                              ? Image.file(
+                                  File(_coverFile!.path),
+                                  fit: BoxFit.cover,
+                                )
+                              : AdvancedImage(
+                                  widget.user.cover!,
+                                  fit: BoxFit.cover,
+                                ),
                     ),
                     Positioned.fill(
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: LoadingIconButton(
-                          style: ButtonStyle(
-                            fixedSize: const WidgetStatePropertyAll(
-                                Size.fromRadius(36)),
-                            iconSize: const WidgetStatePropertyAll(36),
-                            backgroundColor: WidgetStatePropertyAll(
-                                Colors.black.withAlpha(64)),
-                          ),
-                          onPressed: avatarPresent
+                      bottom: 48,
+                      child: Material(
+                        color: Colors.black.withAlpha(64),
+                        child: InkWell(
+                          onTap: coverPresent
                               ? () async {
                                   setState(() {
-                                    _deleteAvatar = true;
-                                    _avatarFile = null;
+                                    _deleteCover = true;
+                                    _coverFile = null;
                                   });
                                 }
                               : () async {
@@ -210,63 +157,116 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                                       .pickImage(source: ImageSource.gallery);
 
                                   setState(() {
-                                    _deleteAvatar = false;
-                                    _avatarFile = image;
+                                    _deleteCover = false;
+                                    _coverFile = image;
                                   });
                                 },
-                          icon: Icon(avatarPresent
-                              ? Symbols.delete_rounded
-                              : Symbols.add_photo_alternate_rounded),
+                          child: Icon(
+                            coverPresent
+                                ? Symbols.delete_rounded
+                                : Symbols.add_photo_alternate_rounded,
+                            size: 36,
+                          ),
                         ),
                       ),
                     ),
                   ],
                 ),
-              ),
-              Positioned(
+                Positioned(
                   bottom: 0,
-                  right: 16,
-                  child: FilledButton(
-                    onPressed: onSave,
-                    child: Text(l(context).saveChanges),
-                  )),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.user.displayName ??
-                              widget.user.name.split('@').first,
-                          style: Theme.of(context).textTheme.titleLarge,
+                  left: 12,
+                  child: Stack(
+                    children: [
+                      Avatar(
+                        avatarPresent ? widget.user.avatar : null,
+                        radius: 36,
+                        borderRadius: 4,
+                        backgroundColor:
+                            Theme.of(context).scaffoldBackgroundColor,
+                        overrideImageProvider: _avatarFile == null
+                            ? null
+                            : FileImage(File(_avatarFile!.path)),
+                      ),
+                      Positioned.fill(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: LoadingIconButton(
+                            style: ButtonStyle(
+                              fixedSize: const WidgetStatePropertyAll(
+                                  Size.fromRadius(36)),
+                              iconSize: const WidgetStatePropertyAll(36),
+                              backgroundColor: WidgetStatePropertyAll(
+                                  Colors.black.withAlpha(64)),
+                            ),
+                            onPressed: avatarPresent
+                                ? () async {
+                                    setState(() {
+                                      _deleteAvatar = true;
+                                      _avatarFile = null;
+                                    });
+                                  }
+                                : () async {
+                                    final image = await ImagePicker()
+                                        .pickImage(source: ImageSource.gallery);
+
+                                    setState(() {
+                                      _deleteAvatar = false;
+                                      _avatarFile = image;
+                                    });
+                                  },
+                            icon: Icon(avatarPresent
+                                ? Symbols.delete_rounded
+                                : Symbols.add_photo_alternate_rounded),
+                          ),
                         ),
-                        Text(
-                          widget.user.name.contains('@')
-                              ? '@${widget.user.name}'
-                              : '@${widget.user.name}@${context.watch<AppController>().instanceHost}',
-                        ),
-                      ],
-                    ),
-                  ),
-                ]),
-                Padding(
-                  padding: const EdgeInsets.only(top: 12),
-                  child: MarkdownEditor(
-                    _aboutTextController!,
-                    originInstance: null,
-                    draftController: aboutDraftController,
-                    label: l(context).account_settings_about,
+                      ),
+                    ],
                   ),
                 ),
-                if (_settings != null)
+                Positioned(
+                    bottom: 0,
+                    right: 16,
+                    child: FilledButton(
+                      onPressed: onSave,
+                      child: Text(l(context).saveChanges),
+                    )),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.user.displayName ??
+                                widget.user.name.split('@').first,
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                          Text(
+                            widget.user.name.contains('@')
+                                ? '@${widget.user.name}'
+                                : '@${widget.user.name}@${context.watch<AppController>().instanceHost}',
+                          ),
+                        ],
+                      ),
+                    ),
+                  ]),
                   Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: MarkdownEditor(
+                      _aboutTextController!,
+                      originInstance: null,
+                      draftController: aboutDraftController,
+                      label: l(context).account_settings_about,
+                    ),
+                  ),
+                  if (_settings != null)
+                    Padding(
                       padding: const EdgeInsets.only(top: 30),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -368,87 +368,15 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                                 });
                               },
                             ),
-                          if (_settings!.notifyOnNewEntry != null)
-                            SwitchListTile(
-                              title: Text(
-                                  l(context).account_settings_notifyOnThread),
-                              value: _settings!.notifyOnNewEntry!,
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  _settings!.notifyOnNewEntry = value!;
-                                  _settingsChanged = true;
-                                });
-                              },
-                            ),
-                          if (_settings!.notifyOnNewPost != null)
-                            SwitchListTile(
-                              title: Text(l(context)
-                                  .account_settings_notifyOnMicroblog),
-                              value: _settings!.notifyOnNewPost!,
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  _settings!.notifyOnNewPost = value!;
-                                  _settingsChanged = true;
-                                });
-                              },
-                            ),
-                          if (_settings!.notifyOnNewEntryReply != null)
-                            SwitchListTile(
-                              title: Text(l(context)
-                                  .account_settings_notifyOnThreadReply),
-                              value: _settings!.notifyOnNewEntryReply!,
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  _settings!.notifyOnNewEntryReply = value!;
-                                  _settingsChanged = true;
-                                });
-                              },
-                            ),
-                          if (_settings!.notifyOnNewEntryCommentReply != null)
-                            SwitchListTile(
-                              title: Text(l(context)
-                                  .account_settings_notifyOnThreadCommentReply),
-                              value: _settings!.notifyOnNewEntryCommentReply!,
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  _settings!.notifyOnNewEntryCommentReply =
-                                      value!;
-                                  _settingsChanged = true;
-                                });
-                              },
-                            ),
-                          if (_settings!.notifyOnNewPostReply != null)
-                            SwitchListTile(
-                              title: Text(l(context)
-                                  .account_settings_notifyOnMicroblogReply),
-                              value: _settings!.notifyOnNewPostReply!,
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  _settings!.notifyOnNewPostReply = value!;
-                                  _settingsChanged = true;
-                                });
-                              },
-                            ),
-                          if (_settings!.notifyOnNewPostCommentReply != null)
-                            SwitchListTile(
-                              title: Text(l(context)
-                                  .account_settings_notifyOnMicroblogCommentReply),
-                              value: _settings!.notifyOnNewPostCommentReply!,
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  _settings!.notifyOnNewPostCommentReply =
-                                      value!;
-                                  _settingsChanged = true;
-                                });
-                              },
-                            ),
                         ],
-                      ))
-              ],
+                      ),
+                    ),
+                ],
+              ),
             ),
-          ),
-        ],
-      )),
+          ],
+        ),
+      ),
     );
   }
 }

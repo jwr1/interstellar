@@ -9,6 +9,7 @@ import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/utils/jwt_http_client.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/redirect_listen.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
@@ -92,7 +93,8 @@ class _LoginConfirmScreenState extends State<LoginConfirmScreen> {
                 child: Text(l(context).guest),
               ),
               const SizedBox(width: 12),
-              FilledButton(
+              LoadingFilledButton(
+                label: Text(l(context).login),
                 onPressed: widget.software == ServerSoftware.lemmy &&
                         (_usernameEmailTextController.text.isEmpty ||
                             _passwordTextController.text.isEmpty)
@@ -188,7 +190,6 @@ class _LoginConfirmScreenState extends State<LoginConfirmScreen> {
 
                         Navigator.pop(context, true);
                       },
-                child: Text(l(context).login),
               ),
             ],
           ),

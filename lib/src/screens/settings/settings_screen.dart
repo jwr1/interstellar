@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/controller/controller.dart';
+import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/screens/settings/about_screen.dart';
 import 'package:interstellar/src/screens/settings/account_selection.dart';
 import 'package:interstellar/src/screens/settings/behavior_screen.dart';
 import 'package:interstellar/src/screens/settings/display_screen.dart';
+import 'package:interstellar/src/screens/settings/feed_actions_screen.dart';
 import 'package:interstellar/src/screens/settings/feed_defaults_screen.dart';
+import 'package:interstellar/src/screens/settings/notification_screen.dart';
 import 'package:interstellar/src/screens/settings/profile_selection.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -44,11 +47,11 @@ class SettingsScreen extends StatelessWidget {
           ListTile(
             leading: const Icon(Symbols.filter_list_rounded),
             title: Text(l(context).settings_feedActions),
-            // onTap: () => Navigator.of(context).push(
-            //   MaterialPageRoute(
-            //     builder: (context) => const SettingsScreen(),
-            //   ),
-            // ),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const FeedActionsSettingsScreen(),
+              ),
+            ),
           ),
           ListTile(
             leading: const Icon(Symbols.tune_rounded),
@@ -62,11 +65,18 @@ class SettingsScreen extends StatelessWidget {
           ListTile(
             leading: const Icon(Symbols.notifications_rounded),
             title: Text(l(context).settings_notifications),
-            // onTap: () => Navigator.of(context).push(
-            //   MaterialPageRoute(
-            //     builder: (context) => const SettingsScreen(),
-            //   ),
-            // ),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const NotificationSettingsScreen(),
+              ),
+            ),
+            enabled: ac.serverSoftware == ServerSoftware.mbin &&
+                context
+                    .watch<AppController>()
+                    .selectedAccount
+                    .split('@')
+                    .first
+                    .isNotEmpty,
           ),
           ListTile(
             leading: const Icon(Symbols.info_rounded),
