@@ -384,5 +384,21 @@
   "searchTheFediverse": "Search the fediverse",
   "languages": "Languages",
   "systemLanguage": "System language",
-  "settings_appLanguage": "App language"
+  "settings_appLanguage": "App language",
+  "pointsX": "{num} Points",
+  "@pointsX": {
+    "placeholders": {
+      "num": {
+        "type": "int"
+      }
+    }
+  },
+  "commentsX": "{num} Comments",
+  "@commentsX": {
+    "placeholders": {
+      "num": {
+        "type": "int"
+      }
+    }
+  }
 }

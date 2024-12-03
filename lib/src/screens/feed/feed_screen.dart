@@ -8,6 +8,7 @@ import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/screens/feed/create_screen.dart';
 import 'package:interstellar/src/screens/feed/nav_drawer.dart';
 import 'package:interstellar/src/screens/feed/post_item.dart';
+import 'package:interstellar/src/screens/feed/post_item_compact.dart';
 import 'package:interstellar/src/screens/feed/post_page.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/actions.dart';
@@ -688,44 +689,60 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<PostModel>(
               itemBuilder: (context, item, index) {
-                final inner = InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => PostPage(
-                          initData: item,
-                          onUpdate: (newValue) {
-                            var newList = _pagingController.itemList;
-                            newList![index] = newValue;
-                            setState(() {
-                              _pagingController.itemList = newList;
-                            });
-                          },
-                        ),
+                void onPostTap() {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => PostPage(
+                        initData: item,
+                        onUpdate: (newValue) {
+                          var newList = _pagingController.itemList;
+                          newList![index] = newValue;
+                          setState(() {
+                            _pagingController.itemList = newList;
+                          });
+                        },
                       ),
-                    );
-                  },
-                  child: PostItem(
-                    item,
-                    (newValue) {
-                      var newList = _pagingController.itemList;
-                      newList![index] = newValue;
-                      setState(() {
-                        _pagingController.itemList = newList;
-                      });
-                    },
-                    isPreview: item.type == PostType.thread,
-                  ),
-                );
+                    ),
+                  );
+                }
 
-                return Card(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: inner,
-                );
+                if (context.watch<AppController>().profile.compactMode) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      InkWell(
+                        onTap: onPostTap,
+                        child: PostItemCompact(item),
+                      ),
+                      const Divider(
+                        height: 1,
+                        thickness: 1,
+                      ),
+                    ],
+                  );
+                } else {
+                  return Card(
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: InkWell(
+                      onTap: onPostTap,
+                      child: PostItem(
+                        item,
+                        (newValue) {
+                          var newList = _pagingController.itemList;
+                          newList![index] = newValue;
+                          setState(() {
+                            _pagingController.itemList = newList;
+                          });
+                        },
+                        isPreview: item.type == PostType.thread,
+                      ),
+                    ),
+                  );
+                }
               },
             ),
           )
