@@ -6,7 +6,6 @@ import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/image.dart';
 import 'package:interstellar/src/widgets/user_status_icons.dart';
-import 'package:interstellar/src/widgets/video.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class ContentItemCompactPost extends StatefulWidget {
@@ -67,13 +66,12 @@ class ContentItemCompactPost extends StatefulWidget {
 class _ContentItemCompactPostState extends State<ContentItemCompactPost> {
   @override
   Widget build(BuildContext context) {
-    final isVideo = widget.link != null && isSupportedVideo(widget.link!);
-
+    // TODO: Figure out how to use full existing height of row, instead of fixed value.
     final imageWidget = widget.image == null
         ? null
         : SizedBox(
-            height: 64,
-            width: 64,
+            height: 96,
+            width: 96,
             child: AdvancedImage(
               widget.image!,
               fit: BoxFit.cover,
@@ -126,11 +124,11 @@ class _ContentItemCompactPostState extends State<ContentItemCompactPost> {
           )
         : null;
 
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: Row(
-        children: [
-          Expanded(
+    return Row(
+      children: [
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(8),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,16 +219,9 @@ class _ContentItemCompactPostState extends State<ContentItemCompactPost> {
               ],
             ),
           ),
-          if (imageWidget != null)
-            Padding(
-              padding: const EdgeInsets.only(left: 16),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: imageWidget,
-              ),
-            ),
-        ],
-      ),
+        ),
+        if (imageWidget != null) imageWidget,
+      ],
     );
   }
 }
