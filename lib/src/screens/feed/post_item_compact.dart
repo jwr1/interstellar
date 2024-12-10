@@ -5,10 +5,12 @@ import 'package:interstellar/src/widgets/content_item/content_item_compact_post.
 class PostItemCompact extends StatelessWidget {
   const PostItemCompact(
     this.item, {
+    this.filterListWarnings,
     super.key,
   });
 
   final PostModel item;
+  final Set<String>? filterListWarnings;
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +25,10 @@ class PostItemCompact extends StatelessWidget {
       isNSFW: item.isNSFW,
       isOC: item.isOC == true,
       user: item.user.name,
-      userIcon: item.user.avatar,
       userIdOnClick: item.user.id,
       userCakeDay: item.user.createdAt,
       userIsBot: item.user.isBot,
       magazine: item.magazine.name,
-      magazineIcon: item.magazine.icon,
       magazineIdOnClick: item.magazine.id,
       upVotes: item.upvotes,
       downVotes: item.downvotes,

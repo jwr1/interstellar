@@ -16,6 +16,7 @@ class PostItem extends StatelessWidget {
     this.onReply,
     this.onEdit,
     this.onDelete,
+    this.filterListWarnings,
   });
 
   final PostModel item;
@@ -24,6 +25,7 @@ class PostItem extends StatelessWidget {
   final Future<void> Function(String)? onEdit;
   final Future<void> Function()? onDelete;
   final bool isPreview;
+  final Set<String>? filterListWarnings;
 
   @override
   Widget build(BuildContext context) {

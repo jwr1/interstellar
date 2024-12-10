@@ -5,6 +5,7 @@ import 'package:interstellar/src/api/api.dart';
 import 'package:interstellar/src/api/oauth.dart';
 import 'package:interstellar/src/controller/account.dart';
 import 'package:interstellar/src/controller/database.dart';
+import 'package:interstellar/src/controller/filter_list.dart';
 import 'package:interstellar/src/controller/profile.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/utils/jwt_http_client.dart';
@@ -18,6 +19,7 @@ import 'package:webpush_encryption/webpush_encryption.dart';
 class AppController with ChangeNotifier {
   final _mainStore = StoreRef.main();
   final _accountStore = StoreRef<String, Map<String, Object?>>('account');
+  final _filterListStore = StoreRef<String, Map<String, Object?>>('filterList');
   final _profileStore = StoreRef<String, Map<String, Object?>>('profile');
   final _serverStore = StoreRef<String, Map<String, Object?>>('server');
 
@@ -67,6 +69,9 @@ class AppController with ChangeNotifier {
   ServerSoftware get serverSoftware => _servers[instanceHost]!.software;
   API get api => _api;
 
+  late Map<String, FilterList> _filterLists;
+  Map<String, FilterList> get filterLists => _filterLists;
+
   Future<void> init() async {
     final mainProfileTemp = await _mainProfileRecord.get(db) as String?;
     if (mainProfileTemp != null) {
@@ -85,7 +90,7 @@ class AppController with ChangeNotifier {
           await _selectedProfileRecord.get(db) as String? ?? _mainProfile;
     }
 
-    _rebuildProfile();
+    await _rebuildProfile();
 
     _stars = (await _starsRecord.get(db) as List<Object?>? ?? [])
         .map((v) => v as String)
@@ -116,6 +121,9 @@ class AppController with ChangeNotifier {
     if (_accounts.isEmpty) {
       _accounts['@kbin.earth'] = const Account();
     }
+
+    _filterLists = Map.fromEntries((await _filterListStore.find(db)).map(
+        (record) => MapEntry(record.key, FilterList.fromJson(record.value))));
 
     await _updateAPI();
   }
@@ -303,6 +311,8 @@ class AppController with ChangeNotifier {
               .toJson());
     }
 
+    _rebuildProfile();
+
     _accounts.remove(key);
     _selectedAccount = _accounts.keys.firstOrNull ?? '@kbin.earth';
 
@@ -444,5 +454,64 @@ class AppController with ChangeNotifier {
     notifyListeners();
 
     await _accountStore.record(account).put(db, _accounts[account]!.toJson());
+  }
+
+  Future<void> setFilterList(String name, FilterList value) async {
+    _filterLists[name] = value;
+
+    notifyListeners();
+
+    await _filterListStore
+        .record(FieldKey.escape(name))
+        .put(db, value.toJson());
+  }
+
+  Future<void> removeFilterList(String name) async {
+    _filterLists.remove(name);
+
+    // Remove a profile's activation value if it is for this filter list
+    for (var record in await _profileStore.find(db)) {
+      final profile = ProfileOptional.fromJson(record.value);
+      if (profile.filterLists?.containsKey(name) == true) {
+        final newProfileFilterLists = {...profile.filterLists!};
+        newProfileFilterLists.remove(name);
+        await _profileRecord(record.key).put(
+            db, profile.copyWith(filterLists: newProfileFilterLists).toJson());
+      }
+    }
+
+    _rebuildProfile();
+
+    notifyListeners();
+
+    await _filterListStore.record(FieldKey.escape(name)).delete(db);
+  }
+
+  Future<void> renameFilterList(String oldName, String newName) async {
+    _filterLists[newName] = _filterLists[oldName]!;
+    _filterLists.remove(oldName);
+
+    // Update a profile's activation value if it is for this filter list
+    for (var record in await _profileStore.find(db)) {
+      final profile = ProfileOptional.fromJson(record.value);
+      if (profile.filterLists?.containsKey(oldName) == true) {
+        final newProfileFilterLists = {
+          ...profile.filterLists!,
+          newName: profile.filterLists![oldName]!,
+        };
+        newProfileFilterLists.remove(oldName);
+        await _profileRecord(record.key).put(
+            db, profile.copyWith(filterLists: newProfileFilterLists).toJson());
+      }
+    }
+
+    _rebuildProfile();
+
+    notifyListeners();
+
+    await _filterListStore
+        .record(FieldKey.escape(newName))
+        .put(db, _filterLists[newName]!.toJson());
+    await _filterListStore.record(FieldKey.escape(oldName)).delete(db);
   }
 }

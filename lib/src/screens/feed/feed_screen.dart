@@ -572,6 +572,10 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
       PagingController<String, PostModel>(firstPageKey: '');
   final _scrollController = ScrollController();
 
+  // Map of postId to FilterList names for posts that match lists that are marked as warnings.
+  // If a post matches any FilterList that is not shown with warning, then the post is not shown at all.
+  final Map<int, Set<String>> _filterListWarnings = {};
+
   @override
   void initState() {
     super.initState();
@@ -580,6 +584,8 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
   }
 
   Future<void> _fetchPage(String pageKey) async {
+    if (pageKey.isEmpty) _filterListWarnings.clear();
+
     try {
       PostListModel newPage = await (switch (widget.mode) {
         PostType.thread => context.read<AppController>().api.threads.list(
@@ -625,18 +631,33 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
       List<PostModel> newItems = [];
       final currentItemIds =
           _pagingController.itemList?.map((post) => post.id) ?? [];
+      final filterListActivations =
+          context.read<AppController>().profile.filterLists;
       newItems = newPage.items
           .where((post) => !currentItemIds.contains(post.id))
           .where((post) {
         // Skip feed filters if it's an explore page
         if (widget.sourceId != null) return true;
 
-        // for (var filter in context.read<AppController>().feedFiltersRegExp) {
-        //   if ((post.title != null && filter.hasMatch(post.title!)) ||
-        //       (post.body != null && filter.hasMatch(post.body!))) {
-        //     return false;
-        //   }
-        // }
+        for (var filterListEntry
+            in context.read<AppController>().filterLists.entries) {
+          if (filterListActivations[filterListEntry.key] == true) {
+            final filterList = filterListEntry.value;
+
+            if ((post.title != null && filterList.hasMatch(post.title!)) ||
+                (post.body != null && filterList.hasMatch(post.body!))) {
+              if (filterList.showWithWarning) {
+                if (!_filterListWarnings.containsKey(post.id)) {
+                  _filterListWarnings[post.id] = {};
+                }
+
+                _filterListWarnings[post.id]!.add(filterListEntry.key);
+              } else {
+                return false;
+              }
+            }
+          }
+        }
 
         return true;
       }).toList();
@@ -712,7 +733,10 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
                     children: [
                       InkWell(
                         onTap: onPostTap,
-                        child: PostItemCompact(item),
+                        child: PostItemCompact(
+                          item,
+                          filterListWarnings: _filterListWarnings[item.id],
+                        ),
                       ),
                       const Divider(
                         height: 1,
@@ -739,6 +763,7 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
                           });
                         },
                         isPreview: item.type == PostType.thread,
+                        filterListWarnings: _filterListWarnings[item.id],
                       ),
                     ),
                   );

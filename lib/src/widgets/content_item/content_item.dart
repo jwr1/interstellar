@@ -85,6 +85,8 @@ class ContentItem extends StatefulWidget {
   final String editDraftResourceId;
   final String replyDraftResourceId;
 
+  final Set<String>? filterListWarnings;
+
   const ContentItem({
     required this.originInstance,
     this.title,
@@ -133,6 +135,7 @@ class ContentItem extends StatefulWidget {
     this.onCollapse,
     required this.editDraftResourceId,
     required this.replyDraftResourceId,
+    this.filterListWarnings,
     super.key,
   });
 
@@ -298,6 +301,19 @@ class _ContentItemState extends State<ContentItem> {
                         ContentItemLinkPanel(link: widget.link!),
                       Row(
                         children: [
+                          if (widget.filterListWarnings?.isNotEmpty == true)
+                            Padding(
+                              padding: const EdgeInsets.only(right: 10),
+                              child: Tooltip(
+                                message: l(context).filterListWarningX(
+                                    widget.filterListWarnings!.join(', ')),
+                                triggerMode: TooltipTriggerMode.tap,
+                                child: const Icon(
+                                  Symbols.warning_amber_rounded,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ),
                           if (widget.isPinned)
                             Padding(
                               padding: const EdgeInsets.only(right: 10),

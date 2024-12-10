@@ -4,7 +4,7 @@ import 'package:material_symbols_icons/symbols.dart';
 
 class ListTileSelect<T> extends StatelessWidget {
   final String title;
-  final IconData icon;
+  final IconData? icon;
   final SelectionMenu<T> selectionMenu;
   final T value;
   final T? oldValue;
@@ -13,7 +13,7 @@ class ListTileSelect<T> extends StatelessWidget {
   const ListTileSelect({
     super.key,
     required this.title,
-    required this.icon,
+    this.icon,
     required this.selectionMenu,
     required this.value,
     required this.oldValue,
@@ -25,7 +25,7 @@ class ListTileSelect<T> extends StatelessWidget {
     final curOption = selectionMenu.getOption(value);
 
     return ListTile(
-      leading: Icon(icon),
+      leading: icon != null ? Icon(icon) : null,
       title: Text(title),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,

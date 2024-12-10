@@ -400,5 +400,30 @@
         "type": "int"
       }
     }
+  },
+  "filterLists": "Filter lists",
+  "filterList_activateFilter": "Activate Filter",
+  "filterList_new": "New filter list",
+  "filterList_edit": "Edit filter list",
+  "filterList_delete": "Delete filter list",
+  "filterList_name": "Name",
+  "filterList_phrases": "Phrases",
+  "filterList_showWithContentWarning": "Show with content warning",
+  "filterList_matchMode": "Match mode",
+  "filterList_matchMode_simple": "Simple",
+  "filterList_matchMode_simple_help": "Will literally match any occurrence of the phrase. For example, the phrase \"app\" will match \"app\", and also \"apps\", \"application\", \"yapp\", etc.",
+  "filterList_matchMode_wholeWords": "Whole words",
+  "filterList_matchMode_wholeWords_help": "Will only match if there is a word boundary at both ends of the checked text, in other words, the phrase must be the whole word and cannot be in the middle of a word. For example, the phrase \"app\" will match \"app\", but not \"apps\", \"application\", \"yapp\", etc.",
+  "filterList_matchMode_regex": "Regular expression",
+  "filterList_matchMode_regex_help": "Will match content that is found by the specified regular expression, which is derived from the phrase.",
+  "filterList_caseSensitive": "Case sensitive",
+  "filterList_caseSensitive_help": "When enabled, will only match content with the same casing as the phrase.",
+  "filterListWarningX": "Warning: this post was matched with the following filter lists: {lists}",
+  "@filterListWarningX": {
+    "placeholders": {
+      "lists": {
+        "type": "String"
+      }
+    }
   }
 }
