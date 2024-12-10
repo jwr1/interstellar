@@ -53,6 +53,8 @@ class ProfileRequired with _$ProfileRequired {
     required ActionLocationWithTabs feedActionSetFilter,
     required ActionLocation feedActionSetSort,
     required ActionLocationWithTabs feedActionSetType,
+    // Filter list activations
+    required Map<String, bool> filterLists,
   }) = _ProfileRequired;
 
   factory ProfileRequired.fromJson(Map<String, Object?> json) =>
@@ -115,6 +117,7 @@ class ProfileRequired with _$ProfileRequired {
             profile?.feedActionSetSort ?? defaultProfile.feedActionSetSort,
         feedActionSetType:
             profile?.feedActionSetType ?? defaultProfile.feedActionSetType,
+        filterLists: profile?.filterLists ?? defaultProfile.filterLists,
       );
 
   static const defaultProfile = ProfileRequired(
@@ -148,6 +151,7 @@ class ProfileRequired with _$ProfileRequired {
     feedActionSetFilter: ActionLocationWithTabs.tabs,
     feedActionSetSort: ActionLocation.appBar,
     feedActionSetType: ActionLocationWithTabs.appBar,
+    filterLists: {},
   );
 }
 
@@ -192,6 +196,8 @@ class ProfileOptional with _$ProfileOptional {
     required ActionLocationWithTabs? feedActionSetFilter,
     required ActionLocation? feedActionSetSort,
     required ActionLocationWithTabs? feedActionSetType,
+    // Filter list activations
+    required Map<String, bool>? filterLists,
   }) = _ProfileOptional;
 
   factory ProfileOptional.fromJson(Map<String, Object?> json) =>
@@ -228,6 +234,7 @@ class ProfileOptional with _$ProfileOptional {
     feedActionSetFilter: null,
     feedActionSetSort: null,
     feedActionSetType: null,
+    filterLists: null,
   );
 
   ProfileOptional merge(ProfileOptional? other) {
@@ -277,6 +284,12 @@ class ProfileOptional with _$ProfileOptional {
           other.feedActionSetFilter ?? this.feedActionSetFilter,
       feedActionSetSort: other.feedActionSetSort ?? this.feedActionSetSort,
       feedActionSetType: other.feedActionSetType ?? this.feedActionSetType,
+      filterLists: filterLists != null && other.filterLists != null
+          ? {
+              ...filterLists!,
+              ...other.filterLists!,
+            }
+          : other.filterLists ?? filterLists,
     );
   }
 }

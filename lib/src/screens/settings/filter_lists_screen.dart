@@ -1,0 +1,259 @@
+import 'package:flutter/material.dart';
+import 'package:interstellar/src/controller/controller.dart';
+import 'package:interstellar/src/controller/filter_list.dart';
+import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/list_tile_select.dart';
+import 'package:interstellar/src/widgets/list_tile_switch.dart';
+import 'package:interstellar/src/widgets/loading_button.dart';
+import 'package:interstellar/src/widgets/selection_menu.dart';
+import 'package:interstellar/src/widgets/text_editor.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:provider/provider.dart';
+
+// TODO: add controls for adding/removing phrases, test show content warning option, test all match modes for correctness
+
+class FilterListsScreen extends StatefulWidget {
+  const FilterListsScreen({super.key});
+
+  @override
+  State<FilterListsScreen> createState() => _FilterListsScreenState();
+}
+
+class _FilterListsScreenState extends State<FilterListsScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ac = context.watch<AppController>();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l(context).filterLists),
+      ),
+      body: ListView(
+        children: [
+          ...ac.filterLists.keys.map(
+            (name) => Row(
+              children: [
+                Expanded(
+                  child: ListTile(
+                    title: Text(name),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            _EditFilterListScreen(filterList: name),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Switch(
+                    value: ac.profile.filterLists[name] == true,
+                    onChanged: (value) {
+                      ac.updateProfile(
+                        ac.selectedProfileValue.copyWith(filterLists: {
+                          if (ac.selectedProfileValue.filterLists != null)
+                            ...ac.selectedProfileValue.filterLists!,
+                          name: value,
+                        }),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Symbols.add_rounded),
+            title: Text(l(context).filterList_new),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) =>
+                    const _EditFilterListScreen(filterList: null),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _EditFilterListScreen extends StatefulWidget {
+  final String? filterList;
+
+  const _EditFilterListScreen({
+    required this.filterList,
+    super.key,
+  });
+
+  @override
+  State<_EditFilterListScreen> createState() => _EditFilterListScreenState();
+}
+
+class _EditFilterListScreenState extends State<_EditFilterListScreen> {
+  final nameController = TextEditingController();
+  FilterList filterListData = FilterList.nullFilterList;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.filterList != null) {
+      nameController.text = widget.filterList!;
+      filterListData =
+          context.read<AppController>().filterLists[widget.filterList!]!;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ac = context.watch<AppController>();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.filterList == null
+            ? l(context).filterList_new
+            : l(context).filterList_edit),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          if (widget.filterList != null) ...[
+            ListTileSwitch(
+              title: Text(l(context).filterList_activateFilter),
+              value: ac.profile.filterLists[widget.filterList] == true,
+              onChanged: (value) {
+                ac.updateProfile(
+                  ac.selectedProfileValue.copyWith(filterLists: {
+                    if (ac.selectedProfileValue.filterLists != null)
+                      ...ac.selectedProfileValue.filterLists!,
+                    widget.filterList!: value,
+                  }),
+                );
+              },
+            ),
+            const Divider(),
+          ],
+          TextEditor(
+            nameController,
+            label: l(context).filterList_name,
+            onChanged: (_) => setState(() {}),
+          ),
+          ListTileSwitch(
+            title: Text(l(context).filterList_showWithContentWarning),
+            value: filterListData.showWithWarning,
+            onChanged: (value) => setState(() {
+              filterListData = filterListData.copyWith(showWithWarning: value);
+            }),
+          ),
+          ListTileSelect<FilterListMatchMode>(
+            title: l(context).filterList_matchMode,
+            selectionMenu: _filterListMatchModeSelect(context),
+            value: filterListData.matchMode,
+            oldValue: filterListData.matchMode,
+            onChange: (newValue) => setState(() {
+              filterListData = filterListData.copyWith(matchMode: newValue);
+            }),
+          ),
+          ListTileSwitch(
+            title: Text(l(context).filterList_caseSensitive),
+            subtitle: Text(l(context).filterList_caseSensitive_help),
+            value: filterListData.caseSensitive,
+            onChanged: (value) => setState(() {
+              filterListData = filterListData.copyWith(caseSensitive: value);
+            }),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 16),
+            child: LoadingFilledButton(
+              icon: const Icon(Symbols.save_rounded),
+              onPressed: nameController.text.isEmpty ||
+                      (nameController.text != widget.filterList &&
+                          ac.filterLists.containsKey(nameController.text))
+                  ? null
+                  : () async {
+                      final name = nameController.text;
+
+                      if (widget.filterList == null) {
+                        await ac.setFilterList(
+                          name,
+                          FilterList.nullFilterList,
+                        );
+                      } else if (name != widget.filterList) {
+                        await ac.renameFilterList(widget.filterList!, name);
+                      }
+
+                      await ac.setFilterList(name, filterListData);
+
+                      if (!context.mounted) return;
+                      Navigator.pop(context);
+                    },
+              label: Text(l(context).saveChanges),
+            ),
+          ),
+          if (widget.filterList != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: OutlinedButton.icon(
+                icon: const Icon(Symbols.delete_rounded),
+                onPressed: () {
+                  showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: Text(l(context).filterList_delete),
+                      content: Text(widget.filterList!),
+                      actions: <Widget>[
+                        OutlinedButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text(l(context).cancel),
+                        ),
+                        FilledButton(
+                          onPressed: () async {
+                            await ac.removeFilterList(widget.filterList!);
+
+                            if (!context.mounted) return;
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                          },
+                          child: Text(l(context).delete),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                label: Text(l(context).filterList_delete),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+SelectionMenu<FilterListMatchMode> _filterListMatchModeSelect(
+        BuildContext context) =>
+    SelectionMenu(
+      l(context).filterList_matchMode,
+      [
+        SelectionMenuItem(
+          value: FilterListMatchMode.simple,
+          title: l(context).filterList_matchMode_simple,
+          subtitle: l(context).filterList_matchMode_simple_help,
+        ),
+        SelectionMenuItem(
+          value: FilterListMatchMode.wholeWords,
+          title: l(context).filterList_matchMode_wholeWords,
+          subtitle: l(context).filterList_matchMode_wholeWords_help,
+        ),
+        SelectionMenuItem(
+          value: FilterListMatchMode.regex,
+          title: l(context).filterList_matchMode_regex,
+          subtitle: l(context).filterList_matchMode_regex_help,
+        ),
+      ],
+    );

@@ -9,6 +9,7 @@ class SelectionMenuItem<T> {
   final IconData? icon;
   final Color? iconColor;
   final ServerSoftware? validSoftware;
+  final String? subtitle;
 
   const SelectionMenuItem({
     required this.value,
@@ -16,6 +17,7 @@ class SelectionMenuItem<T> {
     this.icon,
     this.iconColor,
     this.validSoftware,
+    this.subtitle,
   });
 }
 
@@ -61,6 +63,9 @@ class SelectionMenu<T> {
                               .colorScheme
                               .primaryContainer
                               .withOpacity(0.2),
+                          subtitle: option.subtitle != null
+                              ? Text(option.subtitle!)
+                              : null,
                         ),
                       ),
                   const SizedBox(height: 16),

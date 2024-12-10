@@ -22,18 +22,18 @@ class ContentItemCompactPost extends StatefulWidget {
   final bool isOC;
 
   final String? user;
-  final ImageModel? userIcon;
   final int? userIdOnClick;
   final DateTime? userCakeDay;
   final bool userIsBot;
 
   final String? magazine;
-  final ImageModel? magazineIcon;
   final int? magazineIdOnClick;
 
   final int? upVotes;
   final int? downVotes;
   final int? numComments;
+
+  final Set<String>? filterListWarnings;
 
   const ContentItemCompactPost({
     this.title,
@@ -46,16 +46,15 @@ class ContentItemCompactPost extends StatefulWidget {
     this.isNSFW = false,
     this.isOC = false,
     this.user,
-    this.userIcon,
     this.userIdOnClick,
     this.userCakeDay,
     this.userIsBot = false,
     this.magazine,
-    this.magazineIcon,
     this.magazineIdOnClick,
     this.upVotes,
     this.downVotes,
     this.numComments,
+    this.filterListWarnings,
     super.key,
   });
 
@@ -142,6 +141,19 @@ class _ContentItemCompactPostState extends State<ContentItemCompactPost> {
                 const SizedBox(height: 4),
                 Row(
                   children: [
+                    if (widget.filterListWarnings?.isNotEmpty == true)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: Tooltip(
+                          message: l(context).filterListWarningX(
+                              widget.filterListWarnings!.join(', ')),
+                          triggerMode: TooltipTriggerMode.tap,
+                          child: const Icon(
+                            Symbols.warning_amber_rounded,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ),
                     if (widget.isPinned)
                       Padding(
                         padding: const EdgeInsets.only(right: 10),
