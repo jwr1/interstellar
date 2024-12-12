@@ -408,6 +408,7 @@
   "filterList_delete": "Delete filter list",
   "filterList_name": "Name",
   "filterList_phrases": "Phrases",
+  "filterList_addPhrase": "Add phrase",
   "filterList_showWithContentWarning": "Show with content warning",
   "filterList_matchMode": "Match mode",
   "filterList_matchMode_simple": "Simple",
