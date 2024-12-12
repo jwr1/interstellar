@@ -152,6 +152,7 @@ class PostItem extends StatelessWidget {
           'edit:${item.type.name}:${context.watch<AppController>().instanceHost}:${item.id}',
       replyDraftResourceId:
           'reply:${item.type.name}:${context.watch<AppController>().instanceHost}:${item.id}',
+      filterListWarnings: filterListWarnings,
     );
   }
 }

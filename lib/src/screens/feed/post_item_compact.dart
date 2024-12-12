@@ -33,6 +33,7 @@ class PostItemCompact extends StatelessWidget {
       upVotes: item.upvotes,
       downVotes: item.downvotes,
       numComments: item.numComments,
+      filterListWarnings: filterListWarnings,
     );
   }
 }

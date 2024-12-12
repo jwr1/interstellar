@@ -10,8 +10,6 @@ import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
-// TODO: add controls for adding/removing phrases, test show content warning option, test all match modes for correctness
-
 class FilterListsScreen extends StatefulWidget {
   const FilterListsScreen({super.key});
 
@@ -143,6 +141,82 @@ class _EditFilterListScreenState extends State<_EditFilterListScreen> {
             nameController,
             label: l(context).filterList_name,
             onChanged: (_) => setState(() {}),
+          ),
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(l(context).filterList_phrases),
+              ),
+              Flexible(
+                child: Wrap(
+                  children: [
+                    ...(filterListData.phrases.map(
+                      (phrase) => Padding(
+                        padding: const EdgeInsets.all(2),
+                        child: InputChip(
+                          label: Text(phrase),
+                          onDeleted: () async {
+                            final newPhrases = filterListData.phrases.toSet();
+
+                            newPhrases.remove(phrase);
+
+                            setState(() {
+                              filterListData =
+                                  filterListData.copyWith(phrases: newPhrases);
+                            });
+                          },
+                        ),
+                      ),
+                    )),
+                    Padding(
+                      padding: const EdgeInsets.all(2),
+                      child: IconButton(
+                        onPressed: () async {
+                          final phraseTextEditingController =
+                              TextEditingController();
+
+                          final phrase = await showDialog<String>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text(l(context).filterList_addPhrase),
+                              content: TextEditor(phraseTextEditingController),
+                              actions: [
+                                OutlinedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text(l(context).cancel),
+                                ),
+                                LoadingFilledButton(
+                                  onPressed: () async {
+                                    Navigator.of(context)
+                                        .pop(phraseTextEditingController.text);
+                                  },
+                                  label: Text(l(context).filterList_addPhrase),
+                                ),
+                              ],
+                            ),
+                          );
+
+                          if (phrase == null) return;
+
+                          final newPhrases = filterListData.phrases.toSet();
+
+                          newPhrases.add(phrase);
+
+                          setState(() {
+                            filterListData =
+                                filterListData.copyWith(phrases: newPhrases);
+                          });
+                        },
+                        icon: const Icon(Icons.add),
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
           ),
           ListTileSwitch(
             title: Text(l(context).filterList_showWithContentWarning),

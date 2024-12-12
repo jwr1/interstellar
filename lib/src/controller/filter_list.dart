@@ -15,7 +15,7 @@ class FilterList with _$FilterList {
 
   @JsonSerializable(explicitToJson: true, includeIfNull: false)
   const factory FilterList({
-    required List<String> phrases,
+    required Set<String> phrases,
     required FilterListMatchMode matchMode,
     required bool caseSensitive,
     required bool showWithWarning,
@@ -25,7 +25,7 @@ class FilterList with _$FilterList {
       _$FilterListFromJson(json);
 
   static const nullFilterList = FilterList(
-    phrases: [],
+    phrases: {},
     matchMode: FilterListMatchMode.simple,
     caseSensitive: false,
     showWithWarning: false,
@@ -46,9 +46,9 @@ class FilterList with _$FilterList {
       case FilterListMatchMode.wholeWords:
         for (var phrase in phrases) {
           if (RegExp(
-            phrase,
+            '\\b${RegExp.escape(phrase)}\\b',
             caseSensitive: caseSensitive,
-          ).hasMatch('\\b${RegExp.escape(input)}\\b')) return true;
+          ).hasMatch(input)) return true;
         }
 
         return false;
