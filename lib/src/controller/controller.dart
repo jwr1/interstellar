@@ -50,8 +50,8 @@ class AppController with ChangeNotifier {
   late List<String> _stars;
   List<String> get stars => _stars;
 
-  late WebPushKeys _webPushKeys;
-  WebPushKeys get webPushKeys => _webPushKeys;
+  late WebPushKeySet _webPushKeys;
+  WebPushKeySet get webPushKeys => _webPushKeys;
 
   bool get isPushRegistered =>
       _accounts[_selectedAccount]?.isPushRegistered ?? false;
@@ -98,9 +98,9 @@ class AppController with ChangeNotifier {
 
     final webPushKeysValue = await _webPushKeysRecord.get(db) as String?;
     if (webPushKeysValue != null) {
-      _webPushKeys = await WebPushKeys.deserialize(webPushKeysValue);
+      _webPushKeys = await WebPushKeySet.deserialize(webPushKeysValue);
     } else {
-      _webPushKeys = await WebPushKeys.newKeyPair();
+      _webPushKeys = await WebPushKeySet.newKeyPair();
       await _webPushKeysRecord.put(db, _webPushKeys.serialize);
     }
 
