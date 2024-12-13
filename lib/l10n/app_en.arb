@@ -425,5 +425,6 @@
     }
   },
   "confirmUnsubscribe": "You are about to unsubscribe. Continue?",
-  "confirmUnfollow": "You are about to unfollow. Continue?"
+  "confirmUnfollow": "You are about to unfollow. Continue?",
+  "altText": "Alt text"
 }

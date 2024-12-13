@@ -142,10 +142,27 @@ class _AdvancedImagePageState extends State<AdvancedImagePage> {
               alignment: Alignment.bottomCenter,
               child: Padding(
                 padding: const EdgeInsets.all(8),
-                child: Text(
-                  widget.image.altText!,
-                  textAlign: TextAlign.center,
-                  style: titleStyle,
+                child: GestureDetector(
+                  onTap: () => showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text(l(context).altText),
+                      content: Text(widget.image.altText!),
+                      actions: [
+                        OutlinedButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text(l(context).close),
+                        ),
+                      ],
+                    ),
+                  ),
+                  child: Text(
+                    widget.image.altText!,
+                    textAlign: TextAlign.center,
+                    style: titleStyle,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ),
             ),
