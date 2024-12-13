@@ -24,6 +24,7 @@ class APIUsers {
   Future<DetailedUserListModel> list({
     String? page,
     ExploreFilter? filter,
+    String? search,
   }) async {
     switch (software) {
       case ServerSoftware.mbin:
@@ -37,6 +38,7 @@ class APIUsers {
 
         final query = queryParams({
           'p': page,
+          'q': search,
         });
 
         final response = await httpClient.get(Uri.https(server, path, query));

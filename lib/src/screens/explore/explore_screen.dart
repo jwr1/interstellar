@@ -77,6 +77,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
           final newPage = await context.read<AppController>().api.users.list(
                 page: nullIfEmpty(pageKey),
                 filter: filter,
+                search: search,
               );
 
           // Check BuildContext
@@ -171,10 +172,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
                         },
                         enabled:
                             !(context.watch<AppController>().serverSoftware ==
-                                        ServerSoftware.mbin &&
-                                    (filter != ExploreFilter.all &&
-                                        filter != ExploreFilter.local)) &&
-                                type != ExploreType.people,
+                                    ServerSoftware.mbin &&
+                                (filter != ExploreFilter.all &&
+                                    filter != ExploreFilter.local)),
                         decoration: InputDecoration(
                           prefixIcon: const Icon(Symbols.search_rounded),
                           border: const OutlineInputBorder(
