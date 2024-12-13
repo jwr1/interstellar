@@ -5,6 +5,7 @@ import 'package:interstellar/src/screens/settings/account_selection.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/list_tile_switch.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
+import 'package:interstellar/src/widgets/markdown/markdown.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
@@ -52,10 +53,35 @@ class _ProfileSelectWidgetState extends State<_ProfileSelectWidget> {
       children: [
         Padding(
           padding: const EdgeInsets.all(12),
-          child: Text(
-            l(context).profile_switch,
-            style: Theme.of(context).textTheme.titleLarge,
-            textAlign: TextAlign.center,
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  l(context).profile_switch,
+                  style: Theme.of(context).textTheme.titleLarge,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              IconButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text(l(context).profile_about_title),
+                        content: SingleChildScrollView(
+                            child: Markdown(l(context).profile_about_body,
+                                ac.instanceHost)),
+                        actions: [
+                          OutlinedButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text(l(context).close),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                  icon: const Icon(Symbols.help_rounded))
+            ],
           ),
         ),
         if (profileList != null)
