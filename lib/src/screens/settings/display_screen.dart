@@ -91,7 +91,7 @@ class DisplaySettingsScreen extends StatelessWidget {
           ),
           const Divider(),
           ListTileSwitch(
-            leading: const Icon(Symbols.globe),
+            leading: const Icon(Symbols.globe_rounded),
             title: Text(l(context).settings_alwaysShowInstance),
             subtitle: Text(l(context).settings_alwaysShowInstance_help),
             value: ac.profile.alwaysShowInstance,
@@ -107,6 +107,29 @@ class DisplaySettingsScreen extends StatelessWidget {
               ac.selectedProfileValue
                   .copyWith(coverMediaMarkedSensitive: newValue),
             ),
+          ),
+          const Divider(),
+          ListTileSwitch(
+            leading: const Icon(Symbols.image_rounded),
+            title: Text(l(context).settings_fullImageSizeThreads),
+            value: ac.profile.fullImageSizeThreads,
+            onChanged: ac.profile.compactMode
+                ? null
+                : (newValue) => ac.updateProfile(
+                      ac.selectedProfileValue
+                          .copyWith(fullImageSizeThreads: newValue),
+                    ),
+          ),
+          ListTileSwitch(
+            leading: const Icon(Symbols.image_rounded),
+            title: Text(l(context).settings_fullImageSizeMicroblogs),
+            value: ac.profile.fullImageSizeMicroblogs,
+            onChanged: ac.profile.compactMode
+                ? null
+                : (newValue) => ac.updateProfile(
+                      ac.selectedProfileValue
+                          .copyWith(fullImageSizeMicroblogs: newValue),
+                    ),
           ),
         ],
       ),

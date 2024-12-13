@@ -35,6 +35,8 @@ class ProfileRequired with _$ProfileRequired {
     required bool compactMode,
     required bool alwaysShowInstance,
     required bool coverMediaMarkedSensitive,
+    required bool fullImageSizeThreads,
+    required bool fullImageSizeMicroblogs,
     // Feed defaults
     required PostType feedDefaultType,
     required FeedSource feedDefaultFilter,
@@ -82,6 +84,10 @@ class ProfileRequired with _$ProfileRequired {
             profile?.alwaysShowInstance ?? defaultProfile.alwaysShowInstance,
         coverMediaMarkedSensitive: profile?.coverMediaMarkedSensitive ??
             defaultProfile.coverMediaMarkedSensitive,
+        fullImageSizeThreads: profile?.fullImageSizeThreads ??
+            defaultProfile.fullImageSizeThreads,
+        fullImageSizeMicroblogs: profile?.fullImageSizeMicroblogs ??
+            defaultProfile.fullImageSizeMicroblogs,
         feedDefaultType:
             profile?.feedDefaultType ?? defaultProfile.feedDefaultType,
         feedDefaultFilter:
@@ -126,6 +132,8 @@ class ProfileRequired with _$ProfileRequired {
     compactMode: false,
     alwaysShowInstance: false,
     coverMediaMarkedSensitive: true,
+    fullImageSizeThreads: false,
+    fullImageSizeMicroblogs: true,
     feedDefaultType: PostType.thread,
     feedDefaultFilter: FeedSource.subscribed,
     feedDefaultThreadsSort: FeedSort.hot,
@@ -166,6 +174,8 @@ class ProfileOptional with _$ProfileOptional {
     required bool? compactMode,
     required bool? alwaysShowInstance,
     required bool? coverMediaMarkedSensitive,
+    required bool? fullImageSizeThreads,
+    required bool? fullImageSizeMicroblogs,
     // Feed defaults
     required PostType? feedDefaultType,
     required FeedSource? feedDefaultFilter,
@@ -203,6 +213,8 @@ class ProfileOptional with _$ProfileOptional {
     compactMode: null,
     alwaysShowInstance: null,
     coverMediaMarkedSensitive: null,
+    fullImageSizeThreads: null,
+    fullImageSizeMicroblogs: null,
     feedDefaultType: null,
     feedDefaultFilter: null,
     feedDefaultThreadsSort: null,
@@ -240,6 +252,9 @@ class ProfileOptional with _$ProfileOptional {
       alwaysShowInstance: other.alwaysShowInstance ?? alwaysShowInstance,
       coverMediaMarkedSensitive:
           other.coverMediaMarkedSensitive ?? coverMediaMarkedSensitive,
+      fullImageSizeThreads: other.fullImageSizeThreads ?? fullImageSizeThreads,
+      fullImageSizeMicroblogs:
+          other.fullImageSizeMicroblogs ?? fullImageSizeMicroblogs,
       feedDefaultType: other.feedDefaultType ?? feedDefaultType,
       feedDefaultFilter: other.feedDefaultFilter ?? feedDefaultFilter,
       feedDefaultThreadsSort:

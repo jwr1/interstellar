@@ -34,6 +34,7 @@ class ContentItem extends StatefulWidget {
   final DateTime? editedAt;
 
   final bool isPreview;
+  final bool fullImageSize;
   final bool showMagazineFirst;
 
   final bool isPinned;
@@ -96,6 +97,7 @@ class ContentItem extends StatefulWidget {
     this.createdAt,
     this.editedAt,
     this.isPreview = false,
+    this.fullImageSize = false,
     this.showMagazineFirst = false,
     this.isPinned = false,
     this.isNSFW = false,
@@ -242,7 +244,7 @@ class _ContentItemState extends State<ContentItem> {
                             .coverMediaMarkedSensitive,
                   ),
                 )
-              : (widget.isPreview
+              : (!widget.fullImageSize
                   ? SizedBox(
                       height: 160,
                       width: double.infinity,
@@ -273,7 +275,7 @@ class _ContentItemState extends State<ContentItem> {
           if ((!isRightImage && imageWidget != null) ||
               (!widget.isPreview && isVideo))
             Wrapper(
-              shouldWrap: !widget.isPreview,
+              shouldWrap: widget.fullImageSize,
               parentBuilder: (child) => Container(
                   constraints: BoxConstraints(
                     maxHeight: MediaQuery.of(context).size.height / 2,

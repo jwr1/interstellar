@@ -763,7 +763,7 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
                             _pagingController.itemList = newList;
                           });
                         },
-                        isPreview: item.type == PostType.thread,
+                        isPreview: true,
                         filterListWarnings: _filterListWarnings[item.id],
                       ),
                     ),
