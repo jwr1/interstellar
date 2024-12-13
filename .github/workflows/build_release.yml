@@ -12,7 +12,7 @@ on:
         default: 'X.X.X'
         type: string
       build-number:
-        description: 'Build number to use (e.g. 123)'
+        description: 'Build number to use (e.g. 65)'
         required: true
         type: number
 
@@ -58,7 +58,7 @@ jobs:
         if: matrix.target == 'android'
         uses: actions/setup-java@v4
         with:
-          java-version: '17.x'
+          java-version: '21'
           distribution: temurin
 
       - name: Install Linux dependencies
