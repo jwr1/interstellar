@@ -58,6 +58,7 @@ class _MagazineOwnerPanelState extends State<MagazineOwnerPanel> {
             ),
           ),
           body: TabBarView(
+            physics: appTabViewPhysics(context),
             children: <Widget>[
               MagazineOwnerPanelGeneral(data: _data, onUpdate: onUpdate),
               MagazineOwnerPanelModerators(data: _data, onUpdate: onUpdate),

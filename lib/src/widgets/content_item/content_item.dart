@@ -235,7 +235,11 @@ class _ContentItemState extends State<ContentItem> {
                     widget.image!,
                     fit: BoxFit.cover,
                     openTitle: imageOpenTitle,
-                    enableBlur: widget.isNSFW,
+                    enableBlur: widget.isNSFW &&
+                        context
+                            .watch<AppController>()
+                            .profile
+                            .coverMediaMarkedSensitive,
                   ),
                 )
               : (widget.isPreview

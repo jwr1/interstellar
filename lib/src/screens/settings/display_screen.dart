@@ -100,15 +100,6 @@ class DisplaySettingsScreen extends StatelessWidget {
             ),
           ),
           ListTileSwitch(
-            leading: const Icon(Symbols.warning_rounded),
-            title: Text(l(context).settings_alwaysRevealContentWarnings),
-            value: ac.profile.alwaysRevealContentWarnings,
-            onChanged: (newValue) => ac.updateProfile(
-              ac.selectedProfileValue
-                  .copyWith(alwaysRevealContentWarnings: newValue),
-            ),
-          ),
-          ListTileSwitch(
             leading: const Icon(Symbols.flag_2_rounded),
             title: Text(l(context).settings_coverMediaMarkedSensitive),
             value: ac.profile.coverMediaMarkedSensitive,

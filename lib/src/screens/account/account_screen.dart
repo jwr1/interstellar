@@ -46,11 +46,14 @@ class _AccountScreenState extends State<AccountScreen> {
                         ),
                       ]),
                     ),
-                    body: const TabBarView(children: [
-                      NotificationsScreen(),
-                      MessagesScreen(),
-                      SelfFeed(),
-                    ]),
+                    body: TabBarView(
+                      physics: appTabViewPhysics(context),
+                      children: const [
+                        NotificationsScreen(),
+                        MessagesScreen(),
+                        SelfFeed(),
+                      ],
+                    ),
                   ),
                 ),
         ) ??

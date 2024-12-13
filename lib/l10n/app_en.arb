@@ -155,8 +155,6 @@
   "settings_useAccountLanguageFilter": "Use account language filter",
   "settings_useAccountLanguageFilter_help": "Please note: language filters only apply to \"All\" and explore feeds",
   "settings_customLanguageFilter": "Custom language filter",
-  "settings_addAltTextReminders": "Add alt text reminders",
-  "settings_autoplayAnimatedImages": "Autoplay animated images",
   "settings_disableTabSwiping": "Disable tab swiping",
   "settings_askBeforeUnsubscribing": "Ask before unsubscribing/unfollowing",
   "settings_askBeforeDeleting": "Ask before deleting",
@@ -170,7 +168,6 @@
   "settings_compactMode": "Compact mode",
   "settings_alwaysShowInstance": "Always show instance",
   "settings_alwaysShowInstance_help": "When enabled, the instance of a user/magazine will always display after their username",
-  "settings_alwaysRevealContentWarnings": "Always reveal content warnings",
   "settings_coverMediaMarkedSensitive": "Cover up media marked as sensitive",
   "settings_reduceAnimationMotion": "Reduce motion in animations",
   "settings_aboutInterstellar": "About Interstellar",
@@ -426,5 +423,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "confirmUnsubscribe": "You are about to unsubscribe. Continue?",
+  "confirmUnfollow": "You are about to unfollow. Continue?"
 }

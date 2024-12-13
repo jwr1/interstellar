@@ -12,11 +12,9 @@ import 'package:interstellar/src/screens/feed/post_comment.dart';
 import 'package:interstellar/src/screens/feed/post_comment_screen.dart';
 import 'package:interstellar/src/screens/feed/post_item.dart';
 import 'package:interstellar/src/screens/feed/post_page.dart';
-import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
-import 'package:interstellar/src/widgets/loading_button.dart';
+import 'package:interstellar/src/widgets/subscription_button.dart';
 import 'package:interstellar/src/widgets/user_status_icons.dart';
-import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 class ExploreScreenItem extends StatelessWidget {
@@ -137,11 +135,11 @@ class ExploreScreenItem extends StatelessWidget {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            LoadingChip(
-              selected: isSubscribed ?? false,
-              icon: const Icon(Symbols.people_rounded),
-              label: Text(intFormat(subscriptions)),
-              onSelected: whenLoggedIn(context, onSubscribe),
+            SubscriptionButton(
+              isSubscribed: isSubscribed,
+              subscriptionCount: subscriptions,
+              onSubscribe: onSubscribe,
+              followMode: item is DetailedUserModel,
             ),
           ],
         ),

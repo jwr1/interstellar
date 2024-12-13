@@ -52,6 +52,7 @@ class _MagazineModPanelState extends State<MagazineModPanel> {
             ),
           ),
           body: TabBarView(
+            physics: appTabViewPhysics(context),
             children: <Widget>[
               MagazineModPanelBans(data: _data, onUpdate: onUpdate),
             ],

@@ -25,6 +25,7 @@ import 'package:interstellar/src/widgets/markdown/drafts_controller.dart';
 import 'package:interstellar/src/widgets/markdown/markdown.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:interstellar/src/widgets/star_button.dart';
+import 'package:interstellar/src/widgets/subscription_button.dart';
 import 'package:interstellar/src/widgets/user_status_icons.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
@@ -178,13 +179,10 @@ class _UserScreenState extends State<UserScreen> {
                                     child: Text(l(context).account_edit),
                                   ),
                                 if (!isMyUser)
-                                  LoadingChip(
-                                    selected: user.isFollowedByUser ?? false,
-                                    icon: const Icon(Symbols.people_rounded),
-                                    label: Text(
-                                        intFormat(user.followersCount ?? 0)),
-                                    onSelected:
-                                        whenLoggedIn(context, (selected) async {
+                                  SubscriptionButton(
+                                    isSubscribed: user.isFollowedByUser,
+                                    subscriptionCount: user.followersCount ?? 0,
+                                    onSubscribe: (selected) async {
                                       var newValue = await context
                                           .read<AppController>()
                                           .api
@@ -196,7 +194,8 @@ class _UserScreenState extends State<UserScreen> {
                                       if (widget.onUpdate != null) {
                                         widget.onUpdate!(newValue);
                                       }
-                                    }),
+                                    },
+                                    followMode: true,
                                   ),
                                 StarButton(globalName),
                                 if (isLoggedIn && !isMyUser)
@@ -381,46 +380,49 @@ class _UserScreenState extends State<UserScreen> {
                 pinned: true,
               )
             ],
-            body: TabBarView(children: [
-              UserScreenBody(
-                mode: UserFeedType.thread,
-                sort: _sort,
-                data: _data,
-              ),
-              if (context.watch<AppController>().serverSoftware !=
-                  ServerSoftware.lemmy)
+            body: TabBarView(
+              physics: appTabViewPhysics(context),
+              children: [
                 UserScreenBody(
-                  mode: UserFeedType.microblog,
+                  mode: UserFeedType.thread,
                   sort: _sort,
                   data: _data,
                 ),
-              UserScreenBody(
-                mode: UserFeedType.comment,
-                sort: _sort,
-                data: _data,
-              ),
-              if (context.watch<AppController>().serverSoftware !=
-                  ServerSoftware.lemmy)
+                if (context.watch<AppController>().serverSoftware !=
+                    ServerSoftware.lemmy)
+                  UserScreenBody(
+                    mode: UserFeedType.microblog,
+                    sort: _sort,
+                    data: _data,
+                  ),
                 UserScreenBody(
-                  mode: UserFeedType.reply,
+                  mode: UserFeedType.comment,
                   sort: _sort,
                   data: _data,
                 ),
-              if (context.watch<AppController>().serverSoftware !=
-                  ServerSoftware.lemmy)
-                UserScreenBody(
-                  mode: UserFeedType.follower,
-                  sort: _sort,
-                  data: _data,
-                ),
-              if (context.watch<AppController>().serverSoftware !=
-                  ServerSoftware.lemmy)
-                UserScreenBody(
-                  mode: UserFeedType.following,
-                  sort: _sort,
-                  data: _data,
-                ),
-            ]),
+                if (context.watch<AppController>().serverSoftware !=
+                    ServerSoftware.lemmy)
+                  UserScreenBody(
+                    mode: UserFeedType.reply,
+                    sort: _sort,
+                    data: _data,
+                  ),
+                if (context.watch<AppController>().serverSoftware !=
+                    ServerSoftware.lemmy)
+                  UserScreenBody(
+                    mode: UserFeedType.follower,
+                    sort: _sort,
+                    data: _data,
+                  ),
+                if (context.watch<AppController>().serverSoftware !=
+                    ServerSoftware.lemmy)
+                  UserScreenBody(
+                    mode: UserFeedType.following,
+                    sort: _sort,
+                    data: _data,
+                  ),
+              ],
+            ),
           ),
         ));
   }

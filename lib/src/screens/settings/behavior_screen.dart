@@ -121,20 +121,11 @@ class BehaviorSettingsScreen extends StatelessWidget {
             ],
           ),
           ListTileSwitch(
-            leading: const Icon(Symbols.description_rounded),
-            title: Text(l(context).settings_addAltTextReminders),
-            value: ac.profile.addAltTextReminders,
+            leading: const Icon(Symbols.tabs_rounded),
+            title: Text(l(context).settings_disableTabSwiping),
+            value: ac.profile.disableTabSwiping,
             onChanged: (newValue) => ac.updateProfile(
-              ac.selectedProfileValue.copyWith(addAltTextReminders: newValue),
-            ),
-          ),
-          ListTileSwitch(
-            leading: const Icon(Symbols.animated_images_rounded),
-            title: Text(l(context).settings_autoplayAnimatedImages),
-            value: ac.profile.autoplayAnimatedImages,
-            onChanged: (newValue) => ac.updateProfile(
-              ac.selectedProfileValue
-                  .copyWith(autoplayAnimatedImages: newValue),
+              ac.selectedProfileValue.copyWith(disableTabSwiping: newValue),
             ),
           ),
           ListTileSwitch(

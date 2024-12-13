@@ -24,8 +24,6 @@ class ProfileRequired with _$ProfileRequired {
     required String defaultPostLanguage,
     required bool useAccountLanguageFilter,
     required List<String> customLanguageFilter,
-    required bool addAltTextReminders,
-    required bool autoplayAnimatedImages,
     required bool disableTabSwiping,
     required bool askBeforeUnsubscribing,
     required bool askBeforeDeleting,
@@ -36,7 +34,6 @@ class ProfileRequired with _$ProfileRequired {
     required bool enableTrueBlack,
     required bool compactMode,
     required bool alwaysShowInstance,
-    required bool alwaysRevealContentWarnings,
     required bool coverMediaMarkedSensitive,
     // Feed defaults
     required PostType feedDefaultType,
@@ -69,10 +66,6 @@ class ProfileRequired with _$ProfileRequired {
             defaultProfile.useAccountLanguageFilter,
         customLanguageFilter: profile?.customLanguageFilter ??
             defaultProfile.customLanguageFilter,
-        addAltTextReminders:
-            profile?.addAltTextReminders ?? defaultProfile.addAltTextReminders,
-        autoplayAnimatedImages: profile?.autoplayAnimatedImages ??
-            defaultProfile.autoplayAnimatedImages,
         disableTabSwiping:
             profile?.disableTabSwiping ?? defaultProfile.disableTabSwiping,
         askBeforeUnsubscribing: profile?.askBeforeUnsubscribing ??
@@ -87,8 +80,6 @@ class ProfileRequired with _$ProfileRequired {
         compactMode: profile?.compactMode ?? defaultProfile.compactMode,
         alwaysShowInstance:
             profile?.alwaysShowInstance ?? defaultProfile.alwaysShowInstance,
-        alwaysRevealContentWarnings: profile?.alwaysRevealContentWarnings ??
-            defaultProfile.alwaysRevealContentWarnings,
         coverMediaMarkedSensitive: profile?.coverMediaMarkedSensitive ??
             defaultProfile.coverMediaMarkedSensitive,
         feedDefaultType:
@@ -125,8 +116,6 @@ class ProfileRequired with _$ProfileRequired {
     defaultPostLanguage: 'en',
     useAccountLanguageFilter: true,
     customLanguageFilter: [],
-    addAltTextReminders: true,
-    autoplayAnimatedImages: true,
     disableTabSwiping: false,
     askBeforeUnsubscribing: false,
     askBeforeDeleting: true,
@@ -136,7 +125,6 @@ class ProfileRequired with _$ProfileRequired {
     enableTrueBlack: false,
     compactMode: false,
     alwaysShowInstance: false,
-    alwaysRevealContentWarnings: false,
     coverMediaMarkedSensitive: true,
     feedDefaultType: PostType.thread,
     feedDefaultFilter: FeedSource.subscribed,
@@ -167,8 +155,6 @@ class ProfileOptional with _$ProfileOptional {
     required String? defaultPostLanguage,
     required bool? useAccountLanguageFilter,
     required List<String>? customLanguageFilter,
-    required bool? addAltTextReminders,
-    required bool? autoplayAnimatedImages,
     required bool? disableTabSwiping,
     required bool? askBeforeUnsubscribing,
     required bool? askBeforeDeleting,
@@ -179,7 +165,6 @@ class ProfileOptional with _$ProfileOptional {
     required bool? enableTrueBlack,
     required bool? compactMode,
     required bool? alwaysShowInstance,
-    required bool? alwaysRevealContentWarnings,
     required bool? coverMediaMarkedSensitive,
     // Feed defaults
     required PostType? feedDefaultType,
@@ -208,8 +193,6 @@ class ProfileOptional with _$ProfileOptional {
     defaultPostLanguage: null,
     useAccountLanguageFilter: null,
     customLanguageFilter: null,
-    addAltTextReminders: null,
-    autoplayAnimatedImages: null,
     disableTabSwiping: null,
     askBeforeUnsubscribing: null,
     askBeforeDeleting: null,
@@ -219,7 +202,6 @@ class ProfileOptional with _$ProfileOptional {
     enableTrueBlack: null,
     compactMode: null,
     alwaysShowInstance: null,
-    alwaysRevealContentWarnings: null,
     coverMediaMarkedSensitive: null,
     feedDefaultType: null,
     feedDefaultFilter: null,
@@ -246,9 +228,6 @@ class ProfileOptional with _$ProfileOptional {
       useAccountLanguageFilter:
           other.useAccountLanguageFilter ?? useAccountLanguageFilter,
       customLanguageFilter: other.customLanguageFilter ?? customLanguageFilter,
-      addAltTextReminders: other.addAltTextReminders ?? addAltTextReminders,
-      autoplayAnimatedImages:
-          other.autoplayAnimatedImages ?? autoplayAnimatedImages,
       disableTabSwiping: other.disableTabSwiping ?? disableTabSwiping,
       askBeforeUnsubscribing:
           other.askBeforeUnsubscribing ?? askBeforeUnsubscribing,
@@ -259,8 +238,6 @@ class ProfileOptional with _$ProfileOptional {
       enableTrueBlack: other.enableTrueBlack ?? enableTrueBlack,
       compactMode: other.compactMode ?? compactMode,
       alwaysShowInstance: other.alwaysShowInstance ?? alwaysShowInstance,
-      alwaysRevealContentWarnings:
-          other.alwaysRevealContentWarnings ?? alwaysRevealContentWarnings,
       coverMediaMarkedSensitive:
           other.coverMediaMarkedSensitive ?? coverMediaMarkedSensitive,
       feedDefaultType: other.feedDefaultType ?? feedDefaultType,

@@ -159,3 +159,8 @@ const chipDropdownPadding = EdgeInsets.only(
   right: 0,
   bottom: 6,
 );
+
+ScrollPhysics? appTabViewPhysics(BuildContext context) =>
+    context.watch<AppController>().profile.disableTabSwiping
+        ? const NeverScrollableScrollPhysics()
+        : null;

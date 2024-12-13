@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/models/image.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
@@ -7,6 +8,7 @@ import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/image.dart';
 import 'package:interstellar/src/widgets/user_status_icons.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:provider/provider.dart';
 
 class ContentItemCompactPost extends StatefulWidget {
   final String? title;
@@ -75,7 +77,11 @@ class _ContentItemCompactPostState extends State<ContentItemCompactPost> {
               widget.image!,
               fit: BoxFit.cover,
               openTitle: widget.title,
-              enableBlur: widget.isNSFW,
+              enableBlur: widget.isNSFW &&
+                  context
+                      .watch<AppController>()
+                      .profile
+                      .coverMediaMarkedSensitive,
             ),
           );
 

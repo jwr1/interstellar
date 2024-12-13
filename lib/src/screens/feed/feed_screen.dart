@@ -313,6 +313,7 @@ class _FeedScreenState extends State<FeedScreen> {
                 details: widget.details,
               )
             : TabBarView(
+                physics: appTabViewPhysics(context),
                 children: switch (tabsAction.name) {
                   String name when name == feedActionSetFilter(context).name =>
                     [
