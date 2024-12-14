@@ -284,4 +284,26 @@ class ProfileOptional with _$ProfileOptional {
           : other.filterLists ?? filterLists,
     );
   }
+
+  ProfileOptional cleanupActions(
+      String actionName, ProfileRequired builtProfile) {
+        // Only clean up actions with the following locations
+    if (![
+      ActionLocation.fabTap.name,
+      ActionLocation.fabHold.name,
+      ActionLocationWithTabs.tabs.name
+    ].contains(actionName)) {
+      return this;
+    }
+
+    return copyWith(
+    feedActionBackToTop: builtProfile.feedActionBackToTop.name==actionName?ActionLocation.hide:this.feedActionBackToTop,
+    feedActionCreatePost: builtProfile.feedActionCreatePost.name==actionName?ActionLocation.hide:this.feedActionCreatePost,
+    feedActionExpandFab: builtProfile.feedActionExpandFab.name==actionName?ActionLocation.hide:this.feedActionExpandFab,
+    feedActionRefresh: builtProfile.feedActionRefresh.name==actionName?ActionLocation.hide:this.feedActionRefresh,
+    feedActionSetFilter: builtProfile.feedActionSetFilter.name==actionName?ActionLocationWithTabs.hide:this.feedActionSetFilter,
+    feedActionSetSort: builtProfile.feedActionSetSort.name==actionName?ActionLocation.hide:this.feedActionSetSort,
+    feedActionSetType: builtProfile.feedActionSetType.name==actionName?ActionLocationWithTabs.hide:this.feedActionSetType,
+    );
+  }
 }

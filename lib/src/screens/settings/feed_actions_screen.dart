@@ -26,7 +26,9 @@ class FeedActionsSettingsScreen extends StatelessWidget {
             value: ac.profile.feedActionExpandFab,
             oldValue: ac.selectedProfileValue.feedActionExpandFab,
             onChange: (newValue) => ac.updateProfile(
-              ac.selectedProfileValue.copyWith(feedActionExpandFab: newValue),
+              ac.selectedProfileValue
+                  .cleanupActions(newValue.name, ac.profile)
+                  .copyWith(feedActionExpandFab: newValue),
             ),
           ),
           ListTileSelect(
@@ -36,7 +38,9 @@ class FeedActionsSettingsScreen extends StatelessWidget {
             value: ac.profile.feedActionBackToTop,
             oldValue: ac.selectedProfileValue.feedActionBackToTop,
             onChange: (newValue) => ac.updateProfile(
-              ac.selectedProfileValue.copyWith(feedActionBackToTop: newValue),
+              ac.selectedProfileValue
+                  .cleanupActions(newValue.name, ac.profile)
+                  .copyWith(feedActionBackToTop: newValue),
             ),
           ),
           ListTileSelect(
@@ -46,7 +50,9 @@ class FeedActionsSettingsScreen extends StatelessWidget {
             value: ac.profile.feedActionCreatePost,
             oldValue: ac.selectedProfileValue.feedActionCreatePost,
             onChange: (newValue) => ac.updateProfile(
-              ac.selectedProfileValue.copyWith(feedActionCreatePost: newValue),
+              ac.selectedProfileValue
+                  .cleanupActions(newValue.name, ac.profile)
+                  .copyWith(feedActionCreatePost: newValue),
             ),
           ),
           ListTileSelect(
@@ -56,7 +62,9 @@ class FeedActionsSettingsScreen extends StatelessWidget {
             value: ac.profile.feedActionRefresh,
             oldValue: ac.selectedProfileValue.feedActionRefresh,
             onChange: (newValue) => ac.updateProfile(
-              ac.selectedProfileValue.copyWith(feedActionRefresh: newValue),
+              ac.selectedProfileValue
+                  .cleanupActions(newValue.name, ac.profile)
+                  .copyWith(feedActionRefresh: newValue),
             ),
           ),
           ListTileSelect(
@@ -66,7 +74,9 @@ class FeedActionsSettingsScreen extends StatelessWidget {
             value: ac.profile.feedActionSetFilter,
             oldValue: ac.selectedProfileValue.feedActionSetFilter,
             onChange: (newValue) => ac.updateProfile(
-              ac.selectedProfileValue.copyWith(feedActionSetFilter: newValue),
+              ac.selectedProfileValue
+                  .cleanupActions(newValue.name, ac.profile)
+                  .copyWith(feedActionSetFilter: newValue),
             ),
           ),
           ListTileSelect(
@@ -76,7 +86,9 @@ class FeedActionsSettingsScreen extends StatelessWidget {
             value: ac.profile.feedActionSetSort,
             oldValue: ac.selectedProfileValue.feedActionSetSort,
             onChange: (newValue) => ac.updateProfile(
-              ac.selectedProfileValue.copyWith(feedActionSetSort: newValue),
+              ac.selectedProfileValue
+                  .cleanupActions(newValue.name, ac.profile)
+                  .copyWith(feedActionSetSort: newValue),
             ),
           ),
           ListTileSelect(
@@ -86,7 +98,9 @@ class FeedActionsSettingsScreen extends StatelessWidget {
             value: ac.profile.feedActionSetType,
             oldValue: ac.selectedProfileValue.feedActionSetType,
             onChange: (newValue) => ac.updateProfile(
-              ac.selectedProfileValue.copyWith(feedActionSetType: newValue),
+              ac.selectedProfileValue
+                  .cleanupActions(newValue.name, ac.profile)
+                  .copyWith(feedActionSetType: newValue),
             ),
           ),
         ],
