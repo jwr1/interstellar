@@ -39,7 +39,7 @@ class PostItem extends StatelessWidget {
       body: item.body,
       createdAt: item.createdAt,
       editedAt: item.editedAt,
-      isPreview: item.type == PostType.microblog ? true : isPreview,
+      isPreview: item.type == PostType.microblog ? false : isPreview,
       fullImageSize: isPreview
           ? switch (item.type) {
               PostType.thread =>
