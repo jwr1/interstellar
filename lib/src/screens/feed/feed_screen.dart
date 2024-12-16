@@ -43,7 +43,7 @@ class _FeedScreenState extends State<FeedScreen> {
   final List<GlobalKey<_FeedScreenBodyState>> _feedKeyList = [];
   late FeedSource _filter;
   late PostType _mode;
-  late FeedSort _sort;
+  FeedSort? _sort;
 
   _getFeedKey(int index) {
     while (index >= _feedKeyList.length) {
@@ -51,6 +51,12 @@ class _FeedScreenState extends State<FeedScreen> {
     }
     return _feedKeyList[index];
   }
+
+  FeedSort _defaultSortFromMode(PostType mode) => widget.source == null
+      ? mode == PostType.thread
+          ? context.read<AppController>().profile.feedDefaultThreadsSort
+          : context.read<AppController>().profile.feedDefaultMicroblogSort
+      : context.read<AppController>().profile.feedDefaultExploreSort;
 
   @override
   void initState() {
@@ -62,17 +68,14 @@ class _FeedScreenState extends State<FeedScreen> {
     _mode = context.read<AppController>().serverSoftware != ServerSoftware.lemmy
         ? context.read<AppController>().profile.feedDefaultType
         : PostType.thread;
-    _sort = widget.source == null
-        ? _mode == PostType.thread
-            ? context.read<AppController>().profile.feedDefaultThreadsSort
-            : context.read<AppController>().profile.feedDefaultMicroblogSort
-        : context.read<AppController>().profile.feedDefaultExploreSort;
   }
 
   @override
   Widget build(BuildContext context) {
+    final sort = _sort ?? _defaultSortFromMode(_mode);
+
     final currentFeedModeOption = feedTypeSelect(context).getOption(_mode);
-    final currentFeedSortOption = feedSortSelect(context).getOption(_sort);
+    final currentFeedSortOption = feedSortSelect(context).getOption(sort);
 
     final actions = [
       feedActionCreatePost(context).withProps(
@@ -144,20 +147,6 @@ class _FeedScreenState extends State<FeedScreen> {
           if (newMode != null && newMode != _mode) {
             setState(() {
               _mode = newMode;
-              _sort = widget.source == null
-                  ? _mode == PostType.thread
-                      ? context
-                          .read<AppController>()
-                          .profile
-                          .feedDefaultThreadsSort
-                      : context
-                          .read<AppController>()
-                          .profile
-                          .feedDefaultMicroblogSort
-                  : context
-                      .read<AppController>()
-                      .profile
-                      .feedDefaultExploreSort;
             });
           }
         },
@@ -233,7 +222,24 @@ class _FeedScreenState extends State<FeedScreen> {
             feedTypeSelect(context).options.length,
           _ => 0
         },
-        child: child,
+        child: DefaultTabControllerListener(
+          onTabSelected: tabsAction?.name == feedActionSetType(context).name
+              ? (newIndex) {
+                  setState(() {
+                    switch (newIndex) {
+                      case 0:
+                        _mode = PostType.thread;
+                        break;
+                      case 1:
+                        _mode = PostType.microblog;
+                        break;
+                      default:
+                    }
+                  });
+                }
+              : null,
+          child: child,
+        ),
       ),
       child: Scaffold(
         appBar: AppBar(
@@ -308,7 +314,7 @@ class _FeedScreenState extends State<FeedScreen> {
                 key: _getFeedKey(0),
                 source: widget.source ?? _filter,
                 sourceId: widget.sourceId,
-                sort: _sort,
+                sort: sort,
                 mode: _mode,
                 details: widget.details,
               )
@@ -320,28 +326,28 @@ class _FeedScreenState extends State<FeedScreen> {
                       FeedScreenBody(
                         key: _getFeedKey(0),
                         source: FeedSource.subscribed,
-                        sort: _sort,
+                        sort: sort,
                         mode: _mode,
                         details: widget.details,
                       ),
                       FeedScreenBody(
                         key: _getFeedKey(1),
                         source: FeedSource.moderated,
-                        sort: _sort,
+                        sort: sort,
                         mode: _mode,
                         details: widget.details,
                       ),
                       FeedScreenBody(
                         key: _getFeedKey(2),
                         source: FeedSource.favorited,
-                        sort: _sort,
+                        sort: sort,
                         mode: _mode,
                         details: widget.details,
                       ),
                       FeedScreenBody(
                         key: _getFeedKey(3),
                         source: FeedSource.all,
-                        sort: _sort,
+                        sort: sort,
                         mode: _mode,
                         details: widget.details,
                       ),
@@ -350,14 +356,14 @@ class _FeedScreenState extends State<FeedScreen> {
                       FeedScreenBody(
                         key: _getFeedKey(0),
                         source: _filter,
-                        sort: _sort,
+                        sort: _sort ?? _defaultSortFromMode(PostType.thread),
                         mode: PostType.thread,
                         details: widget.details,
                       ),
                       FeedScreenBody(
                         key: _getFeedKey(1),
                         source: _filter,
-                        sort: _sort,
+                        sort: _sort ?? _defaultSortFromMode(PostType.microblog),
                         mode: PostType.microblog,
                         details: widget.details,
                       ),

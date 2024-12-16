@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:http/http.dart' as http;
 import 'package:interstellar/src/controller/controller.dart';
@@ -164,3 +163,59 @@ ScrollPhysics? appTabViewPhysics(BuildContext context) =>
     context.watch<AppController>().profile.disableTabSwiping
         ? const NeverScrollableScrollPhysics()
         : null;
+
+class DefaultTabControllerListener extends StatefulWidget {
+  const DefaultTabControllerListener(
+      {super.key, this.onTabSelected, required this.child});
+
+  final void Function(int index)? onTabSelected;
+  final Widget child;
+
+  @override
+  State<DefaultTabControllerListener> createState() =>
+      _DefaultTabControllerListenerState();
+}
+
+class _DefaultTabControllerListenerState
+    extends State<DefaultTabControllerListener> {
+  late final void Function()? _listener;
+  TabController? _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final tabController = DefaultTabController.of(context);
+      _listener = () {
+        if (tabController.indexIsChanging) {
+          return;
+        }
+
+        final onTabSelected = widget.onTabSelected;
+        if (onTabSelected != null) {
+          onTabSelected(tabController.index);
+        }
+      };
+      tabController.addListener(_listener!);
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    _tabController = DefaultTabController.of(context);
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    if (_listener != null && _tabController != null) {
+      _tabController!.removeListener(_listener);
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
+  }
+}
