@@ -355,14 +355,16 @@ class _FeedScreenState extends State<FeedScreen> {
                   String name when name == feedActionSetType(context).name => [
                       FeedScreenBody(
                         key: _getFeedKey(0),
-                        source: _filter,
+                        source: widget.source ?? _filter,
+                        sourceId: widget.sourceId,
                         sort: _sort ?? _defaultSortFromMode(PostType.thread),
                         mode: PostType.thread,
                         details: widget.details,
                       ),
                       FeedScreenBody(
                         key: _getFeedKey(1),
-                        source: _filter,
+                        source: widget.source ?? _filter,
+                        sourceId: widget.sourceId,
                         sort: _sort ?? _defaultSortFromMode(PostType.microblog),
                         mode: PostType.microblog,
                         details: widget.details,
