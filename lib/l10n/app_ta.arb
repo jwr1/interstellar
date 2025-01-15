@@ -213,14 +213,6 @@
   "@comment_openRoot": {},
   "comment_openParent": "திறந்த பெற்றோர்",
   "@comment_openParent": {},
-  "openReplies": "திறக்க {count} {எண்ணிக்கை, பன்மை, = 1 {reply} பிற {replies}}",
-  "@openReplies": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "magazines": "பத்திரிகைகள்",
   "@magazines": {},
   "people": "மக்கள்",
@@ -455,7 +447,7 @@
   "@profile_name": {},
   "profile_setAsMain": "முக்கிய சுயவிவரமாக அமைக்கவும்",
   "@profile_setAsMain": {},
-  "banUser_help": "{பத்திரிகை இருந்து இலிருந்து {user} தடை செய்யப் போகிறீர்கள்.",
+  "banUser_help": "பத்திரிகை இருந்து இலிருந்து {user} தடை செய்யப் போகிறீர்கள்.",
   "@banUser_help": {
     "placeholders": {
       "user": {
@@ -660,7 +652,7 @@
       }
     }
   },
-  "editedAt": "{தேதிநேரத்தில் திருத்தப்பட்டது",
+  "editedAt": "தேதிநேரத்தில் திருத்தப்பட்டது",
   "@editedAt": {
     "placeholders": {
       "datetime": {
@@ -672,7 +664,7 @@
   "@expand": {},
   "collapse": "சரிவு",
   "@collapse": {},
-  "moreFrom": "{பெயரில் இருந்து மேலும்",
+  "moreFrom": "பெயரில் இருந்து மேலும்",
   "@moreFrom": {
     "placeholders": {
       "name": {
