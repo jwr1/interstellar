@@ -345,10 +345,11 @@ class AppController with ChangeNotifier {
 
   Future<API> getApiForAccount(String account) async {
     final instance = account.split('@').last;
+    final software = _servers[instance]!.software;
 
     http.Client httpClient = http.Client();
 
-    switch (serverSoftware) {
+    switch (software) {
       case ServerSoftware.mbin:
         oauth2.Credentials? credentials = _accounts[account]?.oauth;
         if (credentials != null) {
@@ -375,7 +376,7 @@ class AppController with ChangeNotifier {
         break;
     }
 
-    return API(serverSoftware, httpClient, instance);
+    return API(software, httpClient, instance);
   }
 
   Future<void> addStar(String newStar) async {

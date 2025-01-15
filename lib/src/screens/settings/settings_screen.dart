@@ -4,6 +4,7 @@ import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/screens/settings/about_screen.dart';
 import 'package:interstellar/src/screens/settings/account_selection.dart';
 import 'package:interstellar/src/screens/settings/behavior_screen.dart';
+import 'package:interstellar/src/screens/settings/data_utilities.dart';
 import 'package:interstellar/src/screens/settings/display_screen.dart';
 import 'package:interstellar/src/screens/settings/feed_actions_screen.dart';
 import 'package:interstellar/src/screens/settings/feed_defaults_screen.dart';
@@ -87,6 +88,15 @@ class SettingsScreen extends StatelessWidget {
                     .split('@')
                     .first
                     .isNotEmpty,
+          ),
+          ListTile(
+            leading: const Icon(Symbols.database_rounded),
+            title: Text(l(context).settings_dataUtilities),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const DataUtilitiesScreen(),
+              ),
+            ),
           ),
           ListTile(
             leading: const Icon(Symbols.info_rounded),

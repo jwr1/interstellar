@@ -430,5 +430,94 @@
   },
   "confirmUnsubscribe": "You are about to unsubscribe. Continue?",
   "confirmUnfollow": "You are about to unfollow. Continue?",
-  "altText": "Alt text"
+  "altText": "Alt text",
+  "settings_dataUtilities": "Data utilities",
+  "settings_accountMigration": "Account migration",
+  "settings_accountMigration_help": "Migrate subscriptions, follows, and blocks between accounts",
+  "settings_accountMigration_step1": "Select source and destination accounts",
+  "settings_accountMigration_step1_source": "Source account",
+  "settings_accountMigration_step1_destination": "Destination account",
+  "settings_accountMigration_step2": "Enable/disable migration categories",
+  "settings_accountMigration_step2_migrateMagazineSubscriptions": "Migrate magazine subscriptions",
+  "settings_accountMigration_step2_migrateMagazineBlocks": "Migrate magazine blocks",
+  "settings_accountMigration_step2_migrateUserFollows": "Migrate user follows",
+  "settings_accountMigration_step2_migrateUserBlocks": "Migrate user blocks",
+  "settings_accountMigration_step3": "Confirm data migration",
+  "settings_accountMigration_readingFromSource": "Reading from source account",
+  "settings_accountMigration_writingFromSource": "Writing to destination account",
+  "settings_accountMigration_complete": "Account migration complete!",
+  "settings_accountMigration_failed": "Account migration failed due to an error",
+  "settings_accountMigration_foundXItems": "Found {count} items",
+  "@settings_accountMigration_foundXItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settings_accountMigration_completeXItems": "Complete {current}/{total} items",
+  "@settings_accountMigration_completeXItems": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "settings_accountMigration_failedXItems": "Failed {current}/{total} items",
+  "@settings_accountMigration_failedXItems": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "settings_accountReset": "Account reset",
+  "settings_accountReset_help": "Remove subscriptions, follows, and blocks from an account",
+  "settings_accountReset_step1": "Select account",
+  "settings_accountReset_step2": "Enable/disable reset categories",
+  "settings_accountReset_step2_resetMagazineSubscriptions": "Reset magazine subscriptions",
+  "settings_accountReset_step2_resetMagazineBlocks": "Reset magazine blocks",
+  "settings_accountReset_step2_resetUserFollows": "Reset user follows",
+  "settings_accountReset_step2_resetUserBlocks": "Reset user blocks",
+  "settings_accountReset_step3": "Confirm data reset",
+  "settings_accountReset_readingFromAccount": "Reading from account",
+  "settings_accountReset_removingItems": "Removing items",
+  "settings_accountReset_complete": "Account reset complete!",
+  "settings_accountReset_failed": "Account reset failed due to an error",
+  "settings_accountReset_foundXItems": "Found {count} items",
+  "@settings_accountReset_foundXItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settings_accountReset_completeXItems": "Complete {current}/{total} items",
+  "@settings_accountReset_completeXItems": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "settings_accountReset_failedXItems": "Failed {current}/{total} items",
+  "@settings_accountReset_failedXItems": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  }
 }

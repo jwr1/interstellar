@@ -28,11 +28,13 @@ Future<String?> selectAccountWithNone(
 class AccountSelectWidget extends StatefulWidget {
   final bool showNoneOption;
   final bool showAccountControls;
+  final bool onlyNonGuestAccounts;
   final String oldAccount;
 
   const AccountSelectWidget({
     this.showNoneOption = false,
     this.showAccountControls = false,
+    this.onlyNonGuestAccounts = false,
     required this.oldAccount,
     super.key,
   });
@@ -72,51 +74,56 @@ class _AccountSelectWidgetState extends State<AccountSelectWidget> {
                   Navigator.of(context).pop('');
                 },
               ),
-            ...ac.accounts.keys.map(
-              (account) => ListTile(
-                title: Text(account),
-                subtitle:
-                    Text(ac.servers[account.split('@').last]!.software.name),
-                onTap: () async {
-                  Navigator.of(context).pop(account);
-                },
-                selected: account == widget.oldAccount,
-                selectedTileColor: Theme.of(context)
-                    .colorScheme
-                    .primaryContainer
-                    .withOpacity(0.2),
-                trailing: widget.showAccountControls
-                    ? IconButton(
-                        icon: const Icon(Symbols.delete_rounded),
-                        onPressed: ac.selectedAccount == account
-                            ? null
-                            : () {
-                                showDialog<String>(
-                                  context: context,
-                                  builder: (BuildContext context) =>
-                                      AlertDialog(
-                                    title: Text(l(context).removeAccount),
-                                    content: Text(account),
-                                    actions: <Widget>[
-                                      OutlinedButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        child: Text(l(context).cancel),
+            ...ac.accounts.keys
+                .where((account) =>
+                    !widget.onlyNonGuestAccounts ||
+                    account.split('@').first.isNotEmpty)
+                .map(
+                  (account) => ListTile(
+                    title: Text(account),
+                    subtitle: Text(
+                        ac.servers[account.split('@').last]!.software.name),
+                    onTap: () async {
+                      Navigator.of(context).pop(account);
+                    },
+                    selected: account == widget.oldAccount,
+                    selectedTileColor: Theme.of(context)
+                        .colorScheme
+                        .primaryContainer
+                        .withOpacity(0.2),
+                    trailing: widget.showAccountControls
+                        ? IconButton(
+                            icon: const Icon(Symbols.delete_rounded),
+                            onPressed: ac.selectedAccount == account
+                                ? null
+                                : () {
+                                    showDialog<String>(
+                                      context: context,
+                                      builder: (BuildContext context) =>
+                                          AlertDialog(
+                                        title: Text(l(context).removeAccount),
+                                        content: Text(account),
+                                        actions: <Widget>[
+                                          OutlinedButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            child: Text(l(context).cancel),
+                                          ),
+                                          FilledButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              ac.removeAccount(account);
+                                            },
+                                            child: Text(l(context).remove),
+                                          ),
+                                        ],
                                       ),
-                                      FilledButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                          ac.removeAccount(account);
-                                        },
-                                        child: Text(l(context).remove),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                      )
-                    : null,
-              ),
-            ),
+                                    );
+                                  },
+                          )
+                        : null,
+                  ),
+                ),
             if (widget.showAccountControls)
               ListTile(
                 title: Text(l(context).addAccount),

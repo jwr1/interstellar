@@ -110,6 +110,20 @@ String getNameHost(BuildContext context, String username) {
       : context.read<AppController>().instanceHost;
 }
 
+// Converts names in the format of:
+// localpart -> localpart@hostname
+// localpart@hostname -> localpart@hostname
+String normalizeName(String name, String host) =>
+    name.contains('@') ? name : '$name@$host';
+
+// Converts names in the format of:
+// localpart@hostname -> localpart
+// localpart@hostname -> localpart@hostname
+String denormalizeName(String name, String host) {
+  final nameSplit = name.split('@');
+  return nameSplit.last == host ? nameSplit.first : name;
+}
+
 String? nullIfEmpty(String value) => value.isEmpty ? null : value;
 
 T parseEnum<T extends Enum>(

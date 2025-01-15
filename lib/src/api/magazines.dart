@@ -109,7 +109,7 @@ class APIMagazines {
               APIMagazinesSort.topNineMonths => 'TopNineMonths',
               APIMagazinesSort.controversial => 'Controversial',
               APIMagazinesSort.scaled => 'Scaled',
-              _ => 'All'
+              _ => 'TopAll'
             },
             'page': page,
           });
