@@ -78,7 +78,6 @@ class _AppState extends State<App> {
                   : appController.profile.colorScheme,
               surfaceMode: FlexSurfaceMode.highSurfaceLowScaffold,
               blendLevel: 13,
-              useMaterial3: true,
             ),
             darkTheme: FlexThemeData.dark(
               colorScheme: dynamicDarkColorScheme,
@@ -87,7 +86,6 @@ class _AppState extends State<App> {
                   : appController.profile.colorScheme,
               surfaceMode: FlexSurfaceMode.highSurfaceLowScaffold,
               blendLevel: 13,
-              useMaterial3: true,
               darkIsTrueBlack: appController.profile.enableTrueBlack,
             ),
             themeMode: appController.profile.themeMode,

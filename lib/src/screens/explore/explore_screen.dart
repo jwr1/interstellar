@@ -123,8 +123,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
           _pagingController.appendPage(newPage.items, newPage.nextPage);
           break;
-
-        default:
       }
     } catch (error) {
       _pagingController.error = error;

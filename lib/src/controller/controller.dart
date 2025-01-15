@@ -373,7 +373,6 @@ class AppController with ChangeNotifier {
           httpClient = JwtHttpClient(jwt);
         }
         break;
-      default:
     }
 
     return API(serverSoftware, httpClient, instance);

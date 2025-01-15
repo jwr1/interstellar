@@ -86,7 +86,6 @@ class _EditFilterListScreen extends StatefulWidget {
 
   const _EditFilterListScreen({
     required this.filterList,
-    super.key,
   });
 
   @override

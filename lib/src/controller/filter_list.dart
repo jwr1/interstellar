@@ -48,7 +48,9 @@ class FilterList with _$FilterList {
           if (RegExp(
             '\\b${RegExp.escape(phrase)}\\b',
             caseSensitive: caseSensitive,
-          ).hasMatch(input)) return true;
+          ).hasMatch(input)) {
+            return true;
+          }
         }
 
         return false;
@@ -57,12 +59,12 @@ class FilterList with _$FilterList {
           if (RegExp(
             phrase,
             caseSensitive: caseSensitive,
-          ).hasMatch(input)) return true;
+          ).hasMatch(input)) {
+            return true;
+          }
         }
 
         return false;
-      default:
-        throw Exception('Unreachable');
     }
   }
 }

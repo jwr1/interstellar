@@ -20,7 +20,7 @@ Future<void> switchProfileSelect(BuildContext context) async {
 }
 
 class _ProfileSelectWidget extends StatefulWidget {
-  const _ProfileSelectWidget({super.key});
+  const _ProfileSelectWidget();
 
   @override
   State<_ProfileSelectWidget> createState() => _ProfileSelectWidgetState();
@@ -147,7 +147,6 @@ class _EditProfileScreen extends StatefulWidget {
   const _EditProfileScreen({
     required this.profile,
     required this.profileList,
-    super.key,
   });
 
   @override

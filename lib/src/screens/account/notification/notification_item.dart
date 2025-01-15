@@ -58,7 +58,9 @@ class _NotificationItemState extends State<NotificationItem> {
   Widget build(BuildContext context) {
     if (widget.item.type == null ||
         widget.item.status == null ||
-        widget.item.subject == null) return const SizedBox();
+        widget.item.subject == null) {
+      return const SizedBox();
+    }
 
     Map<String, Object?> rawUser = (widget.item.subject!['user'] ??
         widget.item.subject!['sender'] ??
