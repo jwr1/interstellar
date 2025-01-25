@@ -210,7 +210,7 @@
   "@comment_openOriginalPost": {},
   "comment_openRoot": "打开根帖",
   "@comment_openRoot": {},
-  "comment_openParent": "打开父帖",
+  "comment_openParent": "打开上帖",
   "@comment_openParent": {},
   "openReplies": "打开 {count} {count, plural, =1{条回复} other{条回复}}",
   "@openReplies": {
@@ -518,7 +518,7 @@
       }
     }
   },
-  "originalPoster_short": "OP",
+  "originalPoster_short": "楼主",
   "@originalPoster_short": {},
   "originalPoster_long": "原始发布者",
   "@originalPoster_long": {},
