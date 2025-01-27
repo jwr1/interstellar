@@ -431,7 +431,7 @@
   "confirmUnsubscribe": "You are about to unsubscribe. Continue?",
   "confirmUnfollow": "You are about to unfollow. Continue?",
   "altText": "Alt text",
-  "settings_dataUtilities": "Data utilities",
+  "settings_dataUtilities": "BETA: Data utilities",
   "settings_accountMigration": "Account migration",
   "settings_accountMigration_help": "Migrate subscriptions, follows, and blocks between accounts",
   "settings_accountMigration_step1": "Select source and destination accounts",
