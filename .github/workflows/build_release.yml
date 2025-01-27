@@ -1,4 +1,4 @@
-name: Build Release
+name: Build release
 
 permissions:
   contents: write
@@ -54,14 +54,14 @@ jobs:
             build_target: windows
             build_path: build\windows\x64\runner\Release
     steps:
-      - name: Install Android dependencies
+      - name: Install android dependencies
         if: matrix.target == 'android'
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: temurin
 
-      - name: Install Linux dependencies
+      - name: Install linux dependencies
         if: matrix.target == 'linux'
         run: |
           sudo apt-get update
@@ -81,7 +81,7 @@ jobs:
           dart pub global activate cider
           cider version ${{ github.event.inputs.version }}+${{ github.event.inputs.build-number }}
 
-      - name: Configure Android Keystore
+      - name: Configure android Keystore
         if: matrix.target == 'android'
         run: |
           echo "$ANDROID_UPLOAD_KEY" | base64 --decode > upload-keystore.jks
@@ -99,7 +99,7 @@ jobs:
           dart run build_runner build
           flutter build -v ${{ matrix.build_target }} ${{ matrix.build_flags }}
 
-      - name: Configure Android Keystore for AppBundle
+      - name: Configure android Keystore for AppBundle
         if: matrix.target == 'android'
         run: echo "includeNDK=true" >> key.properties
         working-directory: android
@@ -115,7 +115,7 @@ jobs:
         if: matrix.target == 'windows'
         run: md dist
 
-      - name: Rename build for Android
+      - name: Rename build for android
         if: matrix.target == 'android'
         run: |
           mv app-armeabi-v7a-release.apk $GITHUB_WORKSPACE/dist/interstellar-android-armeabi-v7a.apk
@@ -124,12 +124,12 @@ jobs:
           mv $GITHUB_WORKSPACE/build/app/outputs/bundle/release/app-release.aab $GITHUB_WORKSPACE/dist/interstellar-android-googleplay.aab
         working-directory: ${{ matrix.build_path }}
 
-      - name: Build tar.gz for Linux
-        if: matrix.target == 'Linux'
+      - name: Build tar.gz for linux
+        if: matrix.target == 'linux'
         run: tar -czf $GITHUB_WORKSPACE/dist/interstellar-linux-x86_64.tar.gz *
         working-directory: ${{ matrix.build_path }}
 
-      - name: Build AppImage for Linux
+      - name: Build AppImage for linux
         if: matrix.target == 'linux'
         run: |
           mv ${{ matrix.build_path }}/* linux/appimage/
