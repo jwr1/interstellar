@@ -7,6 +7,7 @@ import 'package:interstellar/src/widgets/open_webpage.dart';
 import './markdown_mention.dart';
 import './markdown_spoiler.dart';
 import './markdown_subscript_superscript.dart';
+import './markdown_video.dart';
 
 class Markdown extends StatelessWidget {
   final String data;
@@ -53,6 +54,7 @@ class Markdown extends StatelessWidget {
         SubscriptMarkdownSyntax(),
         SuperscriptMarkdownSyntax(),
         MentionMarkdownSyntax(),
+        VideoMarkdownSyntax(),
       ],
       blockSyntaxes: [
         SpoilerMarkdownSyntax(),
@@ -61,6 +63,7 @@ class Markdown extends StatelessWidget {
         'sub': SubscriptMarkdownBuilder(),
         'sup': SuperscriptMarkdownBuilder(),
         'mention': MentionMarkdownBuilder(originInstance: originInstance),
+        'video': VideoMarkdownBuilder(),
         'spoiler': SpoilerMarkdownBuilder(originInstance: originInstance),
       },
     );

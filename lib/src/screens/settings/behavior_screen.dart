@@ -145,6 +145,14 @@ class BehaviorSettingsScreen extends StatelessWidget {
               ac.selectedProfileValue.copyWith(askBeforeDeleting: newValue),
             ),
           ),
+          ListTileSwitch(
+            leading: const Icon(Symbols.play_arrow),
+            title: Text('Auto play videos'), // TODO: add localizations
+            value: ac.profile.autoPlayVideo,
+            onChanged: (newValue) => ac.updateProfile(
+              ac.selectedProfileValue.copyWith(autoPlayVideo: newValue)
+            ),
+          ),
         ],
       ),
     );
