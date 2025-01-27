@@ -147,7 +147,7 @@ class BehaviorSettingsScreen extends StatelessWidget {
           ),
           ListTileSwitch(
             leading: const Icon(Symbols.play_arrow),
-            title: Text('Auto play videos'), // TODO: add localizations
+            title: Text(l(context).settings_autoPlayVideos),
             value: ac.profile.autoPlayVideo,
             onChanged: (newValue) => ac.updateProfile(
               ac.selectedProfileValue.copyWith(autoPlayVideo: newValue)
