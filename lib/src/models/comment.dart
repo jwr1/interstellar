@@ -23,15 +23,25 @@ class CommentListModel with _$CommentListModel {
             json['pagination'] as Map<String, Object?>),
       );
 
-  factory CommentListModel.fromLemmy(Map<String, Object?> json) =>
+  // Lemmy comment list that needs to be converted to tree format. Used for post comments and comment replies.
+  factory CommentListModel.fromLemmyToTree(Map<String, Object?> json) =>
       CommentListModel(
         items: (json['comments'] as List<dynamic>)
             .where(
                 (c) => (c['comment']['path'] as String).split('.').length == 2)
             .map((c) => CommentModel.fromLemmy(
                   c as Map<String, Object?>,
-                  possibleChildren: json['comments'] as List<dynamic>,
+                  possibleChildrenJson: json['comments'] as List<dynamic>,
                 ))
+            .toList(),
+        nextPage: json['next_page'] as String?,
+      );
+
+  // Lemmy comment list that needs to be converted to flat format. Used for a list of user comments.
+  factory CommentListModel.fromLemmyToFlat(Map<String, Object?> json) =>
+      CommentListModel(
+        items: (json['comments'] as List<dynamic>)
+            .map((c) => CommentModel.fromLemmy(c as Map<String, Object?>))
             .toList(),
         nextPage: json['next_page'] as String?,
       );
@@ -95,7 +105,7 @@ class CommentModel with _$CommentModel {
 
   factory CommentModel.fromLemmy(
     Map<String, Object?> json, {
-    List<dynamic> possibleChildren = const [],
+    List<dynamic> possibleChildrenJson = const [],
   }) {
     final lemmyComment = json['comment'] as Map<String, Object?>;
     final lemmyCounts = json['counts'] as Map<String, Object?>;
@@ -104,15 +114,15 @@ class CommentModel with _$CommentModel {
     final lemmyPathSegments =
         lemmyPath.split('.').map((e) => int.parse(e)).toList();
 
-    final children = possibleChildren
+    final children = possibleChildrenJson
         .where((c) {
           String childPath = c['comment']['path'];
 
           return childPath.startsWith('$lemmyPath.') &&
               (childPath.split('.').length == lemmyPathSegments.length + 1);
         })
-        .map((c) =>
-            CommentModel.fromLemmy(c, possibleChildren: possibleChildren))
+        .map((c) => CommentModel.fromLemmy(c,
+            possibleChildrenJson: possibleChildrenJson))
         .toList();
 
     return CommentModel(

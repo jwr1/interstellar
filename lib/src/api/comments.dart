@@ -110,7 +110,7 @@ class APIComments {
 
         httpErrorHandler(response, message: 'Failed to load comments');
 
-        return CommentListModel.fromLemmy(
+        return CommentListModel.fromLemmyToTree(
             jsonDecode(utf8.decode(response.bodyBytes))
                 as Map<String, Object?>);
     }
@@ -159,7 +159,7 @@ class APIComments {
         json['next_page'] =
             lemmyCalcNextIntPage(json['comments'] as List<dynamic>, page);
 
-        return CommentListModel.fromLemmy(json);
+        return CommentListModel.fromLemmyToFlat(json);
     }
   }
 
@@ -188,7 +188,7 @@ class APIComments {
         return CommentModel.fromLemmy(
           (jsonDecode(response.body)['comments'] as List<dynamic>)
               .firstWhere((item) => item['comment']['id'] == commentId),
-          possibleChildren:
+          possibleChildrenJson:
               jsonDecode(utf8.decode(response.bodyBytes))['comments']
                   as List<dynamic>,
         );
