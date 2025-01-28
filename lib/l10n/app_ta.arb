@@ -329,8 +329,6 @@
   "@settings_askBeforeUnsubscribing": {},
   "settings_askBeforeDeleting": "நீக்குவதற்கு முன் கேளுங்கள்",
   "@settings_askBeforeDeleting": {},
-  "settings_hapticFeedback": "ஆப்டிக் கருத்து",
-  "@settings_hapticFeedback": {},
   "settings_themeMode": "கருப்பொருள் பயன்முறை",
   "@settings_themeMode": {},
   "settings_themeMode_system": "மண்டலம்",
