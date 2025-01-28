@@ -159,7 +159,6 @@
   "settings_askBeforeUnsubscribing": "Ask before unsubscribing/unfollowing",
   "settings_askBeforeDeleting": "Ask before deleting",
   "settings_autoPlayVideos": "Auto play videos",
-  "settings_hapticFeedback": "Haptic feedback",
   "settings_themeMode": "Theme mode",
   "settings_themeMode_system": "System",
   "settings_themeMode_light": "Light",

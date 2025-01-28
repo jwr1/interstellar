@@ -27,7 +27,7 @@ class ProfileRequired with _$ProfileRequired {
     required bool disableTabSwiping,
     required bool askBeforeUnsubscribing,
     required bool askBeforeDeleting,
-    required bool autoPlayVideo,
+    required bool autoPlayVideos,
     // Display settings
     required String appLanguage,
     required ThemeMode themeMode,
@@ -75,7 +75,8 @@ class ProfileRequired with _$ProfileRequired {
             defaultProfile.askBeforeUnsubscribing,
         askBeforeDeleting:
             profile?.askBeforeDeleting ?? defaultProfile.askBeforeDeleting,
-        autoPlayVideo: profile?.autoPlayVideo ?? defaultProfile.autoPlayVideo,
+        autoPlayVideos:
+            profile?.autoPlayVideos ?? defaultProfile.autoPlayVideos,
         appLanguage: profile?.appLanguage ?? defaultProfile.appLanguage,
         themeMode: profile?.themeMode ?? defaultProfile.themeMode,
         colorScheme: profile?.colorScheme ?? defaultProfile.colorScheme,
@@ -127,7 +128,7 @@ class ProfileRequired with _$ProfileRequired {
     disableTabSwiping: false,
     askBeforeUnsubscribing: false,
     askBeforeDeleting: true,
-    autoPlayVideo: true,
+    autoPlayVideos: false,
     appLanguage: '',
     themeMode: ThemeMode.system,
     colorScheme: FlexScheme.custom,
@@ -169,7 +170,7 @@ class ProfileOptional with _$ProfileOptional {
     required bool? disableTabSwiping,
     required bool? askBeforeUnsubscribing,
     required bool? askBeforeDeleting,
-    required bool? autoPlayVideo,
+    required bool? autoPlayVideos,
     // Display settings
     required String? appLanguage,
     required ThemeMode? themeMode,
@@ -210,7 +211,7 @@ class ProfileOptional with _$ProfileOptional {
     disableTabSwiping: null,
     askBeforeUnsubscribing: null,
     askBeforeDeleting: null,
-    autoPlayVideo: null,
+    autoPlayVideos: null,
     appLanguage: null,
     themeMode: null,
     colorScheme: null,
@@ -249,7 +250,7 @@ class ProfileOptional with _$ProfileOptional {
       askBeforeUnsubscribing:
           other.askBeforeUnsubscribing ?? askBeforeUnsubscribing,
       askBeforeDeleting: other.askBeforeDeleting ?? askBeforeDeleting,
-      autoPlayVideo: other.autoPlayVideo ?? autoPlayVideo,
+      autoPlayVideos: other.autoPlayVideos ?? autoPlayVideos,
       appLanguage: other.appLanguage ?? appLanguage,
       themeMode: other.themeMode ?? themeMode,
       colorScheme: other.colorScheme ?? colorScheme,
@@ -293,7 +294,7 @@ class ProfileOptional with _$ProfileOptional {
 
   ProfileOptional cleanupActions(
       String actionName, ProfileRequired builtProfile) {
-        // Only clean up actions with the following locations
+    // Only clean up actions with the following locations
     if (![
       ActionLocation.fabTap.name,
       ActionLocation.fabHold.name,
@@ -303,13 +304,27 @@ class ProfileOptional with _$ProfileOptional {
     }
 
     return copyWith(
-    feedActionBackToTop: builtProfile.feedActionBackToTop.name==actionName?ActionLocation.hide:this.feedActionBackToTop,
-    feedActionCreatePost: builtProfile.feedActionCreatePost.name==actionName?ActionLocation.hide:this.feedActionCreatePost,
-    feedActionExpandFab: builtProfile.feedActionExpandFab.name==actionName?ActionLocation.hide:this.feedActionExpandFab,
-    feedActionRefresh: builtProfile.feedActionRefresh.name==actionName?ActionLocation.hide:this.feedActionRefresh,
-    feedActionSetFilter: builtProfile.feedActionSetFilter.name==actionName?ActionLocationWithTabs.hide:this.feedActionSetFilter,
-    feedActionSetSort: builtProfile.feedActionSetSort.name==actionName?ActionLocation.hide:this.feedActionSetSort,
-    feedActionSetType: builtProfile.feedActionSetType.name==actionName?ActionLocationWithTabs.hide:this.feedActionSetType,
+      feedActionBackToTop: builtProfile.feedActionBackToTop.name == actionName
+          ? ActionLocation.hide
+          : this.feedActionBackToTop,
+      feedActionCreatePost: builtProfile.feedActionCreatePost.name == actionName
+          ? ActionLocation.hide
+          : this.feedActionCreatePost,
+      feedActionExpandFab: builtProfile.feedActionExpandFab.name == actionName
+          ? ActionLocation.hide
+          : this.feedActionExpandFab,
+      feedActionRefresh: builtProfile.feedActionRefresh.name == actionName
+          ? ActionLocation.hide
+          : this.feedActionRefresh,
+      feedActionSetFilter: builtProfile.feedActionSetFilter.name == actionName
+          ? ActionLocationWithTabs.hide
+          : this.feedActionSetFilter,
+      feedActionSetSort: builtProfile.feedActionSetSort.name == actionName
+          ? ActionLocation.hide
+          : this.feedActionSetSort,
+      feedActionSetType: builtProfile.feedActionSetType.name == actionName
+          ? ActionLocationWithTabs.hide
+          : this.feedActionSetType,
     );
   }
 }

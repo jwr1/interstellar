@@ -148,10 +148,9 @@ class BehaviorSettingsScreen extends StatelessWidget {
           ListTileSwitch(
             leading: const Icon(Symbols.play_arrow),
             title: Text(l(context).settings_autoPlayVideos),
-            value: ac.profile.autoPlayVideo,
+            value: ac.profile.autoPlayVideos,
             onChanged: (newValue) => ac.updateProfile(
-              ac.selectedProfileValue.copyWith(autoPlayVideo: newValue)
-            ),
+                ac.selectedProfileValue.copyWith(autoPlayVideos: newValue)),
           ),
         ],
       ),

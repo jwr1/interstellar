@@ -151,7 +151,8 @@ class _ContentItemState extends State<ContentItem> {
 
   @override
   Widget build(BuildContext context) {
-    final isVideo = widget.link != null && isSupportedVideo(widget.link!);
+    final isVideo =
+        widget.link != null && isSupportedYouTubeVideo(widget.link!);
 
     final Widget? userWidget = widget.user != null
         ? Padding(

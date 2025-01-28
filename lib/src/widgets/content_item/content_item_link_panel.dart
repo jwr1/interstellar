@@ -54,7 +54,7 @@ class _ContentItemLinkPanelState extends State<ContentItemLinkPanel> {
   void initState() {
     super.initState();
 
-    if (isSupportedVideo(widget.link)) {
+    if (isSupportedYouTubeVideo(widget.link)) {
       _youtubeVideoId =
           youtube_explode_dart.VideoId.parseVideoId(widget.link.toString());
     }
