@@ -55,6 +55,7 @@ class Markdown extends StatelessWidget {
         SuperscriptMarkdownSyntax(),
         MentionMarkdownSyntax(),
         VideoMarkdownSyntax(),
+        YoutubeEmbedSyntax()
       ],
       blockSyntaxes: [
         SpoilerMarkdownSyntax(),
