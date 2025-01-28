@@ -358,8 +358,6 @@
   "@settings_askBeforeUnsubscribing": {},
   "settings_askBeforeDeleting": "在删除之前询问",
   "@settings_askBeforeDeleting": {},
-  "settings_hapticFeedback": "触觉反馈",
-  "@settings_hapticFeedback": {},
   "settings_themeMode": "主题模式",
   "@settings_themeMode": {},
   "settings_themeMode_system": "系统",
