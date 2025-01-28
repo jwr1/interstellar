@@ -27,6 +27,7 @@ class ProfileRequired with _$ProfileRequired {
     required bool disableTabSwiping,
     required bool askBeforeUnsubscribing,
     required bool askBeforeDeleting,
+    required bool autoPlayVideo,
     // Display settings
     required String appLanguage,
     required ThemeMode themeMode,
@@ -74,6 +75,7 @@ class ProfileRequired with _$ProfileRequired {
             defaultProfile.askBeforeUnsubscribing,
         askBeforeDeleting:
             profile?.askBeforeDeleting ?? defaultProfile.askBeforeDeleting,
+        autoPlayVideo: profile?.autoPlayVideo ?? defaultProfile.autoPlayVideo,
         appLanguage: profile?.appLanguage ?? defaultProfile.appLanguage,
         themeMode: profile?.themeMode ?? defaultProfile.themeMode,
         colorScheme: profile?.colorScheme ?? defaultProfile.colorScheme,
@@ -125,6 +127,7 @@ class ProfileRequired with _$ProfileRequired {
     disableTabSwiping: false,
     askBeforeUnsubscribing: false,
     askBeforeDeleting: true,
+    autoPlayVideo: true,
     appLanguage: '',
     themeMode: ThemeMode.system,
     colorScheme: FlexScheme.custom,
@@ -166,6 +169,7 @@ class ProfileOptional with _$ProfileOptional {
     required bool? disableTabSwiping,
     required bool? askBeforeUnsubscribing,
     required bool? askBeforeDeleting,
+    required bool? autoPlayVideo,
     // Display settings
     required String? appLanguage,
     required ThemeMode? themeMode,
@@ -206,6 +210,7 @@ class ProfileOptional with _$ProfileOptional {
     disableTabSwiping: null,
     askBeforeUnsubscribing: null,
     askBeforeDeleting: null,
+    autoPlayVideo: null,
     appLanguage: null,
     themeMode: null,
     colorScheme: null,
@@ -244,6 +249,7 @@ class ProfileOptional with _$ProfileOptional {
       askBeforeUnsubscribing:
           other.askBeforeUnsubscribing ?? askBeforeUnsubscribing,
       askBeforeDeleting: other.askBeforeDeleting ?? askBeforeDeleting,
+      autoPlayVideo: other.autoPlayVideo ?? autoPlayVideo,
       appLanguage: other.appLanguage ?? appLanguage,
       themeMode: other.themeMode ?? themeMode,
       colorScheme: other.colorScheme ?? colorScheme,
