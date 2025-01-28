@@ -803,7 +803,7 @@
   "@confirmUnfollow": {},
   "altText": "替代文本",
   "@altText": {},
-  "settings_dataUtilities": "数据实用程序",
+  "settings_dataUtilities": "BETA: 数据实用程序",
   "@settings_dataUtilities": {},
   "settings_accountMigration": "账号迁移",
   "@settings_accountMigration": {},
@@ -855,5 +855,7 @@
     }
   },
   "pin": "置顶",
-  "@pin": {}
+  "@pin": {},
+  "settings_autoPlayVideos": "自动播放视频",
+  "@settings_autoPlayVideos": {}
 }
