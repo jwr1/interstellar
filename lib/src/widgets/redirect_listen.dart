@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/utils/variables.dart';
+import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -23,7 +25,7 @@ class RedirectListener extends StatefulWidget {
 class _RedirectListenerState extends State<RedirectListener> {
   Future<Uri> _listenForAuth() async {
     HttpServer server = await HttpServer.bind(_redirectHost, _redirectPort);
-    launchUrl(widget.initUri);
+    await launchUrl(widget.initUri);
     final req = await server.first;
 
     if (!mounted) return Uri();
@@ -75,7 +77,23 @@ class _RedirectListenerState extends State<RedirectListener> {
 
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
-      body: Center(child: Text(l(context).continueInBrowser)),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(l(context).continueInBrowser),
+            const SizedBox(height: 8),
+            LoadingTextButton(
+              onPressed: () async {
+                await Clipboard.setData(
+                  ClipboardData(text: widget.initUri.toString()),
+                );
+              },
+              label: Text(l(context).continueInBrowser_manual),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
