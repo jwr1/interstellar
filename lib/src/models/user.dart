@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:interstellar/src/models/image.dart';
+import 'package:interstellar/src/models/notification.dart';
 import 'package:interstellar/src/utils/models.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_mention.dart';
 
@@ -38,6 +39,7 @@ class DetailedUserModel with _$DetailedUserModel {
     required bool? isFollowedByUser,
     required bool? isFollowerOfUser,
     required bool? isBlockedByUser,
+    required NotificationControlStatus? notificationControlStatus,
   }) = _DetailedUserModel;
 
   factory DetailedUserModel.fromMbin(Map<String, Object?> json) {
@@ -54,6 +56,10 @@ class DetailedUserModel with _$DetailedUserModel {
       isFollowedByUser: json['isFollowedByUser'] as bool?,
       isFollowerOfUser: json['isFollowerOfUser'] as bool?,
       isBlockedByUser: json['isBlockedByUser'] as bool?,
+      notificationControlStatus: json['notificationStatus'] == null
+          ? null
+          : NotificationControlStatus.fromJson(
+              json['notificationStatus'] as String),
     );
 
     userMentionCache[user.name] = user;
@@ -78,6 +84,7 @@ class DetailedUserModel with _$DetailedUserModel {
       isFollowedByUser: null,
       isFollowerOfUser: null,
       isBlockedByUser: (json['blocked'] as bool?) ?? false,
+      notificationControlStatus: null,
     );
   }
 }

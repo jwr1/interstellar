@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:interstellar/src/models/image.dart';
+import 'package:interstellar/src/models/notification.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/utils/models.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_mention.dart';
@@ -52,9 +53,11 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
     required bool? isUserSubscribed,
     required bool? isBlockedByUser,
     required bool isPostingRestrictedToMods,
+    required NotificationControlStatus? notificationControlStatus,
   }) = _DetailedMagazineModel;
 
   factory DetailedMagazineModel.fromMbin(Map<String, Object?> json) {
+    print(json);
     final magazine = DetailedMagazineModel(
       id: json['magazineId'] as int,
       name: json['name'] as String,
@@ -77,6 +80,10 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
       isBlockedByUser: json['isBlockedByUser'] as bool?,
       isPostingRestrictedToMods:
           (json['isPostingRestrictedToMods'] ?? false) as bool,
+      notificationControlStatus: json['notificationStatus'] == null
+          ? null
+          : NotificationControlStatus.fromJson(
+              json['notificationStatus'] as String),
     );
 
     magazineMentionCache[magazine.name] = magazine;
@@ -106,6 +113,7 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
       isBlockedByUser: json['blocked'] as bool?,
       isPostingRestrictedToMods:
           (lemmyCommunity['posting_restricted_to_mods']) as bool,
+      notificationControlStatus: null,
     );
 
     magazineMentionCache[magazine.name] = magazine;

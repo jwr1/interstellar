@@ -99,3 +99,21 @@ const notificationTypeMap = {
   'report_rejected_notification': NotificationType.reportRejected,
   'report_approved_notification': NotificationType.reportApproved,
 };
+
+enum NotificationControlStatus {
+  default_,
+  muted,
+  loud;
+
+  factory NotificationControlStatus.fromJson(String json) => {
+        'Default': NotificationControlStatus.default_,
+        'Muted': NotificationControlStatus.muted,
+        'Loud': NotificationControlStatus.loud,
+      }[json]!;
+
+  String toJson() => {
+        NotificationControlStatus.default_: 'Default',
+        NotificationControlStatus.muted: 'Muted',
+        NotificationControlStatus.loud: 'Loud',
+      }[this]!;
+}

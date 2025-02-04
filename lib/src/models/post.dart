@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:interstellar/src/models/domain.dart';
 import 'package:interstellar/src/models/image.dart';
 import 'package:interstellar/src/models/magazine.dart';
+import 'package:interstellar/src/models/notification.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/utils/models.dart';
 
@@ -70,6 +71,7 @@ class PostModel with _$PostModel {
     required DateTime lastActive,
     required String visibility,
     required bool? canAuthUserModerate,
+    required NotificationControlStatus? notificationControlStatus,
   }) = _PostModel;
 
   factory PostModel.fromMbinEntry(Map<String, Object?> json) => PostModel(
@@ -105,6 +107,10 @@ class PostModel with _$PostModel {
         lastActive: DateTime.parse(json['lastActive'] as String),
         visibility: json['visibility'] as String,
         canAuthUserModerate: json['canAuthUserModerate'] as bool?,
+        notificationControlStatus: json['notificationStatus'] == null
+            ? null
+            : NotificationControlStatus.fromJson(
+                json['notificationStatus'] as String),
       );
 
   factory PostModel.fromMbinPost(Map<String, Object?> json) => PostModel(
@@ -135,6 +141,10 @@ class PostModel with _$PostModel {
         lastActive: DateTime.parse(json['lastActive'] as String),
         visibility: json['visibility'] as String,
         canAuthUserModerate: json['canAuthUserModerate'] as bool?,
+        notificationControlStatus: json['notificationStatus'] == null
+            ? null
+            : NotificationControlStatus.fromJson(
+                json['notificationStatus'] as String),
       );
 
   factory PostModel.fromLemmy(Map<String, Object?> json) {
@@ -172,6 +182,7 @@ class PostModel with _$PostModel {
       lastActive: DateTime.parse(lemmyCounts['newest_comment_time'] as String),
       visibility: 'visible',
       canAuthUserModerate: null,
+      notificationControlStatus: null,
     );
   }
 }

@@ -520,5 +520,8 @@
         "type": "int"
       }
     }
-  }
+  },
+  "notificationControlStatus_default": "Default notifications",
+  "notificationControlStatus_muted": "Muted notifications",
+  "notificationControlStatus_loud": "Loud notifications"
 }

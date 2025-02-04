@@ -8,6 +8,8 @@ import 'package:interstellar/src/utils/utils.dart';
 // new_ is used because new is a reserved keyword
 enum NotificationsFilter { all, new_, read }
 
+enum NotificationControlUpdateTargetType { entry, post, magazine, user }
+
 class MbinAPINotifications {
   final ServerSoftware software;
   final http.Client httpClient;
@@ -133,21 +135,28 @@ class MbinAPINotifications {
     }
   }
 
-  Future<void> pushTest() async {
+  Future<void> updateControl({
+    required NotificationControlUpdateTargetType targetType,
+    required int targetId,
+    required NotificationControlStatus status,
+  }) async {
     switch (software) {
       case ServerSoftware.mbin:
-        const path = '/api/notification/push/test';
+        final path =
+            '/api/notification/update/${targetType.name}/$targetId/${status.toJson()}';
 
-        final response = await httpClient.get(
+        final response = await httpClient.put(
           Uri.https(server, path),
         );
 
-        httpErrorHandler(response, message: 'Failed to send test push');
+        httpErrorHandler(response,
+            message: 'Failed to update notification control');
 
         return;
 
       case ServerSoftware.lemmy:
-        throw Exception('Notifications not yet implemented on Lemmy');
+        throw Exception(
+            'Notification update control not yet implemented on Lemmy');
     }
   }
 }
