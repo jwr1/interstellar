@@ -523,5 +523,8 @@
   },
   "notificationControlStatus_default": "Default notifications",
   "notificationControlStatus_muted": "Muted notifications",
-  "notificationControlStatus_loud": "Loud notifications"
+  "notificationControlStatus_loud": "Loud notifications",
+  "bookmark": "Bookmark",
+  "bookmark_addToX": "Add to {name}",
+  "bookmark_removeFromX": "Remove from {name}"
 }

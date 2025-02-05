@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:interstellar/src/api/bookmark.dart';
 import 'package:interstellar/src/api/comments.dart';
 import 'package:interstellar/src/api/domains.dart';
 import 'package:interstellar/src/api/magazine_moderation.dart';
@@ -31,6 +32,7 @@ class API {
   final MbinAPIMicroblogs microblogs;
   final APISearch search;
   final APIUsers users;
+  final APIBookmark bookmark;
 
   API(
     this.software,
@@ -47,7 +49,8 @@ class API {
         notifications = MbinAPINotifications(software, httpClient, server),
         microblogs = MbinAPIMicroblogs(software, httpClient, server),
         search = APISearch(software, httpClient, server),
-        users = APIUsers(software, httpClient, server);
+        users = APIUsers(software, httpClient, server),
+        bookmark = APIBookmark(software, httpClient, server);
 }
 
 Future<ServerSoftware?> getServerSoftware(String server) async {

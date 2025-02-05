@@ -72,6 +72,7 @@ class PostModel with _$PostModel {
     required String visibility,
     required bool? canAuthUserModerate,
     required NotificationControlStatus? notificationControlStatus,
+    required List<String>? bookmarks,
   }) = _PostModel;
 
   factory PostModel.fromMbinEntry(Map<String, Object?> json) => PostModel(
@@ -111,6 +112,7 @@ class PostModel with _$PostModel {
             ? null
             : NotificationControlStatus.fromJson(
                 json['notificationStatus'] as String),
+        bookmarks: optionalStringList(json['bookmarks']),
       );
 
   factory PostModel.fromMbinPost(Map<String, Object?> json) => PostModel(
@@ -145,6 +147,7 @@ class PostModel with _$PostModel {
             ? null
             : NotificationControlStatus.fromJson(
                 json['notificationStatus'] as String),
+        bookmarks: optionalStringList(json['bookmarks']),
       );
 
   factory PostModel.fromLemmy(Map<String, Object?> json) {
@@ -183,6 +186,7 @@ class PostModel with _$PostModel {
       visibility: 'visible',
       canAuthUserModerate: null,
       notificationControlStatus: null,
+      bookmarks: null,
     );
   }
 }
