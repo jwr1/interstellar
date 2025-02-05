@@ -9,6 +9,7 @@ import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/markdown/drafts_controller.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
+import 'package:interstellar/src/widgets/wrapper.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
@@ -37,6 +38,7 @@ class _CreateScreenState extends State<CreateScreen> {
   bool _isOc = false;
   bool _isAdult = false;
   XFile? _imageFile;
+  String? _altText = '';
   String _lang = '';
 
   @override
@@ -89,6 +91,7 @@ class _CreateScreenState extends State<CreateScreen> {
                   Padding(
                     padding: const EdgeInsets.all(5),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         if (_imageFile == null)
                           Expanded(
@@ -99,13 +102,18 @@ class _CreateScreenState extends State<CreateScreen> {
                               onChanged: (_) => setState(() {}),
                             ),
                           ),
-                        ImageSelector(
-                          _imageFile,
-                          (file) => setState(() {
-                            _imageFile = file;
-                          }),
-                          enabled: _bodyTextController.text.isEmpty &&
-                              _urlTextController.text.isEmpty,
+                        Wrapper(
+                          shouldWrap: _imageFile != null,
+                          parentBuilder: (child) => Expanded(child: child),
+                          child: ImageSelector(
+                            _imageFile,
+                                (file, altText) => setState(() {
+                              _imageFile = file;
+                              _altText = altText;
+                            }),
+                            enabled: _bodyTextController.text.isEmpty &&
+                                _urlTextController.text.isEmpty,
+                          ),
                         )
                       ],
                     ),
@@ -113,8 +121,9 @@ class _CreateScreenState extends State<CreateScreen> {
                 if (widget.type == PostType.microblog)
                   ImageSelector(
                     _imageFile,
-                    (file) => setState(() {
+                    (file, altText) => setState(() {
                       _imageFile = file;
+                      _altText = altText;
                     }),
                   ),
                 if (widget.type != PostType.microblog)
@@ -207,7 +216,7 @@ class _CreateScreenState extends State<CreateScreen> {
                                 magazineId,
                                 title: _titleTextController.text,
                                 image: _imageFile!,
-                                alt: '',
+                                alt: _altText?? '',
                                 isOc: _isOc,
                                 body: _bodyTextController.text,
                                 lang: _lang,
