@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:interstellar/src/controller/controller.dart';
-import 'package:interstellar/src/models/bookmark_list.dart';
 import 'package:interstellar/src/models/image.dart';
 import 'package:interstellar/src/screens/explore/domain_screen.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';

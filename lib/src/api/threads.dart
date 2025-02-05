@@ -450,7 +450,8 @@ class APIThreads {
             'community_id': magazineID,
             'url': 'https://$server/pictrs/image/$imageName',
             'body': body,
-            'nsfw': isAdult
+            'nsfw': isAdult,
+            'alt_text': nullIfEmpty(alt),
           }),
         );
 

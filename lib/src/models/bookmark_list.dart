@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:interstellar/src/utils/models.dart';
 
 part 'bookmark_list.freezed.dart';
 

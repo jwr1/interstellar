@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:interstellar/src/controller/controller.dart';
+import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/utils/language.dart';
 import 'package:interstellar/src/utils/utils.dart';
@@ -107,7 +108,7 @@ class _CreateScreenState extends State<CreateScreen> {
                           parentBuilder: (child) => Expanded(child: child),
                           child: ImageSelector(
                             _imageFile,
-                                (file, altText) => setState(() {
+                            (file, altText) => setState(() {
                               _imageFile = file;
                               _altText = altText;
                             }),
@@ -126,7 +127,9 @@ class _CreateScreenState extends State<CreateScreen> {
                       _altText = altText;
                     }),
                   ),
-                if (widget.type != PostType.microblog)
+                if (widget.type == PostType.thread &&
+                    context.watch<AppController>().serverSoftware ==
+                        ServerSoftware.mbin)
                   Padding(
                     padding: const EdgeInsets.all(5),
                     child: TextEditor(
@@ -142,7 +145,9 @@ class _CreateScreenState extends State<CreateScreen> {
                     label: l(context).magazine,
                   ),
                 ),
-                if (widget.type != PostType.microblog)
+                if (widget.type == PostType.thread &&
+                    context.watch<AppController>().serverSoftware ==
+                        ServerSoftware.mbin)
                   CheckboxListTile(
                     title: Text(l(context).originalContent_long),
                     value: _isOc,
@@ -216,7 +221,7 @@ class _CreateScreenState extends State<CreateScreen> {
                                 magazineId,
                                 title: _titleTextController.text,
                                 image: _imageFile!,
-                                alt: _altText?? '',
+                                alt: _altText ?? '',
                                 isOc: _isOc,
                                 body: _bodyTextController.text,
                                 lang: _lang,
