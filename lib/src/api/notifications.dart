@@ -155,8 +155,7 @@ class MbinAPINotifications {
         return;
 
       case ServerSoftware.lemmy:
-        throw Exception(
-            'Notification update control not yet implemented on Lemmy');
+        throw Exception('Notification update control not implemented on Lemmy');
     }
   }
 }

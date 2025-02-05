@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:interstellar/src/controller/controller.dart';
+import 'package:interstellar/src/models/bookmark_list.dart';
 import 'package:interstellar/src/models/image.dart';
 import 'package:interstellar/src/screens/explore/domain_screen.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
@@ -88,6 +89,13 @@ class ContentItem extends StatefulWidget {
 
   final Set<String>? filterListWarnings;
 
+  final List<String>? activeBookmarkLists;
+  final Future<List<String>> Function()? loadPossibleBookmarkLists;
+  final Future<void> Function()? onAddBookmark;
+  final Future<void> Function(String)? onAddBookmarkToList;
+  final Future<void> Function()? onRemoveBookmark;
+  final Future<void> Function(String)? onRemoveBookmarkFromList;
+
   const ContentItem({
     required this.originInstance,
     this.title,
@@ -138,6 +146,12 @@ class ContentItem extends StatefulWidget {
     required this.editDraftResourceId,
     required this.replyDraftResourceId,
     this.filterListWarnings,
+    this.activeBookmarkLists,
+    this.loadPossibleBookmarkLists,
+    this.onAddBookmark,
+    this.onAddBookmarkToList,
+    this.onRemoveBookmark,
+    this.onRemoveBookmarkFromList,
     super.key,
   });
 
@@ -148,6 +162,9 @@ class ContentItem extends StatefulWidget {
 class _ContentItemState extends State<ContentItem> {
   TextEditingController? _replyTextController;
   TextEditingController? _editTextController;
+
+  bool _bookmarkMenuWasOpened = false;
+  List<String>? _possibleBookmarkLists;
 
   @override
   Widget build(BuildContext context) {
@@ -534,6 +551,71 @@ class _ContentItemState extends State<ContentItem> {
                                       child: Text(
                                           l(context).moreFrom(widget.domain!)),
                                     ),
+                                  if (widget.activeBookmarkLists != null &&
+                                      widget.loadPossibleBookmarkLists !=
+                                          null &&
+                                      widget.onAddBookmarkToList != null &&
+                                      widget.onRemoveBookmarkFromList != null)
+                                    SubmenuButton(
+                                      menuChildren: [
+                                        ...{
+                                          ...widget.activeBookmarkLists!,
+                                          if (_possibleBookmarkLists != null)
+                                            ..._possibleBookmarkLists!,
+                                        }.map(
+                                          (listName) => widget
+                                                  .activeBookmarkLists!
+                                                  .contains(listName)
+                                              ? MenuItemButton(
+                                                  onPressed: () => widget
+                                                          .onRemoveBookmarkFromList!(
+                                                      listName),
+                                                  leadingIcon: const Icon(
+                                                    Symbols.bookmark_rounded,
+                                                    fill: 1,
+                                                  ),
+                                                  child: Text(l(context)
+                                                      .bookmark_removeFromX(
+                                                          listName)),
+                                                )
+                                              : MenuItemButton(
+                                                  onPressed: () => widget
+                                                          .onAddBookmarkToList!(
+                                                      listName),
+                                                  leadingIcon: const Icon(
+                                                    Symbols.bookmark_rounded,
+                                                    fill: 0,
+                                                  ),
+                                                  child: Text(l(context)
+                                                      .bookmark_addToX(
+                                                          listName)),
+                                                ),
+                                        ),
+                                        if (_possibleBookmarkLists == null)
+                                          const Padding(
+                                            padding: EdgeInsets.all(8),
+                                            child: SizedBox(
+                                              width: 24,
+                                              height: 24,
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            ),
+                                          ),
+                                      ],
+                                      onOpen: () async {
+                                        if (_bookmarkMenuWasOpened) return;
+                                        _bookmarkMenuWasOpened = true;
+
+                                        final possibleBookmarkLists =
+                                            await widget
+                                                .loadPossibleBookmarkLists!();
+                                        setState(() {
+                                          _possibleBookmarkLists =
+                                              possibleBookmarkLists;
+                                        });
+                                      },
+                                      child: Text(l(context).bookmark),
+                                    ),
                                   if (widget.onReport != null)
                                     MenuItemButton(
                                       onPressed: () async {
@@ -670,6 +752,22 @@ class _ContentItemState extends State<ContentItem> {
                                     ),
                                 ],
                               ),
+                            if (widget.activeBookmarkLists != null)
+                              widget.activeBookmarkLists!.isEmpty
+                                  ? LoadingIconButton(
+                                      onPressed: widget.onAddBookmark,
+                                      icon: const Icon(
+                                        Symbols.bookmark_rounded,
+                                        fill: 0,
+                                      ),
+                                    )
+                                  : LoadingIconButton(
+                                      onPressed: widget.onRemoveBookmark,
+                                      icon: const Icon(
+                                        Symbols.bookmark_rounded,
+                                        fill: 1,
+                                      ),
+                                    ),
                           ];
 
                           return constrains.maxWidth < 300

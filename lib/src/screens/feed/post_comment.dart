@@ -1,5 +1,6 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
+import 'package:interstellar/src/api/bookmark.dart';
 import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/comment.dart';
@@ -37,6 +38,8 @@ class _PostCommentState extends State<PostComment> {
 
   @override
   Widget build(BuildContext context) {
+    final ac = context.watch<AppController>();
+
     final canModerate = widget.comment.canAuthUserModerate ?? false;
 
     return Column(
@@ -63,10 +66,7 @@ class _PostCommentState extends State<PostComment> {
               boosts: widget.comment.boosts,
               isBoosted: widget.comment.myBoost == true,
               onBoost: whenLoggedIn(context, () async {
-                var newValue = await context
-                    .read<AppController>()
-                    .api
-                    .comments
+                var newValue = await ac.api.comments
                     .boost(widget.comment.postType, widget.comment.id);
                 widget.onUpdate(newValue.copyWith(
                   childCount: widget.comment.childCount,
@@ -75,12 +75,11 @@ class _PostCommentState extends State<PostComment> {
               }),
               upVotes: widget.comment.upvotes,
               onUpVote: whenLoggedIn(context, () async {
-                var newValue = await context
-                    .read<AppController>()
-                    .api
-                    .comments
-                    .vote(widget.comment.postType, widget.comment.id, 1,
-                        widget.comment.myVote == 1 ? 0 : 1);
+                var newValue = await ac.api.comments.vote(
+                    widget.comment.postType,
+                    widget.comment.id,
+                    1,
+                    widget.comment.myVote == 1 ? 0 : 1);
                 widget.onUpdate(newValue.copyWith(
                   childCount: widget.comment.childCount,
                   children: widget.comment.children,
@@ -90,12 +89,11 @@ class _PostCommentState extends State<PostComment> {
               downVotes: widget.comment.downvotes,
               isDownVoted: widget.comment.myVote == -1,
               onDownVote: whenLoggedIn(context, () async {
-                var newValue = await context
-                    .read<AppController>()
-                    .api
-                    .comments
-                    .vote(widget.comment.postType, widget.comment.id, -1,
-                        widget.comment.myVote == -1 ? 0 : -1);
+                var newValue = await ac.api.comments.vote(
+                    widget.comment.postType,
+                    widget.comment.id,
+                    -1,
+                    widget.comment.myVote == -1 ? 0 : -1);
                 widget.onUpdate(newValue.copyWith(
                   childCount: widget.comment.childCount,
                   children: widget.comment.children,
@@ -103,13 +101,12 @@ class _PostCommentState extends State<PostComment> {
               }),
               contentTypeName: l(context).comment,
               onReply: whenLoggedIn(context, (body) async {
-                var newSubComment =
-                    await context.read<AppController>().api.comments.create(
-                          widget.comment.postType,
-                          widget.comment.postId,
-                          body,
-                          parentCommentId: widget.comment.id,
-                        );
+                var newSubComment = await ac.api.comments.create(
+                  widget.comment.postType,
+                  widget.comment.postId,
+                  body,
+                  parentCommentId: widget.comment.id,
+                );
 
                 widget.onUpdate(widget.comment.copyWith(
                   childCount: widget.comment.childCount + 1,
@@ -117,20 +114,16 @@ class _PostCommentState extends State<PostComment> {
                 ));
               }),
               onReport: whenLoggedIn(context, (reason) async {
-                await context
-                    .read<AppController>()
-                    .api
-                    .comments
+                await ac.api.comments
                     .report(widget.comment.postType, widget.comment.id, reason);
               }),
               onEdit: widget.comment.visibility != 'soft_deleted'
                   ? whenLoggedIn(context, (body) async {
-                      var newValue =
-                          await context.read<AppController>().api.comments.edit(
-                                widget.comment.postType,
-                                widget.comment.id,
-                                body,
-                              );
+                      var newValue = await ac.api.comments.edit(
+                        widget.comment.postType,
+                        widget.comment.id,
+                        body,
+                      );
 
                       widget.onUpdate(newValue.copyWith(
                         childCount: widget.comment.childCount,
@@ -140,10 +133,7 @@ class _PostCommentState extends State<PostComment> {
                   : null,
               onDelete: widget.comment.visibility != 'soft_deleted'
                   ? whenLoggedIn(context, () async {
-                      await context
-                          .read<AppController>()
-                          .api
-                          .comments
+                      await ac.api.comments
                           .delete(widget.comment.postType, widget.comment.id);
 
                       if (!mounted) return;
@@ -160,15 +150,11 @@ class _PostCommentState extends State<PostComment> {
               onModerateDelete: !canModerate
                   ? null
                   : () async {
-                      final newValue = await context
-                          .read<AppController>()
-                          .api
-                          .moderation
-                          .commentDelete(
-                            widget.comment.postType,
-                            widget.comment.id,
-                            true,
-                          );
+                      final newValue = await ac.api.moderation.commentDelete(
+                        widget.comment.postType,
+                        widget.comment.id,
+                        true,
+                      );
 
                       widget.onUpdate(newValue.copyWith(
                         childCount: widget.comment.childCount,
@@ -189,9 +175,8 @@ class _PostCommentState extends State<PostComment> {
                       })
                   : null,
               openLinkUri: Uri.https(
-                context.watch<AppController>().instanceHost,
-                context.watch<AppController>().serverSoftware ==
-                        ServerSoftware.lemmy
+                ac.instanceHost,
+                ac.serverSoftware == ServerSoftware.lemmy
                     ? '/comment/${widget.comment.id}'
                     : '/m/${widget.comment.magazine.name}/${switch (widget.comment.postType) {
                         PostType.thread => 't',
@@ -205,6 +190,51 @@ class _PostCommentState extends State<PostComment> {
                   'edit:${widget.comment.postType.name}:comment:${context.watch<AppController>().instanceHost}:${widget.comment.id}',
               replyDraftResourceId:
                   'reply:${widget.comment.postType.name}:comment:${context.watch<AppController>().instanceHost}:${widget.comment.id}',
+              activeBookmarkLists: widget.comment.bookmarks,
+              loadPossibleBookmarkLists: () async =>
+                  (await ac.api.bookmark.getBookmarkLists())
+                      .map((list) => list.name)
+                      .toList(),
+              onAddBookmark: () async {
+                final newBookmarks = await ac.api.bookmark.addBookmarkToDefault(
+                  subjectType: BookmarkListSubject.fromPostType(
+                      postType: widget.comment.postType, isComment: true),
+                  subjectId: widget.comment.id,
+                );
+                widget
+                    .onUpdate(widget.comment.copyWith(bookmarks: newBookmarks));
+              },
+              onAddBookmarkToList: (String listName) async {
+                final newBookmarks = await ac.api.bookmark.addBookmarkToList(
+                  subjectType: BookmarkListSubject.fromPostType(
+                      postType: widget.comment.postType, isComment: true),
+                  subjectId: widget.comment.id,
+                  listName: listName,
+                );
+                widget
+                    .onUpdate(widget.comment.copyWith(bookmarks: newBookmarks));
+              },
+              onRemoveBookmark: () async {
+                final newBookmarks =
+                    await ac.api.bookmark.removeBookmarkFromAll(
+                  subjectType: BookmarkListSubject.fromPostType(
+                      postType: widget.comment.postType, isComment: true),
+                  subjectId: widget.comment.id,
+                );
+                widget
+                    .onUpdate(widget.comment.copyWith(bookmarks: newBookmarks));
+              },
+              onRemoveBookmarkFromList: (String listName) async {
+                final newBookmarks =
+                    await ac.api.bookmark.removeBookmarkFromList(
+                  subjectType: BookmarkListSubject.fromPostType(
+                      postType: widget.comment.postType, isComment: true),
+                  subjectId: widget.comment.id,
+                  listName: listName,
+                );
+                widget
+                    .onUpdate(widget.comment.copyWith(bookmarks: newBookmarks));
+              },
             ),
           ),
         ),
