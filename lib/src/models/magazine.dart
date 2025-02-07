@@ -57,7 +57,6 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
   }) = _DetailedMagazineModel;
 
   factory DetailedMagazineModel.fromMbin(Map<String, Object?> json) {
-    print(json);
     final magazine = DetailedMagazineModel(
       id: json['magazineId'] as int,
       name: json['name'] as String,

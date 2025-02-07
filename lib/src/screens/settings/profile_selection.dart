@@ -106,7 +106,7 @@ class _ProfileSelectWidgetState extends State<_ProfileSelectWidget> {
                       onPressed: () async {
                         await Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => _EditProfileScreen(
+                            builder: (context) => EditProfileScreen(
                               profile: profile,
                               profileList: profileList!,
                             ),
@@ -123,7 +123,7 @@ class _ProfileSelectWidgetState extends State<_ProfileSelectWidget> {
                 onTap: () async {
                   await Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => _EditProfileScreen(
+                      builder: (context) => EditProfileScreen(
                         profile: null,
                         profileList: profileList!,
                       ),
@@ -140,20 +140,23 @@ class _ProfileSelectWidgetState extends State<_ProfileSelectWidget> {
   }
 }
 
-class _EditProfileScreen extends StatefulWidget {
+class EditProfileScreen extends StatefulWidget {
   final String? profile;
   final List<String> profileList;
+  final ProfileOptional? importProfile;
 
-  const _EditProfileScreen({
+  const EditProfileScreen({
     required this.profile,
     required this.profileList,
+    this.importProfile,
+    super.key,
   });
 
   @override
-  State<_EditProfileScreen> createState() => _EditProfileScreenState();
+  State<EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
-class _EditProfileScreenState extends State<_EditProfileScreen> {
+class _EditProfileScreenState extends State<EditProfileScreen> {
   final nameController = TextEditingController();
 
   bool setAsMain = false;
@@ -170,28 +173,33 @@ class _EditProfileScreenState extends State<_EditProfileScreen> {
     if (widget.profile != null) {
       nameController.text = widget.profile!;
 
-      newAutoSelect =
-          widget.profile == context.read<AppController>().autoSelectProfile;
-      oldAutoSelect = newAutoSelect;
+      if (widget.importProfile == null) {
+        newAutoSelect =
+            widget.profile == context.read<AppController>().autoSelectProfile;
+        oldAutoSelect = newAutoSelect;
 
-      context.read<AppController>().getProfile(widget.profile!).then((value) {
-        setState(() {
-          autoSelectAccount = value.autoSwitchAccount;
+        context.read<AppController>().getProfile(widget.profile!).then((value) {
+          setState(() {
+            autoSelectAccount = value.autoSwitchAccount;
+          });
         });
-      });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final ac = context.watch<AppController>();
-    final isMainProfile = widget.profile == ac.mainProfile;
+    final isMainProfile =
+        widget.importProfile == null && widget.profile == ac.mainProfile;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.profile == null
-            ? l(context).profile_new
-            : l(context).profile_edit),
+        title: Text(widget.importProfile != null
+            ? l(context).profile_import
+            : widget.profile == null
+                ? l(context).profile_new
+                : l(context).profile_edit),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -239,13 +247,15 @@ class _EditProfileScreenState extends State<_EditProfileScreen> {
             child: LoadingFilledButton(
               icon: const Icon(Symbols.save_rounded),
               onPressed: nameController.text.isEmpty ||
-                      (nameController.text != widget.profile &&
+                      ((nameController.text != widget.profile ||
+                              widget.importProfile != null) &&
                           widget.profileList.contains(nameController.text))
                   ? null
                   : () async {
                       final name = nameController.text;
 
-                      if (widget.profile == null) {
+                      if (widget.profile == null ||
+                          widget.importProfile != null) {
                         await ac.setProfile(
                           name,
                           ProfileOptional.nullProfile,
@@ -278,7 +288,7 @@ class _EditProfileScreenState extends State<_EditProfileScreen> {
               label: Text(l(context).saveChanges),
             ),
           ),
-          if (widget.profile != null)
+          if (widget.profile != null && widget.importProfile == null)
             Padding(
               padding: const EdgeInsets.only(top: 12),
               child: OutlinedButton.icon(

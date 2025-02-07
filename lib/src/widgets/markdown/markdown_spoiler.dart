@@ -14,11 +14,6 @@ class SpoilerMarkdownSyntax extends md.BlockSyntax {
   RegExp endPattern = RegExp(r'^\s{0,3}:{3,}\s*$');
 
   @override
-  bool canParse(md.BlockParser parser) {
-    return pattern.hasMatch(parser.current.content);
-  }
-
-  @override
   md.Node parse(md.BlockParser parser) {
     final Match? match = pattern.firstMatch(parser.current.content);
     final String? title = match?.group(1)?.trim();

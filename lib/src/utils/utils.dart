@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:http/http.dart' as http;
@@ -232,4 +233,14 @@ class _DefaultTabControllerListenerState
   Widget build(BuildContext context) {
     return widget.child;
   }
+}
+
+/// Takes String as input, hashes it with MD5, and outputs a base64 String.
+String strToMd5Base64(String input) {
+  final inputBytes = utf8.encode(input);
+
+  final hashBytes = md5.convert(inputBytes).bytes;
+  final hashBase64 = base64.encode(hashBytes);
+
+  return hashBase64;
 }

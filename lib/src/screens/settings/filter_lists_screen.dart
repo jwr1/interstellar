@@ -42,7 +42,7 @@ class _FilterListsScreenState extends State<FilterListsScreen> {
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) =>
-                            _EditFilterListScreen(filterList: name),
+                            EditFilterListScreen(filterList: name),
                       ),
                     ),
                   ),
@@ -71,7 +71,7 @@ class _FilterListsScreenState extends State<FilterListsScreen> {
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) =>
-                    const _EditFilterListScreen(filterList: null),
+                    const EditFilterListScreen(filterList: null),
               ),
             ),
           ),
@@ -81,18 +81,21 @@ class _FilterListsScreenState extends State<FilterListsScreen> {
   }
 }
 
-class _EditFilterListScreen extends StatefulWidget {
+class EditFilterListScreen extends StatefulWidget {
   final String? filterList;
+  final FilterList? importFilterList;
 
-  const _EditFilterListScreen({
+  const EditFilterListScreen({
     required this.filterList,
+    this.importFilterList,
+    super.key,
   });
 
   @override
-  State<_EditFilterListScreen> createState() => _EditFilterListScreenState();
+  State<EditFilterListScreen> createState() => _EditFilterListScreenState();
 }
 
-class _EditFilterListScreenState extends State<_EditFilterListScreen> {
+class _EditFilterListScreenState extends State<EditFilterListScreen> {
   final nameController = TextEditingController();
   FilterList filterListData = FilterList.nullFilterList;
 
@@ -102,8 +105,13 @@ class _EditFilterListScreenState extends State<_EditFilterListScreen> {
 
     if (widget.filterList != null) {
       nameController.text = widget.filterList!;
-      filterListData =
-          context.read<AppController>().filterLists[widget.filterList!]!;
+
+      if (widget.importFilterList != null) {
+        filterListData = widget.importFilterList!;
+      } else {
+        filterListData =
+            context.read<AppController>().filterLists[widget.filterList!]!;
+      }
     }
   }
 
@@ -113,14 +121,16 @@ class _EditFilterListScreenState extends State<_EditFilterListScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.filterList == null
-            ? l(context).filterList_new
-            : l(context).filterList_edit),
+        title: Text(widget.importFilterList != null
+            ? l(context).filterList_import
+            : widget.filterList == null
+                ? l(context).filterList_new
+                : l(context).filterList_edit),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          if (widget.filterList != null) ...[
+          if (widget.filterList != null && widget.importFilterList == null) ...[
             ListTileSwitch(
               title: Text(l(context).filterList_activateFilter),
               value: ac.profile.filterLists[widget.filterList] == true,
@@ -246,13 +256,15 @@ class _EditFilterListScreenState extends State<_EditFilterListScreen> {
             child: LoadingFilledButton(
               icon: const Icon(Symbols.save_rounded),
               onPressed: nameController.text.isEmpty ||
-                      (nameController.text != widget.filterList &&
+                      ((nameController.text != widget.filterList ||
+                              widget.importFilterList != null) &&
                           ac.filterLists.containsKey(nameController.text))
                   ? null
                   : () async {
                       final name = nameController.text;
 
-                      if (widget.filterList == null) {
+                      if (widget.filterList == null ||
+                          widget.importFilterList != null) {
                         await ac.setFilterList(
                           name,
                           FilterList.nullFilterList,
@@ -269,7 +281,7 @@ class _EditFilterListScreenState extends State<_EditFilterListScreen> {
               label: Text(l(context).saveChanges),
             ),
           ),
-          if (widget.filterList != null)
+          if (widget.filterList != null && widget.importFilterList == null)
             Padding(
               padding: const EdgeInsets.only(top: 12),
               child: OutlinedButton.icon(

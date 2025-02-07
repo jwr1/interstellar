@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart' as mdf;
 import 'package:interstellar/src/models/image.dart';
 import 'package:interstellar/src/widgets/image.dart';
+import 'package:interstellar/src/widgets/markdown/markdown_config_share.dart';
 import 'package:interstellar/src/widgets/open_webpage.dart';
 
 import './markdown_mention.dart';
@@ -59,6 +60,7 @@ class Markdown extends StatelessWidget {
       ],
       blockSyntaxes: [
         SpoilerMarkdownSyntax(),
+        ConfigShareMarkdownSyntax(),
       ],
       builders: {
         'sub': SubscriptMarkdownBuilder(),
@@ -66,6 +68,7 @@ class Markdown extends StatelessWidget {
         'mention': MentionMarkdownBuilder(originInstance: originInstance),
         'video': VideoMarkdownBuilder(),
         'spoiler': SpoilerMarkdownBuilder(originInstance: originInstance),
+        'config-share': ConfigShareMarkdownBuilder(),
       },
     );
   }

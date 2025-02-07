@@ -1,13 +1,17 @@
+import 'dart:convert';
+
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:interstellar/src/controller/controller.dart';
+import 'package:interstellar/src/models/config_share.dart';
 import 'package:interstellar/src/utils/debouncer.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/markdown/drafts_controller.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
+import 'package:interstellar/src/utils/utils.dart';
 
 import './markdown.dart';
 
@@ -157,6 +161,41 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
                                       style: TextButton.styleFrom(
                                           shape: const LinearBorder()),
                                     ),
+                                  ),
+                                ),
+                              ),
+                              DecoratedBox(
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    right: BorderSide(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .outlineVariant),
+                                  ),
+                                ),
+                                child: SizedBox(
+                                  width: 40,
+                                  height: 40,
+                                  child: IconButton(
+                                    onPressed: () async {
+                                      final config = await showDialog<String?>(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return const _MarkdownEditorConfigShareDialog();
+                                        },
+                                      );
+
+                                      _focusNodeTextField.requestFocus();
+
+                                      if (config == null) return;
+
+                                      execAction(
+                                          _MarkdownEditorActionInsertSection(
+                                              '```interstellar\n$config\n```'));
+                                    },
+                                    icon: const Icon(Symbols.share_rounded),
+                                    style: TextButton.styleFrom(
+                                        shape: const LinearBorder()),
                                   ),
                                 ),
                               ),
@@ -370,7 +409,7 @@ List<_MarkdownEditorActionInfo> _actions(BuildContext context) => [
             control: true, alt: true),
       ),
       _MarkdownEditorActionInfo(
-        action: const _MarkdownEditorActionHorizontalRule(),
+        action: const _MarkdownEditorActionInsertSection('---'),
         icon: Symbols.horizontal_rule_rounded,
         tooltip: l(context).markdownEditor_horizontalRule,
         shortcut: const SingleActivator(LogicalKeyboardKey.keyH,
@@ -497,7 +536,6 @@ class _MarkdownEditorActionBlock extends _MarkdownEditorActionBase {
   final String startChars;
   final String endChars;
 
-  // ignore: unused_element
   const _MarkdownEditorActionBlock(this.startChars, [this.endChars = '']);
 
   @override
@@ -579,8 +617,10 @@ class _MarkdownEditorActionLink extends _MarkdownEditorActionBase {
   }
 }
 
-class _MarkdownEditorActionHorizontalRule extends _MarkdownEditorActionBase {
-  const _MarkdownEditorActionHorizontalRule();
+class _MarkdownEditorActionInsertSection extends _MarkdownEditorActionBase {
+  final String sectionText;
+
+  const _MarkdownEditorActionInsertSection(this.sectionText);
 
   @override
   _MarkdownEditorData run(_MarkdownEditorData input) {
@@ -608,7 +648,8 @@ class _MarkdownEditorActionHorizontalRule extends _MarkdownEditorActionBase {
       }
     }
 
-    final newText = '${'\n' * prefixNewlines}---${'\n' * suffixNewlines}';
+    final newText =
+        '${'\n' * prefixNewlines}$sectionText${'\n' * suffixNewlines}';
 
     text =
         text.replaceRange(input.selectionStart, input.selectionStart, newText);
@@ -798,6 +839,92 @@ class __MarkdownEditorDraftItemState extends State<_MarkdownEditorDraftItem> {
             ),
           ),
         ),
+      ],
+    );
+  }
+}
+
+class _MarkdownEditorConfigShareDialog extends StatefulWidget {
+  const _MarkdownEditorConfigShareDialog();
+
+  @override
+  State<_MarkdownEditorConfigShareDialog> createState() =>
+      _MarkdownEditorConfigShareDialogState();
+}
+
+class _MarkdownEditorConfigShareDialogState
+    extends State<_MarkdownEditorConfigShareDialog> {
+  List<String>? _profiles;
+  List<String>? _filterLists;
+
+  @override
+  void initState() {
+    super.initState();
+
+    loadNames();
+  }
+
+  void loadNames() async {
+    _profiles = await context.read<AppController>().getProfileNames();
+    _filterLists = context.read<AppController>().filterLists.keys.toList();
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const headerEdgeInserts = EdgeInsets.fromLTRB(12, 8, 0, 4);
+
+    return SimpleDialog(
+      title: Text(l(context).configShare),
+      children: [
+        if (_profiles != null) ...[
+          Padding(
+            padding: headerEdgeInserts,
+            child: Text(l(context).profiles),
+          ),
+          ..._profiles!.map(
+            (profileName) => SimpleDialogOption(
+              child: Text(profileName),
+              onPressed: () async {
+                final profile = (await context
+                        .read<AppController>()
+                        .getProfile(profileName))
+                    .exportReady();
+
+                final config = await ConfigShare.create(
+                  type: ConfigShareType.profile,
+                  name: profileName,
+                  payload: profile.toJson(),
+                );
+                final configStr = jsonEncode(config.toJson());
+                Navigator.pop(context, configStr);
+              },
+            ),
+          ),
+        ],
+        if (_filterLists != null) ...[
+          Padding(
+            padding: headerEdgeInserts,
+            child: Text(l(context).filterLists),
+          ),
+          ..._filterLists!.map(
+            (filterListName) => SimpleDialogOption(
+              child: Text(filterListName),
+              onPressed: () async {
+                final filterList =
+                    context.read<AppController>().filterLists[filterListName]!;
+
+                final config = await ConfigShare.create(
+                  type: ConfigShareType.filterList,
+                  name: filterListName,
+                  payload: filterList.toJson(),
+                );
+                final configStr = jsonEncode(config.toJson());
+                Navigator.pop(context, configStr);
+              },
+            ),
+          ),
+        ],
       ],
     );
   }

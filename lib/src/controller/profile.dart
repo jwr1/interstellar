@@ -327,4 +327,12 @@ class ProfileOptional with _$ProfileOptional {
           : this.feedActionSetType,
     );
   }
+
+  // Remove fields that depend on a certain setup
+  ProfileOptional exportReady() {
+    return copyWith(
+      autoSwitchAccount: null,
+      filterLists: null,
+    );
+  }
 }

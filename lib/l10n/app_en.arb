@@ -222,10 +222,12 @@
   "settings_feedDefaults_microblogSort": "Microblog Sort",
   "settings_feedDefaults_exploreSort": "Explore Sort",
   "settings_feedDefaults_commentSort": "Comment Sort",
+  "profiles": "Profiles",
   "profile_switch": "Switch profiles",
   "profile_main": "Main profile",
   "profile_new": "New profile",
   "profile_edit": "Edit profile",
+  "profile_import": "Import profile",
   "profile_delete": "Delete profile",
   "profile_name": "Name",
   "profile_setAsMain": "Set as main profile",
@@ -407,6 +409,7 @@
   "filterList_activateFilter": "Activate Filter",
   "filterList_new": "New filter list",
   "filterList_edit": "Edit filter list",
+  "filterList_import": "Import filter list",
   "filterList_delete": "Delete filter list",
   "filterList_name": "Name",
   "filterList_phrases": "Phrases",
@@ -526,5 +529,35 @@
   "notificationControlStatus_loud": "Loud notifications",
   "bookmark": "Bookmark",
   "bookmark_addToX": "Add to {name}",
-  "bookmark_removeFromX": "Remove from {name}"
+  "bookmark_removeFromX": "Remove from {name}",
+  "configShare": "Share config",
+  "configShare_profile_title": "Interstellar profile",
+  "configShare_profile_info": "Modifies {count} settings",
+  "@configShare_profile_info": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "configShare_filterList_title": "Interstellar filter list",
+  "configShare_filterList_info": "Contains {count} phrases",
+  "@configShare_filterList_info": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "configShare_created": "Created {date} with {version}",
+  "@configShare_created": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "version": {
+        "type": "String"
+      }
+    }
+  }
 }
