@@ -130,76 +130,82 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Wrap(
-                            children: [
-                              ..._actions(context).map(
-                                (action) => DecoratedBox(
+                          SizedBox(
+                            height: 40,
+                            child: ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: [
+                                ..._actions(context).map(
+                                  (action) => DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      border: action.showDivider
+                                          ? Border(
+                                              right: BorderSide(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .outlineVariant),
+                                            )
+                                          : null,
+                                    ),
+                                    child: SizedBox(
+                                      width: 40,
+                                      height: 40,
+                                      child: IconButton(
+                                        onPressed: () {
+                                          _focusNodeTextField.requestFocus();
+
+                                          execAction(action.action);
+                                        },
+                                        icon: Icon(action.icon),
+                                        tooltip: action.tooltip +
+                                            (action.shortcut == null
+                                                ? ''
+                                                : ' (${readableShortcut(action.shortcut!)})'),
+                                        style: TextButton.styleFrom(
+                                            shape: const LinearBorder()),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                DecoratedBox(
                                   decoration: BoxDecoration(
-                                    border: action.showDivider
-                                        ? Border(
-                                            right: BorderSide(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .outlineVariant),
-                                          )
-                                        : null,
+                                    border: Border(
+                                      right: BorderSide(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .outlineVariant),
+                                    ),
                                   ),
                                   child: SizedBox(
                                     width: 40,
                                     height: 40,
                                     child: IconButton(
-                                      onPressed: () {
+                                      onPressed: () async {
+                                        final config =
+                                            await showDialog<String?>(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return const _MarkdownEditorConfigShareDialog();
+                                          },
+                                        );
+
                                         _focusNodeTextField.requestFocus();
 
-                                        execAction(action.action);
+                                        if (config == null) return;
+
+                                        execAction(
+                                            _MarkdownEditorActionInsertSection(
+                                                '```interstellar\n$config\n```'));
                                       },
-                                      icon: Icon(action.icon),
-                                      tooltip: action.tooltip +
-                                          (action.shortcut == null
-                                              ? ''
-                                              : ' (${readableShortcut(action.shortcut!)})'),
+                                      icon: const Icon(Symbols.share_rounded),
                                       style: TextButton.styleFrom(
                                           shape: const LinearBorder()),
+                                      tooltip: l(context).configShare,
                                     ),
                                   ),
                                 ),
-                              ),
-                              DecoratedBox(
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    right: BorderSide(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .outlineVariant),
-                                  ),
-                                ),
-                                child: SizedBox(
-                                  width: 40,
-                                  height: 40,
-                                  child: IconButton(
-                                    onPressed: () async {
-                                      final config = await showDialog<String?>(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return const _MarkdownEditorConfigShareDialog();
-                                        },
-                                      );
-
-                                      _focusNodeTextField.requestFocus();
-
-                                      if (config == null) return;
-
-                                      execAction(
-                                          _MarkdownEditorActionInsertSection(
-                                              '```interstellar\n$config\n```'));
-                                    },
-                                    icon: const Icon(Symbols.share_rounded),
-                                    style: TextButton.styleFrom(
-                                        shape: const LinearBorder()),
-                                  ),
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                           const Divider(height: 1, thickness: 1),
                           Expanded(
@@ -877,7 +883,7 @@ class _MarkdownEditorConfigShareDialogState
     return SimpleDialog(
       title: Text(l(context).configShare),
       children: [
-        if (_profiles != null) ...[
+        if (_profiles != null && _profiles!.isNotEmpty) ...[
           Padding(
             padding: headerEdgeInserts,
             child: Text(l(context).profiles),
@@ -902,7 +908,7 @@ class _MarkdownEditorConfigShareDialogState
             ),
           ),
         ],
-        if (_filterLists != null) ...[
+        if (_filterLists != null && _filterLists!.isNotEmpty) ...[
           Padding(
             padding: headerEdgeInserts,
             child: Text(l(context).filterLists),
