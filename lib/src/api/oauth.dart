@@ -17,7 +17,7 @@ const oauthScopes = [
   'report',
   'user',
   'moderate',
-  'user:bookmark_list'
+  'bookmark_list'
 ];
 
 Future<String> registerOauthApp(String instanceHost) async {

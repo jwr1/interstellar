@@ -111,7 +111,7 @@ class APIBookmark {
       case ServerSoftware.mbin:
         final path = '/api/rbo/$subjectId/${subjectType.toJson()}';
 
-        final response = await httpClient.put(Uri.https(server, path));
+        final response = await httpClient.delete(Uri.https(server, path));
 
         httpErrorHandler(response, message: 'Failed to remove bookmark');
 
@@ -132,7 +132,7 @@ class APIBookmark {
       case ServerSoftware.mbin:
         final path = '/api/rbol/$subjectId/${subjectType.toJson()}/$listName';
 
-        final response = await httpClient.put(Uri.https(server, path));
+        final response = await httpClient.delete(Uri.https(server, path));
 
         httpErrorHandler(response, message: 'Failed to remove bookmark');
 

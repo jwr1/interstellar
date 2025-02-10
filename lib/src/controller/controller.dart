@@ -316,6 +316,17 @@ class AppController with ChangeNotifier {
     _accounts.remove(key);
     _selectedAccount = _accounts.keys.firstOrNull ?? '@kbin.earth';
 
+    // If there are no accounts left from a server, then remove the server's data
+    final keyAccountServer = key.split('@').last;
+    if (_accounts.keys
+        .firstWhere((account) => account.split('@').last == keyAccountServer,
+            orElse: () => '')
+        .isEmpty) {
+      _servers.remove(keyAccountServer);
+
+      await _serverStore.record(keyAccountServer).delete(db);
+    }
+
     _updateAPI();
 
     notifyListeners();
