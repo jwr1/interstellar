@@ -74,7 +74,7 @@
       }
     }
   },
-  "feed": "数据流",
+  "feed": "信息流",
   "@feed": {},
   "explore": "探索",
   "@explore": {},
@@ -166,7 +166,7 @@
   "@sort_controversial": {},
   "sort_scaled": "各版热议",
   "@sort_scaled": {},
-  "feedType": "数据流类型",
+  "feedType": "信息流类型",
   "@feedType": {},
   "threads": "帖子",
   "@threads": {},
