@@ -108,15 +108,10 @@ class _AdvancedImagePageState extends State<AdvancedImagePage> {
         actions: [
           LoadingIconButton(
             onPressed: () async {
-              final file = await downloadFile(
+              await downloadFile(
                 Uri.parse(widget.image.src),
                 widget.image.src.split('/').last,
               );
-
-              if (!mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text('${l(context).imageSaved}: ${file.path}'),
-              ));
             },
             icon: const Icon(Symbols.download_rounded),
           ),

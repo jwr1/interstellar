@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -26,14 +27,30 @@ Future<ShareResult> shareFile(Uri uri, String filename) async {
   return result;
 }
 
-Future<File> downloadFile(Uri uri, String filename) async {
+Future<void> downloadFile(Uri uri, String filename) async {
   final response = await http.get(uri);
 
-  final dir = await getDownloadsDirectory();
-  if (dir == null) throw Exception('Downloads directory not found');
+  // Whether to use bytes property or need to manually write file
+  final useBytes = Platform.isAndroid || Platform.isIOS;
 
-  final file = File('${dir.path}/$filename');
-  await file.writeAsBytes(response.bodyBytes);
+  String? filePath;
+  try {
+    filePath = await FilePicker.platform.saveFile(
+      fileName: filename,
+      bytes: useBytes ? response.bodyBytes : null,
+    );
 
-  return file;
+    if (filePath == null) return;
+  } catch (e) {
+    // If file saver fails, then try to download to downloads directory
+    final dir = await getDownloadsDirectory();
+    if (dir == null) throw Exception('Downloads directory not found');
+
+    filePath = '${dir.path}/$filename';
+  }
+
+  if (!useBytes) {
+    final file = File(filePath);
+    await file.writeAsBytes(response.bodyBytes);
+  }
 }
