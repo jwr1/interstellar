@@ -138,44 +138,55 @@ class PostItem extends StatelessWidget {
           'reply:${item.type.name}:${ac.instanceHost}:${item.id}',
       filterListWarnings: filterListWarnings,
       activeBookmarkLists: item.bookmarks,
-      loadPossibleBookmarkLists: () async =>
-          (await ac.api.bookmark.getBookmarkLists())
-              .map((list) => list.name)
-              .toList(),
-      onAddBookmark: () async {
+      loadPossibleBookmarkLists: whenLoggedIn(
+        context,
+        () async => (await ac.api.bookmark.getBookmarkLists())
+            .map((list) => list.name)
+            .toList(),
+        matchesSoftware: ServerSoftware.mbin,
+      ),
+      onAddBookmark: whenLoggedIn(context, () async {
         final newBookmarks = await ac.api.bookmark.addBookmarkToDefault(
           subjectType: BookmarkListSubject.fromPostType(
               postType: item.type, isComment: false),
           subjectId: item.id,
         );
         onUpdate(item.copyWith(bookmarks: newBookmarks));
-      },
-      onAddBookmarkToList: (String listName) async {
-        final newBookmarks = await ac.api.bookmark.addBookmarkToList(
-          subjectType: BookmarkListSubject.fromPostType(
-              postType: item.type, isComment: false),
-          subjectId: item.id,
-          listName: listName,
-        );
-        onUpdate(item.copyWith(bookmarks: newBookmarks));
-      },
-      onRemoveBookmark: () async {
+      }),
+      onAddBookmarkToList: whenLoggedIn(
+        context,
+        (String listName) async {
+          final newBookmarks = await ac.api.bookmark.addBookmarkToList(
+            subjectType: BookmarkListSubject.fromPostType(
+                postType: item.type, isComment: false),
+            subjectId: item.id,
+            listName: listName,
+          );
+          onUpdate(item.copyWith(bookmarks: newBookmarks));
+        },
+        matchesSoftware: ServerSoftware.mbin,
+      ),
+      onRemoveBookmark: whenLoggedIn(context, () async {
         final newBookmarks = await ac.api.bookmark.removeBookmarkFromAll(
           subjectType: BookmarkListSubject.fromPostType(
               postType: item.type, isComment: false),
           subjectId: item.id,
         );
         onUpdate(item.copyWith(bookmarks: newBookmarks));
-      },
-      onRemoveBookmarkFromList: (String listName) async {
-        final newBookmarks = await ac.api.bookmark.removeBookmarkFromList(
-          subjectType: BookmarkListSubject.fromPostType(
-              postType: item.type, isComment: false),
-          subjectId: item.id,
-          listName: listName,
-        );
-        onUpdate(item.copyWith(bookmarks: newBookmarks));
-      },
+      }),
+      onRemoveBookmarkFromList: whenLoggedIn(
+        context,
+        (String listName) async {
+          final newBookmarks = await ac.api.bookmark.removeBookmarkFromList(
+            subjectType: BookmarkListSubject.fromPostType(
+                postType: item.type, isComment: false),
+            subjectId: item.id,
+            listName: listName,
+          );
+          onUpdate(item.copyWith(bookmarks: newBookmarks));
+        },
+        matchesSoftware: ServerSoftware.mbin,
+      ),
     );
   }
 }

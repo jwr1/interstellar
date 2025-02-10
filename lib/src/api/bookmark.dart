@@ -58,7 +58,7 @@ class APIBookmark {
             .items;
 
       case ServerSoftware.lemmy:
-        throw Exception('Bookmarking not implemented on Lemmy');
+        throw Exception('Bookmark lists not on Lemmy');
     }
   }
 
@@ -78,7 +78,28 @@ class APIBookmark {
             (jsonDecode(response.body) as Map<String, dynamic>)['bookmarks']);
 
       case ServerSoftware.lemmy:
-        throw Exception('Bookmarking not implemented on Lemmy');
+        final path = switch (subjectType) {
+          BookmarkListSubject.thread => '/api/v3/post/save',
+          BookmarkListSubject.threadComment => '/api/v3/comment/save',
+          _ => throw Exception('Tried to bookmark microblog on Lemmy')
+        };
+
+        final response = await httpClient.put(
+          Uri.https(server, path),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            switch (subjectType) {
+              BookmarkListSubject.thread => 'post_id',
+              BookmarkListSubject.threadComment => 'comment_id',
+              _ => throw Exception('Tried to bookmark microblog on Lemmy')
+            }: subjectId,
+            'save': true,
+          }),
+        );
+
+        httpErrorHandler(response, message: 'Failed to add bookmark');
+
+        return [''];
     }
   }
 
@@ -99,7 +120,7 @@ class APIBookmark {
             (jsonDecode(response.body) as Map<String, dynamic>)['bookmarks']);
 
       case ServerSoftware.lemmy:
-        throw Exception('Bookmarking not implemented on Lemmy');
+        throw Exception('Bookmark lists not on Lemmy');
     }
   }
 
@@ -119,7 +140,28 @@ class APIBookmark {
             (jsonDecode(response.body) as Map<String, dynamic>)['bookmarks']);
 
       case ServerSoftware.lemmy:
-        throw Exception('Bookmarking not implemented on Lemmy');
+        final path = switch (subjectType) {
+          BookmarkListSubject.thread => '/api/v3/post/save',
+          BookmarkListSubject.threadComment => '/api/v3/comment/save',
+          _ => throw Exception('Tried to bookmark microblog on Lemmy')
+        };
+
+        final response = await httpClient.put(
+          Uri.https(server, path),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            switch (subjectType) {
+              BookmarkListSubject.thread => 'post_id',
+              BookmarkListSubject.threadComment => 'comment_id',
+              _ => throw Exception('Tried to bookmark microblog on Lemmy')
+            }: subjectId,
+            'save': false,
+          }),
+        );
+
+        httpErrorHandler(response, message: 'Failed to remove bookmark');
+
+        return [];
     }
   }
 
@@ -140,7 +182,7 @@ class APIBookmark {
             (jsonDecode(response.body) as Map<String, dynamic>)['bookmarks']);
 
       case ServerSoftware.lemmy:
-        throw Exception('Bookmarking not implemented on Lemmy');
+        throw Exception('Bookmark lists not on Lemmy');
     }
   }
 }

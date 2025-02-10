@@ -186,7 +186,10 @@ class PostModel with _$PostModel {
       visibility: 'visible',
       canAuthUserModerate: null,
       notificationControlStatus: null,
-      bookmarks: null,
+      bookmarks: [
+        // Empty string indicates post is saved. No string indicates post is not saved.
+        if (json['saved'] as bool) '',
+      ],
     );
   }
 }

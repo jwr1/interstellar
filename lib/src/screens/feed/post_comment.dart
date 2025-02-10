@@ -191,11 +191,14 @@ class _PostCommentState extends State<PostComment> {
               replyDraftResourceId:
                   'reply:${widget.comment.postType.name}:comment:${context.watch<AppController>().instanceHost}:${widget.comment.id}',
               activeBookmarkLists: widget.comment.bookmarks,
-              loadPossibleBookmarkLists: () async =>
-                  (await ac.api.bookmark.getBookmarkLists())
-                      .map((list) => list.name)
-                      .toList(),
-              onAddBookmark: () async {
+              loadPossibleBookmarkLists: whenLoggedIn(
+                context,
+                () async => (await ac.api.bookmark.getBookmarkLists())
+                    .map((list) => list.name)
+                    .toList(),
+                matchesSoftware: ServerSoftware.mbin,
+              ),
+              onAddBookmark: whenLoggedIn(context, (() async {
                 final newBookmarks = await ac.api.bookmark.addBookmarkToDefault(
                   subjectType: BookmarkListSubject.fromPostType(
                       postType: widget.comment.postType, isComment: true),
@@ -203,18 +206,22 @@ class _PostCommentState extends State<PostComment> {
                 );
                 widget
                     .onUpdate(widget.comment.copyWith(bookmarks: newBookmarks));
-              },
-              onAddBookmarkToList: (String listName) async {
-                final newBookmarks = await ac.api.bookmark.addBookmarkToList(
-                  subjectType: BookmarkListSubject.fromPostType(
-                      postType: widget.comment.postType, isComment: true),
-                  subjectId: widget.comment.id,
-                  listName: listName,
-                );
-                widget
-                    .onUpdate(widget.comment.copyWith(bookmarks: newBookmarks));
-              },
-              onRemoveBookmark: () async {
+              })),
+              onAddBookmarkToList: whenLoggedIn(
+                context,
+                (String listName) async {
+                  final newBookmarks = await ac.api.bookmark.addBookmarkToList(
+                    subjectType: BookmarkListSubject.fromPostType(
+                        postType: widget.comment.postType, isComment: true),
+                    subjectId: widget.comment.id,
+                    listName: listName,
+                  );
+                  widget.onUpdate(
+                      widget.comment.copyWith(bookmarks: newBookmarks));
+                },
+                matchesSoftware: ServerSoftware.mbin,
+              ),
+              onRemoveBookmark: whenLoggedIn(context, () async {
                 final newBookmarks =
                     await ac.api.bookmark.removeBookmarkFromAll(
                   subjectType: BookmarkListSubject.fromPostType(
@@ -223,18 +230,22 @@ class _PostCommentState extends State<PostComment> {
                 );
                 widget
                     .onUpdate(widget.comment.copyWith(bookmarks: newBookmarks));
-              },
-              onRemoveBookmarkFromList: (String listName) async {
-                final newBookmarks =
-                    await ac.api.bookmark.removeBookmarkFromList(
-                  subjectType: BookmarkListSubject.fromPostType(
-                      postType: widget.comment.postType, isComment: true),
-                  subjectId: widget.comment.id,
-                  listName: listName,
-                );
-                widget
-                    .onUpdate(widget.comment.copyWith(bookmarks: newBookmarks));
-              },
+              }),
+              onRemoveBookmarkFromList: whenLoggedIn(
+                context,
+                (String listName) async {
+                  final newBookmarks =
+                      await ac.api.bookmark.removeBookmarkFromList(
+                    subjectType: BookmarkListSubject.fromPostType(
+                        postType: widget.comment.postType, isComment: true),
+                    subjectId: widget.comment.id,
+                    listName: listName,
+                  );
+                  widget.onUpdate(
+                      widget.comment.copyWith(bookmarks: newBookmarks));
+                },
+                matchesSoftware: ServerSoftware.mbin,
+              ),
             ),
           ),
         ),

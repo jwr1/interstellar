@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:http/http.dart' as http;
 import 'package:interstellar/src/controller/controller.dart';
+import 'package:interstellar/src/controller/server.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -90,6 +91,7 @@ T? whenLoggedIn<T>(
   BuildContext context,
   T? value, {
   String? matchesUsername,
+  ServerSoftware? matchesSoftware,
   T? otherwise,
 }) =>
     context.read<AppController>().isLoggedIn &&
@@ -99,7 +101,9 @@ T? whenLoggedIn<T>(
                         .selectedAccount
                         .split('@')
                         .first ==
-                    matchesUsername)
+                    matchesUsername) &&
+            (matchesSoftware == null ||
+                context.read<AppController>().serverSoftware == matchesSoftware)
         ? value
         : otherwise;
 

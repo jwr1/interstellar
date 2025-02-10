@@ -155,7 +155,10 @@ class CommentModel with _$CommentModel {
       childCount: lemmyCounts['child_count'] as int,
       visibility: 'visible',
       canAuthUserModerate: null,
-      bookmarks: null,
+      bookmarks: [
+        // Empty string indicates comment is saved. No string indicates comment is not saved.
+        if (json['saved'] as bool) '',
+      ],
     );
   }
 }
