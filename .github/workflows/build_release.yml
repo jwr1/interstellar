@@ -123,11 +123,7 @@ jobs:
         run: flutter build -v appbundle
 
       - name: Create dist directory
-        if: matrix.target_os != 'windows'
-        run: mkdir dist
-      - name: Create dist directory
-        if: matrix.target_os == 'windows'
-        run: md dist
+        run: ${{ matrix.target_os == 'windows' && 'md' || 'mkdir' }} dist
 
       - name: Rename build for android
         if: matrix.target_os == 'android'
