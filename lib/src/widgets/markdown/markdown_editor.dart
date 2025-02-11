@@ -11,7 +11,6 @@ import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/markdown/drafts_controller.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
-import 'package:interstellar/src/utils/utils.dart';
 
 import './markdown.dart';
 
