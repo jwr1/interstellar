@@ -287,6 +287,217 @@ class _ContentItemState extends State<ContentItem> {
               ? TextOverflow.ellipsis
               : null;
 
+      final menuWidget = MenuAnchor(
+        builder:
+            (BuildContext context, MenuController controller, Widget? child) {
+          return IconButton(
+            icon: const Icon(Symbols.more_vert_rounded),
+            onPressed: () {
+              if (controller.isOpen) {
+                controller.close();
+              } else {
+                controller.open();
+              }
+            },
+          );
+        },
+        menuChildren: [
+          if (widget.openLinkUri != null)
+            MenuItemButton(
+              onPressed: () => openWebpagePrimary(context, widget.openLinkUri!),
+              child: Text(l(context).openInBrowser),
+            ),
+          if (widget.openLinkUri != null)
+            MenuItemButton(
+              onPressed: () => shareUri(widget.openLinkUri!),
+              child: Text(l(context).share),
+            ),
+          if (widget.domain != null)
+            MenuItemButton(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => DomainScreen(
+                    widget.domainIdOnClick!,
+                  ),
+                ),
+              ),
+              child: Text(l(context).moreFrom(widget.domain!)),
+            ),
+          if (widget.activeBookmarkLists != null &&
+              widget.loadPossibleBookmarkLists != null &&
+              widget.onAddBookmarkToList != null &&
+              widget.onRemoveBookmarkFromList != null)
+            SubmenuButton(
+              menuChildren: [
+                ...{
+                  ...widget.activeBookmarkLists!,
+                  if (_possibleBookmarkLists != null)
+                    ..._possibleBookmarkLists!,
+                }.map(
+                  (listName) => widget.activeBookmarkLists!.contains(listName)
+                      ? MenuItemButton(
+                          onPressed: () =>
+                              widget.onRemoveBookmarkFromList!(listName),
+                          leadingIcon: const Icon(
+                            Symbols.bookmark_rounded,
+                            fill: 1,
+                          ),
+                          child:
+                              Text(l(context).bookmark_removeFromX(listName)),
+                        )
+                      : MenuItemButton(
+                          onPressed: () =>
+                              widget.onAddBookmarkToList!(listName),
+                          leadingIcon: const Icon(
+                            Symbols.bookmark_rounded,
+                            fill: 0,
+                          ),
+                          child: Text(l(context).bookmark_addToX(listName)),
+                        ),
+                ),
+                if (_possibleBookmarkLists == null)
+                  const Padding(
+                    padding: EdgeInsets.all(8),
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+              ],
+              onOpen: () async {
+                if (_bookmarkMenuWasOpened) return;
+                _bookmarkMenuWasOpened = true;
+
+                final possibleBookmarkLists =
+                    await widget.loadPossibleBookmarkLists!();
+                setState(() {
+                  _possibleBookmarkLists = possibleBookmarkLists;
+                });
+              },
+              child: Text(l(context).bookmark),
+            ),
+          if (widget.onReport != null)
+            MenuItemButton(
+              onPressed: () async {
+                final reportReason =
+                    await reportContent(context, widget.contentTypeName);
+
+                if (reportReason != null) {
+                  await widget.onReport!(reportReason);
+                }
+              },
+              child: Text(l(context).report),
+            ),
+          if (widget.onEdit != null)
+            MenuItemButton(
+              onPressed: () => setState(() {
+                _editTextController = TextEditingController(text: widget.body);
+              }),
+              child: Text(l(context).edit),
+            ),
+          if (widget.onDelete != null)
+            MenuItemButton(
+              onPressed: () {
+                // Don't show dialog if askBeforeDeleting is disabled
+                if (!context.read<AppController>().profile.askBeforeDeleting) {
+                  widget.onDelete!();
+                  return;
+                }
+
+                showDialog<bool>(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    title: Text(l(context).deleteX(widget.contentTypeName)),
+                    actions: <Widget>[
+                      OutlinedButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text(l(context).cancel),
+                      ),
+                      LoadingFilledButton(
+                        onPressed: () async {
+                          await widget.onDelete!();
+
+                          if (!mounted) return;
+                          Navigator.pop(context);
+                        },
+                        label: Text(l(context).delete),
+                      ),
+                    ],
+                    actionsOverflowAlignment: OverflowBarAlignment.center,
+                    actionsOverflowButtonSpacing: 8,
+                    actionsOverflowDirection: VerticalDirection.up,
+                  ),
+                );
+              },
+              child: Text(l(context).delete),
+            ),
+          if (widget.body != null)
+            MenuItemButton(
+              child: Text(l(context).viewSource),
+              onPressed: () => showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text(l(context).viewSource),
+                  content: Card.outlined(
+                    margin: EdgeInsets.zero,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: SelectableText(widget.body!),
+                    ),
+                  ),
+                  actions: [
+                    OutlinedButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text(l(context).close),
+                    ),
+                    LoadingTonalButton(
+                      onPressed: () async {
+                        await Clipboard.setData(
+                          ClipboardData(text: widget.body!),
+                        );
+
+                        if (!mounted) return;
+                        Navigator.pop(context);
+                      },
+                      label: Text(l(context).copy),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          if (widget.onModeratePin != null ||
+              widget.onModerateMarkNSFW != null ||
+              widget.onModerateDelete != null ||
+              widget.onModerateBan != null)
+            SubmenuButton(
+              menuChildren: [
+                if (widget.onModeratePin != null)
+                  MenuItemButton(
+                    onPressed: widget.onModeratePin,
+                    child: Text(l(context).pin),
+                  ),
+                if (widget.onModerateMarkNSFW != null)
+                  MenuItemButton(
+                    onPressed: widget.onModerateMarkNSFW,
+                    child: Text(l(context).notSafeForWork_mark),
+                  ),
+                if (widget.onModerateDelete != null)
+                  MenuItemButton(
+                    onPressed: widget.onModerateDelete,
+                    child: Text(l(context).delete),
+                  ),
+                if (widget.onModerateBan != null)
+                  MenuItemButton(
+                    onPressed: widget.onModerateBan,
+                    child: Text(l(context).banUser),
+                  ),
+              ],
+              child: Text(l(context).moderate),
+            ),
+        ],
+      );
+
       return Column(
         children: <Widget>[
           if ((!isRightImage && imageWidget != null) ||
@@ -303,7 +514,9 @@ class _ContentItemState extends State<ContentItem> {
                   : imageWidget!,
             ),
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: widget.title != null
+                ? const EdgeInsets.all(12)
+                : const EdgeInsets.fromLTRB(12, 0, 8, 12),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -312,13 +525,20 @@ class _ContentItemState extends State<ContentItem> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       if (widget.title != null)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: Text(
-                            widget.title!,
-                            style: titleStyle,
-                            overflow: titleOverflow,
-                          ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: Text(
+                                  widget.title!,
+                                  style: titleStyle,
+                                  overflow: titleOverflow,
+                                ),
+                              ),
+                            ),
+                            menuWidget,
+                          ],
                         ),
                       if (widget.link != null)
                         ContentItemLinkPanel(link: widget.link!),
@@ -404,6 +624,10 @@ class _ContentItemState extends State<ContentItem> {
                           if (!widget.showMagazineFirst &&
                               magazineWidget != null)
                             magazineWidget,
+                          if (widget.title == null) ...[
+                            const Spacer(),
+                            menuWidget,
+                          ],
                         ],
                       ),
                       if (widget.body != null &&
@@ -413,20 +637,33 @@ class _ContentItemState extends State<ContentItem> {
                                   .watch<AppController>()
                                   .profile
                                   .compactMode))
-                        Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: widget.isPreview
-                                ? Text(
-                                    widget.body!,
-                                    maxLines: 4,
-                                    overflow: TextOverflow.ellipsis,
-                                  )
-                                : Markdown(
-                                    widget.body!, widget.originInstance)),
+                        widget.isPreview
+                            ? Text(
+                                widget.body!,
+                                maxLines: 4,
+                                overflow: TextOverflow.ellipsis,
+                              )
+                            : Markdown(widget.body!, widget.originInstance),
                       Padding(
                         padding: const EdgeInsets.only(top: 10),
                         child: LayoutBuilder(builder: (context, constrains) {
                           final votingWidgets = [
+                            if (widget.activeBookmarkLists != null)
+                              widget.activeBookmarkLists!.isEmpty
+                                  ? LoadingIconButton(
+                                      onPressed: widget.onAddBookmark,
+                                      icon: const Icon(
+                                        Symbols.bookmark_rounded,
+                                        fill: 0,
+                                      ),
+                                    )
+                                  : LoadingIconButton(
+                                      onPressed: widget.onRemoveBookmark,
+                                      icon: const Icon(
+                                        Symbols.bookmark_rounded,
+                                        fill: 1,
+                                      ),
+                                    ),
                             if (widget.boosts != null)
                               Padding(
                                 padding: const EdgeInsets.only(right: 8),
@@ -484,15 +721,12 @@ class _ContentItemState extends State<ContentItem> {
                                 ),
                               ),
                             if (widget.onReply != null)
-                              Padding(
-                                padding: const EdgeInsets.only(right: 8),
-                                child: IconButton(
-                                  icon: const Icon(Symbols.reply_rounded),
-                                  onPressed: () => setState(() {
-                                    _replyTextController =
-                                        TextEditingController();
-                                  }),
-                                ),
+                              IconButton(
+                                icon: const Icon(Symbols.reply_rounded),
+                                onPressed: () => setState(() {
+                                  _replyTextController =
+                                      TextEditingController();
+                                }),
                               ),
                             if (widget.onCollapse != null)
                               IconButton(
@@ -504,269 +738,6 @@ class _ContentItemState extends State<ContentItem> {
                                       ? const Icon(Symbols.expand_more_rounded)
                                       : const Icon(
                                           Symbols.expand_less_rounded)),
-                          ];
-                          final menuWidgets = [
-                            if (widget.openLinkUri != null ||
-                                widget.onReport != null ||
-                                widget.onEdit != null ||
-                                widget.onDelete != null)
-                              MenuAnchor(
-                                builder: (BuildContext context,
-                                    MenuController controller, Widget? child) {
-                                  return IconButton(
-                                    icon: const Icon(Symbols.more_vert_rounded),
-                                    onPressed: () {
-                                      if (controller.isOpen) {
-                                        controller.close();
-                                      } else {
-                                        controller.open();
-                                      }
-                                    },
-                                  );
-                                },
-                                menuChildren: [
-                                  if (widget.openLinkUri != null)
-                                    MenuItemButton(
-                                      onPressed: () => openWebpagePrimary(
-                                          context, widget.openLinkUri!),
-                                      child: Text(l(context).openInBrowser),
-                                    ),
-                                  if (widget.openLinkUri != null)
-                                    MenuItemButton(
-                                      onPressed: () =>
-                                          shareUri(widget.openLinkUri!),
-                                      child: Text(l(context).share),
-                                    ),
-                                  if (widget.domain != null)
-                                    MenuItemButton(
-                                      onPressed: () =>
-                                          Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) => DomainScreen(
-                                            widget.domainIdOnClick!,
-                                          ),
-                                        ),
-                                      ),
-                                      child: Text(
-                                          l(context).moreFrom(widget.domain!)),
-                                    ),
-                                  if (widget.activeBookmarkLists != null &&
-                                      widget.loadPossibleBookmarkLists !=
-                                          null &&
-                                      widget.onAddBookmarkToList != null &&
-                                      widget.onRemoveBookmarkFromList != null)
-                                    SubmenuButton(
-                                      menuChildren: [
-                                        ...{
-                                          ...widget.activeBookmarkLists!,
-                                          if (_possibleBookmarkLists != null)
-                                            ..._possibleBookmarkLists!,
-                                        }.map(
-                                          (listName) => widget
-                                                  .activeBookmarkLists!
-                                                  .contains(listName)
-                                              ? MenuItemButton(
-                                                  onPressed: () => widget
-                                                          .onRemoveBookmarkFromList!(
-                                                      listName),
-                                                  leadingIcon: const Icon(
-                                                    Symbols.bookmark_rounded,
-                                                    fill: 1,
-                                                  ),
-                                                  child: Text(l(context)
-                                                      .bookmark_removeFromX(
-                                                          listName)),
-                                                )
-                                              : MenuItemButton(
-                                                  onPressed: () => widget
-                                                          .onAddBookmarkToList!(
-                                                      listName),
-                                                  leadingIcon: const Icon(
-                                                    Symbols.bookmark_rounded,
-                                                    fill: 0,
-                                                  ),
-                                                  child: Text(l(context)
-                                                      .bookmark_addToX(
-                                                          listName)),
-                                                ),
-                                        ),
-                                        if (_possibleBookmarkLists == null)
-                                          const Padding(
-                                            padding: EdgeInsets.all(8),
-                                            child: SizedBox(
-                                              width: 24,
-                                              height: 24,
-                                              child:
-                                                  CircularProgressIndicator(),
-                                            ),
-                                          ),
-                                      ],
-                                      onOpen: () async {
-                                        if (_bookmarkMenuWasOpened) return;
-                                        _bookmarkMenuWasOpened = true;
-
-                                        final possibleBookmarkLists =
-                                            await widget
-                                                .loadPossibleBookmarkLists!();
-                                        setState(() {
-                                          _possibleBookmarkLists =
-                                              possibleBookmarkLists;
-                                        });
-                                      },
-                                      child: Text(l(context).bookmark),
-                                    ),
-                                  if (widget.onReport != null)
-                                    MenuItemButton(
-                                      onPressed: () async {
-                                        final reportReason =
-                                            await reportContent(context,
-                                                widget.contentTypeName);
-
-                                        if (reportReason != null) {
-                                          await widget.onReport!(reportReason);
-                                        }
-                                      },
-                                      child: Text(l(context).report),
-                                    ),
-                                  if (widget.onEdit != null)
-                                    MenuItemButton(
-                                      onPressed: () => setState(() {
-                                        _editTextController =
-                                            TextEditingController(
-                                                text: widget.body);
-                                      }),
-                                      child: Text(l(context).edit),
-                                    ),
-                                  if (widget.onDelete != null)
-                                    MenuItemButton(
-                                      onPressed: () {
-                                        // Don't show dialog if askBeforeDeleting is disabled
-                                        if (!context
-                                            .read<AppController>()
-                                            .profile
-                                            .askBeforeDeleting) {
-                                          widget.onDelete!();
-                                          return;
-                                        }
-
-                                        showDialog<bool>(
-                                          context: context,
-                                          builder: (BuildContext context) =>
-                                              AlertDialog(
-                                            title: Text(l(context).deleteX(
-                                                widget.contentTypeName)),
-                                            actions: <Widget>[
-                                              OutlinedButton(
-                                                onPressed: () =>
-                                                    Navigator.pop(context),
-                                                child: Text(l(context).cancel),
-                                              ),
-                                              LoadingFilledButton(
-                                                onPressed: () async {
-                                                  await widget.onDelete!();
-
-                                                  if (!mounted) return;
-                                                  Navigator.pop(context);
-                                                },
-                                                label: Text(l(context).delete),
-                                              ),
-                                            ],
-                                            actionsOverflowAlignment:
-                                                OverflowBarAlignment.center,
-                                            actionsOverflowButtonSpacing: 8,
-                                            actionsOverflowDirection:
-                                                VerticalDirection.up,
-                                          ),
-                                        );
-                                      },
-                                      child: Text(l(context).delete),
-                                    ),
-                                  if (widget.body != null)
-                                    MenuItemButton(
-                                      child: Text(l(context).viewSource),
-                                      onPressed: () => showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                          title: Text(l(context).viewSource),
-                                          content: Card.outlined(
-                                            margin: EdgeInsets.zero,
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(8),
-                                              child:
-                                                  SelectableText(widget.body!),
-                                            ),
-                                          ),
-                                          actions: [
-                                            OutlinedButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context),
-                                              child: Text(l(context).close),
-                                            ),
-                                            LoadingTonalButton(
-                                              onPressed: () async {
-                                                await Clipboard.setData(
-                                                  ClipboardData(
-                                                      text: widget.body!),
-                                                );
-
-                                                if (!mounted) return;
-                                                Navigator.pop(context);
-                                              },
-                                              label: Text(l(context).copy),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  if (widget.onModeratePin != null ||
-                                      widget.onModerateMarkNSFW != null ||
-                                      widget.onModerateDelete != null ||
-                                      widget.onModerateBan != null)
-                                    SubmenuButton(
-                                      menuChildren: [
-                                        if (widget.onModeratePin != null)
-                                          MenuItemButton(
-                                            onPressed: widget.onModeratePin,
-                                            child: Text(l(context).pin),
-                                          ),
-                                        if (widget.onModerateMarkNSFW != null)
-                                          MenuItemButton(
-                                            onPressed:
-                                                widget.onModerateMarkNSFW,
-                                            child: Text(
-                                                l(context).notSafeForWork_mark),
-                                          ),
-                                        if (widget.onModerateDelete != null)
-                                          MenuItemButton(
-                                            onPressed: widget.onModerateDelete,
-                                            child: Text(l(context).delete),
-                                          ),
-                                        if (widget.onModerateBan != null)
-                                          MenuItemButton(
-                                            onPressed: widget.onModerateBan,
-                                            child: Text(l(context).banUser),
-                                          ),
-                                      ],
-                                      child: Text(l(context).moderate),
-                                    ),
-                                ],
-                              ),
-                            if (widget.activeBookmarkLists != null)
-                              widget.activeBookmarkLists!.isEmpty
-                                  ? LoadingIconButton(
-                                      onPressed: widget.onAddBookmark,
-                                      icon: const Icon(
-                                        Symbols.bookmark_rounded,
-                                        fill: 0,
-                                      ),
-                                    )
-                                  : LoadingIconButton(
-                                      onPressed: widget.onRemoveBookmark,
-                                      icon: const Icon(
-                                        Symbols.bookmark_rounded,
-                                        fill: 1,
-                                      ),
-                                    ),
                           ];
 
                           return constrains.maxWidth < 300
@@ -782,7 +753,6 @@ class _ContentItemState extends State<ContentItem> {
                                       children: <Widget>[
                                         ...commentWidgets,
                                         const Spacer(),
-                                        ...menuWidgets,
                                       ],
                                     ),
                                   ],
@@ -791,8 +761,6 @@ class _ContentItemState extends State<ContentItem> {
                                   children: <Widget>[
                                     ...commentWidgets,
                                     const Spacer(),
-                                    ...menuWidgets,
-                                    const SizedBox(width: 8),
                                     ...votingWidgets,
                                   ],
                                 );
