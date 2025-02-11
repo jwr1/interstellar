@@ -515,9 +515,5 @@
   "action_setSort": "Ustaw sortowanie",
   "@action_setSort": {},
   "action_setType": "Ustaw typ",
-  "@action_setType": {},
-  "imageSaved": "Obrazek zapisany",
-  "@imageSaved": {},
-  "videoSaved": "Wideo zapisane",
-  "@videoSaved": {}
+  "@action_setType": {}
 }
