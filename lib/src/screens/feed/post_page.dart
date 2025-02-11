@@ -7,6 +7,7 @@ import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/screens/feed/post_comment.dart';
 import 'package:interstellar/src/screens/feed/post_item.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/error_page.dart';
 import 'package:interstellar/src/widgets/loading_template.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
@@ -235,6 +236,16 @@ class _PostPageState extends State<PostPage> {
             PagedSliverList(
               pagingController: _pagingController,
               builderDelegate: PagedChildBuilderDelegate<CommentModel>(
+                firstPageErrorIndicatorBuilder: (context) =>
+                    FirstPageErrorIndicator(
+                  error: _pagingController.error,
+                  onTryAgain: _pagingController.retryLastFailedRequest,
+                ),
+                newPageErrorIndicatorBuilder: (context) =>
+                    NewPageErrorIndicator(
+                  error: _pagingController.error,
+                  onTryAgain: _pagingController.retryLastFailedRequest,
+                ),
                 itemBuilder: (context, item, index) => Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,

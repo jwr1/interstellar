@@ -4,6 +4,7 @@ import 'package:interstellar/src/api/notifications.dart';
 import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/models/notification.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/error_page.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/selection_menu.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -122,6 +123,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           PagedSliverList(
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<NotificationModel>(
+              firstPageErrorIndicatorBuilder: (context) =>
+                  FirstPageErrorIndicator(
+                error: _pagingController.error,
+                onTryAgain: _pagingController.retryLastFailedRequest,
+              ),
+              newPageErrorIndicatorBuilder: (context) => NewPageErrorIndicator(
+                error: _pagingController.error,
+                onTryAgain: _pagingController.retryLastFailedRequest,
+              ),
               itemBuilder: (context, item, index) => Padding(
                 padding: const EdgeInsets.only(
                   left: 16,

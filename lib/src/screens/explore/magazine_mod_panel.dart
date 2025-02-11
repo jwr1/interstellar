@@ -4,6 +4,7 @@ import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/screens/explore/user_item.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/error_page.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:provider/provider.dart';
 
@@ -119,6 +120,15 @@ class _MagazineModPanelBansState extends State<MagazineModPanelBans> {
           PagedSliverList(
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<MagazineBanModel>(
+              firstPageErrorIndicatorBuilder: (context) =>
+                  FirstPageErrorIndicator(
+                error: _pagingController.error,
+                onTryAgain: _pagingController.retryLastFailedRequest,
+              ),
+              newPageErrorIndicatorBuilder: (context) => NewPageErrorIndicator(
+                error: _pagingController.error,
+                onTryAgain: _pagingController.retryLastFailedRequest,
+              ),
               itemBuilder: (context, item, index) =>
                   UserItemSimple(item.bannedUser, trailingWidgets: [
                 LoadingOutlinedButton(

@@ -3,6 +3,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/models/message.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/error_page.dart';
 import 'package:provider/provider.dart';
 
 import 'message_item.dart';
@@ -59,6 +60,15 @@ class _MessagesScreenState extends State<MessagesScreen> {
           PagedSliverList(
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<MessageThreadModel>(
+              firstPageErrorIndicatorBuilder: (context) =>
+                  FirstPageErrorIndicator(
+                error: _pagingController.error,
+                onTryAgain: _pagingController.retryLastFailedRequest,
+              ),
+              newPageErrorIndicatorBuilder: (context) => NewPageErrorIndicator(
+                error: _pagingController.error,
+                onTryAgain: _pagingController.retryLastFailedRequest,
+              ),
               itemBuilder: (context, item, index) =>
                   MessageItem(item, (newValue) {
                 var newList = _pagingController.itemList;

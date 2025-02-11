@@ -12,6 +12,7 @@ import 'package:interstellar/src/screens/feed/post_item_compact.dart';
 import 'package:interstellar/src/screens/feed/post_page.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/actions.dart';
+import 'package:interstellar/src/widgets/error_page.dart';
 import 'package:interstellar/src/widgets/floating_menu.dart';
 import 'package:interstellar/src/widgets/selection_menu.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
@@ -672,9 +673,7 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
       }).toList();
 
       _pagingController.appendPage(newItems, newPage.nextPage);
-    } catch (error, st) {
-      print(error);
-      print(st);
+    } catch (error) {
       _pagingController.error = error;
     }
   }
@@ -718,6 +717,15 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
           PagedSliverList(
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<PostModel>(
+              firstPageErrorIndicatorBuilder: (context) =>
+                  FirstPageErrorIndicator(
+                error: _pagingController.error,
+                onTryAgain: _pagingController.retryLastFailedRequest,
+              ),
+              newPageErrorIndicatorBuilder: (context) => NewPageErrorIndicator(
+                error: _pagingController.error,
+                onTryAgain: _pagingController.retryLastFailedRequest,
+              ),
               itemBuilder: (context, item, index) {
                 void onPostTap() {
                   Navigator.of(context).push(

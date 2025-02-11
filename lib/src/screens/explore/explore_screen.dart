@@ -6,6 +6,7 @@ import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/screens/explore/explore_screen_item.dart';
 import 'package:interstellar/src/utils/debouncer.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/error_page.dart';
 import 'package:interstellar/src/widgets/selection_menu.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
@@ -329,6 +330,16 @@ class _ExploreScreenState extends State<ExploreScreen> {
             PagedSliverList(
               pagingController: _pagingController,
               builderDelegate: PagedChildBuilderDelegate<dynamic>(
+                firstPageErrorIndicatorBuilder: (context) =>
+                    FirstPageErrorIndicator(
+                  error: _pagingController.error,
+                  onTryAgain: _pagingController.retryLastFailedRequest,
+                ),
+                newPageErrorIndicatorBuilder: (context) =>
+                    NewPageErrorIndicator(
+                  error: _pagingController.error,
+                  onTryAgain: _pagingController.retryLastFailedRequest,
+                ),
                 itemBuilder: (context, item, index) {
                   return ExploreScreenItem(
                     item,

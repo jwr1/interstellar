@@ -77,8 +77,6 @@ android {
 
     buildTypes {
         release {
-            applicationIdSuffix ".dev"
-
             if (keystorePropertiesFile.exists()) {
                 signingConfig signingConfigs.release
             } else {

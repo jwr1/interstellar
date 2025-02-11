@@ -18,6 +18,7 @@ import 'package:interstellar/src/screens/feed/post_item.dart';
 import 'package:interstellar/src/screens/feed/post_page.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/avatar.dart';
+import 'package:interstellar/src/widgets/error_page.dart';
 import 'package:interstellar/src/widgets/image.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/loading_template.dart';
@@ -590,30 +591,54 @@ class _UserScreenBodyState extends State<UserScreenBody> {
           PagedSliverList(
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<dynamic>(
+                firstPageErrorIndicatorBuilder: (context) =>
+                    FirstPageErrorIndicator(
+                      error: _pagingController.error,
+                      onTryAgain: _pagingController.retryLastFailedRequest,
+                    ),
+                newPageErrorIndicatorBuilder: (context) =>
+                    NewPageErrorIndicator(
+                      error: _pagingController.error,
+                      onTryAgain: _pagingController.retryLastFailedRequest,
+                    ),
                 itemBuilder: (context, item, index) {
-              return switch (widget.mode) {
-                UserFeedType.thread || UserFeedType.microblog => Card(
-                    margin:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    clipBehavior: Clip.antiAlias,
-                    child: InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) {
-                              return PostPage(
-                                initData: item,
-                                onUpdate: (newValue) {
-                                  var newList = _pagingController.itemList;
-                                  newList![index] = newValue;
-                                  setState(() {
-                                    _pagingController.itemList = newList;
-                                  });
-                                },
+                  return switch (widget.mode) {
+                    UserFeedType.thread || UserFeedType.microblog => Card(
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
+                        clipBehavior: Clip.antiAlias,
+                        child: InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(builder: (context) {
+                                  return PostPage(
+                                    initData: item,
+                                    onUpdate: (newValue) {
+                                      var newList = _pagingController.itemList;
+                                      newList![index] = newValue;
+                                      setState(() {
+                                        _pagingController.itemList = newList;
+                                      });
+                                    },
+                                  );
+                                }),
                               );
-                            }),
-                          );
-                        },
-                        child: PostItem(
+                            },
+                            child: PostItem(
+                              item,
+                              (newValue) {
+                                var newList = _pagingController.itemList;
+                                newList![index] = newValue;
+                                setState(() {
+                                  _pagingController.itemList = newList;
+                                });
+                              },
+                              isPreview: item.type == PostType.thread,
+                            )),
+                      ),
+                    UserFeedType.comment || UserFeedType.reply => Padding(
+                        padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                        child: PostComment(
                           item,
                           (newValue) {
                             var newList = _pagingController.itemList;
@@ -622,40 +647,27 @@ class _UserScreenBodyState extends State<UserScreenBody> {
                               _pagingController.itemList = newList;
                             });
                           },
-                          isPreview: item.type == PostType.thread,
-                        )),
-                  ),
-                UserFeedType.comment || UserFeedType.reply => Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-                    child: PostComment(
-                      item,
-                      (newValue) {
+                          onClick: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context) {
+                                return PostCommentScreen(
+                                    item.postType, item.id);
+                              }),
+                            );
+                          },
+                        ),
+                      ),
+                    UserFeedType.follower ||
+                    UserFeedType.following =>
+                      ExploreScreenItem(item, (newValue) {
                         var newList = _pagingController.itemList;
                         newList![index] = newValue;
                         setState(() {
                           _pagingController.itemList = newList;
                         });
-                      },
-                      onClick: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) {
-                            return PostCommentScreen(item.postType, item.id);
-                          }),
-                        );
-                      },
-                    ),
-                  ),
-                UserFeedType.follower ||
-                UserFeedType.following =>
-                  ExploreScreenItem(item, (newValue) {
-                    var newList = _pagingController.itemList;
-                    newList![index] = newValue;
-                    setState(() {
-                      _pagingController.itemList = newList;
-                    });
-                  }),
-              };
-            }),
+                      }),
+                  };
+                }),
           )
         ],
       ),

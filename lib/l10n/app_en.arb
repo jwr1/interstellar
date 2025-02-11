@@ -557,5 +557,8 @@
         "type": "String"
       }
     }
-  }
+  },
+  "errorPage_firstPage": "Something went wrong",
+  "errorPage_firstPage_button": "Try Again",
+  "errorPage_newPage": "Something went wrong. Tap to try again."
 }
