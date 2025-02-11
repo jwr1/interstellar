@@ -34,55 +34,69 @@ jobs:
     needs: draft-release
     environment: production
     name: Create ${{ matrix.target }} build
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.runner_os }}
     strategy:
       fail-fast: false
       matrix:
-        target: [android, linux, windows]
+        target: [android, linux-x86_64, linux-aarch64, windows-x86_64]
         include:
-          - os: ubuntu-latest
-            target: android
+          - target: android
+            target_os: android
             build_target: apk
             build_flags: --split-per-abi
             build_path: build/app/outputs/flutter-apk
-          - os: ubuntu-latest
-            target: linux
+            runner_os: ubuntu-latest
+          - target: linux-x86_64
+            target_os: linux
+            target_arch: x86_64
             build_target: linux
             build_path: build/linux/x64/release/bundle
-          - os: windows-latest
-            target: windows
+            runner_os: ubuntu-latest
+          - target: linux-aarch64
+            target_os: linux
+            target_arch: aarch64
+            build_target: linux
+            build_path: build/linux/arm64/release/bundle
+            runner_os: ubuntu-24.04-arm
+          - target: windows-x86_64
+            target_os: windows
+            target_arch: x86_64
             build_target: windows
             build_path: build\windows\x64\runner\Release
+            runner_os: windows-latest
     steps:
       - name: Install android dependencies
-        if: matrix.target == 'android'
+        if: matrix.target_os == 'android'
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: temurin
 
       - name: Install linux dependencies
-        if: matrix.target == 'linux'
+        if: matrix.target_os == 'linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libx11-dev pkg-config cmake ninja-build libblkid-dev libmpv-dev mpv libfuse2
-          wget -O appimagetool "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage"
+          wget -O appimagetool "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-${{ matrix.target_arch }}.AppImage"
           chmod +x appimagetool
           mv appimagetool /usr/local/bin/
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
+        with:
+          # Use master until Flutter action is fixed for arm (https://github.com/subosito/flutter-action/issues/345)
+          channel: ${{ matrix.target == 'linux-aarch64' && 'master' || 'stable' }}
 
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set version
         run: |
-          dart pub global activate cider
+          flutter pub global activate cider
           cider version ${{ github.event.inputs.version }}+${{ github.event.inputs.build-number }}
 
       - name: Configure android Keystore
-        if: matrix.target == 'android'
+        if: matrix.target_os == 'android'
         run: |
           echo "$ANDROID_UPLOAD_KEY" | base64 --decode > upload-keystore.jks
           echo "storeFile=../upload-keystore.jks" >> key.properties
@@ -96,27 +110,27 @@ jobs:
 
       - name: Build Flutter app
         run: |
-          dart run build_runner build
+          flutter pub run build_runner build
           flutter build -v ${{ matrix.build_target }} ${{ matrix.build_flags }}
 
       - name: Configure android Keystore for AppBundle
-        if: matrix.target == 'android'
+        if: matrix.target_os == 'android'
         run: echo "includeNDK=true" >> key.properties
         working-directory: android
 
       - name: Build additional Flutter app for AppBundle
-        if: matrix.target == 'android'
+        if: matrix.target_os == 'android'
         run: flutter build -v appbundle
 
       - name: Create dist directory
-        if: matrix.target != 'windows'
+        if: matrix.target_os != 'windows'
         run: mkdir dist
       - name: Create dist directory
-        if: matrix.target == 'windows'
+        if: matrix.target_os == 'windows'
         run: md dist
 
       - name: Rename build for android
-        if: matrix.target == 'android'
+        if: matrix.target_os == 'android'
         run: |
           mv app-armeabi-v7a-release.apk $GITHUB_WORKSPACE/dist/interstellar-android-armeabi-v7a.apk
           mv app-arm64-v8a-release.apk $GITHUB_WORKSPACE/dist/interstellar-android-arm64-v8a.apk
@@ -125,21 +139,21 @@ jobs:
         working-directory: ${{ matrix.build_path }}
 
       - name: Build tar.gz for linux
-        if: matrix.target == 'linux'
-        run: tar -czf $GITHUB_WORKSPACE/dist/interstellar-linux-x86_64.tar.gz *
+        if: matrix.target_os == 'linux'
+        run: tar -czf $GITHUB_WORKSPACE/dist/interstellar-${{ matrix.target }}.tar.gz *
         working-directory: ${{ matrix.build_path }}
 
       - name: Build AppImage for linux
-        if: matrix.target == 'linux'
+        if: matrix.target_os == 'linux'
         run: |
           mv ${{ matrix.build_path }}/* linux/appimage/
           cp assets/icons/logo.png linux/appimage/interstellar.png
           cp $(echo $(ldd -d linux/appimage/interstellar | grep -Eo ' (/usr)?/lib/[^ ]*') $(ldd -d linux/appimage/lib/libflutter_linux_gtk.so | grep -Eo ' (/usr)?/lib/[^ ]*')  | tr ' ' '\n' | sort | uniq -u) linux/appimage/lib/
-          appimagetool linux/appimage dist/interstellar-linux-x86_64.AppImage
+          appimagetool linux/appimage dist/interstellar-${{ matrix.target }}.AppImage
 
       - name: Compress build for Windows
-        if: matrix.target == 'windows'
-        run: compress-archive -Path * -DestinationPath ${env:GITHUB_WORKSPACE}\dist\interstellar-windows-x86_64.zip
+        if: matrix.target_os == 'windows'
+        run: compress-archive -Path * -DestinationPath ${env:GITHUB_WORKSPACE}\dist\interstellar-${{ matrix.target }}.zip
         working-directory: ${{ matrix.build_path }}
 
       - name: Upload build to release draft
