@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/controller/profile.dart';
+import 'package:interstellar/src/models/config_share.dart';
+import 'package:interstellar/src/models/post.dart';
+import 'package:interstellar/src/screens/feed/create_screen.dart';
+import 'package:interstellar/src/screens/settings/about_screen.dart';
 import 'package:interstellar/src/screens/settings/account_selection.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/list_tile_switch.dart';
@@ -88,33 +92,73 @@ class _ProfileSelectWidgetState extends State<_ProfileSelectWidget> {
           Flexible(
             child: ListView(shrinkWrap: true, children: [
               ...profileList!.map(
-                (profile) => ListTile(
-                  title: Text(profile),
-                  subtitle: profile == ac.mainProfile
+                (profileName) => ListTile(
+                  title: Text(profileName),
+                  subtitle: profileName == ac.mainProfile
                       ? Text(l(context).profile_main)
                       : null,
                   onTap: () async {
                     Navigator.pop(context);
-                    await ac.switchProfiles(profile);
+                    await ac.switchProfiles(profileName);
                   },
-                  selected: profile == ac.selectedProfile,
+                  selected: profileName == ac.selectedProfile,
                   selectedTileColor: Theme.of(context)
                       .colorScheme
                       .primaryContainer
                       .withOpacity(0.2),
-                  trailing: IconButton(
-                      onPressed: () async {
-                        await Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => EditProfileScreen(
-                              profile: profile,
-                              profileList: profileList!,
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        onPressed: () async {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => EditProfileScreen(
+                                profile: profileName,
+                                profileList: profileList!,
+                              ),
                             ),
-                          ),
-                        );
-                        getProfiles();
-                      },
-                      icon: const Icon(Symbols.edit_rounded)),
+                          );
+                          getProfiles();
+                        },
+                        icon: const Icon(Symbols.edit_rounded),
+                      ),
+                      IconButton(
+                        onPressed: () async {
+                          final profile = (await context
+                                  .read<AppController>()
+                                  .getProfile(profileName))
+                              .exportReady();
+
+                          final config = await ConfigShare.create(
+                            type: ConfigShareType.profile,
+                            name: profileName,
+                            payload: profile.toJson(),
+                          );
+
+                          if (!mounted) return;
+                          String magazine = mbinConfigsMagazineName;
+                          if (magazine.endsWith(
+                              context.read<AppController>().instanceHost)) {
+                            magazine = magazine.split('@').first;
+                          }
+
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => CreateScreen(
+                                PostType.thread,
+                                initTitle: '[Profile] $profileName',
+                                initBody:
+                                    'Short description here...\n\n${config.toMarkdown()}',
+                                initMagazineName: magazine,
+                              ),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Symbols.share_rounded),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               ListTile(

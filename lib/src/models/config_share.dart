@@ -55,4 +55,6 @@ class ConfigShare with _$ConfigShare {
 
     return hash == hashToCheck;
   }
+
+  String toMarkdown() => '```interstellar\n${jsonEncode(toJson())}\n```';
 }

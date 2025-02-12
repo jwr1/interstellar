@@ -88,8 +88,8 @@ class _FeedScreenState extends State<FeedScreen> {
             MaterialPageRoute(
               builder: (context) => CreateScreen(
                 _mode,
-                magazineId: widget.createPostMagazine?.id,
-                magazineName: widget.createPostMagazine?.name,
+                initMagazineId: widget.createPostMagazine?.id,
+                initMagazineName: widget.createPostMagazine?.name,
               ),
             ),
           );

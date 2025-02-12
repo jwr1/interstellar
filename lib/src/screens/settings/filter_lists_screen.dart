@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/controller/filter_list.dart';
+import 'package:interstellar/src/models/config_share.dart';
+import 'package:interstellar/src/models/post.dart';
+import 'package:interstellar/src/screens/feed/create_screen.dart';
+import 'package:interstellar/src/screens/settings/about_screen.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/list_tile_select.dart';
 import 'package:interstellar/src/widgets/list_tile_switch.dart';
@@ -44,6 +48,38 @@ class _FilterListsScreenState extends State<FilterListsScreen> {
                         builder: (context) =>
                             EditFilterListScreen(filterList: name),
                       ),
+                    ),
+                    trailing: IconButton(
+                      onPressed: () async {
+                        final filterList =
+                            context.read<AppController>().filterLists[name]!;
+
+                        final config = await ConfigShare.create(
+                          type: ConfigShareType.filterList,
+                          name: name,
+                          payload: filterList.toJson(),
+                        );
+
+                        if (!mounted) return;
+                        String magazine = mbinConfigsMagazineName;
+                        if (magazine.endsWith(
+                            context.read<AppController>().instanceHost)) {
+                          magazine = magazine.split('@').first;
+                        }
+
+                        await Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => CreateScreen(
+                              PostType.thread,
+                              initTitle: '[Filter List] $name',
+                              initBody:
+                                  'Short description here...\n\n${config.toMarkdown()}',
+                              initMagazineName: magazine,
+                            ),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Symbols.share_rounded),
                     ),
                   ),
                 ),

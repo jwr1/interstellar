@@ -15,6 +15,8 @@ const _reportIssueLink = 'https://github.com/jwr1/interstellar/issues';
 const _matrixSpaceLink = 'https://matrix.to/#/#interstellar-space:matrix.org';
 const _mbinMagazineName = 'interstellar@kbin.earth';
 const _mbinMagazineLink = 'https://kbin.earth/m/interstellar';
+const mbinConfigsMagazineName = 'interstellar_configs@kbin.earth';
+const _mbinConfigsMagazineLink = 'https://kbin.earth/m/interstellar-configs';
 
 class AboutScreen extends StatefulWidget {
   const AboutScreen({super.key});
@@ -104,6 +106,37 @@ class _AboutScreenState extends State<AboutScreen> {
               } catch (e) {
                 if (!mounted) return;
                 openWebpagePrimary(context, Uri.parse(_mbinMagazineLink));
+              }
+            },
+          ),
+          ListTile(
+            leading: const Icon(Symbols.share_rounded),
+            title: Text(l(context).settings_mbinConfigsMagazine),
+            onTap: () async {
+              try {
+                String name = mbinConfigsMagazineName;
+                if (name.endsWith(context.read<AppController>().instanceHost)) {
+                  name = name.split('@').first;
+                }
+
+                final magazine = await context
+                    .read<AppController>()
+                    .api
+                    .magazines
+                    .getByName(name);
+
+                if (!mounted) return;
+
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        MagazineScreen(magazine.id, initData: magazine),
+                  ),
+                );
+              } catch (e) {
+                if (!mounted) return;
+                openWebpagePrimary(
+                    context, Uri.parse(_mbinConfigsMagazineLink));
               }
             },
           ),

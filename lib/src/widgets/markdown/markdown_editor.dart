@@ -21,11 +21,13 @@ class MarkdownEditor extends StatefulWidget {
   final void Function(String)? onChanged;
   final bool? enabled;
   final String? label;
+  final bool? draftDisableAutoLoad;
 
   const MarkdownEditor(
     this.controller, {
     required this.originInstance,
     required this.draftController,
+    this.draftDisableAutoLoad,
     this.onChanged,
     this.enabled,
     this.label,
@@ -60,9 +62,11 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
   void initState() {
     super.initState();
 
-    final draftRead = widget.draftController.read();
-    if (draftRead != null) {
-      widget.controller.text = draftRead.body;
+    if (widget.draftDisableAutoLoad != true) {
+      final draftRead = widget.draftController.read();
+      if (draftRead != null) {
+        widget.controller.text = draftRead.body;
+      }
     }
   }
 
@@ -194,7 +198,7 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
 
                                         execAction(
                                             _MarkdownEditorActionInsertSection(
-                                                '```interstellar\n$config\n```'));
+                                                config));
                                       },
                                       icon: const Icon(Symbols.share_rounded),
                                       style: TextButton.styleFrom(
@@ -901,8 +905,7 @@ class _MarkdownEditorConfigShareDialogState
                   name: profileName,
                   payload: profile.toJson(),
                 );
-                final configStr = jsonEncode(config.toJson());
-                Navigator.pop(context, configStr);
+                Navigator.pop(context, config.toMarkdown());
               },
             ),
           ),

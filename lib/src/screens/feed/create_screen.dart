@@ -17,14 +17,18 @@ import 'package:provider/provider.dart';
 class CreateScreen extends StatefulWidget {
   const CreateScreen(
     this.type, {
-    this.magazineId,
-    this.magazineName,
+    this.initMagazineId,
+    this.initMagazineName,
+    this.initTitle,
+    this.initBody,
     super.key,
   });
 
   final PostType type;
-  final int? magazineId;
-  final String? magazineName;
+  final int? initMagazineId;
+  final String? initMagazineName;
+  final String? initTitle;
+  final String? initBody;
 
   @override
   State<CreateScreen> createState() => _CreateScreenState();
@@ -47,13 +51,17 @@ class _CreateScreenState extends State<CreateScreen> {
     super.initState();
 
     _lang = context.read<AppController>().profile.defaultPostLanguage;
-    _magazineTextController.text = widget.magazineName ?? '';
+    if (widget.initMagazineName != null) {
+      _magazineTextController.text = widget.initMagazineName!;
+    }
+    if (widget.initTitle != null) _titleTextController.text = widget.initTitle!;
+    if (widget.initBody != null) _bodyTextController.text = widget.initBody!;
   }
 
   @override
   Widget build(BuildContext context) {
     final bodyDraftController = context.watch<DraftsController>().auto(
-        'create:${widget.type.name}${widget.magazineName == null ? '' : ':${context.watch<AppController>().instanceHost}:${widget.magazineName}'}');
+        'create:${widget.type.name}${widget.initMagazineName == null ? '' : ':${context.watch<AppController>().instanceHost}:${widget.initMagazineName}'}');
 
     return Scaffold(
       appBar: AppBar(
@@ -84,6 +92,7 @@ class _CreateScreenState extends State<CreateScreen> {
                       _bodyTextController,
                       originInstance: null,
                       draftController: bodyDraftController,
+                      draftDisableAutoLoad: widget.initBody != null,
                       onChanged: (_) => setState(() {}),
                       label: l(context).body,
                     ),
@@ -192,8 +201,10 @@ class _CreateScreenState extends State<CreateScreen> {
 
                       var magazineName = _magazineTextController.text;
 
-                      int? magazineId = widget.magazineId;
-                      if (magazineId == null) {
+                      int? magazineId = widget.initMagazineId;
+                      if (magazineId == null ||
+                          // If target magazine was changed from the default, then refetch the id.
+                          magazineName != widget.initMagazineName) {
                         final magazine =
                             await api.magazines.getByName(magazineName);
                         magazineId = magazine.id;
