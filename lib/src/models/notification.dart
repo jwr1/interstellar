@@ -70,7 +70,8 @@ enum NotificationType {
   ban,
   reportCreated,
   reportRejected,
-  reportApproved
+  reportApproved,
+  newSignup,
 }
 
 const notificationTypeMap = {
@@ -98,6 +99,7 @@ const notificationTypeMap = {
   'report_created_notification': NotificationType.reportCreated,
   'report_rejected_notification': NotificationType.reportRejected,
   'report_approved_notification': NotificationType.reportApproved,
+  'new_signup': NotificationType.newSignup,
 };
 
 enum NotificationControlStatus {

@@ -41,6 +41,7 @@ const notificationTitle = {
   NotificationType.reportCreated: 'report created',
   NotificationType.reportRejected: 'report rejected',
   NotificationType.reportApproved: 'report approved',
+  NotificationType.newSignup: 'new user registered',
 };
 
 class NotificationItem extends StatefulWidget {
