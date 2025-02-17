@@ -27,8 +27,6 @@ wget "$LIB4BN" -O "$BUILD_DIR"/lib4bin
 chmod +x "$BUILD_DIR"/lib4bin
 xvfb-run -a -- "$BUILD_DIR"/lib4bin l -p -v -e -r -k -d "$BUILD_DIR"/AppDir "$EXE_BUNDLE_DIR"/interstellar
 
-find "$BUILD_DIR"/AppDir/shared -type f -exec strip -s -R .comment --strip-unneeded {} ';'
-
 # Prepare sharun
 ln -s ./bin/interstellar "$BUILD_DIR"/AppDir/AppRun
 "$BUILD_DIR"/AppDir/sharun -g
