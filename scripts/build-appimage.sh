@@ -12,7 +12,7 @@ LIB4BN="https://github.com/VHSgunzo/sharun/releases/latest/download/sharun-$ARCH
 URUNTIME="https://github.com/VHSgunzo/uruntime/releases/latest/download/uruntime-appimage-dwarfs-$ARCH"
 
 # Prepare AppDir
-mkdir -p "$BUILD_DIR"/AppDir/usr/share/applications "$BUILD_DIR"/AppDir/shared/lib
+mkdir -p "$BUILD_DIR"/AppDir/usr/share/applications
 
 cp -r "$EXE_BUNDLE_DIR"/data "$BUILD_DIR"/AppDir
 cp linux/appimage/interstellar.desktop "$BUILD_DIR"/AppDir
@@ -20,12 +20,12 @@ cp linux/appimage/interstellar.desktop "$BUILD_DIR"/AppDir/usr/share/application
 cp assets/icons/logo.png "$BUILD_DIR"/AppDir/interstellar.png
 cp assets/icons/logo.png "$BUILD_DIR"/AppDir/.DirIcon
 
-ln -s ./usr/share "$BUILD_DIR"/AppDir
-
 # ADD LIBRARIES
 wget "$LIB4BN" -O "$BUILD_DIR"/lib4bin
 chmod +x "$BUILD_DIR"/lib4bin
-xvfb-run -a -- "$BUILD_DIR"/lib4bin l -p -v -e -r -k -d "$BUILD_DIR"/AppDir "$EXE_BUNDLE_DIR"/interstellar
+xvfb-run -a -- "$BUILD_DIR"/lib4bin l -p -v -e -k \
+	-d "$BUILD_DIR"/AppDir \
+	"$EXE_BUNDLE_DIR"/interstellar
 
 # Prepare sharun
 ln -s ./bin/interstellar "$BUILD_DIR"/AppDir/AppRun
