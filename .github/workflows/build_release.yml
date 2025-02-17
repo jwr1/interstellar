@@ -76,10 +76,9 @@ jobs:
         if: matrix.target_os == 'linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev libx11-dev pkg-config cmake ninja-build libblkid-dev libmpv-dev mpv libfuse2
-          wget -O appimagetool "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-${{ matrix.target_arch }}.AppImage"
-          chmod +x appimagetool
-          mv appimagetool /usr/local/bin/
+          sudo apt-get install -y libgtk-3-dev libx11-dev pkg-config cmake ninja-build libblkid-dev libmpv-dev mpv
+          # AppImage only dependencies
+          sudo apt-get install -y xvfb x11-xserver-utils
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -141,11 +140,7 @@ jobs:
 
       - name: Build AppImage for linux
         if: matrix.target_os == 'linux'
-        run: |
-          mv ${{ matrix.build_path }}/* linux/appimage/
-          cp assets/icons/logo.png linux/appimage/interstellar.png
-          cp $(echo $(ldd -d linux/appimage/interstellar | grep -Eo ' (/usr)?/lib/[^ ]*') $(ldd -d linux/appimage/lib/libflutter_linux_gtk.so | grep -Eo ' (/usr)?/lib/[^ ]*')  | tr ' ' '\n' | sort | uniq -u) linux/appimage/lib/
-          appimagetool linux/appimage dist/interstellar-${{ matrix.target }}.AppImage
+        run: ./scripts/build-appimage.sh
 
       - name: Compress build for Windows
         if: matrix.target_os == 'windows'
