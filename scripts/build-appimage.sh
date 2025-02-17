@@ -25,7 +25,8 @@ wget "$LIB4BN" -O "$BUILD_DIR"/lib4bin
 chmod +x "$BUILD_DIR"/lib4bin
 xvfb-run -a -- "$BUILD_DIR"/lib4bin l -p -v -e -k \
 	-d "$BUILD_DIR"/AppDir \
-	"$EXE_BUNDLE_DIR"/interstellar
+	"$EXE_BUNDLE_DIR"/interstellar \
+	/usr/lib/x86_64-linux-gnu/libGL*
 
 # Prepare sharun
 ln -s ./bin/interstellar "$BUILD_DIR"/AppDir/AppRun
