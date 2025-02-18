@@ -23,14 +23,36 @@ cp assets/icons/logo.png "$BUILD_DIR"/AppDir/.DirIcon
 # ADD LIBRARIES
 wget "$LIB4BN" -O "$BUILD_DIR"/lib4bin
 chmod +x "$BUILD_DIR"/lib4bin
-xvfb-run -a -- "$BUILD_DIR"/lib4bin l -p -v -e -k \
+xvfb-run -a -- "$BUILD_DIR"/lib4bin -p -v -e -s -k \
 	-d "$BUILD_DIR"/AppDir \
 	"$EXE_BUNDLE_DIR"/interstellar \
 	/usr/lib/x86_64-linux-gnu/libGL*
 
-# Prepare sharun
-ln -s ./bin/interstellar "$BUILD_DIR"/AppDir/AppRun
-"$BUILD_DIR"/AppDir/sharun -g
+# unsharun
+rm -fv "$BUILD_DIR"/AppDir/lib
+mv -v "$BUILD_DIR"/AppDir/shared/lib "$BUILD_DIR"/AppDir
+mv -v "$BUILD_DIR"/AppDir/shared/bin/interstellar "$BUILD_DIR"/AppDir
+patchelf --set-rpath \
+	'$ORIGIN/lib:$ORIGIN/lib/pulseaudio:$ORIGIN/lib/gvfs:$ORIGIN/lib/gio/modules' \
+	"$BUILD_DIR"/AppDir/interstellar
+patchelf --set-interpreter ./lib/ld-linux-x86-64.so.2 "$BUILD_DIR"/AppDir/interstellar
+
+echo '#!/bin/sh
+CURRENTDIR="$(dirname "$(readlink -f "$0")")"
+
+# since we patched a relative interpreter we have to change cwd
+cd "$CURRENTDIR" || exit 1
+
+export GIO_MODULE_DIR="$CURRENTDIR/lib/gio/modules"
+export FONTCONFIG_FILE="$CURRENTDIR/etc/fonts/fonts.conf"
+export GSETTINGS_SCHEMA_DIR="$CURRENTDIR/share/glib-2.0/schemas"
+export __EGL_VENDOR_LIBRARY_DIRS="$CURRENTDIR/share/glvnd/egl_vendor.d:/usr/share/glvnd/egl_vendor.d"
+export XKB_CONFIG_ROOT="$CURRENTDIR/share/X11/xkb"
+export TERMINFO="$CURRENTDIR/share/terminfo"
+export XDG_DATA_DIRS="$CURRENTDIR/share:/usr/local/share:/usr/share"
+
+exec "$CURRENTDIR"/interstellar' > "$BUILD_DIR"/AppDir/AppRun
+chmod +x "$BUILD_DIR"/AppDir/AppRun
 
 # MAKE APPIMAGE WITH URUNTIME
 wget -q "$URUNTIME" -O "$BUILD_DIR"/uruntime
