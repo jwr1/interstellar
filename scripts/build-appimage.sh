@@ -8,7 +8,7 @@ BUILD_DIR=$(mktemp -d)
 export ARCH="$(uname -m)"
 export APPIMAGE_EXTRACT_AND_RUN=1
 
-LIB4BN="https://github.com/VHSgunzo/sharun/releases/latest/download/sharun-$ARCH-aio"
+LIB4BN="https://raw.githubusercontent.com/VHSgunzo/sharun/refs/heads/main/lib4bin"
 URUNTIME="https://github.com/VHSgunzo/uruntime/releases/latest/download/uruntime-appimage-dwarfs-$ARCH"
 
 # Prepare AppDir
