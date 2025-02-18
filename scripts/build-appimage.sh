@@ -23,10 +23,8 @@ cp assets/icons/logo.png "$BUILD_DIR"/AppDir/.DirIcon
 # ADD LIBRARIES
 wget "$LIB4BN" -O "$BUILD_DIR"/lib4bin
 chmod +x "$BUILD_DIR"/lib4bin
-xvfb-run -a -- "$BUILD_DIR"/lib4bin -p -v -e -s -k \
-	-d "$BUILD_DIR"/AppDir \
-	"$EXE_BUNDLE_DIR"/interstellar \
-	/usr/lib/x86_64-linux-gnu/libGL*
+xvfb-run -a -- "$BUILD_DIR"/lib4bin -d "$BUILD_DIR"/AppDir -p -v -e -s -k \
+	"$EXE_BUNDLE_DIR"/interstellar /usr/lib/x86_64-linux-gnu/libGL*
 
 # unsharun
 rm -fv "$BUILD_DIR"/AppDir/lib
