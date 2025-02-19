@@ -8,7 +8,7 @@ export ARCH="$(uname -m)"
 BUILD_DIR=$(mktemp -d)
 
 LIB4BN_URL="https://github.com/VHSgunzo/sharun/releases/latest/download/sharun-$ARCH-aio"
-APPIMAGETOOL_URL="https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-$ARCH.AppImage"
+URUNTIME_URL="https://github.com/VHSgunzo/uruntime/releases/latest/download/uruntime-appimage-dwarfs-$ARCH"
 
 # Prepare AppDir
 cp -r build/linux/*/release/bundle/. "$BUILD_DIR"/AppDir
@@ -29,11 +29,14 @@ ln "$BUILD_DIR"/AppDir/sharun "$BUILD_DIR"/AppDir/AppRun
 "$BUILD_DIR"/AppDir/sharun -g
 
 # Make AppImage
-wget "$APPIMAGETOOL_URL" -O "$BUILD_DIR"/appimagetool
-chmod +x "$BUILD_DIR"/appimagetool
-"$BUILD_DIR"/appimagetool --comp zstd \
-	--mksquashfs-opt -Xcompression-level --mksquashfs-opt 22 \
-	-n "$BUILD_DIR"/AppDir dist/interstellar-linux-$ARCH.AppImage
+wget "$URUNTIME_URL" -O "$BUILD_DIR"/uruntime
+chmod +x "$BUILD_DIR"/uruntime
+"$BUILD_DIR"/uruntime --appimage-mkdwarfs -f \
+	--set-owner 0 --set-group 0 \
+	--no-history --no-create-timestamp \
+	--compression zstd:level=22 -S25 -B16 \
+	--header "$BUILD_DIR"/uruntime \
+	-i "$BUILD_DIR"/AppDir -o dist/interstellar-linux-$ARCH.AppImage
 
 # Cleanup
 rm -r "$BUILD_DIR"
