@@ -4,3 +4,4 @@ Name=Interstellar
 Exec=interstellar %u
 Icon=interstellar
 Categories=Network
+StartupWMClass=interstellar
