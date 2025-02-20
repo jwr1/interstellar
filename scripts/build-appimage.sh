@@ -24,6 +24,13 @@ ln -s ../lib "$BUILD_DIR"/AppDir/bin/lib
 ln -s ../../data "$BUILD_DIR"/AppDir/shared/bin/data
 ln -s ../../lib "$BUILD_DIR"/AppDir/shared/bin/lib
 
+# Fix browser links not opening (app expects gio-launch-desktop but can't find it).
+echo '#!/bin/sh
+shift
+xdg-open "$@"
+' > "$BUILD_DIR"/AppDir/bin/gio-launch-desktop
+chmod +x "$BUILD_DIR"/AppDir/bin/gio-launch-desktop
+
 # Prepare sharun
 ln "$BUILD_DIR"/AppDir/sharun "$BUILD_DIR"/AppDir/AppRun
 "$BUILD_DIR"/AppDir/sharun -g
@@ -31,6 +38,7 @@ ln "$BUILD_DIR"/AppDir/sharun "$BUILD_DIR"/AppDir/AppRun
 # Make AppImage
 wget "$URUNTIME_URL" -O "$BUILD_DIR"/uruntime
 chmod +x "$BUILD_DIR"/uruntime
+mkdir -p dist
 "$BUILD_DIR"/uruntime --appimage-mkdwarfs -f \
 	--set-owner 0 --set-group 0 \
 	--no-history --no-create-timestamp \
