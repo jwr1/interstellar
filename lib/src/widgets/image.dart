@@ -129,34 +129,38 @@ class _AdvancedImagePageState extends State<AdvancedImagePage> {
         children: [
           Positioned.fill(
             child: InteractiveViewer(
-              child: AdvancedImage(widget.image),
+              child: SafeArea(
+                child: AdvancedImage(widget.image),
+              ),
             ),
           ),
           if (widget.image.altText != null)
             Align(
               alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: GestureDetector(
-                  onTap: () => showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text(l(context).altText),
-                      content: Text(widget.image.altText!),
-                      actions: [
-                        OutlinedButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: Text(l(context).close),
-                        ),
-                      ],
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: GestureDetector(
+                    onTap: () => showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text(l(context).altText),
+                        content: Text(widget.image.altText!),
+                        actions: [
+                          OutlinedButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text(l(context).close),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  child: Text(
-                    widget.image.altText!,
-                    textAlign: TextAlign.center,
-                    style: titleStyle,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
+                    child: Text(
+                      widget.image.altText!,
+                      textAlign: TextAlign.center,
+                      style: titleStyle,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ),
               ),

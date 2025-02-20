@@ -147,7 +147,7 @@ class _AboutScreenState extends State<AboutScreen> {
               SizedBox(
                 width: 96,
                 height: 96,
-                child: Image.asset('assets/icons/logo-android-foreground.png'),
+                child: Image.asset('assets/icons/logo-foreground.png'),
               ),
               Text(
                 packageInfo == null
