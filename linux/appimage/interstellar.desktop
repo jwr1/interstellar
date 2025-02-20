@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=Interstellar
-Exec=LD_LIBRARY_PATH=lib ./interstellar %u
+Exec=interstellar %u
 Icon=interstellar
 Categories=Network
+StartupWMClass=interstellar
