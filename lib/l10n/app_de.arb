@@ -453,5 +453,15 @@
   "sort_newest": "Neueste",
   "@sort_newest": {},
   "sort_oldest": "Älteste",
-  "@sort_oldest": {}
+  "@sort_oldest": {},
+  "filter_allResults": "Alle Ergebnisse",
+  "@filter_allResults": {},
+  "sortComments": "Kommentare sortieren",
+  "@sortComments": {},
+  "account_settings_settings": "Einstellungen",
+  "@account_settings_settings": {},
+  "account_settings_showNSFW": "NSFW aktivieren",
+  "@account_settings_showNSFW": {},
+  "account_settings_blurNSFW": "NSFW-Bilder verwischen",
+  "@account_settings_blurNSFW": {}
 }
