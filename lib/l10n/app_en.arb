@@ -232,12 +232,12 @@
   "profile_delete": "Delete profile",
   "profile_name": "Name",
   "profile_setAsMain": "Set as main profile",
-  "profile_setAsMain_help": "The main profile is the base that all your other profiles build off of. If you change a setting in your main profile, it will also appear in all your other profiles unless you have overwritten the value.",
+  "profile_setAsMain_help": "The main profile serves as the foundation for all other profiles. Changes made to it will apply to all profiles unless a specific setting has been overridden.",
   "profile_autoSelect": "Automatically select on app start",
   "profile_autoSelectAccount": "Automatically select account when profile is enabled",
   "profile_autoSelectAccount_none": "None",
   "profile_about_title": "About profiles",
-  "profile_about_body": "Profiles in Interstellar is a powerful feature that allows you to store a group of settings and recall them back easily. The main profile is the base that all your other profiles build off of, this is where you would want to store the majority of you settings. In your other profiles, you can override settings so that they are automatically set the next that specific profile is activated.\n\nIn order to alter a setting for a profile (including main), all you need to do is switch to that profile, then change the settings you want. At the moment, if you want to unoverride a profile setting (so it will inherit from main once again), you need to delete and recreate the profile.\n\nSettings that are included in profiles are:\n\n- All behavior settings\n- All display settings\n- Feed actions\n- Feed defaults\n- Whether a filter list is enabled or disabled\n\nAdditional profile options include:\n\n- Switching which profile is main\n- Selecting a profile to auto activate when Interstellar is started\n- Selecting an account to auto switch to when a profile is activated.\n\nIf you decide not to use profiles, then just stay on the main (default) profile and the app will continue to function normally.",
+  "profile_about_body": "Profiles let you save and switch between groups of settings easily. The **main profile** serves as the default, with other profiles overriding specific settings as needed.\n\n## Modifying Profiles\n\nTo alter a profile, switch to it and adjust the settings. Currently, to reset an overridden setting back to default, you must delete and recreate the profile.\n\n## Included Settings\n\n- Behavior settings\n- Display settings\n- Feed actions\n- Feed defaults\n- Filter list activation status\n\n## Additional Options\n\n- Switch which profile is main\n- Auto activate a specific profile at startup\n- Auto switch to an account when a certain profile is activated\n  \n\nIf you don’t use profiles, just stay on the main profile and the app will function as usual.",
   "unsupportedSoftware": "{host} is using unsupported software",
   "@unsupportedSoftware": {
     "placeholders": {
