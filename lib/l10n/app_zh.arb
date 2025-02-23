@@ -482,31 +482,31 @@
   "@settings_feedDefaults_exploreSort": {},
   "settings_feedDefaults_commentSort": "评论排序",
   "@settings_feedDefaults_commentSort": {},
-  "profile_switch": "切换资料",
+  "profile_switch": "切换方案",
   "@profile_switch": {},
-  "profile_main": "主资料",
+  "profile_main": "主方案",
   "@profile_main": {},
-  "profile_new": "新资料",
+  "profile_new": "新方案",
   "@profile_new": {},
-  "profile_edit": "编辑资料",
+  "profile_edit": "编辑方案",
   "@profile_edit": {},
-  "profile_delete": "删除资料",
+  "profile_delete": "删除方案",
   "@profile_delete": {},
   "profile_name": "名称",
   "@profile_name": {},
-  "profile_setAsMain": "设为主资料",
+  "profile_setAsMain": "设为主方案",
   "@profile_setAsMain": {},
-  "profile_setAsMain_help": "主资料是所有其它资料的基础。如果您在主资料中更改某个设置，它也会出现在所有其它资料中，除非您已覆盖该值。",
+  "profile_setAsMain_help": "主方案是所有其它方案的基础。除非特定设置被覆盖，否则对其所做的更改将适用于所有方案。",
   "@profile_setAsMain_help": {},
   "profile_autoSelect": "在应用启动时自动选择",
   "@profile_autoSelect": {},
-  "profile_autoSelectAccount": "在启用资料时自动选择账号",
+  "profile_autoSelectAccount": "在启用方案时自动选择账号",
   "@profile_autoSelectAccount": {},
   "profile_autoSelectAccount_none": "无",
   "@profile_autoSelectAccount_none": {},
-  "profile_about_title": "关于资料",
+  "profile_about_title": "关于方案",
   "@profile_about_title": {},
-  "profile_about_body": "Interstellar 中的资料是一项强大的功能，允许您存储一组设置并轻松调用。主资料是所有其它资料的基础，这里是您要存储大多数设置的地方。在其它资料中，您可以覆盖设置，以便在下次激活特定资料时它们会自动设置。\n\n为了更改资料（包括主资料）的设置，您所需要做的就是切换到该资料，然后更改您想要的设置。当前，如果您想取消资料设置的覆盖（以便再次从主资料继承），您需要删除并重建该资料。\n\n包含在资料中的设置有：\n\n- 所有行为设置\n- 所有显示设置\n- 信息流操作\n- 信息流默认值\n- 过滤器列表是否启用或禁用\n\n其它资料选项包括：\n\n- 切换哪个资料为主\n- 选择在启动 Interstellar 时自动激活的资料\n- 选择在激活资料时自动切换到的账号。\n\n如果您决定不使用资料，那么只需保持在主（默认）资料上，应用将继续正常运行。",
+  "profile_about_body": "方案可让您轻松地在设置组之间保存并切换。 **主方案**作为默认值，其它方案根据需要覆盖特定的设置。\n\n ##修改方案\n\n 要更改方案，请切换到它并调整设置。 当前，要重置默认设置的覆盖设置，您必须删除并重新创建方案。\n\n ##包括设置\n\n- 行为设置\n- 显示设置\n- 信息流操作\n- 信息流默认值\n- 过滤列表激活状态\n\n ##其它选项\n\n- 切换哪个方案为主\n- 自动在启动时激活特定方案\n- 激活某个方案时自动切换到帐户\n\n\n 如果您不使用方案，只需保持在主方案上，应用会照常工作。",
   "@profile_about_body": {},
   "unsupportedSoftware": "{host} 使用了不受支持的软件",
   "@unsupportedSoftware": {
@@ -853,5 +853,66 @@
   "pin": "置顶",
   "@pin": {},
   "settings_autoPlayVideos": "自动播放视频",
-  "@settings_autoPlayVideos": {}
+  "@settings_autoPlayVideos": {},
+  "bookmark": "书签",
+  "@bookmark": {},
+  "bookmark_addToX": "添加到 {name}",
+  "@bookmark_addToX": {},
+  "bookmark_removeFromX": "从 {name} 移除",
+  "@bookmark_removeFromX": {},
+  "configShare_created": "创建于 {date}，版本 {version}",
+  "@configShare_created": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "errorPage_firstPage_button": "再试一次",
+  "@errorPage_firstPage_button": {},
+  "profiles": "方案",
+  "@profiles": {},
+  "profile_import": "导入方案",
+  "@profile_import": {},
+  "configShare": "分享配置",
+  "@configShare": {},
+  "notificationControlStatus_default": "默认通知",
+  "@notificationControlStatus_default": {},
+  "notificationControlStatus_muted": "静音通知",
+  "@notificationControlStatus_muted": {},
+  "notificationControlStatus_loud": "响亮通知",
+  "@notificationControlStatus_loud": {},
+  "errorPage_newPage": "出现问题。点击重试。",
+  "@errorPage_newPage": {},
+  "settings_mbinConfigsMagazine": "共享杂志配置",
+  "@settings_mbinConfigsMagazine": {},
+  "continueInBrowser_manual": "如果浏览器未启动，请单击以复制并手动粘贴",
+  "@continueInBrowser_manual": {},
+  "filterList_import": "导入过滤器列表",
+  "@filterList_import": {},
+  "configShare_profile_info": "修改了 {count} 项设置",
+  "@configShare_profile_info": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "configShare_filterList_title": "Interstellar 过滤器列表",
+  "@configShare_filterList_title": {},
+  "configShare_filterList_info": "包含 {count} 个短语",
+  "@configShare_filterList_info": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "errorPage_firstPage": "出现问题",
+  "@errorPage_firstPage": {},
+  "configShare_profile_title": "Interstellar 方案",
+  "@configShare_profile_title": {}
 }
