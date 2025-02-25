@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/bookmark.dart';
+import 'package:interstellar/src/api/notifications.dart';
 import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/post.dart';
@@ -187,6 +188,22 @@ class PostItem extends StatelessWidget {
         },
         matchesSoftware: ServerSoftware.mbin,
       ),
+      notificationControlStatus: item.notificationControlStatus,
+      onNotificationControlStatusChange: item.notificationControlStatus == null
+          ? null
+          : (newStatus) async {
+              await ac.api.notifications.updateControl(
+                targetType: switch (item.type) {
+                  PostType.thread => NotificationControlUpdateTargetType.entry,
+                  PostType.microblog =>
+                    NotificationControlUpdateTargetType.post,
+                },
+                targetId: item.id,
+                status: newStatus,
+              );
+
+              onUpdate(item.copyWith(notificationControlStatus: newStatus));
+            },
     );
   }
 }

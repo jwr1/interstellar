@@ -33,11 +33,6 @@ class NotificationControlSegment extends StatelessWidget {
         onChange(newSelection.first);
       },
       showSelectedIcon: false,
-      style: const ButtonStyle(
-          visualDensity: VisualDensity(
-        horizontal: -4,
-        vertical: -2,
-      )),
     );
   }
 }

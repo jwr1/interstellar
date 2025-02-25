@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/models/image.dart';
+import 'package:interstellar/src/models/notification.dart';
 import 'package:interstellar/src/screens/explore/domain_screen.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
@@ -13,6 +14,7 @@ import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/markdown/drafts_controller.dart';
 import 'package:interstellar/src/widgets/markdown/markdown.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
+import 'package:interstellar/src/widgets/notification_control_segment.dart';
 import 'package:interstellar/src/widgets/open_webpage.dart';
 import 'package:interstellar/src/widgets/report_content.dart';
 import 'package:interstellar/src/widgets/user_status_icons.dart';
@@ -95,6 +97,10 @@ class ContentItem extends StatefulWidget {
   final Future<void> Function()? onRemoveBookmark;
   final Future<void> Function(String)? onRemoveBookmarkFromList;
 
+  final NotificationControlStatus? notificationControlStatus;
+  final Future<void> Function(NotificationControlStatus)?
+      onNotificationControlStatusChange;
+
   const ContentItem({
     required this.originInstance,
     this.title,
@@ -151,6 +157,8 @@ class ContentItem extends StatefulWidget {
     this.onAddBookmarkToList,
     this.onRemoveBookmark,
     this.onRemoveBookmarkFromList,
+    this.notificationControlStatus,
+    this.onNotificationControlStatusChange,
     super.key,
   });
 
@@ -766,6 +774,21 @@ class _ContentItemState extends State<ContentItem> {
                                 );
                         }),
                       ),
+                      if (!widget.isPreview &&
+                          widget.notificationControlStatus != null &&
+                          widget.onNotificationControlStatusChange != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              NotificationControlSegment(
+                                widget.notificationControlStatus!,
+                                widget.onNotificationControlStatusChange!,
+                              )
+                            ],
+                          ),
+                        ),
                       if (widget.onReply != null &&
                           _replyTextController != null)
                         Padding(

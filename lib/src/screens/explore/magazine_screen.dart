@@ -80,158 +80,167 @@ class _MagazineScreenState extends State<MagazineScreen> {
           : Padding(
               padding: const EdgeInsets.all(12),
               child: LayoutBuilder(builder: (context, constraints) {
-                final actions = [
-                  SubscriptionButton(
-                    isSubscribed: _data!.isUserSubscribed,
-                    subscriptionCount: _data!.subscriptionsCount,
-                    onSubscribe: (selected) async {
-                      var newValue =
-                          await ac.api.magazines.subscribe(_data!.id, selected);
+                final actions = Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SubscriptionButton(
+                          isSubscribed: _data!.isUserSubscribed,
+                          subscriptionCount: _data!.subscriptionsCount,
+                          onSubscribe: (selected) async {
+                            var newValue = await ac.api.magazines
+                                .subscribe(_data!.id, selected);
 
-                      setState(() {
-                        _data = newValue;
-                      });
-                      if (widget.onUpdate != null) {
-                        widget.onUpdate!(newValue);
-                      }
-                    },
-                    followMode: false,
-                  ),
-                  if (_data!.notificationControlStatus != null)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: NotificationControlSegment(
-                        _data!.notificationControlStatus ??
-                            NotificationControlStatus.default_,
-                        (newStatus) async {
-                          await ac.api.notifications.updateControl(
-                              targetType:
-                                  NotificationControlUpdateTargetType.magazine,
-                              targetId: _data!.id,
-                              status: newStatus);
+                            setState(() {
+                              _data = newValue;
+                            });
+                            if (widget.onUpdate != null) {
+                              widget.onUpdate!(newValue);
+                            }
+                          },
+                          followMode: false,
+                        ),
+                        StarButton(globalName!),
+                        if (whenLoggedIn(context, true) == true)
+                          LoadingIconButton(
+                            onPressed: () async {
+                              final newValue = await ac.api.magazines.block(
+                                _data!.id,
+                                !_data!.isBlockedByUser!,
+                              );
 
-                          final newValue = _data!
-                              .copyWith(notificationControlStatus: newStatus);
-                          setState(() {
-                            _data = newValue;
-                          });
-                          if (widget.onUpdate != null) {
-                            widget.onUpdate!(newValue);
-                          }
-                        },
-                      ),
-                    ),
-                  StarButton(globalName!),
-                  if (whenLoggedIn(context, true) == true)
-                    LoadingIconButton(
-                      onPressed: () async {
-                        final newValue = await ac.api.magazines.block(
-                          _data!.id,
-                          !_data!.isBlockedByUser!,
-                        );
-
-                        setState(() {
-                          _data = newValue;
-                        });
-                        if (widget.onUpdate != null) {
-                          widget.onUpdate!(newValue);
-                        }
-                      },
-                      icon: const Icon(Symbols.block_rounded),
-                      style: ButtonStyle(
-                        foregroundColor: WidgetStatePropertyAll(
-                            _data!.isBlockedByUser == true
-                                ? Theme.of(context).colorScheme.error
-                                : Theme.of(context).disabledColor),
-                      ),
-                    ),
-                  MenuAnchor(
-                    builder: (BuildContext context, MenuController controller,
-                        Widget? child) {
-                      return IconButton(
-                        icon: const Icon(Symbols.more_vert_rounded),
-                        onPressed: () {
-                          if (controller.isOpen) {
-                            controller.close();
-                          } else {
-                            controller.open();
-                          }
-                        },
-                      );
-                    },
-                    menuChildren: [
-                      MenuItemButton(
-                        onPressed: () => openWebpagePrimary(
-                            context,
-                            Uri.https(
-                              ac.instanceHost,
-                              ac.serverSoftware == ServerSoftware.lemmy
-                                  ? '/c/${_data!.name}'
-                                  : '/m/${_data!.name}',
-                            )),
-                        child: Text(l(context).openInBrowser),
-                      ),
-                      MenuItemButton(
-                        onPressed: () => showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: Text(l(context).modsOf(_data!.name)),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: _data!.moderators
-                                  .map((mod) => UserItemSimple(
-                                        mod,
-                                        isOwner: mod.id == _data!.owner?.id,
-                                      ))
-                                  .toList(),
+                              setState(() {
+                                _data = newValue;
+                              });
+                              if (widget.onUpdate != null) {
+                                widget.onUpdate!(newValue);
+                              }
+                            },
+                            icon: const Icon(Symbols.block_rounded),
+                            style: ButtonStyle(
+                              foregroundColor: WidgetStatePropertyAll(
+                                  _data!.isBlockedByUser == true
+                                      ? Theme.of(context).colorScheme.error
+                                      : Theme.of(context).disabledColor),
                             ),
                           ),
-                        ),
-                        child: Text(l(context).viewMods),
-                      ),
-                      if (isModerator)
-                        MenuItemButton(
-                          onPressed: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => MagazineModPanel(
-                                initData: _data!,
-                                onUpdate: (newValue) {
-                                  setState(() {
-                                    _data = newValue;
-                                  });
-                                  if (widget.onUpdate != null) {
-                                    widget.onUpdate!(newValue);
-                                  }
-                                },
+                        MenuAnchor(
+                          builder: (BuildContext context,
+                              MenuController controller, Widget? child) {
+                            return IconButton(
+                              icon: const Icon(Symbols.more_vert_rounded),
+                              onPressed: () {
+                                if (controller.isOpen) {
+                                  controller.close();
+                                } else {
+                                  controller.open();
+                                }
+                              },
+                            );
+                          },
+                          menuChildren: [
+                            MenuItemButton(
+                              onPressed: () => openWebpagePrimary(
+                                  context,
+                                  Uri.https(
+                                    ac.instanceHost,
+                                    ac.serverSoftware == ServerSoftware.lemmy
+                                        ? '/c/${_data!.name}'
+                                        : '/m/${_data!.name}',
+                                  )),
+                              child: Text(l(context).openInBrowser),
+                            ),
+                            MenuItemButton(
+                              onPressed: () => showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text(l(context).modsOf(_data!.name)),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: _data!.moderators
+                                        .map((mod) => UserItemSimple(
+                                              mod,
+                                              isOwner:
+                                                  mod.id == _data!.owner?.id,
+                                            ))
+                                        .toList(),
+                                  ),
+                                ),
                               ),
+                              child: Text(l(context).viewMods),
                             ),
-                          ),
-                          child: Text(l(context).modPanel),
-                        ),
-                      if (_data!.owner != null &&
-                          _data!.owner!.name ==
-                              ac.selectedAccount.split('@').first)
-                        MenuItemButton(
-                          onPressed: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => MagazineOwnerPanel(
-                                initData: _data!,
-                                onUpdate: (newValue) {
-                                  setState(() {
-                                    _data = newValue;
-                                  });
-                                  if (widget.onUpdate != null) {
-                                    widget.onUpdate!(newValue);
-                                  }
-                                },
+                            if (isModerator)
+                              MenuItemButton(
+                                onPressed: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => MagazineModPanel(
+                                      initData: _data!,
+                                      onUpdate: (newValue) {
+                                        setState(() {
+                                          _data = newValue;
+                                        });
+                                        if (widget.onUpdate != null) {
+                                          widget.onUpdate!(newValue);
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                child: Text(l(context).modPanel),
                               ),
-                            ),
-                          ),
-                          child: Text(l(context).ownerPanel),
+                            if (_data!.owner != null &&
+                                _data!.owner!.name ==
+                                    ac.selectedAccount.split('@').first)
+                              MenuItemButton(
+                                onPressed: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => MagazineOwnerPanel(
+                                      initData: _data!,
+                                      onUpdate: (newValue) {
+                                        setState(() {
+                                          _data = newValue;
+                                        });
+                                        if (widget.onUpdate != null) {
+                                          widget.onUpdate!(newValue);
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                child: Text(l(context).ownerPanel),
+                              ),
+                          ],
                         ),
-                    ],
-                  ),
-                ];
+                      ],
+                    ),
+                    if (_data!.notificationControlStatus != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: NotificationControlSegment(
+                          _data!.notificationControlStatus!,
+                          (newStatus) async {
+                            await ac.api.notifications.updateControl(
+                                targetType: NotificationControlUpdateTargetType
+                                    .magazine,
+                                targetId: _data!.id,
+                                status: newStatus);
+
+                            final newValue = _data!
+                                .copyWith(notificationControlStatus: newStatus);
+                            setState(() {
+                              _data = newValue;
+                            });
+                            if (widget.onUpdate != null) {
+                              widget.onUpdate!(newValue);
+                            }
+                          },
+                        ),
+                      ),
+                  ],
+                );
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -279,14 +288,10 @@ class _MagazineScreenState extends State<MagazineScreen> {
                             ],
                           ),
                         ),
-                        if (constraints.maxWidth > 600) ...actions,
+                        if (constraints.maxWidth > 600) actions,
                       ],
                     ),
-                    if (constraints.maxWidth <= 600)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: actions,
-                      ),
+                    if (constraints.maxWidth <= 600) actions,
                     if (_data!.description != null)
                       Padding(
                         padding: const EdgeInsets.only(top: 12),

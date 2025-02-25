@@ -3,9 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/comments.dart';
 import 'package:interstellar/src/api/feed_source.dart';
+import 'package:interstellar/src/api/notifications.dart';
 import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/comment.dart';
+import 'package:interstellar/src/models/notification.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/screens/account/messages/message_thread_screen.dart';
@@ -25,6 +27,7 @@ import 'package:interstellar/src/widgets/loading_template.dart';
 import 'package:interstellar/src/widgets/markdown/drafts_controller.dart';
 import 'package:interstellar/src/widgets/markdown/markdown.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
+import 'package:interstellar/src/widgets/notification_control_segment.dart';
 import 'package:interstellar/src/widgets/star_button.dart';
 import 'package:interstellar/src/widgets/subscription_button.dart';
 import 'package:interstellar/src/widgets/user_status_icons.dart';
@@ -72,13 +75,15 @@ class _UserScreenState extends State<UserScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final ac = context.watch<AppController>();
+
     if (_data == null) {
       return const LoadingTemplate();
     }
 
     final user = _data!;
 
-    final isLoggedIn = context.watch<AppController>().isLoggedIn;
+    final isLoggedIn = ac.isLoggedIn;
     final isMyUser = isLoggedIn &&
         whenLoggedIn(context, true, matchesUsername: user.name) == true;
 
@@ -86,10 +91,11 @@ class _UserScreenState extends State<UserScreen> {
 
     final globalName = user.name.contains('@')
         ? '@${user.name}'
-        : '@${user.name}@${context.watch<AppController>().instanceHost}';
+        : '@${user.name}@${ac.instanceHost}';
 
-    final messageDraftController = context.watch<DraftsController>().auto(
-        'message:${context.watch<AppController>().instanceHost}:${user.name}');
+    final messageDraftController = context
+        .watch<DraftsController>()
+        .auto('message:${ac.instanceHost}:${user.name}');
 
     return Scaffold(
         appBar: AppBar(
@@ -123,10 +129,7 @@ class _UserScreenState extends State<UserScreen> {
           ],
         ),
         body: DefaultTabController(
-          length: context.watch<AppController>().serverSoftware ==
-                  ServerSoftware.lemmy
-              ? 2
-              : 6,
+          length: ac.serverSoftware == ServerSoftware.lemmy ? 2 : 6,
           child: NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) => [
               SliverToBoxAdapter(
@@ -164,81 +167,111 @@ class _UserScreenState extends State<UserScreen> {
                         Positioned(
                             bottom: 0,
                             right: 16,
-                            child: Row(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                if (isMyUser)
-                                  FilledButton(
-                                    onPressed: () => Navigator.of(context).push(
-                                        MaterialPageRoute(builder: (context) {
-                                      return ProfileEditScreen(_data!,
-                                          (DetailedUserModel? user) {
-                                        setState(() {
-                                          _data = user;
-                                        });
-                                      });
-                                    })),
-                                    child: Text(l(context).account_edit),
-                                  ),
-                                if (!isMyUser)
-                                  SubscriptionButton(
-                                    isSubscribed: user.isFollowedByUser,
-                                    subscriptionCount: user.followersCount ?? 0,
-                                    onSubscribe: (selected) async {
-                                      var newValue = await context
-                                          .read<AppController>()
-                                          .api
-                                          .users
-                                          .follow(user.id, selected);
-                                      setState(() {
-                                        _data = newValue;
-                                      });
-                                      if (widget.onUpdate != null) {
-                                        widget.onUpdate!(newValue);
-                                      }
-                                    },
-                                    followMode: true,
-                                  ),
-                                StarButton(globalName),
-                                if (isLoggedIn && !isMyUser)
-                                  LoadingIconButton(
-                                    onPressed: () async {
-                                      final newValue = await context
-                                          .read<AppController>()
-                                          .api
-                                          .users
-                                          .putBlock(
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if (isMyUser)
+                                      FilledButton(
+                                        onPressed: () => Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                                builder: (context) {
+                                          return ProfileEditScreen(_data!,
+                                              (DetailedUserModel? user) {
+                                            setState(() {
+                                              _data = user;
+                                            });
+                                          });
+                                        })),
+                                        child: Text(l(context).account_edit),
+                                      ),
+                                    if (!isMyUser)
+                                      SubscriptionButton(
+                                        isSubscribed: user.isFollowedByUser,
+                                        subscriptionCount:
+                                            user.followersCount ?? 0,
+                                        onSubscribe: (selected) async {
+                                          var newValue = await ac.api.users
+                                              .follow(user.id, selected);
+                                          setState(() {
+                                            _data = newValue;
+                                          });
+                                          if (widget.onUpdate != null) {
+                                            widget.onUpdate!(newValue);
+                                          }
+                                        },
+                                        followMode: true,
+                                      ),
+                                    StarButton(globalName),
+                                    if (isLoggedIn && !isMyUser)
+                                      LoadingIconButton(
+                                        onPressed: () async {
+                                          final newValue =
+                                              await ac.api.users.putBlock(
                                             user.id,
                                             !user.isBlockedByUser!,
                                           );
 
-                                      setState(() {
-                                        _data = newValue;
-                                      });
-                                      if (widget.onUpdate != null) {
-                                        widget.onUpdate!(newValue);
-                                      }
-                                    },
-                                    icon: const Icon(Symbols.block_rounded),
-                                    style: ButtonStyle(
-                                      foregroundColor: WidgetStatePropertyAll(
-                                          user.isBlockedByUser == true
-                                              ? Theme.of(context)
-                                                  .colorScheme
-                                                  .error
-                                              : Theme.of(context)
-                                                  .disabledColor),
+                                          setState(() {
+                                            _data = newValue;
+                                          });
+                                          if (widget.onUpdate != null) {
+                                            widget.onUpdate!(newValue);
+                                          }
+                                        },
+                                        icon: const Icon(Symbols.block_rounded),
+                                        style: ButtonStyle(
+                                          foregroundColor:
+                                              WidgetStatePropertyAll(
+                                                  user.isBlockedByUser == true
+                                                      ? Theme.of(context)
+                                                          .colorScheme
+                                                          .error
+                                                      : Theme.of(context)
+                                                          .disabledColor),
+                                        ),
+                                      ),
+                                    if (isLoggedIn && !isMyUser)
+                                      IconButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            _messageController =
+                                                TextEditingController();
+                                          });
+                                        },
+                                        icon: const Icon(Symbols.mail_rounded),
+                                        tooltip: 'Send message',
+                                      ),
+                                  ],
+                                ),
+                                if (!isMyUser &&
+                                    _data!.notificationControlStatus != null)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 8),
+                                    child: NotificationControlSegment(
+                                      _data!.notificationControlStatus!,
+                                      (newStatus) async {
+                                        await ac.api.notifications.updateControl(
+                                            targetType:
+                                                NotificationControlUpdateTargetType
+                                                    .user,
+                                            targetId: _data!.id,
+                                            status: newStatus);
+
+                                        final newValue = _data!.copyWith(
+                                            notificationControlStatus:
+                                                newStatus);
+                                        setState(() {
+                                          _data = newValue;
+                                        });
+                                        if (widget.onUpdate != null) {
+                                          widget.onUpdate!(newValue);
+                                        }
+                                      },
                                     ),
-                                  ),
-                                if (isLoggedIn && !isMyUser)
-                                  IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        _messageController =
-                                            TextEditingController();
-                                      });
-                                    },
-                                    icon: const Icon(Symbols.mail_rounded),
-                                    tooltip: 'Send message',
                                   ),
                               ],
                             )),
@@ -262,7 +295,7 @@ class _UserScreenState extends State<UserScreen> {
                                     ClipboardData(
                                         text: user.name.contains('@')
                                             ? '@${user.name}'
-                                            : '@${user.name}@${context.read<AppController>().instanceHost}'),
+                                            : '@${user.name}@${ac.instanceHost}'),
                                   );
 
                                   if (!mounted) return;
@@ -312,14 +345,11 @@ class _UserScreenState extends State<UserScreen> {
                                     ),
                                     LoadingFilledButton(
                                       onPressed: () async {
-                                        final newThread = await context
-                                            .read<AppController>()
-                                            .api
-                                            .messages
-                                            .create(
-                                              user.id,
-                                              _messageController!.text,
-                                            );
+                                        final newThread =
+                                            await ac.api.messages.create(
+                                          user.id,
+                                          _messageController!.text,
+                                        );
 
                                         await messageDraftController.discard();
 
@@ -363,18 +393,14 @@ class _UserScreenState extends State<UserScreen> {
                   tabAlignment: TabAlignment.start,
                   tabs: [
                     const Tab(text: 'Threads'),
-                    if (context.watch<AppController>().serverSoftware !=
-                        ServerSoftware.lemmy)
+                    if (ac.serverSoftware != ServerSoftware.lemmy)
                       const Tab(text: 'Microblogs'),
                     const Tab(text: 'Comments'),
-                    if (context.watch<AppController>().serverSoftware !=
-                        ServerSoftware.lemmy)
+                    if (ac.serverSoftware != ServerSoftware.lemmy)
                       const Tab(text: 'Replies'),
-                    if (context.watch<AppController>().serverSoftware !=
-                        ServerSoftware.lemmy)
+                    if (ac.serverSoftware != ServerSoftware.lemmy)
                       const Tab(text: 'Followers'),
-                    if (context.watch<AppController>().serverSoftware !=
-                        ServerSoftware.lemmy)
+                    if (ac.serverSoftware != ServerSoftware.lemmy)
                       const Tab(text: 'Following')
                   ],
                 ),
@@ -389,8 +415,7 @@ class _UserScreenState extends State<UserScreen> {
                   sort: _sort,
                   data: _data,
                 ),
-                if (context.watch<AppController>().serverSoftware !=
-                    ServerSoftware.lemmy)
+                if (ac.serverSoftware != ServerSoftware.lemmy)
                   UserScreenBody(
                     mode: UserFeedType.microblog,
                     sort: _sort,
@@ -401,22 +426,19 @@ class _UserScreenState extends State<UserScreen> {
                   sort: _sort,
                   data: _data,
                 ),
-                if (context.watch<AppController>().serverSoftware !=
-                    ServerSoftware.lemmy)
+                if (ac.serverSoftware != ServerSoftware.lemmy)
                   UserScreenBody(
                     mode: UserFeedType.reply,
                     sort: _sort,
                     data: _data,
                   ),
-                if (context.watch<AppController>().serverSoftware !=
-                    ServerSoftware.lemmy)
+                if (ac.serverSoftware != ServerSoftware.lemmy)
                   UserScreenBody(
                     mode: UserFeedType.follower,
                     sort: _sort,
                     data: _data,
                   ),
-                if (context.watch<AppController>().serverSoftware !=
-                    ServerSoftware.lemmy)
+                if (ac.serverSoftware != ServerSoftware.lemmy)
                   UserScreenBody(
                     mode: UserFeedType.following,
                     sort: _sort,
@@ -465,6 +487,8 @@ class _UserScreenBodyState extends State<UserScreenBody> {
   }
 
   Future<void> _fetchPage(String pageKey) async {
+    final ac = context.watch<AppController>();
+
     const Map<FeedSort, CommentSort> feedToCommentSortMap = {
       FeedSort.active: CommentSort.active,
       FeedSort.commented: CommentSort.active,
@@ -476,80 +500,50 @@ class _UserScreenBodyState extends State<UserScreenBody> {
 
     try {
       final newPage = await (switch (widget.mode) {
-        UserFeedType.thread => context.read<AppController>().api.threads.list(
-              FeedSource.user,
-              sourceId: widget.data!.id,
-              page: nullIfEmpty(pageKey),
-              sort: widget.sort,
-              usePreferredLangs: whenLoggedIn(
-                  context,
-                  context
-                      .read<AppController>()
-                      .profile
-                      .useAccountLanguageFilter),
-              langs: context.read<AppController>().profile.customLanguageFilter,
-            ),
-        UserFeedType.microblog => context
-            .read<AppController>()
-            .api
-            .microblogs
-            .list(
-              FeedSource.user,
-              sourceId: widget.data!.id,
-              page: nullIfEmpty(pageKey),
-              sort: widget.sort,
-              usePreferredLangs: whenLoggedIn(
-                  context,
-                  context
-                      .read<AppController>()
-                      .profile
-                      .useAccountLanguageFilter),
-              langs: context.read<AppController>().profile.customLanguageFilter,
-            ),
-        UserFeedType.comment => context
-            .read<AppController>()
-            .api
-            .comments
-            .listFromUser(
-              PostType.thread,
-              widget.data!.id,
-              page: nullIfEmpty(pageKey),
-              sort: feedToCommentSortMap[widget.sort],
-              usePreferredLangs: whenLoggedIn(
-                  context,
-                  context
-                      .read<AppController>()
-                      .profile
-                      .useAccountLanguageFilter),
-              langs: context.read<AppController>().profile.customLanguageFilter,
-            ),
-        UserFeedType.reply => context
-            .read<AppController>()
-            .api
-            .comments
-            .listFromUser(
-              PostType.microblog,
-              widget.data!.id,
-              page: nullIfEmpty(pageKey),
-              sort: feedToCommentSortMap[widget.sort],
-              usePreferredLangs: whenLoggedIn(
-                  context,
-                  context
-                      .read<AppController>()
-                      .profile
-                      .useAccountLanguageFilter),
-              langs: context.read<AppController>().profile.customLanguageFilter,
-            ),
-        UserFeedType.follower =>
-          context.read<AppController>().api.users.listFollowers(
-                widget.data!.id,
-                page: nullIfEmpty(pageKey),
-              ),
-        UserFeedType.following =>
-          context.read<AppController>().api.users.listFollowing(
-                widget.data!.id,
-                page: nullIfEmpty(pageKey),
-              ),
+        UserFeedType.thread => ac.api.threads.list(
+            FeedSource.user,
+            sourceId: widget.data!.id,
+            page: nullIfEmpty(pageKey),
+            sort: widget.sort,
+            usePreferredLangs:
+                whenLoggedIn(context, ac.profile.useAccountLanguageFilter),
+            langs: ac.profile.customLanguageFilter,
+          ),
+        UserFeedType.microblog => ac.api.microblogs.list(
+            FeedSource.user,
+            sourceId: widget.data!.id,
+            page: nullIfEmpty(pageKey),
+            sort: widget.sort,
+            usePreferredLangs:
+                whenLoggedIn(context, ac.profile.useAccountLanguageFilter),
+            langs: ac.profile.customLanguageFilter,
+          ),
+        UserFeedType.comment => ac.api.comments.listFromUser(
+            PostType.thread,
+            widget.data!.id,
+            page: nullIfEmpty(pageKey),
+            sort: feedToCommentSortMap[widget.sort],
+            usePreferredLangs:
+                whenLoggedIn(context, ac.profile.useAccountLanguageFilter),
+            langs: ac.profile.customLanguageFilter,
+          ),
+        UserFeedType.reply => ac.api.comments.listFromUser(
+            PostType.microblog,
+            widget.data!.id,
+            page: nullIfEmpty(pageKey),
+            sort: feedToCommentSortMap[widget.sort],
+            usePreferredLangs:
+                whenLoggedIn(context, ac.profile.useAccountLanguageFilter),
+            langs: ac.profile.customLanguageFilter,
+          ),
+        UserFeedType.follower => ac.api.users.listFollowers(
+            widget.data!.id,
+            page: nullIfEmpty(pageKey),
+          ),
+        UserFeedType.following => ac.api.users.listFollowing(
+            widget.data!.id,
+            page: nullIfEmpty(pageKey),
+          ),
       });
 
       if (!mounted) return;
