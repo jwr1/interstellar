@@ -138,8 +138,8 @@ class _ContentItemLinkPanelState extends State<ContentItemLinkPanel> {
                           ),
                         ],
                       ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
+                      softWrap: false,
+                      overflow: TextOverflow.fade,
                     ),
                   ),
                   onTap: () {

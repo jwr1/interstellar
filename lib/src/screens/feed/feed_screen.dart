@@ -252,8 +252,8 @@ class _FeedScreenState extends State<FeedScreen> {
                       (context.watch<AppController>().isLoggedIn
                           ? ''
                           : ' (${l(context).guest})'),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+              softWrap: false,
+              overflow: TextOverflow.fade,
             ),
             subtitle: Row(
               children: [

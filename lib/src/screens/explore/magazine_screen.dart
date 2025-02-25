@@ -5,7 +5,6 @@ import 'package:interstellar/src/api/notifications.dart';
 import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/magazine.dart';
-import 'package:interstellar/src/models/notification.dart';
 import 'package:interstellar/src/screens/explore/magazine_mod_panel.dart';
 import 'package:interstellar/src/screens/explore/magazine_owner_panel.dart';
 import 'package:interstellar/src/screens/explore/user_item.dart';

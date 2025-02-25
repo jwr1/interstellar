@@ -86,45 +86,51 @@ class _ContentItemCompactPostState extends State<ContentItemCompactPost> {
           );
 
     final Widget? userWidget = widget.user != null
-        ? Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                DisplayName(
-                  widget.user!,
-                  onTap: widget.userIdOnClick != null
-                      ? () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => UserScreen(
-                                widget.userIdOnClick!,
-                              ),
-                            ),
-                          )
-                      : null,
-                ),
-                UserStatusIcons(
-                  cakeDay: widget.userCakeDay,
-                  isBot: widget.userIsBot,
-                ),
-              ],
+        ? Flexible(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: DisplayName(
+                      widget.user!,
+                      onTap: widget.userIdOnClick != null
+                          ? () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => UserScreen(
+                                    widget.userIdOnClick!,
+                                  ),
+                                ),
+                              )
+                          : null,
+                    ),
+                  ),
+                  UserStatusIcons(
+                    cakeDay: widget.userCakeDay,
+                    isBot: widget.userIsBot,
+                  ),
+                ],
+              ),
             ),
           )
         : null;
     final Widget? magazineWidget = widget.magazine != null
-        ? Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: DisplayName(
-              widget.magazine!,
-              onTap: widget.magazineIdOnClick != null
-                  ? () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => MagazineScreen(
-                            widget.magazineIdOnClick!,
+        ? Flexible(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: DisplayName(
+                widget.magazine!,
+                onTap: widget.magazineIdOnClick != null
+                    ? () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => MagazineScreen(
+                              widget.magazineIdOnClick!,
+                            ),
                           ),
-                        ),
-                      )
-                  : null,
+                        )
+                    : null,
+              ),
             ),
           )
         : null;
@@ -141,8 +147,8 @@ class _ContentItemCompactPostState extends State<ContentItemCompactPost> {
                 Text(
                   widget.title ?? '',
                   style: Theme.of(context).textTheme.titleMedium,
+                  softWrap: false,
                   overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
                 ),
                 const SizedBox(height: 4),
                 Row(

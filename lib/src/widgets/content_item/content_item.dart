@@ -179,62 +179,68 @@ class _ContentItemState extends State<ContentItem> {
         widget.link != null && isSupportedYouTubeVideo(widget.link!);
 
     final Widget? userWidget = widget.user != null
-        ? Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                DisplayName(
-                  widget.user!,
-                  icon: widget.userIcon,
-                  onTap: widget.userIdOnClick != null
-                      ? () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => UserScreen(
-                                widget.userIdOnClick!,
-                              ),
-                            ),
-                          )
-                      : null,
-                ),
-                UserStatusIcons(
-                  cakeDay: widget.userCakeDay,
-                  isBot: widget.userIsBot,
-                ),
-                if (widget.opUserId == widget.userIdOnClick)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 5),
-                    child: Tooltip(
-                      message: l(context).originalPoster_long,
-                      triggerMode: TooltipTriggerMode.tap,
-                      child: Text(
-                        l(context).originalPoster_short,
-                        style: const TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
+        ? Flexible(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: DisplayName(
+                      widget.user!,
+                      icon: widget.userIcon,
+                      onTap: widget.userIdOnClick != null
+                          ? () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => UserScreen(
+                                    widget.userIdOnClick!,
+                                  ),
+                                ),
+                              )
+                          : null,
+                    ),
+                  ),
+                  UserStatusIcons(
+                    cakeDay: widget.userCakeDay,
+                    isBot: widget.userIsBot,
+                  ),
+                  if (widget.opUserId == widget.userIdOnClick)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5),
+                      child: Tooltip(
+                        message: l(context).originalPoster_long,
+                        triggerMode: TooltipTriggerMode.tap,
+                        child: Text(
+                          l(context).originalPoster_short,
+                          style: const TextStyle(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
           )
         : null;
     final Widget? magazineWidget = widget.magazine != null
-        ? Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: DisplayName(
-              widget.magazine!,
-              icon: widget.magazineIcon,
-              onTap: widget.magazineIdOnClick != null
-                  ? () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => MagazineScreen(
-                            widget.magazineIdOnClick!,
+        ? Flexible(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: DisplayName(
+                widget.magazine!,
+                icon: widget.magazineIcon,
+                onTap: widget.magazineIdOnClick != null
+                    ? () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => MagazineScreen(
+                              widget.magazineIdOnClick!,
+                            ),
                           ),
-                        ),
-                      )
-                  : null,
+                        )
+                    : null,
+              ),
             ),
           )
         : null;
@@ -552,92 +558,103 @@ class _ContentItemState extends State<ContentItem> {
                         ContentItemLinkPanel(link: widget.link!),
                       Row(
                         children: [
-                          if (widget.filterListWarnings?.isNotEmpty == true)
-                            Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: Tooltip(
-                                message: l(context).filterListWarningX(
-                                    widget.filterListWarnings!.join(', ')),
-                                triggerMode: TooltipTriggerMode.tap,
-                                child: const Icon(
-                                  Symbols.warning_amber_rounded,
-                                  color: Colors.red,
-                                ),
-                              ),
-                            ),
-                          if (widget.isPinned)
-                            Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: Tooltip(
-                                message: l(context).pinnedInMagazine,
-                                triggerMode: TooltipTriggerMode.tap,
-                                child: const Icon(Symbols.push_pin_rounded,
-                                    size: 20),
-                              ),
-                            ),
-                          if (widget.isNSFW)
-                            Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: Tooltip(
-                                message: l(context).notSafeForWork_long,
-                                triggerMode: TooltipTriggerMode.tap,
-                                child: Text(
-                                  l(context).notSafeForWork_short,
-                                  style: const TextStyle(
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold,
+                          Expanded(
+                            child: Row(
+                              children: [
+                                if (widget.filterListWarnings?.isNotEmpty ==
+                                    true)
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 10),
+                                    child: Tooltip(
+                                      message: l(context).filterListWarningX(
+                                          widget.filterListWarnings!
+                                              .join(', ')),
+                                      triggerMode: TooltipTriggerMode.tap,
+                                      child: const Icon(
+                                        Symbols.warning_amber_rounded,
+                                        color: Colors.red,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            ),
-                          if (widget.isOC)
-                            Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: Tooltip(
-                                message: l(context).originalContent_long,
-                                triggerMode: TooltipTriggerMode.tap,
-                                child: Text(
-                                  l(context).originalContent_short,
-                                  style: const TextStyle(
-                                    color: Colors.lightGreen,
-                                    fontWeight: FontWeight.bold,
+                                if (widget.isPinned)
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 10),
+                                    child: Tooltip(
+                                      message: l(context).pinnedInMagazine,
+                                      triggerMode: TooltipTriggerMode.tap,
+                                      child: const Icon(
+                                          Symbols.push_pin_rounded,
+                                          size: 20),
+                                    ),
                                   ),
-                                ),
-                              ),
+                                if (widget.isNSFW)
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 10),
+                                    child: Tooltip(
+                                      message: l(context).notSafeForWork_long,
+                                      triggerMode: TooltipTriggerMode.tap,
+                                      child: Text(
+                                        l(context).notSafeForWork_short,
+                                        style: const TextStyle(
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                if (widget.isOC)
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 10),
+                                    child: Tooltip(
+                                      message: l(context).originalContent_long,
+                                      triggerMode: TooltipTriggerMode.tap,
+                                      child: Text(
+                                        l(context).originalContent_short,
+                                        style: const TextStyle(
+                                          color: Colors.lightGreen,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                if (!widget.showMagazineFirst &&
+                                    userWidget != null)
+                                  userWidget,
+                                if (widget.showMagazineFirst &&
+                                    magazineWidget != null)
+                                  magazineWidget,
+                                if (widget.createdAt != null)
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 10),
+                                    child: Tooltip(
+                                      message: l(context).createdAt(
+                                              dateTimeFormat(
+                                                  widget.createdAt!)) +
+                                          (widget.editedAt == null
+                                              ? ''
+                                              : '\n${l(context).editedAt(dateTimeFormat(widget.editedAt!))}'),
+                                      triggerMode: TooltipTriggerMode.tap,
+                                      child: Text(
+                                        dateDiffFormat(widget.createdAt!),
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w300),
+                                      ),
+                                    ),
+                                  ),
+                                if (widget.showMagazineFirst &&
+                                    userWidget != null)
+                                  userWidget,
+                                if (!widget.showMagazineFirst &&
+                                    magazineWidget != null)
+                                  magazineWidget,
+                              ],
                             ),
-                          if (!widget.showMagazineFirst && userWidget != null)
-                            userWidget,
-                          if (widget.showMagazineFirst &&
-                              magazineWidget != null)
-                            magazineWidget,
-                          if (widget.createdAt != null)
-                            Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: Tooltip(
-                                message: l(context).createdAt(
-                                        dateTimeFormat(widget.createdAt!)) +
-                                    (widget.editedAt == null
-                                        ? ''
-                                        : '\n${l(context).editedAt(dateTimeFormat(widget.editedAt!))}'),
-                                triggerMode: TooltipTriggerMode.tap,
-                                child: Text(
-                                  dateDiffFormat(widget.createdAt!),
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w300),
-                                ),
-                              ),
-                            ),
-                          if (widget.showMagazineFirst && userWidget != null)
-                            userWidget,
-                          if (!widget.showMagazineFirst &&
-                              magazineWidget != null)
-                            magazineWidget,
-                          if (widget.title == null) ...[
-                            const Spacer(),
-                            menuWidget,
-                          ],
+                          ),
+                          if (widget.title == null) menuWidget,
                         ],
                       ),
+                      // The menu button on the info row provides padding; add this padding when the menu button is not present
+                      if (widget.title != null) SizedBox(height: 10),
                       if (widget.body != null &&
                           widget.body!.isNotEmpty &&
                           !(widget.isPreview &&

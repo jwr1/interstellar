@@ -771,8 +771,12 @@ class __MarkdownEditorDraftItemState extends State<_MarkdownEditorDraftItem> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         ListTile(
-          title: Text(widget.draft.body,
-              maxLines: 1, overflow: TextOverflow.ellipsis),
+          title: Text(
+            widget.draft.body,
+            softWrap: false,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
           subtitle: Text(
             '${dateTimeFormat(widget.draft.at)}\n${widget.draft.resourceId != null ? l(context).markdownEditor_drafts_savedAutomatically : l(context).markdownEditor_drafts_savedManually}${widget.draft.resourceId != null ? ': ${widget.draft.resourceId}' : ''}',
           ),

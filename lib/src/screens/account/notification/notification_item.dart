@@ -131,34 +131,43 @@ class _NotificationItemState extends State<NotificationItem> {
             children: [
               Row(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: DisplayName(
-                      user.name,
-                      icon: user.avatar,
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => UserScreen(user.id),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Text(notificationTitle[widget.item.type]!),
-                  if (bannedMagazine != null)
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: DisplayName(
-                        bannedMagazine.name,
-                        icon: bannedMagazine.icon,
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                MagazineScreen(bannedMagazine.id),
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Flexible(
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: DisplayName(
+                              user.name,
+                              icon: user.avatar,
+                              onTap: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => UserScreen(user.id),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                        Text(notificationTitle[widget.item.type]!),
+                        if (bannedMagazine != null)
+                          Flexible(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8),
+                              child: DisplayName(
+                                bannedMagazine.name,
+                                icon: bannedMagazine.icon,
+                                onTap: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        MagazineScreen(bannedMagazine.id),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
-                  const Spacer(),
+                  ),
                   LoadingIconButton(
                     onPressed: () async {
                       final newNotification = await context

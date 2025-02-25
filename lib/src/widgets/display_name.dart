@@ -24,16 +24,20 @@ class DisplayName extends StatelessWidget {
           Padding(
               padding: const EdgeInsets.only(right: 3),
               child: Avatar(icon!, radius: 14)),
-        InkWell(
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.all(3.0),
-            child: Text(
-              localName +
-                  (context.watch<AppController>().profile.alwaysShowInstance
-                      ? '@${hostName ?? context.watch<AppController>().instanceHost}'
-                      : ''),
-              style: Theme.of(context).textTheme.labelLarge,
+        Flexible(
+          child: InkWell(
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.all(3.0),
+              child: Text(
+                localName +
+                    (context.watch<AppController>().profile.alwaysShowInstance
+                        ? '@${hostName ?? context.watch<AppController>().instanceHost}'
+                        : ''),
+                style: Theme.of(context).textTheme.labelLarge,
+                softWrap: false,
+                overflow: TextOverflow.fade,
+              ),
             ),
           ),
         ),

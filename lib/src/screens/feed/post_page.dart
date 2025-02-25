@@ -121,8 +121,8 @@ class _PostPageState extends State<PostPage> {
           contentPadding: EdgeInsets.zero,
           title: Text(
             post.title ?? post.body ?? '',
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+            softWrap: false,
+            overflow: TextOverflow.fade,
           ),
           subtitle: Row(
             children: [

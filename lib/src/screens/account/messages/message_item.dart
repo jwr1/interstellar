@@ -22,10 +22,14 @@ class MessageItem extends StatelessWidget {
     );
 
     return ListTile(
-      title: Text(messageUser.name),
+      title: Text(
+        messageUser.name,
+        softWrap: false,
+        overflow: TextOverflow.fade,
+      ),
       subtitle: Text(
         item.messages.first.body,
-        maxLines: 1,
+        softWrap: false,
         overflow: TextOverflow.ellipsis,
       ),
       leading: Avatar(messageUser.avatar),

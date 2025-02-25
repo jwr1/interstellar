@@ -7,7 +7,6 @@ import 'package:interstellar/src/api/notifications.dart';
 import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/comment.dart';
-import 'package:interstellar/src/models/notification.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/screens/account/messages/message_thread_screen.dart';
