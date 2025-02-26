@@ -152,7 +152,7 @@ jobs:
 
       - name: Create setup exe for windows
         if: matrix.target_os == 'windows'
-        uses: Minionguyjpro/Inno-Setup-Action@v1
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
         with:
           path: scripts/build-windows-setup.iss
           options: /O+
