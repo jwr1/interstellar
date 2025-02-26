@@ -146,13 +146,9 @@ jobs:
         if: matrix.target_os == 'linux'
         run: ./scripts/build-appimage.sh
 
-      - name: Copy redistributables and compress build for windows
+      - name: Compress build for windows
         if: matrix.target_os == 'windows'
-        run: |
-          cp "${{ matrix.windows_redistributables }}\msvcp140.dll" .
-          cp "${{ matrix.windows_redistributables }}\vcruntime140.dll" .
-          cp "${{ matrix.windows_redistributables }}\vcruntime140_1.dll" .
-          compress-archive -Path * -DestinationPath ${env:GITHUB_WORKSPACE}\dist\interstellar-${{ matrix.target }}.zip
+        run: compress-archive -Path * -DestinationPath ${env:GITHUB_WORKSPACE}\dist\interstellar-${{ matrix.target }}.zip
         working-directory: ${{ matrix.build_path }}
 
       - name: Upload build to release draft
