@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Interstellar"
-#define MyAppVersion "{#GetEnv('INTERSTELLAR_VERSION')}"
+#define MyAppVersion GetEnv('INTERSTELLAR_VERSION')
 #define MyAppPublisher "jwr1"
 #define MyAppURL "https://github.com/jwr1/interstellar"
 #define MyAppExeName "interstellar.exe"
