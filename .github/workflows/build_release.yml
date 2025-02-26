@@ -150,6 +150,15 @@ jobs:
         run: compress-archive -Path * -DestinationPath ${env:GITHUB_WORKSPACE}\dist\interstellar-${{ matrix.target }}.zip
         working-directory: ${{ matrix.build_path }}
 
+      - name: Create setup exe for windows
+        if: matrix.target_os == 'windows'
+        uses: Minionguyjpro/Inno-Setup-Action@v1
+        with:
+          path: scripts/build-windows-setup.iss
+          options: /O+
+        env:
+          BUILD_PATH: ${{ github.workspace }}\${{ matrix.build_path }}
+
       - name: Upload build to release draft
         uses: shogo82148/actions-upload-release-asset@v1
         with:
