@@ -34,7 +34,7 @@ jobs:
     needs: draft-release
     environment: production
     name: Create ${{ matrix.target }} build
-    runs-on: ${{ matrix.runner_os }}
+    runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
@@ -45,25 +45,26 @@ jobs:
             build_target: apk
             build_flags: --split-per-abi
             build_path: build/app/outputs/flutter-apk
-            runner_os: ubuntu-latest
+            runner: ubuntu-latest
           - target: linux-x86_64
             target_os: linux
             target_arch: x86_64
             build_target: linux
             build_path: build/linux/x64/release/bundle
-            runner_os: ubuntu-24.04
+            runner: ubuntu-24.04
           - target: linux-aarch64
             target_os: linux
             target_arch: aarch64
             build_target: linux
             build_path: build/linux/arm64/release/bundle
-            runner_os: ubuntu-24.04-arm
+            runner: ubuntu-24.04-arm
           - target: windows-x86_64
             target_os: windows
             target_arch: x86_64
             build_target: windows
             build_path: build\windows\x64\runner\Release
-            runner_os: windows-latest
+            windows_redistributables: C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Redist\MSVC\14.42.34433\x64\Microsoft.VC143.CRT
+            runner: windows-latest
     steps:
       - name: Install android dependencies
         if: matrix.target_os == 'android'
@@ -77,6 +78,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y ninja-build libgtk-3-dev liblzma-dev libstdc++-12-dev libmpv-dev
+
+      - name: Install windows dependencies
+        if: matrix.target_os == 'windows'
+        uses: ilammy/setup-nasm@v1
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -141,9 +146,13 @@ jobs:
         if: matrix.target_os == 'linux'
         run: ./scripts/build-appimage.sh
 
-      - name: Compress build for Windows
+      - name: Copy redistributables and compress build for windows
         if: matrix.target_os == 'windows'
-        run: compress-archive -Path * -DestinationPath ${env:GITHUB_WORKSPACE}\dist\interstellar-${{ matrix.target }}.zip
+        run: |
+          cp "${{ matrix.windows_redistributables }}\msvcp140.dll" .
+          cp "${{ matrix.windows_redistributables }}\vcruntime140.dll" .
+          cp "${{ matrix.windows_redistributables }}\vcruntime140_1.dll" .
+          compress-archive -Path * -DestinationPath ${env:GITHUB_WORKSPACE}\dist\interstellar-${{ matrix.target }}.zip
         working-directory: ${{ matrix.build_path }}
 
       - name: Upload build to release draft
