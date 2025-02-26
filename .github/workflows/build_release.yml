@@ -63,7 +63,6 @@ jobs:
             target_arch: x86_64
             build_target: windows
             build_path: build\windows\x64\runner\Release
-            windows_redistributables: C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Redist\MSVC\14.42.34433\x64\Microsoft.VC143.CRT
             runner: windows-latest
     steps:
       - name: Install android dependencies
