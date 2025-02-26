@@ -35,7 +35,7 @@ LicenseFile={%GITHUB_WORKSPACE}\LICENSE
 PrivilegesRequiredOverridesAllowed=dialog
 OutputDir={%GITHUB_WORKSPACE}\dist
 OutputBaseFilename=interstellar-windows-x86_64
-SetupIconFile={%GITHUB_WORKSPACE}\window\runner\resources\app_icon.ico
+SetupIconFile={%GITHUB_WORKSPACE}\windows\runner\resources\app_icon.ico
 SolidCompression=yes
 WizardStyle=modern
 
