@@ -157,7 +157,8 @@ jobs:
           path: scripts/build-windows-setup.iss
           options: /O+
         env:
-          BUILD_PATH: ${{ github.workspace }}\${{ matrix.build_path }}
+          INTERSTELLAR_VERSION: ${{ github.event.inputs.version }}
+          INTERSTELLAR_BUILD_PATH: ${{ github.workspace }}\${{ matrix.build_path }}
 
       - name: Upload build to release draft
         uses: shogo82148/actions-upload-release-asset@v1

@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Interstellar"
-#define MyAppVersion ""
+#define MyAppVersion "{%INTERSTELLAR_VERSION}"
 #define MyAppPublisher "jwr1"
 #define MyAppURL "https://github.com/jwr1/interstellar"
 #define MyAppExeName "interstellar.exe"
@@ -73,7 +73,7 @@ Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "{%BUILD_PATH}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{%INTERSTELLAR_BUILD_PATH}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
