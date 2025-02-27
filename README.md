@@ -21,11 +21,10 @@ You can ask questions, report bugs, make suggestions, etc., to any of the follow
 ## Screenshots
 
 <div align="center">
-<img src="assets/screenshots/desktop-3.png"  width="800"></img>
-<img src="assets/screenshots/desktop-2.png"  width="800"></img>
-<br>
 <img src="assets/screenshots/mobile-1.png" width="300"></img>
 <img src="assets/screenshots/mobile-2.png"  width="300"></img>
+<img src="assets/screenshots/mobile-3.png" width="300"></img>
+<img src="assets/screenshots/mobile-4.png"  width="300"></img>
 </div>
 
 ## Contributing
