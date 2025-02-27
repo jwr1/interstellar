@@ -72,7 +72,7 @@ class _CreateScreenState extends State<CreateScreen> {
           children: children,
         );
 
-    Widget magazinePickerWidget() => Padding(
+    Widget magazinePickerWidget({bool microblogMode = false}) => Padding(
           padding: const EdgeInsets.all(8),
           child: MagazinePicker(
             value: _magazine,
@@ -81,6 +81,7 @@ class _CreateScreenState extends State<CreateScreen> {
                 _magazine = newMagazine;
               });
             },
+            microblogMode: microblogMode,
           ),
         );
 
@@ -305,8 +306,6 @@ class _CreateScreenState extends State<CreateScreen> {
                           tags: tags,
                         );
 
-                        await bodyDraftController.discard();
-
                         // Check BuildContext
                         if (!mounted) return;
 
@@ -353,39 +352,44 @@ class _CreateScreenState extends State<CreateScreen> {
             if (ac.serverSoftware == ServerSoftware.mbin)
               listViewWidget(
                 [
-                  magazinePickerWidget(),
+                  magazinePickerWidget(microblogMode: true),
                   bodyEditorWidget(),
                   imagePickerWidget(),
                   nsfwToggleWidget(),
                   languagePickerWidget(),
-                  submitButtonWidget(_magazine == null
-                      ? null
-                      : () async {
-                          if (_imageFile == null) {
-                            await ac.api.microblogs.create(
-                              _magazine!.id,
-                              body: _bodyTextController.text,
-                              lang: _lang,
-                              isAdult: _isAdult,
-                            );
-                          } else {
-                            await ac.api.microblogs.createImage(
-                              _magazine!.id,
-                              image: _imageFile!,
-                              alt: '',
-                              body: _bodyTextController.text,
-                              lang: _lang,
-                              isAdult: _isAdult,
-                            );
-                          }
+                  submitButtonWidget(() async {
+                    final magazine = _magazine ??
+                        await context
+                            .read<AppController>()
+                            .api
+                            .magazines
+                            .getByName('random');
 
-                          await bodyDraftController.discard();
+                    if (_imageFile == null) {
+                      await ac.api.microblogs.create(
+                        magazine.id,
+                        body: _bodyTextController.text,
+                        lang: _lang,
+                        isAdult: _isAdult,
+                      );
+                    } else {
+                      await ac.api.microblogs.createImage(
+                        magazine.id,
+                        image: _imageFile!,
+                        alt: '',
+                        body: _bodyTextController.text,
+                        lang: _lang,
+                        isAdult: _isAdult,
+                      );
+                    }
 
-                          // Check BuildContext
-                          if (!mounted) return;
+                    await bodyDraftController.discard();
 
-                          Navigator.pop(context);
-                        })
+                    // Check BuildContext
+                    if (!mounted) return;
+
+                    Navigator.pop(context);
+                  })
                 ],
               ),
             MagazineOwnerPanelGeneral(

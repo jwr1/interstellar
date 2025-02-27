@@ -11,10 +11,12 @@ import 'package:provider/provider.dart';
 class MagazinePicker extends StatefulWidget {
   final DetailedMagazineModel? value;
   final void Function(DetailedMagazineModel?) onChange;
+  final bool microblogMode;
 
   const MagazinePicker({
     required this.value,
     required this.onChange,
+    this.microblogMode = false,
     super.key,
   });
 
@@ -54,6 +56,9 @@ class _MagazinePickerState extends State<MagazinePicker> {
                   ),
                   icon: Icon(Symbols.open_in_new_rounded),
                 ),
+          helperText: widget.microblogMode
+              ? l(context).microblog_magazineHelperText
+              : null,
         ),
         focusNode: focusNode,
         onSubmitted: (_) => onFieldSubmitted(),

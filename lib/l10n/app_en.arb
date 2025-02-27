@@ -365,6 +365,7 @@
   "create_link_invalid": "Url is invalid",
   "create_microblog": "Microblog",
   "create_magazine": "Magazine",
+  "microblog_magazineHelperText": "Defaults to the 'random' magazine for microblogs since that's where Mbin stores uncatagorized microblogs.",
   "selectMagazine": "Select a magazine ...",
   "title": "Title",
   "body": "Body",
