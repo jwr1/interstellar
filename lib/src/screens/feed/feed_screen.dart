@@ -79,18 +79,15 @@ class _FeedScreenState extends State<FeedScreen> {
     final currentFeedSortOption = feedSortSelect(context).getOption(sort);
 
     final actions = [
-      feedActionCreatePost(context).withProps(
+      feedActionCreateNew(context).withProps(
         context.watch<AppController>().isLoggedIn
-            ? context.watch<AppController>().profile.feedActionCreatePost
+            ? context.watch<AppController>().profile.feedActionCreateNew
             : ActionLocation.hide,
         () async {
           await Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => CreateScreen(
-                _mode,
-                initMagazineId: widget.createPostMagazine?.id,
-                initMagazineName: widget.createPostMagazine?.name,
-              ),
+              builder: (context) =>
+                  CreateScreen(initMagazine: widget.createPostMagazine),
             ),
           );
         },

@@ -84,6 +84,54 @@ class APIMagazineModeration {
     }
   }
 
+  Future<DetailedMagazineModel> create({
+    required String name,
+    required String title,
+    required String description,
+    required bool isAdult,
+    required bool isPostingRestrictedToMods,
+  }) async {
+    switch (software) {
+      case ServerSoftware.mbin:
+        final path = '/api/moderate/magazine/new';
+
+        final response = await httpClient.post(Uri.https(server, path),
+            body: jsonEncode({
+              'name': name,
+              'title': title,
+              'description': description,
+              'isAdult': isAdult,
+              'isPostingRestrictedToMods': isPostingRestrictedToMods,
+            }));
+
+        httpErrorHandler(response, message: 'Failed to create magazine');
+
+        return DetailedMagazineModel.fromMbin(
+            jsonDecode(response.body) as Map<String, Object?>);
+
+      case ServerSoftware.lemmy:
+        const path = '/api/v3/community';
+
+        final response = await httpClient.post(
+          Uri.https(server, path),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'name': name,
+            'title': title,
+            'description': description,
+            'nsfw': isAdult,
+            'posting_restricted_to_mods': isPostingRestrictedToMods,
+          }),
+        );
+
+        httpErrorHandler(response, message: 'Failed to create magazine');
+
+        return DetailedMagazineModel.fromLemmy(
+            jsonDecode(response.body)['community_view']
+                as Map<String, Object?>);
+    }
+  }
+
   Future<DetailedMagazineModel> edit(
     int magazineId, {
     required String title,

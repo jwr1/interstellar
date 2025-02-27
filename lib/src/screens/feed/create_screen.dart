@@ -1,12 +1,19 @@
+import 'package:any_link_preview/any_link_preview.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/controller/server.dart';
+import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/models/post.dart';
+import 'package:interstellar/src/screens/explore/magazine_owner_panel.dart';
+import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/utils/language.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/avatar.dart';
 import 'package:interstellar/src/widgets/image_selector.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
+import 'package:interstellar/src/widgets/magazine_picker.dart';
 import 'package:interstellar/src/widgets/markdown/drafts_controller.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
@@ -15,18 +22,14 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 class CreateScreen extends StatefulWidget {
-  const CreateScreen(
-    this.type, {
-    this.initMagazineId,
-    this.initMagazineName,
+  const CreateScreen({
+    this.initMagazine,
     this.initTitle,
     this.initBody,
     super.key,
   });
 
-  final PostType type;
-  final int? initMagazineId;
-  final String? initMagazineName;
+  final DetailedMagazineModel? initMagazine;
   final String? initTitle;
   final String? initBody;
 
@@ -35,11 +38,11 @@ class CreateScreen extends StatefulWidget {
 }
 
 class _CreateScreenState extends State<CreateScreen> {
+  DetailedMagazineModel? _magazine;
   final TextEditingController _titleTextController = TextEditingController();
   final TextEditingController _bodyTextController = TextEditingController();
   final TextEditingController _urlTextController = TextEditingController();
   final TextEditingController _tagsTextController = TextEditingController();
-  final TextEditingController _magazineTextController = TextEditingController();
   bool _isOc = false;
   bool _isAdult = false;
   XFile? _imageFile;
@@ -51,218 +54,323 @@ class _CreateScreenState extends State<CreateScreen> {
     super.initState();
 
     _lang = context.read<AppController>().profile.defaultPostLanguage;
-    if (widget.initMagazineName != null) {
-      _magazineTextController.text = widget.initMagazineName!;
-    }
+
+    if (widget.initMagazine != null) _magazine = widget.initMagazine;
     if (widget.initTitle != null) _titleTextController.text = widget.initTitle!;
     if (widget.initBody != null) _bodyTextController.text = widget.initBody!;
   }
 
   @override
   Widget build(BuildContext context) {
+    final ac = context.watch<AppController>();
+
     final bodyDraftController = context.watch<DraftsController>().auto(
-        'create:${widget.type.name}${widget.initMagazineName == null ? '' : ':${context.watch<AppController>().instanceHost}:${widget.initMagazineName}'}');
+        'create:${widget.initMagazine == null ? '' : ':${ac.instanceHost}:${widget.initMagazine!.name}'}');
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(switch (widget.type) {
-          PostType.thread => l(context).createThread,
-          PostType.microblog => l(context).createMicroblog,
-        }),
-      ),
-      body: ListView(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (widget.type != PostType.microblog)
-                  Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: TextEditor(
-                      _titleTextController,
-                      label: l(context).title,
-                    ),
-                  ),
-                if (_imageFile == null || widget.type == PostType.microblog)
-                  Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: MarkdownEditor(
-                      _bodyTextController,
-                      originInstance: null,
-                      draftController: bodyDraftController,
-                      draftDisableAutoLoad: widget.initBody != null,
-                      onChanged: (_) => setState(() {}),
-                      label: l(context).body,
-                    ),
-                  ),
-                if (widget.type != PostType.microblog)
-                  Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        if (_imageFile == null)
-                          Expanded(
-                            child: TextEditor(
-                              _urlTextController,
-                              keyboardType: TextInputType.url,
-                              label: l(context).link,
-                              onChanged: (_) => setState(() {}),
-                            ),
-                          ),
-                        Wrapper(
-                          shouldWrap: _imageFile != null,
-                          parentBuilder: (child) => Expanded(child: child),
-                          child: ImageSelector(
-                            _imageFile,
-                            (file, altText) => setState(() {
-                              _imageFile = file;
-                              _altText = altText;
-                            }),
-                            enabled: _bodyTextController.text.isEmpty &&
-                                _urlTextController.text.isEmpty,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                if (widget.type == PostType.microblog)
-                  ImageSelector(
-                    _imageFile,
-                    (file, altText) => setState(() {
-                      _imageFile = file;
-                      _altText = altText;
-                    }),
-                  ),
-                if (widget.type == PostType.thread &&
-                    context.watch<AppController>().serverSoftware ==
-                        ServerSoftware.mbin)
-                  Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: TextEditor(
-                      _tagsTextController,
-                      label: l(context).tags,
-                      hint: l(context).tags_hint,
-                    ),
-                  ),
-                Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: TextEditor(
-                    _magazineTextController,
-                    label: l(context).magazine,
-                  ),
+    Widget listViewWidget(List<Widget> children) => ListView(
+          padding: const EdgeInsets.all(12),
+          children: children,
+        );
+
+    Widget magazinePickerWidget() => Padding(
+          padding: const EdgeInsets.all(8),
+          child: MagazinePicker(
+            value: _magazine,
+            onChange: (newMagazine) {
+              setState(() {
+                _magazine = newMagazine;
+              });
+            },
+          ),
+        );
+
+    final linkIsValid = _urlTextController.text.isNotEmpty &&
+        (Uri.tryParse(_urlTextController.text)?.isAbsolute ?? false);
+
+    linkEditorFetchDataCB(bool override) async {
+      if (!linkIsValid) return;
+      if (!override &&
+          (_titleTextController.text.isNotEmpty ||
+              _bodyTextController.text.isNotEmpty)) return;
+
+      final metadata =
+          await AnyLinkPreview.getMetadata(link: _urlTextController.text);
+
+      if (metadata == null) return;
+
+      _titleTextController.text = metadata.title ?? '';
+      _bodyTextController.text = metadata.desc ?? '';
+    }
+
+    Widget linkEditorWidget() => Padding(
+        padding: const EdgeInsets.all(8),
+        child: TextField(
+          controller: _urlTextController,
+          keyboardType: TextInputType.url,
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+            label: Text(l(context).link),
+            suffixIcon: LoadingIconButton(
+              onPressed:
+                  !linkIsValid ? null : () => linkEditorFetchDataCB(true),
+              icon: Icon(Symbols.globe_rounded),
+            ),
+            errorText: _urlTextController.text.isEmpty || linkIsValid
+                ? null
+                : l(context).create_link_invalid,
+          ),
+          onChanged: (_) => setState(() {}),
+          onSubmitted: (_) => linkEditorFetchDataCB(false),
+        ));
+
+    Widget titleEditorWidget() => Padding(
+          padding: const EdgeInsets.all(8),
+          child: TextEditor(
+            _titleTextController,
+            label: l(context).title,
+          ),
+        );
+
+    Widget bodyEditorWidget() => Padding(
+          padding: const EdgeInsets.all(8),
+          child: MarkdownEditor(
+            _bodyTextController,
+            originInstance: null,
+            draftController: bodyDraftController,
+            draftDisableAutoLoad: widget.initBody != null,
+            onChanged: (_) => setState(() {}),
+            label: l(context).body,
+          ),
+        );
+
+    Widget imagePickerWidget() => ImageSelector(
+          _imageFile,
+          (file, altText) => setState(() {
+            _imageFile = file;
+            _altText = altText;
+          }),
+        );
+
+    Widget tagsEditorWidget() => Padding(
+          padding: const EdgeInsets.all(8),
+          child: TextEditor(
+            _tagsTextController,
+            label: l(context).tags,
+            hint: l(context).tags_hint,
+          ),
+        );
+
+    Widget ocToggleWidget() => CheckboxListTile(
+          title: Text(l(context).originalContent_long),
+          value: _isOc,
+          onChanged: (newValue) => setState(() {
+            _isOc = newValue!;
+          }),
+          controlAffinity: ListTileControlAffinity.leading,
+        );
+
+    Widget nsfwToggleWidget() => CheckboxListTile(
+          title: Text(l(context).notSafeForWork_long),
+          value: _isAdult,
+          onChanged: (newValue) => setState(() {
+            _isAdult = newValue!;
+          }),
+          controlAffinity: ListTileControlAffinity.leading,
+        );
+
+    Widget languagePickerWidget() => ListTile(
+          title: Text(l(context).language),
+          onTap: () async {
+            final newLang = await languageSelectionMenu(context).askSelection(
+              context,
+              _lang,
+            );
+
+            if (newLang != null) {
+              setState(() {
+                _lang = newLang;
+              });
+            }
+          },
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [Text(getLanguageName(context, _lang))],
+          ),
+        );
+
+    Widget submitButtonWidget(Future<void> Function()? onPressed) => Padding(
+          padding: const EdgeInsets.all(8),
+          child: LoadingFilledButton(
+            onPressed: onPressed,
+            icon: const Icon(Symbols.send_rounded),
+            label: Text(l(context).submit),
+          ),
+        );
+
+    return DefaultTabController(
+      length: switch (ac.serverSoftware) {
+        ServerSoftware.mbin => 5,
+        // No Microblog tab on Lemmy
+        ServerSoftware.lemmy => 4,
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(l(context).action_createNew),
+          bottom: TabBar(
+            tabs: [
+              Tab(
+                text: l(context).create_text,
+                icon: Icon(Symbols.article_rounded),
+              ),
+              Tab(
+                text: l(context).create_image,
+                icon: Icon(Symbols.image_rounded),
+              ),
+              Tab(
+                text: l(context).create_link,
+                icon: Icon(Symbols.link_rounded),
+              ),
+              if (ac.serverSoftware == ServerSoftware.mbin)
+                Tab(
+                  text: l(context).create_microblog,
+                  icon: Icon(Symbols.edit_note_rounded),
                 ),
-                if (widget.type == PostType.thread &&
-                    context.watch<AppController>().serverSoftware ==
-                        ServerSoftware.mbin)
-                  CheckboxListTile(
-                    title: Text(l(context).originalContent_long),
-                    value: _isOc,
-                    onChanged: (newValue) => setState(() {
-                      _isOc = newValue!;
-                    }),
-                    controlAffinity: ListTileControlAffinity.leading,
-                  ),
-                CheckboxListTile(
-                  title: Text(l(context).notSafeForWork_long),
-                  value: _isAdult,
-                  onChanged: (newValue) => setState(() {
-                    _isAdult = newValue!;
-                  }),
-                  controlAffinity: ListTileControlAffinity.leading,
-                ),
-                ListTile(
-                  title: Text(l(context).language),
-                  onTap: () async {
-                    final newLang =
-                        await languageSelectionMenu(context).askSelection(
-                      context,
-                      _lang,
-                    );
+              Tab(
+                text: l(context).create_magazine,
+                icon: Icon(Symbols.group_rounded),
+              ),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            listViewWidget(
+              [
+                magazinePickerWidget(),
+                titleEditorWidget(),
+                bodyEditorWidget(),
+                if (ac.serverSoftware == ServerSoftware.mbin)
+                  tagsEditorWidget(),
+                if (ac.serverSoftware == ServerSoftware.mbin) ocToggleWidget(),
+                nsfwToggleWidget(),
+                languagePickerWidget(),
+                submitButtonWidget(_magazine == null
+                    ? null
+                    : () async {
+                        final tags = _tagsTextController.text.split(' ');
 
-                    if (newLang != null) {
-                      setState(() {
-                        _lang = newLang;
-                      });
-                    }
-                  },
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [Text(getLanguageName(context, _lang))],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: LoadingFilledButton(
-                    onPressed: () async {
-                      final api = context.read<AppController>().api;
+                        await ac.api.threads.createArticle(
+                          _magazine!.id,
+                          title: _titleTextController.text,
+                          isOc: _isOc,
+                          body: _bodyTextController.text,
+                          lang: _lang,
+                          isAdult: _isAdult,
+                          tags: tags,
+                        );
 
-                      var magazineName = _magazineTextController.text;
+                        await bodyDraftController.discard();
 
-                      int? magazineId = widget.initMagazineId;
-                      if (magazineId == null ||
-                          // If target magazine was changed from the default, then refetch the id.
-                          magazineName != widget.initMagazineName) {
-                        final magazine =
-                            await api.magazines.getByName(magazineName);
-                        magazineId = magazine.id;
-                      }
+                        // Check BuildContext
+                        if (!mounted) return;
 
-                      var tags = _tagsTextController.text.isNotEmpty
-                          ? _tagsTextController.text.split(' ')
-                          : <String>[];
+                        Navigator.pop(context);
+                      })
+              ],
+            ),
+            listViewWidget(
+              [
+                magazinePickerWidget(),
+                titleEditorWidget(),
+                imagePickerWidget(),
+                if (ac.serverSoftware == ServerSoftware.mbin)
+                  tagsEditorWidget(),
+                if (ac.serverSoftware == ServerSoftware.mbin) ocToggleWidget(),
+                nsfwToggleWidget(),
+                languagePickerWidget(),
+                submitButtonWidget(_magazine == null
+                    ? null
+                    : () async {
+                        final tags = _tagsTextController.text.split(' ');
 
-                      switch (widget.type) {
-                        case PostType.thread:
-                          if (_urlTextController.text.isEmpty) {
-                            if (_imageFile == null) {
-                              await api.threads.createArticle(
-                                magazineId,
-                                title: _titleTextController.text,
-                                isOc: _isOc,
-                                body: _bodyTextController.text,
-                                lang: _lang,
-                                isAdult: _isAdult,
-                                tags: tags,
-                              );
-                            } else {
-                              await api.threads.createImage(
-                                magazineId,
-                                title: _titleTextController.text,
-                                image: _imageFile!,
-                                alt: _altText ?? '',
-                                isOc: _isOc,
-                                body: _bodyTextController.text,
-                                lang: _lang,
-                                isAdult: _isAdult,
-                                tags: tags,
-                              );
-                            }
-                          } else {
-                            await api.threads.createLink(
-                              magazineId,
-                              title: _titleTextController.text,
-                              url: _urlTextController.text,
-                              isOc: _isOc,
-                              body: _bodyTextController.text,
-                              lang: _lang,
-                              isAdult: _isAdult,
-                              tags: tags,
-                            );
-                          }
-                        case PostType.microblog:
+                        await ac.api.threads.createImage(
+                          _magazine!.id,
+                          title: _titleTextController.text,
+                          image: _imageFile!,
+                          alt: _altText ?? '',
+                          isOc: _isOc,
+                          body: _bodyTextController.text,
+                          lang: _lang,
+                          isAdult: _isAdult,
+                          tags: tags,
+                        );
+
+                        await bodyDraftController.discard();
+
+                        // Check BuildContext
+                        if (!mounted) return;
+
+                        Navigator.pop(context);
+                      })
+              ],
+            ),
+            listViewWidget(
+              [
+                magazinePickerWidget(),
+                linkEditorWidget(),
+                titleEditorWidget(),
+                bodyEditorWidget(),
+                if (ac.serverSoftware == ServerSoftware.mbin)
+                  tagsEditorWidget(),
+                if (ac.serverSoftware == ServerSoftware.mbin) ocToggleWidget(),
+                nsfwToggleWidget(),
+                languagePickerWidget(),
+                submitButtonWidget(_magazine == null || !linkIsValid
+                    ? null
+                    : () async {
+                        final tags = _tagsTextController.text.split(' ');
+
+                        await ac.api.threads.createLink(
+                          _magazine!.id,
+                          title: _titleTextController.text,
+                          url: _urlTextController.text,
+                          isOc: _isOc,
+                          body: _bodyTextController.text,
+                          lang: _lang,
+                          isAdult: _isAdult,
+                          tags: tags,
+                        );
+
+                        await bodyDraftController.discard();
+
+                        // Check BuildContext
+                        if (!mounted) return;
+
+                        Navigator.pop(context);
+                      })
+              ],
+            ),
+            if (ac.serverSoftware == ServerSoftware.mbin)
+              listViewWidget(
+                [
+                  magazinePickerWidget(),
+                  bodyEditorWidget(),
+                  imagePickerWidget(),
+                  nsfwToggleWidget(),
+                  languagePickerWidget(),
+                  submitButtonWidget(_magazine == null
+                      ? null
+                      : () async {
                           if (_imageFile == null) {
-                            await api.microblogs.create(
-                              magazineId,
+                            await ac.api.microblogs.create(
+                              _magazine!.id,
                               body: _bodyTextController.text,
                               lang: _lang,
                               isAdult: _isAdult,
                             );
                           } else {
-                            await api.microblogs.createImage(
-                              magazineId,
+                            await ac.api.microblogs.createImage(
+                              _magazine!.id,
                               image: _imageFile!,
                               alt: '',
                               body: _bodyTextController.text,
@@ -270,23 +378,33 @@ class _CreateScreenState extends State<CreateScreen> {
                               isAdult: _isAdult,
                             );
                           }
-                      }
 
-                      await bodyDraftController.discard();
+                          await bodyDraftController.discard();
 
-                      // Check BuildContext
-                      if (!mounted) return;
+                          // Check BuildContext
+                          if (!mounted) return;
 
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Symbols.send_rounded),
-                    label: Text(l(context).submit),
+                          Navigator.pop(context);
+                        })
+                ],
+              ),
+            MagazineOwnerPanelGeneral(
+              data: null,
+              onUpdate: (newMagazine) {
+                Navigator.pop(context);
+
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => MagazineScreen(
+                      newMagazine.id,
+                      initData: newMagazine,
+                    ),
                   ),
-                ),
-              ],
+                );
+              },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

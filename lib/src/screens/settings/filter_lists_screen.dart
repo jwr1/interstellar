@@ -61,20 +61,27 @@ class _FilterListsScreenState extends State<FilterListsScreen> {
                         );
 
                         if (!mounted) return;
-                        String magazine = mbinConfigsMagazineName;
-                        if (magazine.endsWith(
+                        String magazineName = mbinConfigsMagazineName;
+                        if (magazineName.endsWith(
                             context.read<AppController>().instanceHost)) {
-                          magazine = magazine.split('@').first;
+                          magazineName = magazineName.split('@').first;
                         }
+
+                        final magazine = await context
+                            .read<AppController>()
+                            .api
+                            .magazines
+                            .getByName(magazineName);
+
+                        if (!mounted) return;
 
                         await Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => CreateScreen(
-                              PostType.thread,
                               initTitle: '[Filter List] $name',
                               initBody:
                                   'Short description here...\n\n${config.toMarkdown()}',
-                              initMagazineName: magazine,
+                              initMagazine: magazine,
                             ),
                           ),
                         );

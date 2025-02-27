@@ -29,8 +29,8 @@ ActionItem feedActionBackToTop(BuildContext context) => ActionItem(
       name: l(context).action_backToTop,
       icon: Symbols.keyboard_double_arrow_up_rounded,
     );
-ActionItem feedActionCreatePost(BuildContext context) => ActionItem(
-      name: l(context).action_createPost,
+ActionItem feedActionCreateNew(BuildContext context) => ActionItem(
+      name: l(context).action_createNew,
       icon: Symbols.create_rounded,
     );
 ActionItem feedActionExpandFab(BuildContext context) => ActionItem(

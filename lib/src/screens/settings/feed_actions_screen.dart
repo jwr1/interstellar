@@ -44,15 +44,15 @@ class FeedActionsSettingsScreen extends StatelessWidget {
             ),
           ),
           ListTileSelect(
-            title: l(context).action_createPost,
+            title: l(context).action_createNew,
             icon: Symbols.create_rounded,
             selectionMenu: actionLocationSelect(context),
-            value: ac.profile.feedActionCreatePost,
-            oldValue: ac.selectedProfileValue.feedActionCreatePost,
+            value: ac.profile.feedActionCreateNew,
+            oldValue: ac.selectedProfileValue.feedActionCreateNew,
             onChange: (newValue) => ac.updateProfile(
               ac.selectedProfileValue
                   .cleanupActions(newValue.name, ac.profile)
-                  .copyWith(feedActionCreatePost: newValue),
+                  .copyWith(feedActionCreateNew: newValue),
             ),
           ),
           ListTileSelect(

@@ -137,20 +137,27 @@ class _ProfileSelectWidgetState extends State<_ProfileSelectWidget> {
                           );
 
                           if (!mounted) return;
-                          String magazine = mbinConfigsMagazineName;
-                          if (magazine.endsWith(
+                          String magazineName = mbinConfigsMagazineName;
+                          if (magazineName.endsWith(
                               context.read<AppController>().instanceHost)) {
-                            magazine = magazine.split('@').first;
+                            magazineName = magazineName.split('@').first;
                           }
+
+                          final magazine = await context
+                              .read<AppController>()
+                              .api
+                              .magazines
+                              .getByName(magazineName);
+
+                          if (!mounted) return;
 
                           await Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => CreateScreen(
-                                PostType.thread,
                                 initTitle: '[Profile] $profileName',
                                 initBody:
                                     'Short description here...\n\n${config.toMarkdown()}',
-                                initMagazineName: magazine,
+                                initMagazine: magazine,
                               ),
                             ),
                           );

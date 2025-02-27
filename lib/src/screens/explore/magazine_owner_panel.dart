@@ -70,7 +70,8 @@ class _MagazineOwnerPanelState extends State<MagazineOwnerPanel> {
 }
 
 class MagazineOwnerPanelGeneral extends StatefulWidget {
-  final DetailedMagazineModel data;
+  // Data is null for magazine creation screen
+  final DetailedMagazineModel? data;
   final void Function(DetailedMagazineModel) onUpdate;
 
   const MagazineOwnerPanelGeneral({
@@ -85,6 +86,7 @@ class MagazineOwnerPanelGeneral extends StatefulWidget {
 }
 
 class _MagazineOwnerPanelGeneralState extends State<MagazineOwnerPanelGeneral> {
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
@@ -95,35 +97,47 @@ class _MagazineOwnerPanelGeneralState extends State<MagazineOwnerPanelGeneral> {
   void initState() {
     super.initState();
 
-    _titleController.text = widget.data.title;
-    _descriptionController.text = widget.data.description ?? '';
+    _nameController.text = widget.data?.name ?? '';
+    _titleController.text = widget.data?.title ?? '';
+    _descriptionController.text = widget.data?.description ?? '';
 
-    _isAdult = widget.data.isAdult;
-    _isPostingRestrictedToMods = widget.data.isPostingRestrictedToMods;
+    _isAdult = widget.data?.isAdult ?? false;
+    _isPostingRestrictedToMods =
+        widget.data?.isPostingRestrictedToMods ?? false;
   }
 
   @override
   Widget build(BuildContext context) {
-    final descriptionDraftController = context
-        .watch<DraftsController>()
-        .auto('magazine:description:${widget.data.name}');
+    final descriptionDraftController = context.watch<DraftsController>().auto(
+        'magazine:description${widget.data == null ? '' : ':${widget.data}'}');
 
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
+        if (widget.data == null)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: TextEditor(
+              _nameController,
+              label: 'Name',
+              onChanged: (_) => setState(() {}),
+              maxLength: 25,
+            ),
+          ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: TextEditor(
             _titleController,
             label: 'Title',
             onChanged: (_) => setState(() {}),
+            maxLength: 50,
           ),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: MarkdownEditor(
             _descriptionController,
-            originInstance: getNameHost(context, widget.data.name),
+            originInstance: context.watch<AppController>().instanceHost,
             draftController: descriptionDraftController,
             label: 'Description',
             onChanged: (_) => setState(() {}),
@@ -157,24 +171,41 @@ class _MagazineOwnerPanelGeneralState extends State<MagazineOwnerPanelGeneral> {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: LoadingFilledButton(
-            onPressed: _titleController.text == widget.data.title &&
-                    _descriptionController.text == widget.data.description &&
-                    _isAdult == widget.data.isAdult &&
-                    _isPostingRestrictedToMods ==
-                        widget.data.isPostingRestrictedToMods
+            onPressed: _nameController.text.isEmpty ||
+                    _titleController.text.isEmpty ||
+                    (_titleController.text == widget.data?.title &&
+                        _descriptionController.text ==
+                            widget.data?.description &&
+                        _isAdult == widget.data?.isAdult &&
+                        _isPostingRestrictedToMods ==
+                            widget.data?.isPostingRestrictedToMods)
                 ? null
                 : () async {
-                    final result = await context
-                        .read<AppController>()
-                        .api
-                        .magazineModeration
-                        .edit(
-                          widget.data.id,
-                          title: _titleController.text,
-                          description: _descriptionController.text,
-                          isAdult: _isAdult,
-                          isPostingRestrictedToMods: _isPostingRestrictedToMods,
-                        );
+                    final result = widget.data == null
+                        ? await context
+                            .read<AppController>()
+                            .api
+                            .magazineModeration
+                            .create(
+                              name: _nameController.text,
+                              title: _titleController.text,
+                              description: _descriptionController.text,
+                              isAdult: _isAdult,
+                              isPostingRestrictedToMods:
+                                  _isPostingRestrictedToMods,
+                            )
+                        : await context
+                            .read<AppController>()
+                            .api
+                            .magazineModeration
+                            .edit(
+                              widget.data!.id,
+                              title: _titleController.text,
+                              description: _descriptionController.text,
+                              isAdult: _isAdult,
+                              isPostingRestrictedToMods:
+                                  _isPostingRestrictedToMods,
+                            );
 
                     await descriptionDraftController.discard();
 

@@ -47,7 +47,7 @@ class ProfileRequired with _$ProfileRequired {
     required CommentSort feedDefaultCommentSort,
     // Feed actions
     required ActionLocation feedActionBackToTop,
-    required ActionLocation feedActionCreatePost,
+    required ActionLocation feedActionCreateNew,
     required ActionLocation feedActionExpandFab,
     required ActionLocation feedActionRefresh,
     required ActionLocationWithTabs feedActionSetFilter,
@@ -105,8 +105,8 @@ class ProfileRequired with _$ProfileRequired {
             defaultProfile.feedDefaultCommentSort,
         feedActionBackToTop:
             profile?.feedActionBackToTop ?? defaultProfile.feedActionBackToTop,
-        feedActionCreatePost: profile?.feedActionCreatePost ??
-            defaultProfile.feedActionCreatePost,
+        feedActionCreateNew:
+            profile?.feedActionCreateNew ?? defaultProfile.feedActionCreateNew,
         feedActionExpandFab:
             profile?.feedActionExpandFab ?? defaultProfile.feedActionExpandFab,
         feedActionRefresh:
@@ -145,7 +145,7 @@ class ProfileRequired with _$ProfileRequired {
     feedDefaultExploreSort: FeedSort.newest,
     feedDefaultCommentSort: CommentSort.hot,
     feedActionBackToTop: ActionLocation.fabMenu,
-    feedActionCreatePost: ActionLocation.fabMenu,
+    feedActionCreateNew: ActionLocation.fabMenu,
     feedActionExpandFab: ActionLocation.fabTap,
     feedActionRefresh: ActionLocation.fabMenu,
     feedActionSetFilter: ActionLocationWithTabs.tabs,
@@ -190,7 +190,7 @@ class ProfileOptional with _$ProfileOptional {
     required CommentSort? feedDefaultCommentSort,
     // Feed actions
     required ActionLocation? feedActionBackToTop,
-    required ActionLocation? feedActionCreatePost,
+    required ActionLocation? feedActionCreateNew,
     required ActionLocation? feedActionExpandFab,
     required ActionLocation? feedActionRefresh,
     required ActionLocationWithTabs? feedActionSetFilter,
@@ -228,7 +228,7 @@ class ProfileOptional with _$ProfileOptional {
     feedDefaultExploreSort: null,
     feedDefaultCommentSort: null,
     feedActionBackToTop: null,
-    feedActionCreatePost: null,
+    feedActionCreateNew: null,
     feedActionExpandFab: null,
     feedActionRefresh: null,
     feedActionSetFilter: null,
@@ -274,8 +274,8 @@ class ProfileOptional with _$ProfileOptional {
           other.feedDefaultCommentSort ?? feedDefaultCommentSort,
       feedActionBackToTop:
           other.feedActionBackToTop ?? this.feedActionBackToTop,
-      feedActionCreatePost:
-          other.feedActionCreatePost ?? this.feedActionCreatePost,
+      feedActionCreateNew:
+          other.feedActionCreateNew ?? this.feedActionCreateNew,
       feedActionExpandFab:
           other.feedActionExpandFab ?? this.feedActionExpandFab,
       feedActionRefresh: other.feedActionRefresh ?? this.feedActionRefresh,
@@ -307,9 +307,9 @@ class ProfileOptional with _$ProfileOptional {
       feedActionBackToTop: builtProfile.feedActionBackToTop.name == actionName
           ? ActionLocation.hide
           : this.feedActionBackToTop,
-      feedActionCreatePost: builtProfile.feedActionCreatePost.name == actionName
+      feedActionCreateNew: builtProfile.feedActionCreateNew.name == actionName
           ? ActionLocation.hide
-          : this.feedActionCreatePost,
+          : this.feedActionCreateNew,
       feedActionExpandFab: builtProfile.feedActionExpandFab.name == actionName
           ? ActionLocation.hide
           : this.feedActionExpandFab,
