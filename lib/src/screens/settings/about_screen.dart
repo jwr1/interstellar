@@ -16,7 +16,7 @@ const _matrixSpaceLink = 'https://matrix.to/#/#interstellar-space:matrix.org';
 const _mbinMagazineName = 'interstellar@kbin.earth';
 const _mbinMagazineLink = 'https://kbin.earth/m/interstellar';
 const mbinConfigsMagazineName = 'interstellar_configs@kbin.earth';
-const _mbinConfigsMagazineLink = 'https://kbin.earth/m/interstellar-configs';
+const _mbinConfigsMagazineLink = 'https://kbin.earth/m/interstellar_configs';
 
 class AboutScreen extends StatefulWidget {
   const AboutScreen({super.key});
