@@ -1,23 +1,19 @@
 import 'package:any_link_preview/any_link_preview.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/magazine.dart';
-import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/screens/explore/magazine_owner_panel.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/utils/language.dart';
 import 'package:interstellar/src/utils/utils.dart';
-import 'package:interstellar/src/widgets/avatar.dart';
 import 'package:interstellar/src/widgets/image_selector.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
 import 'package:interstellar/src/widgets/magazine_picker.dart';
 import 'package:interstellar/src/widgets/markdown/drafts_controller.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:interstellar/src/widgets/text_editor.dart';
-import 'package:interstellar/src/widgets/wrapper.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
@@ -92,7 +88,9 @@ class _CreateScreenState extends State<CreateScreen> {
       if (!linkIsValid) return;
       if (!override &&
           (_titleTextController.text.isNotEmpty ||
-              _bodyTextController.text.isNotEmpty)) return;
+              _bodyTextController.text.isNotEmpty)) {
+        return;
+      }
 
       final metadata =
           await AnyLinkPreview.getMetadata(link: _urlTextController.text);
@@ -211,8 +209,9 @@ class _CreateScreenState extends State<CreateScreen> {
     return DefaultTabController(
       length: switch (ac.serverSoftware) {
         ServerSoftware.mbin => 5,
-        // No Microblog tab on Lemmy
+        // Microblog tab only for Mbin
         ServerSoftware.lemmy => 4,
+        ServerSoftware.piefed => 4,
       },
       child: Scaffold(
         appBar: AppBar(

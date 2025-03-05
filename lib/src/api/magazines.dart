@@ -1,11 +1,10 @@
 import 'dart:convert';
 
-import 'package:http/http.dart' as http;
+import 'package:interstellar/src/api/client.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/screens/explore/explore_screen.dart';
 import 'package:interstellar/src/utils/models.dart';
-import 'package:interstellar/src/utils/utils.dart';
 
 enum APIMagazinesSort {
   active,
@@ -32,15 +31,9 @@ enum APIMagazinesSort {
 }
 
 class APIMagazines {
-  final ServerSoftware software;
-  final http.Client httpClient;
-  final String server;
+  final ServerClient client;
 
-  APIMagazines(
-    this.software,
-    this.httpClient,
-    this.server,
-  );
+  APIMagazines(this.client);
 
   Future<DetailedMagazineListModel> list({
     String? page,
@@ -48,37 +41,33 @@ class APIMagazines {
     APIMagazinesSort? sort,
     String? search,
   }) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
         final path = (filter == null ||
                 filter == ExploreFilter.all ||
                 filter == ExploreFilter.local)
-            ? '/api/magazines'
-            : '/api/magazines/${filter.name}';
-        final query = queryParams(
-          (filter == null ||
-                  filter == ExploreFilter.all ||
-                  filter == ExploreFilter.local)
-              ? {
-                  'p': page,
-                  'sort': sort?.name,
-                  'q': search,
-                  'federation': filter == ExploreFilter.local ? 'local' : null,
-                }
-              : {'p': page},
-        );
+            ? '/magazines'
+            : '/magazines/${filter.name}';
+        final query = {
+          'p': page,
+          if (filter == null ||
+              filter == ExploreFilter.all ||
+              filter == ExploreFilter.local) ...{
+            'sort': sort?.name,
+            'q': search,
+            'federation': filter == ExploreFilter.local ? 'local' : null,
+          },
+        };
 
-        final response = await httpClient.get(Uri.https(server, path, query));
+        final response =
+            await client.send(HttpMethod.get, path, queryParams: query);
 
-        httpErrorHandler(response, message: 'Failed to load magazines');
-
-        return DetailedMagazineListModel.fromMbin(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return DetailedMagazineListModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
         if (search == null) {
-          const path = '/api/v3/community/list';
-          final query = queryParams({
+          const path = '/community/list';
+          final query = {
             'type_': switch (filter) {
               ExploreFilter.all => 'All',
               ExploreFilter.local => 'Local',
@@ -112,21 +101,20 @@ class APIMagazines {
               _ => 'TopAll'
             },
             'page': page,
-          });
+          };
 
-          final response = await httpClient.get(Uri.https(server, path, query));
+          final response =
+              await client.send(HttpMethod.get, path, queryParams: query);
 
-          httpErrorHandler(response, message: 'Failed to load magazines');
-
-          final json = jsonDecode(response.body) as Map<String, Object?>;
+          final json = response.bodyJson;
 
           json['next_page'] =
               lemmyCalcNextIntPage(json['communities'] as List<dynamic>, page);
 
           return DetailedMagazineListModel.fromLemmy(json);
         } else {
-          const path = '/api/v3/search';
-          final query = queryParams({
+          const path = '/search';
+          final query = {
             'type_': 'Communities',
             'listing_type': switch (filter) {
               ExploreFilter.all => 'All',
@@ -146,140 +134,128 @@ class APIMagazines {
             },
             'page': page,
             'q': search,
-          });
+          };
 
-          final response = await httpClient.get(Uri.https(server, path, query));
+          final response =
+              await client.send(HttpMethod.get, path, queryParams: query);
 
-          httpErrorHandler(response, message: 'Failed to load magazines');
-
-          final json = jsonDecode(response.body) as Map<String, Object?>;
+          final json = response.bodyJson;
 
           json['next_page'] =
               lemmyCalcNextIntPage(json['communities'] as List<dynamic>, page);
 
           return DetailedMagazineListModel.fromLemmy(json);
         }
+
+      case ServerSoftware.piefed:
+        throw UnimplementedError();
     }
   }
 
   Future<DetailedMagazineModel> get(int magazineId) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/magazine/$magazineId';
+        final path = '/magazine/$magazineId';
 
-        final response = await httpClient.get(Uri.https(server, path));
+        final response = await client.send(HttpMethod.get, path);
 
-        httpErrorHandler(response, message: 'Failed to load magazine');
-
-        return DetailedMagazineModel.fromMbin(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return DetailedMagazineModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
-        const path = '/api/v3/community';
-        final query = queryParams({
-          'id': magazineId.toString(),
-        });
+        const path = '/community';
+        final query = {'id': magazineId.toString()};
 
-        final response = await httpClient.get(Uri.https(server, path, query));
-
-        httpErrorHandler(response, message: 'Failed to load magazine');
+        final response =
+            await client.send(HttpMethod.get, path, queryParams: query);
 
         return DetailedMagazineModel.fromLemmy(
-            jsonDecode(response.body)['community_view']
-                as Map<String, Object?>);
+            response.bodyJson['community_view'] as Map<String, Object?>);
+
+      case ServerSoftware.piefed:
+        throw UnimplementedError();
     }
   }
 
   Future<DetailedMagazineModel> getByName(String magazineName) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/magazine/name/$magazineName';
+        final path = '/magazine/name/$magazineName';
 
-        final response = await httpClient.get(Uri.https(server, path));
+        final response = await client.send(HttpMethod.get, path);
 
-        httpErrorHandler(response, message: 'Failed to load magazine');
-
-        return DetailedMagazineModel.fromMbin(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return DetailedMagazineModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
-        const path = '/api/v3/community';
-        final query = queryParams({
-          'name': magazineName.toString(),
-        });
+        const path = '/community';
+        final query = {'name': magazineName.toString()};
 
-        final response = await httpClient.get(Uri.https(server, path, query));
-
-        httpErrorHandler(response, message: 'Failed to load magazine');
+        final response =
+            await client.send(HttpMethod.get, path, queryParams: query);
 
         return DetailedMagazineModel.fromLemmy(
-            jsonDecode(response.body)['community_view']
-                as Map<String, Object?>);
+            response.bodyJson['community_view'] as Map<String, Object?>);
+
+      case ServerSoftware.piefed:
+        throw UnimplementedError();
     }
   }
 
   Future<DetailedMagazineModel> subscribe(int magazineId, bool state) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
         final path =
-            '/api/magazine/$magazineId/${state ? 'subscribe' : 'unsubscribe'}';
+            '/magazine/$magazineId/${state ? 'subscribe' : 'unsubscribe'}';
 
-        final response = await httpClient.put(Uri.https(server, path));
+        final response = await client.send(HttpMethod.put, path);
 
-        httpErrorHandler(response, message: 'Failed to send subscribe');
-
-        return DetailedMagazineModel.fromMbin(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return DetailedMagazineModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
-        const path = '/api/v3/community/follow';
+        const path = '/community/follow';
 
-        final response = await httpClient.post(
-          Uri.https(server, path),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
+        final response = await client.send(
+          HttpMethod.post,
+          path,
+          body: {
             'community_id': magazineId,
             'follow': state,
-          }),
+          },
         );
 
-        httpErrorHandler(response, message: 'Failed to send subscribe');
-
         return DetailedMagazineModel.fromLemmy(
-            jsonDecode(response.body)['community_view']
-                as Map<String, Object?>);
+            response.bodyJson['community_view'] as Map<String, Object?>);
+
+      case ServerSoftware.piefed:
+        throw UnimplementedError();
     }
   }
 
   Future<DetailedMagazineModel> block(int magazineId, bool state) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/magazine/$magazineId/${state ? 'block' : 'unblock'}';
+        final path = '/magazine/$magazineId/${state ? 'block' : 'unblock'}';
 
-        final response = await httpClient.put(Uri.https(server, path));
+        final response = await client.send(HttpMethod.put, path);
 
-        httpErrorHandler(response, message: 'Failed to send block');
-
-        return DetailedMagazineModel.fromMbin(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return DetailedMagazineModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
-        const path = '/api/v3/community/block';
+        const path = '/community/block';
 
-        final response = await httpClient.post(
-          Uri.https(server, path),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
+        final response = await client.send(
+          HttpMethod.post,
+          path,
+          body: {
             'community_id': magazineId,
             'block': state,
-          }),
+          },
         );
 
-        httpErrorHandler(response, message: 'Failed to send block');
-
         return DetailedMagazineModel.fromLemmy(
-            jsonDecode(response.body)['community_view']
-                as Map<String, Object?>);
+            response.bodyJson['community_view'] as Map<String, Object?>);
+
+      case ServerSoftware.piefed:
+        throw UnimplementedError();
     }
   }
 }

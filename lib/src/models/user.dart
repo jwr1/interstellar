@@ -73,13 +73,34 @@ class DetailedUserModel with _$DetailedUserModel {
 
     return DetailedUserModel(
       id: lemmyPerson['id'] as int,
-      name: lemmyGetActorName(lemmyPerson),
+      name: getLemmyPiefedActorName(lemmyPerson),
       displayName: lemmyPerson['display_name'] as String?,
       avatar: lemmyGetImage(lemmyPerson['avatar'] as String?),
       cover: lemmyGetImage(lemmyPerson['banner'] as String?),
       createdAt: DateTime.parse(lemmyPerson['published'] as String),
       isBot: lemmyPerson['bot_account'] as bool,
       about: lemmyPerson['bio'] as String?,
+      followersCount: null,
+      isFollowedByUser: null,
+      isFollowerOfUser: null,
+      isBlockedByUser: (json['blocked'] as bool?) ?? false,
+      notificationControlStatus: null,
+    );
+  }
+
+  factory DetailedUserModel.fromPiefed(Map<String, Object?> json) {
+    final piefedPersonView = json['person_view'] as Map<String, Object?>;
+    final piefedPerson = piefedPersonView['person'] as Map<String, Object?>;
+
+    return DetailedUserModel(
+      id: piefedPerson['id'] as int,
+      name: getLemmyPiefedActorName(piefedPerson),
+      displayName: piefedPerson['title'] as String?,
+      avatar: null,
+      cover: null,
+      createdAt: DateTime.parse(piefedPerson['published'] as String),
+      isBot: piefedPerson['bot'] as bool,
+      about: piefedPerson['about'] as String?,
       followersCount: null,
       isFollowedByUser: null,
       isFollowerOfUser: null,
@@ -109,10 +130,18 @@ class UserModel with _$UserModel {
 
   factory UserModel.fromLemmy(Map<String, Object?> json) => UserModel(
         id: json['id'] as int,
-        name: lemmyGetActorName(json),
+        name: getLemmyPiefedActorName(json),
         avatar: lemmyGetImage(json['avatar'] as String?),
         createdAt: DateTime.parse(json['published'] as String),
         isBot: json['bot_account'] as bool,
+      );
+
+  factory UserModel.fromPiefed(Map<String, Object?> json) => UserModel(
+        id: json['id'] as int,
+        name: getLemmyPiefedActorName(json),
+        avatar: null,
+        createdAt: DateTime.parse(json['published'] as String),
+        isBot: json['bot'] as bool,
       );
 
   factory UserModel.fromDetailedUser(DetailedUserModel user) => UserModel(
@@ -165,6 +194,23 @@ class UserSettings with _$UserSettings {
   factory UserSettings.fromLemmy(Map<String, Object?> json) => UserSettings(
         showNSFW: json['show_nsfw'] as bool,
         blurNSFW: json['blur_nsfw'] as bool?,
+        showReadPosts: json['show_read_posts'] as bool?,
+        showSubscribedUsers: null,
+        showSubscribedMagazines: null,
+        showSubscribedDomains: null,
+        showProfileSubscriptions: null,
+        showProfileFollowings: null,
+        notifyOnNewEntry: null,
+        notifyOnNewEntryReply: null,
+        notifyOnNewEntryCommentReply: null,
+        notifyOnNewPost: null,
+        notifyOnNewPostReply: null,
+        notifyOnNewPostCommentReply: null,
+      );
+
+  factory UserSettings.fromPiefed(Map<String, Object?> json) => UserSettings(
+        showNSFW: json['show_nsfw'] as bool,
+        blurNSFW: null,
         showReadPosts: json['show_read_posts'] as bool?,
         showSubscribedUsers: null,
         showSubscribedMagazines: null,

@@ -3,7 +3,17 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'server.freezed.dart';
 part 'server.g.dart';
 
-enum ServerSoftware { mbin, lemmy }
+enum ServerSoftware {
+  mbin,
+  lemmy,
+  piefed;
+
+  String get apiPathPrefix => switch (this) {
+        ServerSoftware.mbin => '/api',
+        ServerSoftware.lemmy => '/api/v3',
+        ServerSoftware.piefed => '/api/alpha',
+      };
+}
 
 @freezed
 class Server with _$Server {

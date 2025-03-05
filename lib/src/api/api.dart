@@ -1,7 +1,6 @@
-import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 import 'package:interstellar/src/api/bookmark.dart';
+import 'package:interstellar/src/api/client.dart';
 import 'package:interstellar/src/api/comments.dart';
 import 'package:interstellar/src/api/domains.dart';
 import 'package:interstellar/src/api/magazine_moderation.dart';
@@ -14,12 +13,9 @@ import 'package:interstellar/src/api/search.dart';
 import 'package:interstellar/src/api/threads.dart';
 import 'package:interstellar/src/api/users.dart';
 import 'package:interstellar/src/controller/server.dart';
-import 'package:interstellar/src/utils/utils.dart';
 
 class API {
-  final ServerSoftware software;
-  final http.Client httpClient;
-  final String server;
+  final ServerClient client;
 
   final APIComments comments;
   final MbinAPIDomains domains;
@@ -34,33 +30,28 @@ class API {
   final APIUsers users;
   final APIBookmark bookmark;
 
-  API(
-    this.software,
-    this.httpClient,
-    this.server,
-  )   : comments = APIComments(software, httpClient, server),
-        domains = MbinAPIDomains(software, httpClient, server),
-        threads = APIThreads(software, httpClient, server),
-        magazines = APIMagazines(software, httpClient, server),
-        magazineModeration =
-            APIMagazineModeration(software, httpClient, server),
-        messages = MbinAPIMessages(software, httpClient, server),
-        moderation = APIModeration(software, httpClient, server),
-        notifications = MbinAPINotifications(software, httpClient, server),
-        microblogs = MbinAPIMicroblogs(software, httpClient, server),
-        search = APISearch(software, httpClient, server),
-        users = APIUsers(software, httpClient, server),
-        bookmark = APIBookmark(software, httpClient, server);
+  API(this.client)
+      : comments = APIComments(client),
+        domains = MbinAPIDomains(client),
+        threads = APIThreads(client),
+        magazines = APIMagazines(client),
+        magazineModeration = APIMagazineModeration(client),
+        messages = MbinAPIMessages(client),
+        moderation = APIModeration(client),
+        notifications = MbinAPINotifications(client),
+        microblogs = MbinAPIMicroblogs(client),
+        search = APISearch(client),
+        users = APIUsers(client),
+        bookmark = APIBookmark(client);
 }
 
 Future<ServerSoftware?> getServerSoftware(String server) async {
-  final response = await http.get(Uri.https(server, '/nodeinfo/2.0.json'));
-
-  httpErrorHandler(response, message: 'Failed to load nodeinfo');
+  final response = await http.get(Uri.https(server, '/nodeinfo/2.0'));
 
   try {
-    return ServerSoftware.values
-        .byName(jsonDecode(response.body)['software']['name']);
+    return ServerSoftware.values.byName(((response.bodyJson['software']
+            as Map<String, Object?>)['name'] as String)
+        .toLowerCase());
   } catch (_) {
     return null;
   }

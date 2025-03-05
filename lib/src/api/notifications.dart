@@ -1,9 +1,10 @@
 import 'dart:convert';
 
-import 'package:http/http.dart' as http;
+import 'package:interstellar/src/api/client.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/notification.dart';
-import 'package:interstellar/src/utils/utils.dart';
+
+// TODO: add missing switch statements to this file
 
 // new_ is used because new is a reserved keyword
 enum NotificationsFilter { all, new_, read }
@@ -11,64 +12,51 @@ enum NotificationsFilter { all, new_, read }
 enum NotificationControlUpdateTargetType { entry, post, magazine, user }
 
 class MbinAPINotifications {
-  final ServerSoftware software;
-  final http.Client httpClient;
-  final String server;
+  final ServerClient client;
 
-  MbinAPINotifications(
-    this.software,
-    this.httpClient,
-    this.server,
-  );
+  MbinAPINotifications(this.client);
 
   Future<NotificationListModel> list({
     String? page,
     NotificationsFilter? filter,
   }) async {
     final path =
-        '/api/notifications/${filter == NotificationsFilter.new_ ? 'new' : (filter?.name ?? 'all')}';
-    final query = queryParams({'p': page});
+        '/notifications/${filter == NotificationsFilter.new_ ? 'new' : (filter?.name ?? 'all')}';
+    final query = {'p': page};
 
-    final response = await httpClient.get(Uri.https(server, path, query));
+    final response =
+        await client.send(HttpMethod.get, path, queryParams: query);
 
-    httpErrorHandler(response, message: 'Failed to load notifications');
-
-    return NotificationListModel.fromMbin(
-        jsonDecode(response.body) as Map<String, Object?>);
+    return NotificationListModel.fromMbin(response.bodyJson);
   }
 
   Future<int> getCount() async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        const path = '/api/notifications/count';
+        const path = '/notifications/count';
 
-        final response = await httpClient.get(Uri.https(server, path));
+        final response = await client.send(HttpMethod.get, path);
 
-        httpErrorHandler(response,
-            message: 'Failed to load notification count');
-
-        return jsonDecode(response.body)['count'];
+        return response.bodyJson['count'] as int;
 
       case ServerSoftware.lemmy:
-        const path = '/api/v3/user/unread_count';
+        const path = '/user/unread_count';
 
-        final response = await httpClient.get(Uri.https(server, path));
+        final response = await client.send(HttpMethod.get, path);
 
-        httpErrorHandler(response,
-            message: 'Failed to load notification count');
+        return (response.bodyJson['replies'] as int) +
+            (response.bodyJson['mentions'] as int) +
+            (response.bodyJson['private_messages'] as int);
 
-        return (jsonDecode(response.body)['replies'] as int) +
-            (jsonDecode(response.body)['mentions'] as int) +
-            (jsonDecode(response.body)['private_messages'] as int);
+      case ServerSoftware.piefed:
+        throw UnimplementedError();
     }
   }
 
   Future<void> putReadAll() async {
-    const path = '/api/notifications/read';
+    const path = '/notifications/read';
 
-    final response = await httpClient.put(Uri.https(server, path));
-
-    httpErrorHandler(response, message: 'Failed to mark notifications');
+    final response = await client.send(HttpMethod.put, path);
   }
 
   Future<NotificationModel> putRead(
@@ -76,14 +64,11 @@ class MbinAPINotifications {
     bool readState,
   ) async {
     final path =
-        '/api/notifications/$notificationId/${readState ? 'read' : 'unread'}';
+        '/notifications/$notificationId/${readState ? 'read' : 'unread'}';
 
-    final response = await httpClient.put(Uri.https(server, path));
+    final response = await client.send(HttpMethod.put, path);
 
-    httpErrorHandler(response, message: 'Failed to mark notification');
-
-    return NotificationModel.fromMbin(
-        jsonDecode(response.body) as Map<String, Object?>);
+    return NotificationModel.fromMbin(response.bodyJson);
   }
 
   // Returns server's public key
@@ -92,46 +77,47 @@ class MbinAPINotifications {
     required String serverKey,
     required String contentPublicKey,
   }) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        const path = '/api/notification/push';
+        const path = '/notification/push';
 
-        final response = await httpClient.post(
-          Uri.https(server, path),
-          headers: {
-            'content-type': 'application/json',
-          },
-          body: jsonEncode({
+        final response = await client.send(
+          HttpMethod.post,
+          path,
+          body: {
             'endpoint': endpoint,
             'serverKey': serverKey,
             'contentPublicKey': contentPublicKey
-          }),
+          },
         );
-
-        httpErrorHandler(response, message: 'Failed to send register push');
 
         return;
 
       case ServerSoftware.lemmy:
         throw Exception('Notifications not yet implemented on Lemmy');
+
+      case ServerSoftware.piefed:
+        throw Exception('Notifications not yet implemented on PieFed');
     }
   }
 
   Future<void> pushDelete() async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        const path = '/api/notification/push';
+        const path = '/notification/push';
 
-        final response = await httpClient.delete(
-          Uri.https(server, path),
+        final response = await client.send(
+          HttpMethod.delete,
+          path,
         );
-
-        httpErrorHandler(response, message: 'Failed to send delete push');
 
         return;
 
       case ServerSoftware.lemmy:
         throw Exception('Notifications not yet implemented on Lemmy');
+
+      case ServerSoftware.piefed:
+        throw Exception('Notifications not yet implemented on PieFed');
     }
   }
 
@@ -140,22 +126,24 @@ class MbinAPINotifications {
     required int targetId,
     required NotificationControlStatus status,
   }) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
         final path =
-            '/api/notification/update/${targetType.name}/$targetId/${status.toJson()}';
+            '/notification/update/${targetType.name}/$targetId/${status.toJson()}';
 
-        final response = await httpClient.put(
-          Uri.https(server, path),
+        final response = await client.send(
+          HttpMethod.put,
+          path,
         );
-
-        httpErrorHandler(response,
-            message: 'Failed to update notification control');
 
         return;
 
       case ServerSoftware.lemmy:
         throw Exception('Notification update control not implemented on Lemmy');
+
+      case ServerSoftware.piefed:
+        throw Exception(
+            'Notification update control not implemented on PieFed');
     }
   }
 }

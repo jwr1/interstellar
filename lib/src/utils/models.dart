@@ -26,10 +26,13 @@ String mbinNormalizeUsername(String username) {
   return username.startsWith('@') ? username.substring(1) : username;
 }
 
-String lemmyGetActorName(Map<String, Object?> json) {
+/// Converts lemmy and piefed's local name to Mbin's standard name
+String getLemmyPiefedActorName(Map<String, Object?> json) {
+  final name = (json['user_name'] ?? json['name']) as String;
+
   return (json['local'] as bool)
-      ? (json['name'] as String)
-      : '${json['name'] as String}@${Uri.parse(json['actor_id'] as String).host}';
+      ? name
+      : '$name@${Uri.parse(json['actor_id'] as String).host}';
 }
 
 String? lemmyCalcNextIntPage(

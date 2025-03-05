@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/api/client.dart';
 import 'package:interstellar/src/widgets/redirect_listen.dart';
 
 const oauthName = 'Interstellar';
@@ -21,7 +21,7 @@ const oauthScopes = [
 ];
 
 Future<String> registerOauthApp(String instanceHost) async {
-  const path = '/api/client';
+  const path = '/client';
 
   final response = await http.post(
     Uri.https(instanceHost, path),
@@ -38,7 +38,5 @@ Future<String> registerOauthApp(String instanceHost) async {
     }),
   );
 
-  httpErrorHandler(response, message: 'Failed to register client');
-
-  return (jsonDecode(response.body) as Map<String, dynamic>)['identifier'];
+  return response.bodyJson['identifier'] as String;
 }

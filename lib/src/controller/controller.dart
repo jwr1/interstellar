@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:interstellar/src/api/api.dart';
+import 'package:interstellar/src/api/client.dart';
 import 'package:interstellar/src/api/oauth.dart';
 import 'package:interstellar/src/controller/account.dart';
 import 'package:interstellar/src/controller/database.dart';
@@ -380,6 +381,7 @@ class AppController with ChangeNotifier {
         }
         break;
       case ServerSoftware.lemmy:
+      case ServerSoftware.piefed:
         String? jwt = _accounts[account]!.jwt;
         if (jwt != null) {
           httpClient = JwtHttpClient(jwt);
@@ -387,7 +389,11 @@ class AppController with ChangeNotifier {
         break;
     }
 
-    return API(software, httpClient, instance);
+    return API(ServerClient(
+      httpClient: httpClient,
+      software: software,
+      domain: instance,
+    ));
   }
 
   Future<void> addStar(String newStar) async {

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:interstellar/src/api/client.dart';
 import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/post.dart';
@@ -34,15 +35,9 @@ const Map<FeedSort, String> lemmyFeedSortMap = {
 };
 
 class APIThreads {
-  final ServerSoftware software;
-  final http.Client httpClient;
-  final String server;
+  final ServerClient client;
 
-  APIThreads(
-    this.software,
-    this.httpClient,
-    this.server,
-  );
+  APIThreads(this.client);
 
   Future<PostListModel> list(
     FeedSource source, {
@@ -52,45 +47,42 @@ class APIThreads {
     List<String>? langs,
     bool? usePreferredLangs,
   }) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
         final path = switch (source) {
-          FeedSource.all => '/api/entries',
-          FeedSource.subscribed => '/api/entries/subscribed',
-          FeedSource.moderated => '/api/entries/moderated',
-          FeedSource.favorited => '/api/entries/favourited',
-          FeedSource.magazine => '/api/magazine/${sourceId!}/entries',
-          FeedSource.user => '/api/users/${sourceId!}/entries',
-          FeedSource.domain => '/api/domain/${sourceId!}/entries',
+          FeedSource.all => '/entries',
+          FeedSource.subscribed => '/entries/subscribed',
+          FeedSource.moderated => '/entries/moderated',
+          FeedSource.favorited => '/entries/favourited',
+          FeedSource.magazine => '/magazine/${sourceId!}/entries',
+          FeedSource.user => '/users/${sourceId!}/entries',
+          FeedSource.domain => '/domain/${sourceId!}/entries',
         };
-        final query = queryParams({
+        final query = {
           'p': page,
           'sort': sort?.name,
           'lang': langs?.join(','),
           'usePreferredLangs': (usePreferredLangs ?? false).toString(),
-        });
+        };
 
-        final response = await httpClient.get(Uri.https(server, path, query));
+        final response =
+            await client.send(HttpMethod.get, path, queryParams: query);
 
-        httpErrorHandler(response, message: 'Failed to load entries');
-
-        return PostListModel.fromMbinEntries(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return PostListModel.fromMbinEntries(response.bodyJson);
 
       case ServerSoftware.lemmy:
         if (source == FeedSource.user) {
-          const path = '/api/v3/user';
-          final query = queryParams({
+          const path = '/user';
+          final query = {
             'person_id': sourceId.toString(),
             'page': page,
             'sort': lemmyFeedSortMap[sort]
-          });
+          };
 
-          final response = await httpClient.get(Uri.https(server, path, query));
+          final response =
+              await client.send(HttpMethod.get, path, queryParams: query);
 
-          httpErrorHandler(response, message: 'Failed to load user');
-
-          final json = jsonDecode(response.body) as Map<String, Object?>;
+          final json = response.bodyJson;
 
           json['next_page'] =
               lemmyCalcNextIntPage(json['posts'] as List<dynamic>, page);
@@ -98,8 +90,8 @@ class APIThreads {
           return PostListModel.fromLemmy(json);
         }
 
-        const path = '/api/v3/post/list';
-        final query = queryParams({
+        const path = '/post/list';
+        final query = {
           'page_cursor': page,
           'sort': lemmyFeedSortMap[sort],
         }..addAll(switch (source) {
@@ -112,93 +104,142 @@ class APIThreads {
               throw Exception('User source not allowed for lemmy'),
             FeedSource.domain =>
               throw Exception('Domain source not allowed for lemmy'),
-          }));
+          });
 
-        final response = await httpClient.get(Uri.https(server, path, query));
-
-        httpErrorHandler(response, message: 'Failed to load posts');
+        final response =
+            await client.send(HttpMethod.get, path, queryParams: query);
 
         return PostListModel.fromLemmy(
-            jsonDecode(utf8.decode(response.bodyBytes))
-                as Map<String, Object?>);
+            response.bodyJson as Map<String, Object?>);
+
+      case ServerSoftware.piefed:
+        if (source == FeedSource.user) {
+          const path = '/user';
+          final query = {
+            'person_id': sourceId.toString(),
+            'page': page,
+            'sort': lemmyFeedSortMap[sort]
+          };
+
+          final response =
+              await client.send(HttpMethod.get, path, queryParams: query);
+
+          final json = response.bodyJson;
+
+          json['next_page'] =
+              lemmyCalcNextIntPage(json['posts'] as List<dynamic>, page);
+
+          return PostListModel.fromPiefed(json);
+        }
+
+        const path = '/post/list';
+        final query = {
+          'page_cursor': page,
+          'sort': lemmyFeedSortMap[sort],
+        }..addAll(switch (source) {
+            FeedSource.all => {'type_': 'All'},
+            FeedSource.subscribed => {'type_': 'Subscribed'},
+            FeedSource.moderated => {'type_': 'ModeratorView'},
+            FeedSource.favorited => {'liked_only': 'true'},
+            FeedSource.magazine => {'community_id': sourceId!.toString()},
+            FeedSource.user =>
+              throw Exception('User source not allowed for fromPiefed'),
+            FeedSource.domain =>
+              throw Exception('Domain source not allowed for fromPiefed'),
+          });
+
+        final response =
+            await client.send(HttpMethod.get, path, queryParams: query);
+
+        return PostListModel.fromPiefed(
+            response.bodyJson as Map<String, Object?>);
     }
   }
 
   Future<PostModel> get(int postId) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/entry/$postId';
+        final path = '/entry/$postId';
 
-        final response = await httpClient.get(Uri.https(server, path));
+        final response = await client.send(HttpMethod.get, path);
 
-        httpErrorHandler(response, message: 'Failed to load post');
-
-        return PostModel.fromMbinEntry(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return PostModel.fromMbinEntry(response.bodyJson);
 
       case ServerSoftware.lemmy:
-        const path = '/api/v3/post';
-        final query = queryParams({
-          'id': postId.toString(),
-        });
+        const path = '/post';
+        final query = {'id': postId.toString()};
 
-        final response = await httpClient.get(Uri.https(server, path, query));
-
-        httpErrorHandler(response, message: 'Failed to load post');
+        final response =
+            await client.send(HttpMethod.get, path, queryParams: query);
 
         return PostModel.fromLemmy(
-            jsonDecode(utf8.decode(response.bodyBytes))['post_view']
-                as Map<String, Object?>);
+            response.bodyJson['post_view'] as Map<String, Object?>);
+
+      case ServerSoftware.piefed:
+        const path = '/post';
+        final query = {'id': postId.toString()};
+
+        final response =
+            await client.send(HttpMethod.get, path, queryParams: query);
+
+        return PostModel.fromPiefed(
+            response.bodyJson['post_view'] as Map<String, Object?>);
     }
   }
 
   Future<PostModel> vote(int postId, int choice, int newScore) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
         final path = choice == 1
-            ? '/api/entry/$postId/favourite'
-            : '/api/entry/$postId/vote/$choice';
+            ? '/entry/$postId/favourite'
+            : '/entry/$postId/vote/$choice';
 
-        final response = await httpClient.put(Uri.https(server, path));
+        final response = await client.send(HttpMethod.put, path);
 
-        httpErrorHandler(response, message: 'Failed to send vote');
-
-        return PostModel.fromMbinEntry(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return PostModel.fromMbinEntry(response.bodyJson);
 
       case ServerSoftware.lemmy:
-        const path = '/api/v3/post/like';
-
-        final response = await httpClient.post(
-          Uri.https(server, path),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
+        final response = await client.send(
+          HttpMethod.post,
+          '/post/like',
+          body: {
             'post_id': postId,
             'score': newScore,
-          }),
+          },
         );
 
-        httpErrorHandler(response, message: 'Failed to send vote');
-
         return PostModel.fromLemmy(
-            jsonDecode(response.body)['post_view'] as Map<String, Object?>);
+            response.bodyJson['post_view'] as Map<String, Object?>);
+
+      case ServerSoftware.piefed:
+        final response = await client.send(
+          HttpMethod.post,
+          '/post/like',
+          body: {
+            'post_id': postId,
+            'score': newScore,
+          },
+        );
+
+        return PostModel.fromPiefed(
+            response.bodyJson['post_view'] as Map<String, Object?>);
     }
   }
 
   Future<PostModel> boost(int postId) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/entry/$postId/vote/1';
+        final path = '/entry/$postId/vote/1';
 
-        final response = await httpClient.put(Uri.https(server, path));
+        final response = await client.send(HttpMethod.put, path);
 
-        httpErrorHandler(response, message: 'Failed to send boost');
-
-        return PostModel.fromMbinEntry(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return PostModel.fromMbinEntry(response.bodyJson);
 
       case ServerSoftware.lemmy:
         throw Exception('Tried to boost on lemmy');
+
+      case ServerSoftware.piefed:
+        throw Exception('Tried to boost on piefed');
     }
   }
 
@@ -210,66 +251,90 @@ class APIThreads {
     String? lang,
     bool? isAdult,
   ) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/entry/$entryID';
+        final path = '/entry/$entryID';
 
-        final response = await httpClient.put(
-          Uri.https(server, path),
-          body: jsonEncode({
+        final response = await client.send(
+          HttpMethod.put,
+          path,
+          body: {
             'title': title,
             'tags': [],
             'isOc': isOc,
             'body': body,
             'lang': lang,
             'isAdult': isAdult
-          }),
+          },
         );
 
-        httpErrorHandler(response, message: 'Failed to edit entry');
-
-        return PostModel.fromMbinEntry(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return PostModel.fromMbinEntry(response.bodyJson);
 
       case ServerSoftware.lemmy:
-        const path = '/api/v3/post';
+        const path = '/post';
 
-        final response = await httpClient.put(
-          Uri.https(server, path),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
+        final response = await client.send(
+          HttpMethod.put,
+          path,
+          body: {
             'post_id': entryID,
             'name': title,
             'body': body,
             'nsfw': isAdult
-          }),
+          },
         );
 
-        httpErrorHandler(response, message: 'Failed to edit entry');
-
         return PostModel.fromLemmy(
-            jsonDecode(utf8.decode(response.bodyBytes))['post_view']
-                as Map<String, Object?>);
+            response.bodyJson['post_view'] as Map<String, Object?>);
+
+      case ServerSoftware.piefed:
+        const path = '/post';
+
+        final response = await client.send(
+          HttpMethod.put,
+          path,
+          body: {
+            'post_id': entryID,
+            'name': title,
+            'body': body,
+            'nsfw': isAdult
+          },
+        );
+
+        return PostModel.fromPiefed(
+            response.bodyJson['post_view'] as Map<String, Object?>);
     }
   }
 
   Future<void> delete(int postID) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final response =
-            await httpClient.delete(Uri.https(server, '/api/entry/$postID'));
+        final response = await client.send(HttpMethod.delete, '/entry/$postID');
 
-        httpErrorHandler(response, message: 'Failed to delete entry');
         break;
 
       case ServerSoftware.lemmy:
-        final response = await httpClient.post(
-          Uri.https(server, '/api/v3/post/delete'),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({'post_id': postID, 'deleted': true}),
+        final response = await client.send(
+          HttpMethod.post,
+          '/post/delete',
+          body: {
+            'post_id': postID,
+            'deleted': true,
+          },
         );
 
-        httpErrorHandler(response, message: 'Failed to delete entry');
+        break;
+
+      case ServerSoftware.piefed:
+        final response = await client.send(
+          HttpMethod.post,
+          '/post/delete',
+          body: {
+            'post_id': postID,
+            'deleted': true,
+          },
+        );
+
         break;
     }
   }
@@ -283,45 +348,56 @@ class APIThreads {
     required bool isAdult,
     required List<String> tags,
   }) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/magazine/$magazineID/article';
+        final path = '/magazine/$magazineID/article';
 
-        final response = await httpClient.post(
-          Uri.https(server, path),
-          body: jsonEncode({
+        final response = await client.send(
+          HttpMethod.post,
+          path,
+          body: {
             'title': title,
             'tags': tags,
             'isOc': isOc,
             'body': body,
             'lang': lang,
             'isAdult': isAdult
-          }),
+          },
         );
 
-        httpErrorHandler(response, message: 'Failed to create entry');
-
-        return PostModel.fromMbinEntry(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return PostModel.fromMbinEntry(response.bodyJson);
 
       case ServerSoftware.lemmy:
-        const path = '/api/v3/post';
-        final response = await httpClient.post(
-          Uri.https(server, path),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
+        const path = '/post';
+        final response = await client.send(
+          HttpMethod.post,
+          path,
+          body: {
             'name': title,
             'community_id': magazineID,
             'body': body,
             'nsfw': isAdult
-          }),
+          },
         );
 
-        httpErrorHandler(response, message: 'Failed to create entry');
-
         return PostModel.fromLemmy(
-            jsonDecode(utf8.decode(response.bodyBytes))['post_view']
-                as Map<String, Object?>);
+            response.bodyJson['post_view'] as Map<String, Object?>);
+
+      case ServerSoftware.piefed:
+        const path = '/post';
+        final response = await client.send(
+          HttpMethod.post,
+          path,
+          body: {
+            'name': title,
+            'community_id': magazineID,
+            'body': body,
+            'nsfw': isAdult
+          },
+        );
+
+        return PostModel.fromPiefed(
+            response.bodyJson['post_view'] as Map<String, Object?>);
     }
   }
 
@@ -335,13 +411,14 @@ class APIThreads {
     required bool isAdult,
     required List<String> tags,
   }) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/magazine/$magazineID/link';
+        final path = '/magazine/$magazineID/link';
 
-        final response = await httpClient.post(
-          Uri.https(server, path),
-          body: jsonEncode({
+        final response = await client.send(
+          HttpMethod.post,
+          path,
+          body: {
             'title': title,
             'url': url,
             'tags': tags,
@@ -349,33 +426,44 @@ class APIThreads {
             'body': body,
             'lang': lang,
             'isAdult': isAdult
-          }),
+          },
         );
 
-        httpErrorHandler(response, message: 'Failed to create entry');
-
-        return PostModel.fromMbinEntry(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return PostModel.fromMbinEntry(response.bodyJson);
 
       case ServerSoftware.lemmy:
-        const path = '/api/v3/post';
-        final response = await httpClient.post(
-          Uri.https(server, path),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
+        const path = '/post';
+        final response = await client.send(
+          HttpMethod.post,
+          path,
+          body: {
             'name': title,
             'community_id': magazineID,
             'url': url,
             'body': body,
             'nsfw': isAdult
-          }),
+          },
         );
 
-        httpErrorHandler(response, message: 'Failed to create entry');
-
         return PostModel.fromLemmy(
-            jsonDecode(utf8.decode(response.bodyBytes))['post_view']
-                as Map<String, Object?>);
+            response.bodyJson['post_view'] as Map<String, Object?>);
+
+      case ServerSoftware.piefed:
+        const path = '/post';
+        final response = await client.send(
+          HttpMethod.post,
+          path,
+          body: {
+            'name': title,
+            'community_id': magazineID,
+            'url': url,
+            'body': body,
+            'nsfw': isAdult
+          },
+        );
+
+        return PostModel.fromPiefed(
+            response.bodyJson['post_view'] as Map<String, Object?>);
     }
   }
 
@@ -390,11 +478,12 @@ class APIThreads {
     required bool isAdult,
     required List<String> tags,
   }) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/magazine/$magazineID/image';
+        final path = '/magazine/$magazineID/image';
 
-        var request = http.MultipartRequest('POST', Uri.https(server, path));
+        var request = http.MultipartRequest('POST',
+            Uri.https(client.domain, client.software.apiPathPrefix + path));
         var multipartFile = http.MultipartFile.fromBytes(
           'uploadImage',
           await image.readAsBytes(),
@@ -411,19 +500,15 @@ class APIThreads {
         request.fields['lang'] = lang;
         request.fields['isAdult'] = isAdult.toString();
         request.fields['alt'] = alt;
-        var response =
-            await http.Response.fromStream(await httpClient.send(request));
+        var response = await client.sendRequest(request);
 
-        httpErrorHandler(response, message: 'Failed to create entry');
-
-        return PostModel.fromMbinEntry(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return PostModel.fromMbinEntry(response.bodyJson);
 
       case ServerSoftware.lemmy:
         const pictrsPath = '/pictrs/image';
 
         var request =
-            http.MultipartRequest('POST', Uri.https(server, pictrsPath));
+            http.MultipartRequest('POST', Uri.https(client.domain, pictrsPath));
         var multipartFile = http.MultipartFile.fromBytes(
           'images[]',
           await image.readAsBytes(),
@@ -431,65 +516,69 @@ class APIThreads {
           contentType: MediaType.parse(lookupMimeType(image.path)!),
         );
         request.files.add(multipartFile);
-        var pictrsResponse =
-            await http.Response.fromStream(await httpClient.send(request));
-
-        httpErrorHandler(pictrsResponse, message: 'Failed to upload image');
+        var pictrsResponse = await client.sendRequest(request);
 
         final json = jsonDecode(pictrsResponse.body) as Map<String, Object?>;
 
         final imageName = ((json['files'] as List<Object?>).first
             as Map<String, Object?>)['file'] as String?;
 
-        const path = '/api/v3/post';
-        final response = await httpClient.post(
-          Uri.https(server, path),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
+        const path = '/post';
+        final response = await client.send(
+          HttpMethod.post,
+          path,
+          body: {
             'name': title,
             'community_id': magazineID,
-            'url': 'https://$server/pictrs/image/$imageName',
+            'url': 'https://${client.domain}/pictrs/image/$imageName',
             'body': body,
             'nsfw': isAdult,
             'alt_text': nullIfEmpty(alt),
-          }),
+          },
         );
 
-        httpErrorHandler(response, message: 'Failed to create entry');
-
         return PostModel.fromLemmy(
-            jsonDecode(utf8.decode(response.bodyBytes))['post_view']
-                as Map<String, Object?>);
+            response.bodyJson['post_view'] as Map<String, Object?>);
+
+      case ServerSoftware.piefed:
+        throw UnimplementedError();
     }
   }
 
   Future<void> report(int postId, String reason) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/entry/$postId/report';
+        final path = '/entry/$postId/report';
 
-        final response = await httpClient.post(
-          Uri.https(server, path),
-          body: jsonEncode({
-            'reason': reason,
-          }),
+        final response = await client.send(
+          HttpMethod.post,
+          path,
+          body: {'reason': reason},
         );
-
-        httpErrorHandler(response, message: 'Failed to report post');
 
       case ServerSoftware.lemmy:
-        const path = '/api/v3/post/report';
+        const path = '/post/report';
 
-        final response = await httpClient.post(
-          Uri.https(server, path),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
+        final response = await client.send(
+          HttpMethod.post,
+          path,
+          body: {
             'post_id': postId,
             'reason': reason,
-          }),
+          },
         );
 
-        httpErrorHandler(response, message: 'Failed to report post');
+      case ServerSoftware.piefed:
+        const path = '/post/report';
+
+        final response = await client.send(
+          HttpMethod.post,
+          path,
+          body: {
+            'post_id': postId,
+            'reason': reason,
+          },
+        );
     }
   }
 }

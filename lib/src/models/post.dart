@@ -42,6 +42,13 @@ class PostListModel with _$PostListModel {
             .toList(),
         nextPage: json['next_page'] as String?,
       );
+
+  factory PostListModel.fromPiefed(Map<String, Object?> json) => PostListModel(
+        items: (json['posts'] as List<dynamic>)
+            .map((post) => PostModel.fromPiefed(post as Map<String, Object?>))
+            .toList(),
+        nextPage: json['next_page'] as String?,
+      );
 }
 
 @freezed
@@ -183,6 +190,48 @@ class PostModel with _$PostModel {
       createdAt: DateTime.parse(lemmyPost['published'] as String),
       editedAt: optionalDateTime(lemmyPost['updated'] as String?),
       lastActive: DateTime.parse(lemmyCounts['newest_comment_time'] as String),
+      visibility: 'visible',
+      canAuthUserModerate: null,
+      notificationControlStatus: null,
+      bookmarks: [
+        // Empty string indicates post is saved. No string indicates post is not saved.
+        if (json['saved'] as bool) '',
+      ],
+    );
+  }
+
+  factory PostModel.fromPiefed(Map<String, Object?> json) {
+    final piefedPost = json['post'] as Map<String, Object?>;
+    final piefedCounts = json['counts'] as Map<String, Object?>;
+
+    return PostModel(
+      type: PostType.thread,
+      id: piefedPost['id'] as int,
+      user: UserModel.fromPiefed(json['creator'] as Map<String, Object?>),
+      magazine:
+          MagazineModel.fromPiefed(json['community'] as Map<String, Object?>),
+      domain: null,
+      title: piefedPost['title'] as String,
+      // Only include link if it's not an Image post
+      url: (piefedPost['url_content_type'] != null &&
+              (piefedPost['url_content_type'] as String).startsWith('image/'))
+          ? null
+          : piefedPost['url'] as String?,
+      image: lemmyGetImage(piefedPost['thumbnail_url'] as String?),
+      body: piefedPost['body'] as String?,
+      lang: null,
+      numComments: piefedCounts['comments'] as int,
+      upvotes: piefedCounts['upvotes'] as int,
+      downvotes: piefedCounts['downvotes'] as int,
+      boosts: null,
+      myVote: json['my_vote'] as int?,
+      myBoost: null,
+      isOC: null,
+      isNSFW: piefedPost['nsfw'] as bool,
+      isPinned: false,
+      createdAt: DateTime.parse(piefedPost['published'] as String),
+      editedAt: optionalDateTime(piefedPost['updated'] as String?),
+      lastActive: DateTime.parse(piefedCounts['newest_comment_time'] as String),
       visibility: 'visible',
       canAuthUserModerate: null,
       notificationControlStatus: null,

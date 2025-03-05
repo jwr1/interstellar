@@ -1,41 +1,33 @@
 import 'dart:convert';
 
-import 'package:http/http.dart' as http;
+import 'package:interstellar/src/api/client.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/magazine.dart';
-import 'package:interstellar/src/utils/utils.dart';
 
 class APIMagazineModeration {
-  final ServerSoftware software;
-  final http.Client httpClient;
-  final String server;
+  final ServerClient client;
 
-  APIMagazineModeration(
-    this.software,
-    this.httpClient,
-    this.server,
-  );
+  APIMagazineModeration(this.client);
 
   Future<MagazineBanListModel> listBans(
     int magazineId, {
     String? page,
   }) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/moderate/magazine/$magazineId/bans';
-        final query = queryParams({
-          'p': page,
-        });
+        final path = '/moderate/magazine/$magazineId/bans';
+        final query = {'p': page};
 
-        final response = await httpClient.get(Uri.https(server, path, query));
+        final response =
+            await client.send(HttpMethod.get, path, queryParams: query);
 
-        httpErrorHandler(response, message: 'Failed to load magazine bans');
-
-        return MagazineBanListModel.fromMbin(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return MagazineBanListModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
         throw Exception('List banned users not allowed on lemmy');
+
+      case ServerSoftware.piefed:
+        throw UnimplementedError();
     }
   }
 
@@ -45,42 +37,43 @@ class APIMagazineModeration {
     String? reason,
     DateTime? expiredAt,
   }) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/moderate/magazine/$magazineId/ban/$userId';
+        final path = '/moderate/magazine/$magazineId/ban/$userId';
 
-        final response = await httpClient.post(
-          Uri.https(server, path),
-          body: jsonEncode({
+        final response = await client.send(
+          HttpMethod.post,
+          path,
+          body: {
             'reason': reason,
             'expiredAt': expiredAt?.toIso8601String(),
-          }),
+          },
         );
 
-        httpErrorHandler(response, message: 'Failed to send ban');
-
-        return MagazineBanModel.fromMbin(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return MagazineBanModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
         throw Exception('Ban update not implemented on Lemmy yet');
+
+      case ServerSoftware.piefed:
+        throw UnimplementedError();
     }
   }
 
   Future<MagazineBanModel> removeBan(int magazineId, int userId) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/moderate/magazine/$magazineId/ban/$userId';
+        final path = '/moderate/magazine/$magazineId/ban/$userId';
 
-        final response = await httpClient.delete(Uri.https(server, path));
+        final response = await client.send(HttpMethod.delete, path);
 
-        httpErrorHandler(response, message: 'Failed to send unban');
-
-        return MagazineBanModel.fromMbin(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return MagazineBanModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
         throw Exception('Ban update not implemented on Lemmy yet');
+
+      case ServerSoftware.piefed:
+        throw UnimplementedError();
     }
   }
 
@@ -91,44 +84,44 @@ class APIMagazineModeration {
     required bool isAdult,
     required bool isPostingRestrictedToMods,
   }) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/moderate/magazine/new';
+        final path = '/moderate/magazine/new';
 
-        final response = await httpClient.post(Uri.https(server, path),
-            body: jsonEncode({
-              'name': name,
-              'title': title,
-              'description': description,
-              'isAdult': isAdult,
-              'isPostingRestrictedToMods': isPostingRestrictedToMods,
-            }));
+        final response = await client.send(
+          HttpMethod.post,
+          path,
+          body: {
+            'name': name,
+            'title': title,
+            'description': description,
+            'isAdult': isAdult,
+            'isPostingRestrictedToMods': isPostingRestrictedToMods,
+          },
+        );
 
-        httpErrorHandler(response, message: 'Failed to create magazine');
-
-        return DetailedMagazineModel.fromMbin(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return DetailedMagazineModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
-        const path = '/api/v3/community';
+        const path = '/community';
 
-        final response = await httpClient.post(
-          Uri.https(server, path),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
+        final response = await client.send(
+          HttpMethod.post,
+          path,
+          body: {
             'name': name,
             'title': title,
             'description': description,
             'nsfw': isAdult,
             'posting_restricted_to_mods': isPostingRestrictedToMods,
-          }),
+          },
         );
 
-        httpErrorHandler(response, message: 'Failed to create magazine');
-
         return DetailedMagazineModel.fromLemmy(
-            jsonDecode(response.body)['community_view']
-                as Map<String, Object?>);
+            response.bodyJson['community_view'] as Map<String, Object?>);
+
+      case ServerSoftware.piefed:
+        throw UnimplementedError();
     }
   }
 
@@ -139,25 +132,28 @@ class APIMagazineModeration {
     required bool isAdult,
     required bool isPostingRestrictedToMods,
   }) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/moderate/magazine/$magazineId';
+        final path = '/moderate/magazine/$magazineId';
 
-        final response = await httpClient.put(Uri.https(server, path),
-            body: jsonEncode({
-              'title': title,
-              'description': description,
-              'isAdult': isAdult,
-              'isPostingRestrictedToMods': isPostingRestrictedToMods,
-            }));
+        final response = await client.send(
+          HttpMethod.put,
+          path,
+          body: {
+            'title': title,
+            'description': description,
+            'isAdult': isAdult,
+            'isPostingRestrictedToMods': isPostingRestrictedToMods,
+          },
+        );
 
-        httpErrorHandler(response, message: 'Failed to edit magazine');
-
-        return DetailedMagazineModel.fromMbin(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return DetailedMagazineModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
         throw Exception('Magazine edit not implemented on Lemmy yet');
+
+      case ServerSoftware.piefed:
+        throw UnimplementedError();
     }
   }
 
@@ -166,53 +162,54 @@ class APIMagazineModeration {
     int userId,
     bool state,
   ) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/moderate/magazine/$magazineId/mod/$userId';
+        final path = '/moderate/magazine/$magazineId/mod/$userId';
 
-        final response = await (state
-            ? httpClient.post(Uri.https(server, path))
-            : httpClient.delete(Uri.https(server, path)));
+        final response = await client.send(
+            state ? HttpMethod.post : HttpMethod.delete, path);
 
-        httpErrorHandler(response, message: 'Failed to send moderator update');
-
-        return DetailedMagazineModel.fromMbin(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return DetailedMagazineModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
         throw Exception('Moderator update not implemented on Lemmy yet');
+
+      case ServerSoftware.piefed:
+        throw UnimplementedError();
     }
   }
 
   Future<void> removeIcon(int magazineId) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/moderate/magazine/$magazineId/icon';
+        final path = '/moderate/magazine/$magazineId/icon';
 
-        final response = await httpClient.delete(Uri.https(server, path));
-
-        httpErrorHandler(response, message: 'Failed to remove icon');
+        final response = await client.send(HttpMethod.delete, path);
 
         return;
 
       case ServerSoftware.lemmy:
         throw Exception('Remove icon not implemented on Lemmy yet');
+
+      case ServerSoftware.piefed:
+        throw UnimplementedError();
     }
   }
 
   Future<void> delete(int magazineId) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/moderate/magazine/$magazineId';
+        final path = '/moderate/magazine/$magazineId';
 
-        final response = await httpClient.delete(Uri.https(server, path));
-
-        httpErrorHandler(response, message: 'Failed to delete magazine');
+        final response = await client.send(HttpMethod.delete, path);
 
         return;
 
       case ServerSoftware.lemmy:
         throw Exception('Magazine delete not implemented on Lemmy yet');
+
+      case ServerSoftware.piefed:
+        throw UnimplementedError();
     }
   }
 }
