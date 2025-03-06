@@ -115,16 +115,16 @@ class _LoginConfirmScreenState extends State<LoginConfirmScreen> {
                           final response = await http.post(
                             loginEndpoint,
                             body: jsonEncode({
-                              'username_or_email':
-                                  _usernameEmailTextController.text,
-                              'password': _passwordTextController.text,
-                              'totp_2fa_token': switch (widget.software) {
-                                ServerSoftware.lemmy =>
-                                  nullIfEmpty(_totpTokenTextController.text),
-                                ServerSoftware.piefed => null,
+                              switch (widget.software) {
+                                ServerSoftware.lemmy => 'username_or_email',
+                                ServerSoftware.piefed => 'username',
                                 ServerSoftware.mbin =>
-                                  throw Exception('unreachable')
-                              },
+                                  throw Exception('unreachable'),
+                              }: _usernameEmailTextController.text,
+                              'password': _passwordTextController.text,
+                              if (widget.software == ServerSoftware.lemmy)
+                                'totp_2fa_token':
+                                    nullIfEmpty(_totpTokenTextController.text),
                             }),
                           );
                           ServerClient.checkResponseSuccess(

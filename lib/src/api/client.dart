@@ -65,15 +65,12 @@ class ServerClient {
 
     var message = 'Request failed with status ${response.statusCode}';
 
-    String? errorDetails;
-    try {
-      errorDetails = response.bodyJson['detail'] as String;
-    } catch (e) {
-      // No error details provided in response
-    }
-    errorDetails ??= response.reasonPhrase;
-    if (errorDetails != null) {
+    if (response.reasonPhrase != null) {
       message = '$message: ${response.reasonPhrase}';
+    }
+
+    if (response.body.isNotEmpty) {
+      message = '$message: ${response.body}';
     }
 
     throw http.ClientException(message, url);

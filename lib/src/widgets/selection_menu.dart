@@ -8,7 +8,6 @@ class SelectionMenuItem<T> {
   final String title;
   final IconData? icon;
   final Color? iconColor;
-  final ServerSoftware? validSoftware;
   final String? subtitle;
 
   const SelectionMenuItem({
@@ -16,7 +15,6 @@ class SelectionMenuItem<T> {
     required this.title,
     this.icon,
     this.iconColor,
-    this.validSoftware,
     this.subtitle,
   });
 }
@@ -48,26 +46,21 @@ class SelectionMenu<T> {
               ),
               Flexible(
                 child: ListView(shrinkWrap: true, children: [
-                  ...options
-                      .where((element) =>
-                          element.validSoftware == null ||
-                          element.validSoftware ==
-                              context.watch<AppController>().serverSoftware)
-                      .map(
-                        (option) => ListTile(
-                          title: Text(option.title),
-                          onTap: () => Navigator.pop(context, option.value),
-                          leading: Icon(option.icon, color: option.iconColor),
-                          selected: oldSelection == option.value,
-                          selectedTileColor: Theme.of(context)
-                              .colorScheme
-                              .primaryContainer
-                              .withOpacity(0.2),
-                          subtitle: option.subtitle != null
-                              ? Text(option.subtitle!)
-                              : null,
-                        ),
-                      ),
+                  ...options.map(
+                    (option) => ListTile(
+                      title: Text(option.title),
+                      onTap: () => Navigator.pop(context, option.value),
+                      leading: Icon(option.icon, color: option.iconColor),
+                      selected: oldSelection == option.value,
+                      selectedTileColor: Theme.of(context)
+                          .colorScheme
+                          .primaryContainer
+                          .withOpacity(0.2),
+                      subtitle: option.subtitle != null
+                          ? Text(option.subtitle!)
+                          : null,
+                    ),
+                  ),
                   const SizedBox(height: 16),
                 ]),
               ),

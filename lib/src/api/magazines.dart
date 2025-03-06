@@ -27,7 +27,29 @@ enum APIMagazinesSort {
   topSixMonths,
   topNineMonths,
   controversial,
-  scaled,
+  scaled;
+
+  String toLemmyString() => switch (this) {
+        APIMagazinesSort.active => 'Active',
+        APIMagazinesSort.hot => 'Hot',
+        APIMagazinesSort.newest => 'New',
+        APIMagazinesSort.top => 'TopAll',
+        APIMagazinesSort.oldest => 'Old',
+        APIMagazinesSort.commented => 'MostComments',
+        APIMagazinesSort.newComments => 'NewComments',
+        APIMagazinesSort.topDay => 'TopDay',
+        APIMagazinesSort.topWeek => 'TopWeek',
+        APIMagazinesSort.topMonth => 'TopMonth',
+        APIMagazinesSort.topYear => 'TopYear',
+        APIMagazinesSort.topHour => 'TopHour',
+        APIMagazinesSort.topSixHour => 'TopSixHour',
+        APIMagazinesSort.topTwelveHour => 'TopTwelveHour',
+        APIMagazinesSort.topThreeMonths => 'TopThreeMonths',
+        APIMagazinesSort.topSixMonths => 'TopSixMonths',
+        APIMagazinesSort.topNineMonths => 'TopNineMonths',
+        APIMagazinesSort.controversial => 'Controversial',
+        APIMagazinesSort.scaled => 'Scaled',
+      };
 }
 
 class APIMagazines {
@@ -78,28 +100,7 @@ class APIMagazines {
               null => 'All'
             },
             'limit': '50',
-            'sort': switch (sort) {
-              APIMagazinesSort.active => 'Active',
-              APIMagazinesSort.hot => 'Hot',
-              APIMagazinesSort.newest => 'New',
-              APIMagazinesSort.top => 'TopAll',
-              APIMagazinesSort.oldest => 'Old',
-              APIMagazinesSort.commented => 'MostComments',
-              APIMagazinesSort.newComments => 'NewComments',
-              APIMagazinesSort.topDay => 'TopDay',
-              APIMagazinesSort.topWeek => 'TopWeek',
-              APIMagazinesSort.topMonth => 'TopMonth',
-              APIMagazinesSort.topYear => 'TopYear',
-              APIMagazinesSort.topHour => 'TopHour',
-              APIMagazinesSort.topSixHour => 'TopSixHour',
-              APIMagazinesSort.topTwelveHour => 'TopTwelveHour',
-              APIMagazinesSort.topThreeMonths => 'TopThreeMonths',
-              APIMagazinesSort.topSixMonths => 'TopSixMonths',
-              APIMagazinesSort.topNineMonths => 'TopNineMonths',
-              APIMagazinesSort.controversial => 'Controversial',
-              APIMagazinesSort.scaled => 'Scaled',
-              _ => 'TopAll'
-            },
+            'sort': (sort ?? APIMagazinesSort.top).toLemmyString(),
             'page': page,
           };
 
@@ -126,12 +127,7 @@ class APIMagazines {
               null => 'All'
             },
             'limit': '50',
-            'sort': switch (sort) {
-              APIMagazinesSort.active => 'Active',
-              APIMagazinesSort.hot => 'TopAll',
-              APIMagazinesSort.newest => 'New',
-              _ => 'All'
-            },
+            'sort': (sort ?? APIMagazinesSort.top).toLemmyString(),
             'page': page,
             'q': search,
           };
@@ -148,7 +144,61 @@ class APIMagazines {
         }
 
       case ServerSoftware.piefed:
-        throw UnimplementedError();
+        if (search == null) {
+          const path = '/community/list';
+          final query = {
+            'type_': switch (filter) {
+              ExploreFilter.all => 'All',
+              ExploreFilter.local => 'Local',
+              ExploreFilter.moderated => 'ModeratorView',
+              ExploreFilter.subscribed => 'Subscribed',
+              ExploreFilter.blocked =>
+                throw Exception('Can not filter magazines by blocked on Lemmy'),
+              null => 'All'
+            },
+            'limit': '50',
+            'sort': (sort ?? APIMagazinesSort.top).toLemmyString(),
+            'page': page,
+          };
+
+          final response =
+              await client.send(HttpMethod.get, path, queryParams: query);
+
+          final json = response.bodyJson;
+
+          json['next_page'] =
+              lemmyCalcNextIntPage(json['communities'] as List<dynamic>, page);
+
+          return DetailedMagazineListModel.fromPiefed(json);
+        } else {
+          const path = '/search';
+          final query = {
+            'type_': 'Communities',
+            'listing_type': switch (filter) {
+              ExploreFilter.all => 'All',
+              ExploreFilter.local => 'Local',
+              ExploreFilter.moderated => 'ModeratorView',
+              ExploreFilter.subscribed => 'Subscribed',
+              ExploreFilter.blocked =>
+                throw Exception('Can not filter magazines by blocked on Lemmy'),
+              null => 'All'
+            },
+            'limit': '50',
+            'sort': (sort ?? APIMagazinesSort.top).toLemmyString(),
+            'page': page,
+            'q': search,
+          };
+
+          final response =
+              await client.send(HttpMethod.get, path, queryParams: query);
+
+          final json = response.bodyJson;
+
+          json['next_page'] =
+              lemmyCalcNextIntPage(json['communities'] as List<dynamic>, page);
+
+          return DetailedMagazineListModel.fromPiefed(json);
+        }
     }
   }
 
@@ -172,7 +222,14 @@ class APIMagazines {
             response.bodyJson['community_view'] as Map<String, Object?>);
 
       case ServerSoftware.piefed:
-        throw UnimplementedError();
+        const path = '/community';
+        final query = {'id': magazineId.toString()};
+
+        final response =
+            await client.send(HttpMethod.get, path, queryParams: query);
+
+        return DetailedMagazineModel.fromPiefed(
+            response.bodyJson['community_view'] as Map<String, Object?>);
     }
   }
 
@@ -196,7 +253,14 @@ class APIMagazines {
             response.bodyJson['community_view'] as Map<String, Object?>);
 
       case ServerSoftware.piefed:
-        throw UnimplementedError();
+        const path = '/community';
+        final query = {'name': magazineName.toString()};
+
+        final response =
+            await client.send(HttpMethod.get, path, queryParams: query);
+
+        return DetailedMagazineModel.fromPiefed(
+            response.bodyJson['community_view'] as Map<String, Object?>);
     }
   }
 
@@ -226,7 +290,19 @@ class APIMagazines {
             response.bodyJson['community_view'] as Map<String, Object?>);
 
       case ServerSoftware.piefed:
-        throw UnimplementedError();
+        const path = '/community/follow';
+
+        final response = await client.send(
+          HttpMethod.post,
+          path,
+          body: {
+            'community_id': magazineId,
+            'follow': state,
+          },
+        );
+
+        return DetailedMagazineModel.fromPiefed(
+            response.bodyJson['community_view'] as Map<String, Object?>);
     }
   }
 
@@ -255,7 +331,19 @@ class APIMagazines {
             response.bodyJson['community_view'] as Map<String, Object?>);
 
       case ServerSoftware.piefed:
-        throw UnimplementedError();
+        const path = '/community/block';
+
+        final response = await client.send(
+          HttpMethod.post,
+          path,
+          body: {
+            'community_id': magazineId,
+            'block': state,
+          },
+        );
+
+        return DetailedMagazineModel.fromPiefed(
+            response.bodyJson['community_view'] as Map<String, Object?>);
     }
   }
 }

@@ -22,6 +22,24 @@ class DetailedUserListModel with _$DetailedUserListModel {
         nextPage: mbinCalcNextPaginationPage(
             json['pagination'] as Map<String, Object?>),
       );
+
+  factory DetailedUserListModel.fromLemmy(Map<String, Object?> json) =>
+      DetailedUserListModel(
+        items: (json['users'] as List<dynamic>)
+            .map((item) =>
+                DetailedUserModel.fromLemmy(item as Map<String, Object?>))
+            .toList(),
+        nextPage: json['next_page'] as String?,
+      );
+
+  factory DetailedUserListModel.fromPiefed(Map<String, Object?> json) =>
+      DetailedUserListModel(
+        items: (json['users'] as List<dynamic>)
+            .map((item) =>
+                DetailedUserModel.fromPiefed(item as Map<String, Object?>))
+            .toList(),
+        nextPage: json['next_page'] as String?,
+      );
 }
 
 @freezed
@@ -68,8 +86,7 @@ class DetailedUserModel with _$DetailedUserModel {
   }
 
   factory DetailedUserModel.fromLemmy(Map<String, Object?> json) {
-    final lemmyPersonView = json['person_view'] as Map<String, Object?>;
-    final lemmyPerson = lemmyPersonView['person'] as Map<String, Object?>;
+    final lemmyPerson = json['person'] as Map<String, Object?>;
 
     return DetailedUserModel(
       id: lemmyPerson['id'] as int,
@@ -89,8 +106,7 @@ class DetailedUserModel with _$DetailedUserModel {
   }
 
   factory DetailedUserModel.fromPiefed(Map<String, Object?> json) {
-    final piefedPersonView = json['person_view'] as Map<String, Object?>;
-    final piefedPerson = piefedPersonView['person'] as Map<String, Object?>;
+    final piefedPerson = json['person'] as Map<String, Object?>;
 
     return DetailedUserModel(
       id: piefedPerson['id'] as int,

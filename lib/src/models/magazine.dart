@@ -32,6 +32,15 @@ class DetailedMagazineListModel with _$DetailedMagazineListModel {
             .toList(),
         nextPage: json['next_page'] as String?,
       );
+
+  factory DetailedMagazineListModel.fromPiefed(Map<String, Object?> json) =>
+      DetailedMagazineListModel(
+        items: (json['communities'] as List<dynamic>)
+            .map((item) =>
+                DetailedMagazineModel.fromPiefed(item as Map<String, Object?>))
+            .toList(),
+        nextPage: json['next_page'] as String?,
+      );
 }
 
 @freezed
@@ -141,7 +150,7 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
       isUserSubscribed: (json['subscribed'] as String) != 'NotSubscribed',
       isBlockedByUser: json['blocked'] as bool?,
       isPostingRestrictedToMods:
-          (piefedCommunity['posting_restricted_to_mods']) as bool,
+          (piefedCommunity['restricted_to_mods']) as bool,
       notificationControlStatus: null,
     );
 

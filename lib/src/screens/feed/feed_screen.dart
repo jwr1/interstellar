@@ -411,121 +411,115 @@ SelectionMenu<PostType> feedTypeSelect(BuildContext context) => SelectionMenu(
       ],
     );
 
-SelectionMenu<FeedSort> feedSortSelect(BuildContext context) => SelectionMenu(
-      l(context).sort,
-      [
-        SelectionMenuItem(
-          value: FeedSort.hot,
-          title: l(context).sort_hot,
-          icon: Symbols.local_fire_department_rounded,
-        ),
-        SelectionMenuItem(
-          value: FeedSort.top,
-          title: l(context).sort_top,
-          icon: Symbols.trending_up_rounded,
-        ),
-        SelectionMenuItem(
-          value: FeedSort.newest,
-          title: l(context).sort_newest,
-          icon: Symbols.nest_eco_leaf_rounded,
-        ),
-        SelectionMenuItem(
-          value: FeedSort.active,
-          title: l(context).sort_active,
-          icon: Symbols.rocket_launch_rounded,
-        ),
-        SelectionMenuItem(
-          value: FeedSort.commented,
-          title: l(context).sort_commented,
-          icon: Symbols.chat_rounded,
-        ),
-        SelectionMenuItem(
-          value: FeedSort.oldest,
-          title: l(context).sort_oldest,
-          icon: Symbols.access_time_rounded,
-        ),
+SelectionMenu<FeedSort> feedSortSelect(BuildContext context) {
+  final isLemmy =
+      context.read<AppController>().serverSoftware == ServerSoftware.lemmy;
 
-        //lemmy specific
+  return SelectionMenu(
+    l(context).sort,
+    [
+      SelectionMenuItem(
+        value: FeedSort.hot,
+        title: l(context).sort_hot,
+        icon: Symbols.local_fire_department_rounded,
+      ),
+      SelectionMenuItem(
+        value: FeedSort.top,
+        title: l(context).sort_top,
+        icon: Symbols.trending_up_rounded,
+      ),
+      SelectionMenuItem(
+        value: FeedSort.newest,
+        title: l(context).sort_newest,
+        icon: Symbols.nest_eco_leaf_rounded,
+      ),
+      SelectionMenuItem(
+        value: FeedSort.active,
+        title: l(context).sort_active,
+        icon: Symbols.rocket_launch_rounded,
+      ),
+      SelectionMenuItem(
+        value: FeedSort.commented,
+        title: l(context).sort_commented,
+        icon: Symbols.chat_rounded,
+      ),
+      SelectionMenuItem(
+        value: FeedSort.oldest,
+        title: l(context).sort_oldest,
+        icon: Symbols.access_time_rounded,
+      ),
+
+      // lemmy specific
+      if (isLemmy) ...[
         SelectionMenuItem(
           value: FeedSort.newComments,
           title: l(context).sort_newComments,
           icon: Symbols.mark_chat_unread_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.controversial,
           title: l(context).sort_controversial,
           icon: Symbols.thumbs_up_down_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.scaled,
           title: l(context).sort_scaled,
           icon: Symbols.scale_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topDay,
           title: l(context).sort_topDay,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topWeek,
           title: l(context).sort_topWeek,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topMonth,
           title: l(context).sort_topMonth,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topYear,
           title: l(context).sort_topYear,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topHour,
           title: l(context).sort_topHour,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topSixHour,
           title: l(context).sort_topSixHour,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topTwelveHour,
           title: l(context).sort_topTwelveHour,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topThreeMonths,
           title: l(context).sort_topThreeMonths,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topSixMonths,
           title: l(context).sort_topSixMonths,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topNineMonths,
           title: l(context).sort_topNineMonths,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
       ],
-    );
+    ],
+  );
+}
 
 SelectionMenu<FeedSource> feedFilterSelect(BuildContext context) =>
     SelectionMenu(

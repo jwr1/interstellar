@@ -75,6 +75,14 @@ class _ExploreScreenState extends State<ExploreScreen> {
           break;
 
         case ExploreType.people:
+          // Lemmy cannot search with an empty query
+          if (context.read<AppController>().serverSoftware ==
+                  ServerSoftware.lemmy &&
+              search.isEmpty) {
+            _pagingController.appendLastPage([]);
+            return;
+          }
+
           final newPage = await context.read<AppController>().api.users.list(
                 page: nullIfEmpty(pageKey),
                 filter: filter,
@@ -200,27 +208,27 @@ class _ExploreScreenState extends State<ExploreScreen> {
                             },
                             padding: chipPadding,
                           ),
-                          if (context.read<AppController>().serverSoftware ==
+                          const SizedBox(width: 4),
+                          ChoiceChip(
+                            label: Text(l(context).people),
+                            selected: type == ExploreType.people,
+                            onSelected: (bool selected) {
+                              if (selected) {
+                                setState(() {
+                                  type = ExploreType.people;
+
+                                  if (filter == ExploreFilter.local) {
+                                    filter = ExploreFilter.all;
+                                  }
+
+                                  _pagingController.refresh();
+                                });
+                              }
+                            },
+                            padding: chipPadding,
+                          ),
+                          if (context.watch<AppController>().serverSoftware ==
                               ServerSoftware.mbin) ...[
-                            const SizedBox(width: 4),
-                            ChoiceChip(
-                              label: Text(l(context).people),
-                              selected: type == ExploreType.people,
-                              onSelected: (bool selected) {
-                                if (selected) {
-                                  setState(() {
-                                    type = ExploreType.people;
-
-                                    if (filter == ExploreFilter.local) {
-                                      filter = ExploreFilter.all;
-                                    }
-
-                                    _pagingController.refresh();
-                                  });
-                                }
-                              },
-                              padding: chipPadding,
-                            ),
                             const SizedBox(width: 4),
                             ChoiceChip(
                               label: Text(l(context).domains),
@@ -271,7 +279,12 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                 const Icon(Symbols.arrow_drop_down_rounded),
                               ],
                             ),
-                            onPressed: type == ExploreType.all
+                            onPressed: type == ExploreType.all ||
+                                    (type == ExploreType.people &&
+                                        context
+                                                .watch<AppController>()
+                                                .serverSoftware !=
+                                            ServerSoftware.mbin)
                                 ? null
                                 : () async {
                                     final result = await exploreFilterSelection(
@@ -412,131 +425,138 @@ SelectionMenu<ExploreFilter> exploreFilterSelection(
                       : l(context).filter_moderated,
                   icon: Symbols.lock_rounded,
                 ),
-              SelectionMenuItem(
-                value: ExploreFilter.blocked,
-                title: l(context).filter_blocked,
-                icon: Symbols.block_rounded,
-                validSoftware: ServerSoftware.mbin,
-              ),
+              if (context.read<AppController>().serverSoftware ==
+                  ServerSoftware.mbin)
+                SelectionMenuItem(
+                  value: ExploreFilter.blocked,
+                  title: l(context).filter_blocked,
+                  icon: Symbols.block_rounded,
+                ),
             ]) ??
             [])
       ],
     );
 
-SelectionMenu<APIMagazinesSort> exploreSortSelection(BuildContext context) =>
-    SelectionMenu(
-      l(context).sort,
-      [
-        SelectionMenuItem(
-          value: APIMagazinesSort.hot,
-          title: l(context).sort_hot,
-          icon: Symbols.local_fire_department_rounded,
-        ),
+SelectionMenu<APIMagazinesSort> exploreSortSelection(BuildContext context) {
+  final isMbin =
+      context.read<AppController>().serverSoftware == ServerSoftware.mbin;
+  final isLemmy =
+      context.read<AppController>().serverSoftware == ServerSoftware.lemmy;
+
+  return SelectionMenu(
+    l(context).sort,
+    [
+      SelectionMenuItem(
+        value: APIMagazinesSort.hot,
+        title: l(context).sort_hot,
+        icon: Symbols.local_fire_department_rounded,
+      ),
+      if (!isMbin)
         SelectionMenuItem(
           value: APIMagazinesSort.top,
           title: l(context).sort_top,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
-        SelectionMenuItem(
-          value: APIMagazinesSort.newest,
-          title: l(context).sort_newest,
-          icon: Symbols.nest_eco_leaf_rounded,
-        ),
-        SelectionMenuItem(
-          value: APIMagazinesSort.active,
-          title: l(context).sort_active,
-          icon: Symbols.rocket_launch_rounded,
-        ),
+      SelectionMenuItem(
+        value: APIMagazinesSort.newest,
+        title: l(context).sort_newest,
+        icon: Symbols.nest_eco_leaf_rounded,
+      ),
+      SelectionMenuItem(
+        value: APIMagazinesSort.active,
+        title: l(context).sort_active,
+        icon: Symbols.rocket_launch_rounded,
+      ),
+      if (isLemmy)
         SelectionMenuItem(
           value: APIMagazinesSort.commented,
           title: l(context).sort_commented,
           icon: Symbols.chat_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
+      if (isLemmy)
         SelectionMenuItem(
           value: APIMagazinesSort.oldest,
           title: l(context).sort_oldest,
           icon: Symbols.access_time_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
+      if (isLemmy)
         SelectionMenuItem(
           value: APIMagazinesSort.newComments,
           title: l(context).sort_newComments,
           icon: Symbols.mark_chat_unread_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
+      if (isLemmy)
         SelectionMenuItem(
           value: APIMagazinesSort.controversial,
           title: l(context).sort_controversial,
           icon: Symbols.thumbs_up_down_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
+      if (isLemmy)
         SelectionMenuItem(
           value: APIMagazinesSort.scaled,
           title: l(context).sort_scaled,
           icon: Symbols.scale_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
+      if (isLemmy)
         SelectionMenuItem(
           value: APIMagazinesSort.topDay,
           title: l(context).sort_topDay,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
+      if (isLemmy)
         SelectionMenuItem(
           value: APIMagazinesSort.topWeek,
           title: l(context).sort_topWeek,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
+      if (isLemmy)
         SelectionMenuItem(
           value: APIMagazinesSort.topMonth,
           title: l(context).sort_topMonth,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
+      if (isLemmy)
         SelectionMenuItem(
           value: APIMagazinesSort.topYear,
           title: l(context).sort_topYear,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
+      if (isLemmy)
         SelectionMenuItem(
           value: APIMagazinesSort.topHour,
           title: l(context).sort_topHour,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
+      if (isLemmy)
         SelectionMenuItem(
           value: APIMagazinesSort.topSixHour,
           title: l(context).sort_topSixHour,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
+      if (isLemmy)
         SelectionMenuItem(
           value: APIMagazinesSort.topTwelveHour,
           title: l(context).sort_topTwelveHour,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
+      if (isLemmy)
         SelectionMenuItem(
           value: APIMagazinesSort.topThreeMonths,
           title: l(context).sort_topThreeMonths,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
+      if (isLemmy)
         SelectionMenuItem(
           value: APIMagazinesSort.topSixMonths,
           title: l(context).sort_topSixMonths,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
+      if (isLemmy)
         SelectionMenuItem(
           value: APIMagazinesSort.topNineMonths,
           title: l(context).sort_topNineMonths,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
-      ],
-    );
+    ],
+  );
+}

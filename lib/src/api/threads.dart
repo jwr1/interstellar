@@ -109,8 +109,7 @@ class APIThreads {
         final response =
             await client.send(HttpMethod.get, path, queryParams: query);
 
-        return PostListModel.fromLemmy(
-            response.bodyJson as Map<String, Object?>);
+        return PostListModel.fromLemmy(response.bodyJson);
 
       case ServerSoftware.piefed:
         if (source == FeedSource.user) {
@@ -151,8 +150,7 @@ class APIThreads {
         final response =
             await client.send(HttpMethod.get, path, queryParams: query);
 
-        return PostListModel.fromPiefed(
-            response.bodyJson as Map<String, Object?>);
+        return PostListModel.fromPiefed(response.bodyJson);
     }
   }
 

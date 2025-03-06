@@ -4,9 +4,11 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:interstellar/src/api/client.dart';
+import 'package:interstellar/src/api/magazines.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/screens/explore/explore_screen.dart';
+import 'package:interstellar/src/utils/models.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart';
 
@@ -18,6 +20,7 @@ class APIUsers {
   Future<DetailedUserListModel> list({
     String? page,
     ExploreFilter? filter,
+    APIMagazinesSort? sort,
     String? search,
   }) async {
     switch (client.software) {
@@ -41,10 +44,44 @@ class APIUsers {
         return DetailedUserListModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
-        throw Exception('List users not allowed on lemmy');
+        const path = '/search';
+        final query = {
+          'type_': 'Users',
+          'limit': '50',
+          'sort': (sort ?? APIMagazinesSort.top).toLemmyString(),
+          'page': page,
+          'q': search,
+        };
+
+        final response =
+            await client.send(HttpMethod.get, path, queryParams: query);
+
+        final json = response.bodyJson;
+
+        json['next_page'] =
+            lemmyCalcNextIntPage(json['users'] as List<dynamic>, page);
+
+        return DetailedUserListModel.fromLemmy(json);
 
       case ServerSoftware.piefed:
-        throw Exception('List users not allowed on piefed');
+        const path = '/search';
+        final query = {
+          'type_': 'Users',
+          'limit': '50',
+          'sort': (sort ?? APIMagazinesSort.top).toLemmyString(),
+          'page': page,
+          'q': search,
+        };
+
+        final response =
+            await client.send(HttpMethod.get, path, queryParams: query);
+
+        final json = response.bodyJson;
+
+        json['next_page'] =
+            lemmyCalcNextIntPage(json['users'] as List<dynamic>, page);
+
+        return DetailedUserListModel.fromPiefed(json);
     }
   }
 
@@ -64,7 +101,8 @@ class APIUsers {
         final response =
             await client.send(HttpMethod.get, path, queryParams: query);
 
-        return DetailedUserModel.fromLemmy(response.bodyJson);
+        return DetailedUserModel.fromLemmy(
+            response.bodyJson['person_view'] as Map<String, Object?>);
 
       case ServerSoftware.piefed:
         const path = '/user';
@@ -73,7 +111,8 @@ class APIUsers {
         final response =
             await client.send(HttpMethod.get, path, queryParams: query);
 
-        return DetailedUserModel.fromPiefed(response.bodyJson);
+        return DetailedUserModel.fromPiefed(
+            response.bodyJson['person_view'] as Map<String, Object?>);
     }
   }
 
@@ -94,7 +133,8 @@ class APIUsers {
         final response =
             await client.send(HttpMethod.get, path, queryParams: query);
 
-        return DetailedUserModel.fromLemmy(response.bodyJson);
+        return DetailedUserModel.fromLemmy(
+            response.bodyJson['person_view'] as Map<String, Object?>);
 
       case ServerSoftware.piefed:
         const path = '/user';
@@ -103,7 +143,8 @@ class APIUsers {
         final response =
             await client.send(HttpMethod.get, path, queryParams: query);
 
-        return DetailedUserModel.fromPiefed(response.bodyJson);
+        return DetailedUserModel.fromPiefed(
+            response.bodyJson['person_view'] as Map<String, Object?>);
     }
   }
 
@@ -129,7 +170,7 @@ class APIUsers {
 
         final response = await client.send(HttpMethod.get, path);
 
-        return UserModel.fromLemmy(((response.bodyJson as dynamic)['my_user']
+        return UserModel.fromPiefed(((response.bodyJson as dynamic)['my_user']
             ['local_user_view']['person']) as Map<String, Object?>);
     }
   }
@@ -207,7 +248,8 @@ class APIUsers {
           },
         );
 
-        return DetailedUserModel.fromLemmy(response.bodyJson);
+        return DetailedUserModel.fromLemmy(
+            response.bodyJson['person_view'] as Map<String, Object?>);
 
       case ServerSoftware.piefed:
         const path = '/user/block';
@@ -221,7 +263,8 @@ class APIUsers {
           },
         );
 
-        return DetailedUserModel.fromPiefed(response.bodyJson);
+        return DetailedUserModel.fromPiefed(
+            response.bodyJson['person_view'] as Map<String, Object?>);
     }
   }
 

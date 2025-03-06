@@ -48,8 +48,8 @@ class SearchListModel with _$SearchListModel {
   factory SearchListModel.fromLemmy(Map<String, dynamic> json) {
     List<Object> items = [];
 
-    for (var actor in json['users']) {
-      items.add(DetailedUserModel.fromLemmy({'person_view': actor}));
+    for (var user in json['users']) {
+      items.add(DetailedUserModel.fromLemmy(user));
     }
 
     for (var community in json['communities']) {
@@ -63,6 +63,30 @@ class SearchListModel with _$SearchListModel {
 
     for (var comment in json['comments']) {
       items.add(CommentModel.fromLemmy(comment as Map<String, Object?>));
+    }
+
+    return SearchListModel(
+        items: items, nextPage: json['next_page'] as String?);
+  }
+
+  factory SearchListModel.fromPiefed(Map<String, dynamic> json) {
+    List<Object> items = [];
+
+    for (var user in json['users']) {
+      items.add(DetailedUserModel.fromPiefed(user));
+    }
+
+    for (var community in json['communities']) {
+      items.add(
+          DetailedMagazineModel.fromPiefed(community as Map<String, Object?>));
+    }
+
+    for (var post in json['posts']) {
+      items.add(PostModel.fromPiefed(post as Map<String, Object?>));
+    }
+
+    for (var comment in json['comments']) {
+      items.add(CommentModel.fromPiefed(comment as Map<String, Object?>));
     }
 
     return SearchListModel(

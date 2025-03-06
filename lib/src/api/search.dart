@@ -1,4 +1,3 @@
-
 import 'package:interstellar/src/api/client.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/search.dart';
@@ -50,7 +49,29 @@ class APISearch {
         return SearchListModel.fromLemmy(json);
 
       case ServerSoftware.piefed:
-        throw UnimplementedError();
+        const path = '/search';
+        final query = {
+          'q': search,
+          'page': page ?? '1',
+          'type_': 'All',
+          'listing_type': 'All'
+        };
+
+        final response =
+            await client.send(HttpMethod.get, path, queryParams: query);
+
+        final json = response.bodyJson;
+        String? nextPage;
+        if ((json['comments'] as List<dynamic>).isNotEmpty ||
+            (json['posts'] as List<dynamic>).isNotEmpty ||
+            (json['communities'] as List<dynamic>).isNotEmpty ||
+            (json['users'] as List<dynamic>).isNotEmpty) {
+          nextPage = (int.parse(page ?? '1') + 1).toString();
+        }
+
+        json['next_page'] = nextPage;
+
+        return SearchListModel.fromPiefed(json);
     }
   }
 }
