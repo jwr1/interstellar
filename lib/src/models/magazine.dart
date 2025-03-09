@@ -70,7 +70,7 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
       id: json['magazineId'] as int,
       name: json['name'] as String,
       title: json['title'] as String,
-      icon: mbinGetImage(json['icon'] as Map<String, Object?>?),
+      icon: mbinGetOptionalImage(json['icon'] as Map<String, Object?>?),
       description: json['description'] as String?,
       owner: json['owner'] == null
           ? null
@@ -107,7 +107,7 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
       id: lemmyCommunity['id'] as int,
       name: getLemmyPiefedActorName(lemmyCommunity),
       title: lemmyCommunity['title'] as String,
-      icon: lemmyGetImage(lemmyCommunity['icon'] as String?),
+      icon: lemmyGetOptionalImage(lemmyCommunity['icon'] as String?),
       description: lemmyCommunity['description'] as String?,
       owner: null,
       moderators: [],
@@ -137,7 +137,7 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
       id: piefedCommunity['id'] as int,
       name: getLemmyPiefedActorName(piefedCommunity),
       title: piefedCommunity['title'] as String,
-      icon: lemmyGetImage(piefedCommunity['icon'] as String?),
+      icon: lemmyGetOptionalImage(piefedCommunity['icon'] as String?),
       description: piefedCommunity['description'] as String?,
       owner: null,
       moderators: [],
@@ -171,19 +171,19 @@ class MagazineModel with _$MagazineModel {
   factory MagazineModel.fromMbin(Map<String, Object?> json) => MagazineModel(
         id: json['magazineId'] as int,
         name: json['name'] as String,
-        icon: mbinGetImage(json['icon'] as Map<String, Object?>?),
+        icon: mbinGetOptionalImage(json['icon'] as Map<String, Object?>?),
       );
 
   factory MagazineModel.fromLemmy(Map<String, Object?> json) => MagazineModel(
         id: json['id'] as int,
         name: getLemmyPiefedActorName(json),
-        icon: lemmyGetImage(json['icon'] as String?),
+        icon: lemmyGetOptionalImage(json['icon'] as String?),
       );
 
   factory MagazineModel.fromPiefed(Map<String, Object?> json) => MagazineModel(
         id: json['id'] as int,
         name: getLemmyPiefedActorName(json),
-        icon: lemmyGetImage(json['icon'] as String?),
+        icon: lemmyGetOptionalImage(json['icon'] as String?),
       );
 }
 

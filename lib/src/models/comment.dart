@@ -107,7 +107,7 @@ class CommentModel with _$CommentModel {
         postId: (json['entryId'] ?? json['postId']) as int,
         rootId: json['rootId'] as int?,
         parentId: json['parentId'] as int?,
-        image: mbinGetImage(json['image'] as Map<String, Object?>?),
+        image: mbinGetOptionalImage(json['image'] as Map<String, Object?>?),
         body: json['body'] as String?,
         lang: json['lang'] as String,
         upvotes: json['favourites'] as int?,

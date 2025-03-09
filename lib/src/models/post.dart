@@ -96,7 +96,7 @@ class PostModel with _$PostModel {
         url: (json['type'] == 'image' && json['image'] != null)
             ? null
             : json['url'] as String?,
-        image: mbinGetImage(json['image'] as Map<String, Object?>?),
+        image: mbinGetOptionalImage(json['image'] as Map<String, Object?>?),
         body: json['body'] as String?,
         lang: json['lang'] as String,
         numComments: json['numComments'] as int,
@@ -131,7 +131,7 @@ class PostModel with _$PostModel {
         domain: null,
         title: null,
         url: null,
-        image: mbinGetImage(json['image'] as Map<String, Object?>?),
+        image: mbinGetOptionalImage(json['image'] as Map<String, Object?>?),
         body: json['body'] as String,
         lang: json['lang'] as String,
         numComments: json['comments'] as int,
@@ -174,7 +174,10 @@ class PostModel with _$PostModel {
               (lemmyPost['url_content_type'] as String).startsWith('image/'))
           ? null
           : lemmyPost['url'] as String?,
-      image: lemmyGetImage(lemmyPost['thumbnail_url'] as String?),
+      image: lemmyGetOptionalImage(
+        lemmyPost['thumbnail_url'] as String?,
+        lemmyPost['alt_text'] as String?,
+      ),
       body: lemmyPost['body'] as String?,
       lang: null,
       numComments: lemmyCounts['comments'] as int,
@@ -217,7 +220,10 @@ class PostModel with _$PostModel {
               (piefedPost['url_content_type'] as String).startsWith('image/'))
           ? null
           : piefedPost['url'] as String?,
-      image: lemmyGetImage(piefedPost['thumbnail_url'] as String?),
+      image: lemmyGetOptionalImage(
+        piefedPost['thumbnail_url'] as String?,
+        piefedPost['alt_text'] as String?,
+      ),
       body: piefedPost['body'] as String?,
       lang: null,
       numComments: piefedCounts['comments'] as int,

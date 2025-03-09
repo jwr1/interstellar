@@ -65,8 +65,8 @@ class DetailedUserModel with _$DetailedUserModel {
       id: json['userId'] as int,
       name: mbinNormalizeUsername(json['username'] as String),
       displayName: null,
-      avatar: mbinGetImage(json['avatar'] as Map<String, Object?>?),
-      cover: mbinGetImage(json['cover'] as Map<String, Object?>?),
+      avatar: mbinGetOptionalImage(json['avatar'] as Map<String, Object?>?),
+      cover: mbinGetOptionalImage(json['cover'] as Map<String, Object?>?),
       createdAt: DateTime.parse(json['createdAt'] as String),
       isBot: json['isBot'] as bool,
       about: json['about'] as String?,
@@ -92,8 +92,8 @@ class DetailedUserModel with _$DetailedUserModel {
       id: lemmyPerson['id'] as int,
       name: getLemmyPiefedActorName(lemmyPerson),
       displayName: lemmyPerson['display_name'] as String?,
-      avatar: lemmyGetImage(lemmyPerson['avatar'] as String?),
-      cover: lemmyGetImage(lemmyPerson['banner'] as String?),
+      avatar: lemmyGetOptionalImage(lemmyPerson['avatar'] as String?),
+      cover: lemmyGetOptionalImage(lemmyPerson['banner'] as String?),
       createdAt: DateTime.parse(lemmyPerson['published'] as String),
       isBot: lemmyPerson['bot_account'] as bool,
       about: lemmyPerson['bio'] as String?,
@@ -139,7 +139,7 @@ class UserModel with _$UserModel {
   factory UserModel.fromMbin(Map<String, Object?> json) => UserModel(
         id: json['userId'] as int,
         name: mbinNormalizeUsername(json['username'] as String),
-        avatar: mbinGetImage(json['avatar'] as Map<String, Object?>?),
+        avatar: mbinGetOptionalImage(json['avatar'] as Map<String, Object?>?),
         createdAt: optionalDateTime(json['createdAt'] as String?),
         isBot: (json['isBot'] ?? false) as bool,
       );
@@ -147,7 +147,7 @@ class UserModel with _$UserModel {
   factory UserModel.fromLemmy(Map<String, Object?> json) => UserModel(
         id: json['id'] as int,
         name: getLemmyPiefedActorName(json),
-        avatar: lemmyGetImage(json['avatar'] as String?),
+        avatar: lemmyGetOptionalImage(json['avatar'] as String?),
         createdAt: DateTime.parse(json['published'] as String),
         isBot: json['bot_account'] as bool,
       );

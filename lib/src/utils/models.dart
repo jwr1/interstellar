@@ -12,14 +12,14 @@ String? mbinCalcNextPaginationPage(Map<String, Object?> pagination) {
       : null;
 }
 
-ImageModel? mbinGetImage(Map<String, Object?>? json) {
+ImageModel? mbinGetOptionalImage(Map<String, Object?>? json) {
   return json == null || (json['storageUrl'] ?? json['sourceUrl']) == null
       ? null
       : ImageModel.fromMbin(json);
 }
 
-ImageModel? lemmyGetImage(String? json) {
-  return json == null ? null : ImageModel.fromLemmy(json);
+ImageModel? lemmyGetOptionalImage(String? src, [String? altText]) {
+  return src == null ? null : ImageModel.fromLemmy(src, altText);
 }
 
 String mbinNormalizeUsername(String username) {
