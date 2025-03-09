@@ -46,7 +46,7 @@ class BehaviorSettingsScreen extends StatelessWidget {
             title: Text(l(context).settings_useAccountLanguageFilter),
             subtitle: Text(l(context).settings_useAccountLanguageFilter_help),
             value: ac.profile.useAccountLanguageFilter,
-            onChanged: ac.serverSoftware == ServerSoftware.lemmy
+            onChanged: ac.serverSoftware != ServerSoftware.mbin
                 ? null
                 : (newValue) => ac.updateProfile(
                       ac.selectedProfileValue

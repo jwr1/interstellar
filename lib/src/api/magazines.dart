@@ -1,21 +1,22 @@
-import 'dart:convert';
-
 import 'package:interstellar/src/api/client.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/screens/explore/explore_screen.dart';
 import 'package:interstellar/src/utils/models.dart';
 
-enum APIMagazinesSort {
-  active,
+enum APIExploreSort {
   hot,
+  active,
   newest,
 
   //lemmy specific
-  top,
   oldest,
-  commented,
+  mostComments,
   newComments,
+  controversial,
+  scaled,
+
+  topAll,
   topDay,
   topWeek,
   topMonth,
@@ -25,30 +26,59 @@ enum APIMagazinesSort {
   topTwelveHour,
   topThreeMonths,
   topSixMonths,
-  topNineMonths,
-  controversial,
-  scaled;
+  topNineMonths;
 
-  String toLemmyString() => switch (this) {
-        APIMagazinesSort.active => 'Active',
-        APIMagazinesSort.hot => 'Hot',
-        APIMagazinesSort.newest => 'New',
-        APIMagazinesSort.top => 'TopAll',
-        APIMagazinesSort.oldest => 'Old',
-        APIMagazinesSort.commented => 'MostComments',
-        APIMagazinesSort.newComments => 'NewComments',
-        APIMagazinesSort.topDay => 'TopDay',
-        APIMagazinesSort.topWeek => 'TopWeek',
-        APIMagazinesSort.topMonth => 'TopMonth',
-        APIMagazinesSort.topYear => 'TopYear',
-        APIMagazinesSort.topHour => 'TopHour',
-        APIMagazinesSort.topSixHour => 'TopSixHour',
-        APIMagazinesSort.topTwelveHour => 'TopTwelveHour',
-        APIMagazinesSort.topThreeMonths => 'TopThreeMonths',
-        APIMagazinesSort.topSixMonths => 'TopSixMonths',
-        APIMagazinesSort.topNineMonths => 'TopNineMonths',
-        APIMagazinesSort.controversial => 'Controversial',
-        APIMagazinesSort.scaled => 'Scaled',
+  static List<APIExploreSort> valuesBySoftware(ServerSoftware software) =>
+      switch (software) {
+        ServerSoftware.mbin => [
+            hot,
+            active,
+            newest,
+          ],
+        ServerSoftware.lemmy => values,
+        ServerSoftware.piefed => [
+            hot,
+            topAll,
+            newest,
+            active,
+          ],
+      };
+
+  String nameBySoftware(ServerSoftware software) => switch (software) {
+        ServerSoftware.mbin => switch (this) {
+            APIExploreSort.active => 'active',
+            APIExploreSort.hot => 'hot',
+            APIExploreSort.newest => 'newest',
+            _ => 'hot',
+          },
+        ServerSoftware.lemmy => switch (this) {
+            APIExploreSort.active => 'Active',
+            APIExploreSort.hot => 'Hot',
+            APIExploreSort.newest => 'New',
+            APIExploreSort.topAll => 'TopAll',
+            APIExploreSort.oldest => 'Old',
+            APIExploreSort.mostComments => 'MostComments',
+            APIExploreSort.newComments => 'NewComments',
+            APIExploreSort.topDay => 'TopDay',
+            APIExploreSort.topWeek => 'TopWeek',
+            APIExploreSort.topMonth => 'TopMonth',
+            APIExploreSort.topYear => 'TopYear',
+            APIExploreSort.topHour => 'TopHour',
+            APIExploreSort.topSixHour => 'TopSixHour',
+            APIExploreSort.topTwelveHour => 'TopTwelveHour',
+            APIExploreSort.topThreeMonths => 'TopThreeMonths',
+            APIExploreSort.topSixMonths => 'TopSixMonths',
+            APIExploreSort.topNineMonths => 'TopNineMonths',
+            APIExploreSort.controversial => 'Controversial',
+            APIExploreSort.scaled => 'Scaled',
+          },
+        ServerSoftware.piefed => switch (this) {
+            APIExploreSort.active => 'Active',
+            APIExploreSort.hot => 'Hot',
+            APIExploreSort.newest => 'New',
+            APIExploreSort.topAll => 'Top',
+            _ => 'Hot',
+          },
       };
 }
 
@@ -60,7 +90,7 @@ class APIMagazines {
   Future<DetailedMagazineListModel> list({
     String? page,
     ExploreFilter? filter,
-    APIMagazinesSort? sort,
+    APIExploreSort sort = APIExploreSort.hot,
     String? search,
   }) async {
     switch (client.software) {
@@ -75,7 +105,7 @@ class APIMagazines {
           if (filter == null ||
               filter == ExploreFilter.all ||
               filter == ExploreFilter.local) ...{
-            'sort': sort?.name,
+            'sort': sort.nameBySoftware(client.software),
             'q': search,
             'federation': filter == ExploreFilter.local ? 'local' : null,
           },
@@ -100,7 +130,7 @@ class APIMagazines {
               null => 'All'
             },
             'limit': '50',
-            'sort': (sort ?? APIMagazinesSort.top).toLemmyString(),
+            'sort': sort.nameBySoftware(client.software),
             'page': page,
           };
 
@@ -127,7 +157,7 @@ class APIMagazines {
               null => 'All'
             },
             'limit': '50',
-            'sort': (sort ?? APIMagazinesSort.top).toLemmyString(),
+            'sort': sort.nameBySoftware(client.software),
             'page': page,
             'q': search,
           };
@@ -157,7 +187,7 @@ class APIMagazines {
               null => 'All'
             },
             'limit': '50',
-            'sort': (sort ?? APIMagazinesSort.top).toLemmyString(),
+            'sort': sort.nameBySoftware(client.software),
             'page': page,
           };
 
@@ -184,7 +214,7 @@ class APIMagazines {
               null => 'All'
             },
             'limit': '50',
-            'sort': (sort ?? APIMagazinesSort.top).toLemmyString(),
+            'sort': sort.nameBySoftware(client.software),
             'page': page,
             'q': search,
           };

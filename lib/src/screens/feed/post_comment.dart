@@ -176,15 +176,15 @@ class _PostCommentState extends State<PostComment> {
                   : null,
               openLinkUri: Uri.https(
                 ac.instanceHost,
-                ac.serverSoftware == ServerSoftware.lemmy
-                    ? '/comment/${widget.comment.id}'
-                    : '/m/${widget.comment.magazine.name}/${switch (widget.comment.postType) {
+                ac.serverSoftware == ServerSoftware.mbin
+                    ? '/m/${widget.comment.magazine.name}/${switch (widget.comment.postType) {
                         PostType.thread => 't',
                         PostType.microblog => 'p',
                       }}/${widget.comment.postId}/-/${switch (widget.comment.postType) {
                         PostType.thread => 'comment',
                         PostType.microblog => 'reply',
-                      }}/${widget.comment.id}',
+                      }}/${widget.comment.id}'
+                    : '/comment/${widget.comment.id}',
               ),
               editDraftResourceId:
                   'edit:${widget.comment.postType.name}:comment:${context.watch<AppController>().instanceHost}:${widget.comment.id}',

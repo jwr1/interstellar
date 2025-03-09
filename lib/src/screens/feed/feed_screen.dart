@@ -129,9 +129,8 @@ class _FeedScreenState extends State<FeedScreen> {
         },
       ),
       feedActionSetType(context).withProps(
-        widget.source == FeedSource.domain &&
-                context.watch<AppController>().serverSoftware ==
-                    ServerSoftware.lemmy
+        context.watch<AppController>().serverSoftware != ServerSoftware.mbin ||
+                widget.source == FeedSource.domain
             ? ActionLocation.hide
             : parseEnum(
                 ActionLocation.values,
@@ -206,8 +205,8 @@ class _FeedScreenState extends State<FeedScreen> {
                 .entries
                 .firstWhere((entry) =>
                     entry.value.value ==
-                    (context.watch<AppController>().serverSoftware !=
-                            ServerSoftware.lemmy
+                    (context.watch<AppController>().serverSoftware ==
+                            ServerSoftware.mbin
                         ? context.watch<AppController>().profile.feedDefaultType
                         : PostType.thread))
                 .key,
@@ -414,6 +413,8 @@ SelectionMenu<PostType> feedTypeSelect(BuildContext context) => SelectionMenu(
 SelectionMenu<FeedSort> feedSortSelect(BuildContext context) {
   final isLemmy =
       context.read<AppController>().serverSoftware == ServerSoftware.lemmy;
+  final isPiefed =
+      context.read<AppController>().serverSoftware == ServerSoftware.piefed;
 
   return SelectionMenu(
     l(context).sort,
@@ -438,16 +439,20 @@ SelectionMenu<FeedSort> feedSortSelect(BuildContext context) {
         title: l(context).sort_active,
         icon: Symbols.rocket_launch_rounded,
       ),
-      SelectionMenuItem(
-        value: FeedSort.commented,
-        title: l(context).sort_commented,
-        icon: Symbols.chat_rounded,
-      ),
-      SelectionMenuItem(
-        value: FeedSort.oldest,
-        title: l(context).sort_oldest,
-        icon: Symbols.access_time_rounded,
-      ),
+
+      // Not in PieFed
+      if (!isPiefed) ...[
+        SelectionMenuItem(
+          value: FeedSort.commented,
+          title: l(context).sort_commented,
+          icon: Symbols.chat_rounded,
+        ),
+        SelectionMenuItem(
+          value: FeedSort.oldest,
+          title: l(context).sort_oldest,
+          icon: Symbols.access_time_rounded,
+        ),
+      ],
 
       // lemmy specific
       if (isLemmy) ...[

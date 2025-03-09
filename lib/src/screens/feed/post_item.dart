@@ -126,12 +126,12 @@ class PostItem extends StatelessWidget {
       numComments: item.numComments,
       openLinkUri: Uri.https(
         ac.instanceHost,
-        ac.serverSoftware == ServerSoftware.lemmy
-            ? '/post/${item.id}'
-            : '/m/${item.magazine.name}/${switch (item.type) {
+        ac.serverSoftware == ServerSoftware.mbin
+            ? '/m/${item.magazine.name}/${switch (item.type) {
                 PostType.thread => 't',
                 PostType.microblog => 'p',
-              }}/${item.id}',
+              }}/${item.id}'
+            : '/post/${item.id}',
       ),
       editDraftResourceId:
           'edit:${item.type.name}:${ac.instanceHost}:${item.id}',

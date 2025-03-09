@@ -142,8 +142,29 @@ class MbinAPINotifications {
         throw Exception('Notification update control not implemented on Lemmy');
 
       case ServerSoftware.piefed:
-        throw Exception(
-            'Notification update control not implemented on PieFed');
+        final path = switch (targetType) {
+          NotificationControlUpdateTargetType.entry => '/post/subscribe',
+          NotificationControlUpdateTargetType.post =>
+            throw UnsupportedError('Microblogs not on PieFed'),
+          NotificationControlUpdateTargetType.magazine =>
+            '/community/subscribe',
+          NotificationControlUpdateTargetType.user => '/user/subscribe',
+        };
+
+        final response = await client.send(
+          HttpMethod.put,
+          path,
+          body: {
+            switch (targetType) {
+              NotificationControlUpdateTargetType.entry => 'post_id',
+              NotificationControlUpdateTargetType.post =>
+                throw UnsupportedError('Microblogs not on PieFed'),
+              NotificationControlUpdateTargetType.magazine => 'community_id',
+              NotificationControlUpdateTargetType.user => 'person_id',
+            }: targetId,
+            'subscribe': status == NotificationControlStatus.loud,
+          },
+        );
     }
   }
 }

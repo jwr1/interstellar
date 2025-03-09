@@ -22,7 +22,7 @@ class _AccountScreenState extends State<AccountScreen> {
   Widget build(BuildContext context) {
     return whenLoggedIn(
           context,
-          context.read<AppController>().serverSoftware == ServerSoftware.lemmy
+          context.read<AppController>().serverSoftware != ServerSoftware.mbin
               ? const SelfFeed()
               : DefaultTabController(
                   length: 3,

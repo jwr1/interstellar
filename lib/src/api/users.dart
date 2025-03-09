@@ -20,7 +20,7 @@ class APIUsers {
   Future<DetailedUserListModel> list({
     String? page,
     ExploreFilter? filter,
-    APIMagazinesSort? sort,
+    APIExploreSort sort = APIExploreSort.hot,
     String? search,
   }) async {
     switch (client.software) {
@@ -48,9 +48,14 @@ class APIUsers {
         final query = {
           'type_': 'Users',
           'limit': '50',
-          'sort': (sort ?? APIMagazinesSort.top).toLemmyString(),
+          'sort': sort.nameBySoftware(client.software),
           'page': page,
           'q': search,
+          'listing_type': switch (filter) {
+            ExploreFilter.all => 'All',
+            ExploreFilter.local => 'Local',
+            _ => 'All',
+          },
         };
 
         final response =
@@ -68,9 +73,14 @@ class APIUsers {
         final query = {
           'type_': 'Users',
           'limit': '50',
-          'sort': (sort ?? APIMagazinesSort.top).toLemmyString(),
+          'sort': sort.nameBySoftware(client.software),
           'page': page,
           'q': search,
+          'listing_type': switch (filter) {
+            ExploreFilter.all => 'All',
+            ExploreFilter.local => 'Local',
+            _ => 'All',
+          },
         };
 
         final response =

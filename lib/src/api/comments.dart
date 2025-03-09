@@ -1,7 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/widgets.dart';
 import 'package:interstellar/src/api/client.dart';
+import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/comment.dart';
 import 'package:interstellar/src/models/post.dart';
@@ -9,8 +8,15 @@ import 'package:interstellar/src/utils/models.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/selection_menu.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:provider/provider.dart';
 
-enum CommentSort { newest, top, hot, active, oldest }
+enum CommentSort {
+  hot,
+  top,
+  newest,
+  active,
+  oldest,
+}
 
 const Map<CommentSort, String> lemmyCommentSortMap = {
   CommentSort.active: 'Controversial',
@@ -39,16 +45,20 @@ SelectionMenu<CommentSort> commentSortSelect(BuildContext context) =>
           title: l(context).sort_newest,
           icon: Symbols.nest_eco_leaf_rounded,
         ),
-        SelectionMenuItem(
-          value: CommentSort.active,
-          title: l(context).sort_active,
-          icon: Symbols.rocket_launch_rounded,
-        ),
-        SelectionMenuItem(
-          value: CommentSort.oldest,
-          title: l(context).sort_oldest,
-          icon: Symbols.access_time_rounded,
-        ),
+        if (context.read<AppController>().serverSoftware !=
+            ServerSoftware.piefed)
+          SelectionMenuItem(
+            value: CommentSort.active,
+            title: l(context).sort_active,
+            icon: Symbols.rocket_launch_rounded,
+          ),
+        if (context.read<AppController>().serverSoftware !=
+            ServerSoftware.piefed)
+          SelectionMenuItem(
+            value: CommentSort.oldest,
+            title: l(context).sort_oldest,
+            icon: Symbols.access_time_rounded,
+          ),
       ],
     );
 

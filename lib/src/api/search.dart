@@ -1,6 +1,7 @@
 import 'package:interstellar/src/api/client.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/search.dart';
+import 'package:interstellar/src/screens/explore/explore_screen.dart';
 
 class APISearch {
   final ServerClient client;
@@ -10,6 +11,7 @@ class APISearch {
   Future<SearchListModel> get({
     String? page,
     String? search,
+    ExploreFilter? filter,
   }) async {
     switch (client.software) {
       case ServerSoftware.mbin:
@@ -29,7 +31,11 @@ class APISearch {
           'q': search,
           'page': page ?? '1',
           'type_': 'All',
-          'listing_type': 'All'
+          'listing_type': switch (filter) {
+            ExploreFilter.all => 'All',
+            ExploreFilter.local => 'Local',
+            _ => 'All',
+          },
         };
 
         final response =
@@ -53,8 +59,13 @@ class APISearch {
         final query = {
           'q': search,
           'page': page ?? '1',
-          'type_': 'All',
-          'listing_type': 'All'
+          // Only use "Posts" type until "All" type is supported in PieFed
+          'type_': 'Posts',
+          'listing_type': switch (filter) {
+            ExploreFilter.all => 'All',
+            ExploreFilter.local => 'Local',
+            _ => 'All',
+          },
         };
 
         final response =

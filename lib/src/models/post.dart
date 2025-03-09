@@ -234,7 +234,11 @@ class PostModel with _$PostModel {
       lastActive: DateTime.parse(piefedCounts['newest_comment_time'] as String),
       visibility: 'visible',
       canAuthUserModerate: null,
-      notificationControlStatus: null,
+      notificationControlStatus: json['activity_alert'] == null
+          ? null
+          : json['activity_alert'] as bool
+              ? NotificationControlStatus.loud
+              : NotificationControlStatus.default_,
       bookmarks: [
         // Empty string indicates post is saved. No string indicates post is not saved.
         if (json['saved'] as bool) '',

@@ -260,8 +260,8 @@ class AppController with ChangeNotifier {
       return _servers[server]!.oauthIdentifier!;
     }
 
-    if (software == ServerSoftware.lemmy) {
-      throw Exception('Tried to register oauth for lemmy');
+    if (software != ServerSoftware.mbin) {
+      throw Exception('Register oauth only allowed on mbin');
     }
 
     String oauthIdentifier = await registerOauthApp(server);
@@ -418,7 +418,7 @@ class AppController with ChangeNotifier {
 
   Future<void> registerPush(BuildContext context) async {
     if (serverSoftware != ServerSoftware.mbin) {
-      throw Exception('Push notifications only supported on Mbin');
+      throw Exception('Push notifications only allowed on Mbin');
     }
 
     final permissionsResult = await FlutterLocalNotificationsPlugin()
@@ -441,7 +441,7 @@ class AppController with ChangeNotifier {
 
   Future<void> unregisterPush([String? overrideAccount]) async {
     if (serverSoftware != ServerSoftware.mbin) {
-      throw Exception('Push notifications only supported on Mbin');
+      throw Exception('Push notifications only allowed on Mbin');
     }
 
     final account = overrideAccount ?? _selectedAccount;

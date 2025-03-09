@@ -26,7 +26,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
   ExploreType type = ExploreType.magazines;
 
-  APIMagazinesSort sort = APIMagazinesSort.hot;
+  APIExploreSort sort = APIExploreSort.hot;
   ExploreFilter filter = ExploreFilter.all;
 
   final PagingController<String, dynamic> _pagingController =
@@ -217,7 +217,16 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                 setState(() {
                                   type = ExploreType.people;
 
-                                  if (filter == ExploreFilter.local) {
+                                  if (context
+                                                  .read<AppController>()
+                                                  .serverSoftware ==
+                                              ServerSoftware.mbin &&
+                                          filter == ExploreFilter.local ||
+                                      context
+                                                  .read<AppController>()
+                                                  .serverSoftware !=
+                                              ServerSoftware.mbin &&
+                                          filter == ExploreFilter.subscribed) {
                                     filter = ExploreFilter.all;
                                   }
 
@@ -256,7 +265,20 @@ class _ExploreScreenState extends State<ExploreScreen> {
                             onSelected: (bool selected) {
                               if (selected) {
                                 setState(() {
+                                  if (context
+                                              .read<AppController>()
+                                              .serverSoftware ==
+                                          ServerSoftware.mbin ||
+                                      context
+                                                  .read<AppController>()
+                                                  .serverSoftware !=
+                                              ServerSoftware.mbin &&
+                                          filter == ExploreFilter.subscribed) {
+                                    filter = ExploreFilter.all;
+                                  }
+
                                   type = ExploreType.all;
+
                                   _pagingController.refresh();
                                 });
                               }
@@ -279,12 +301,11 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                 const Icon(Symbols.arrow_drop_down_rounded),
                               ],
                             ),
-                            onPressed: type == ExploreType.all ||
-                                    (type == ExploreType.people &&
-                                        context
-                                                .watch<AppController>()
-                                                .serverSoftware !=
-                                            ServerSoftware.mbin)
+                            onPressed: context
+                                            .read<AppController>()
+                                            .serverSoftware ==
+                                        ServerSoftware.mbin &&
+                                    type != ExploreType.all
                                 ? null
                                 : () async {
                                     final result = await exploreFilterSelection(
@@ -401,8 +422,8 @@ SelectionMenu<ExploreFilter> exploreFilterSelection(
           title: l(context).filter_allResults,
           icon: Symbols.newspaper_rounded,
         ),
-        if (context.read<AppController>().serverSoftware ==
-                ServerSoftware.lemmy ||
+        if (context.read<AppController>().serverSoftware !=
+                ServerSoftware.mbin ||
             type == ExploreType.magazines)
           SelectionMenuItem(
             value: ExploreFilter.local,
@@ -410,13 +431,16 @@ SelectionMenu<ExploreFilter> exploreFilterSelection(
             icon: Symbols.home_rounded,
           ),
         ...(whenLoggedIn(context, [
-              SelectionMenuItem(
-                value: ExploreFilter.subscribed,
-                title: type == ExploreType.people
-                    ? l(context).filter_followed
-                    : l(context).filter_subscribed,
-                icon: Symbols.people_rounded,
-              ),
+              if (context.read<AppController>().serverSoftware ==
+                      ServerSoftware.mbin ||
+                  type == ExploreType.magazines)
+                SelectionMenuItem(
+                  value: ExploreFilter.subscribed,
+                  title: type == ExploreType.people
+                      ? l(context).filter_followed
+                      : l(context).filter_subscribed,
+                  icon: Symbols.people_rounded,
+                ),
               if (type != ExploreType.domains)
                 SelectionMenuItem(
                   value: ExploreFilter.moderated,
@@ -437,126 +461,110 @@ SelectionMenu<ExploreFilter> exploreFilterSelection(
       ],
     );
 
-SelectionMenu<APIMagazinesSort> exploreSortSelection(BuildContext context) {
-  final isMbin =
-      context.read<AppController>().serverSoftware == ServerSoftware.mbin;
-  final isLemmy =
-      context.read<AppController>().serverSoftware == ServerSoftware.lemmy;
+SelectionMenu<APIExploreSort> exploreSortSelection(BuildContext context) {
+  final options = [
+    SelectionMenuItem(
+      value: APIExploreSort.hot,
+      title: l(context).sort_hot,
+      icon: Symbols.local_fire_department_rounded,
+    ),
+    SelectionMenuItem(
+      value: APIExploreSort.topAll,
+      title: l(context).sort_top,
+      icon: Symbols.trending_up_rounded,
+    ),
+    SelectionMenuItem(
+      value: APIExploreSort.newest,
+      title: l(context).sort_newest,
+      icon: Symbols.nest_eco_leaf_rounded,
+    ),
+    SelectionMenuItem(
+      value: APIExploreSort.active,
+      title: l(context).sort_active,
+      icon: Symbols.rocket_launch_rounded,
+    ),
+    SelectionMenuItem(
+      value: APIExploreSort.mostComments,
+      title: l(context).sort_commented,
+      icon: Symbols.chat_rounded,
+    ),
+    SelectionMenuItem(
+      value: APIExploreSort.oldest,
+      title: l(context).sort_oldest,
+      icon: Symbols.access_time_rounded,
+    ),
+    SelectionMenuItem(
+      value: APIExploreSort.newComments,
+      title: l(context).sort_newComments,
+      icon: Symbols.mark_chat_unread_rounded,
+    ),
+    SelectionMenuItem(
+      value: APIExploreSort.controversial,
+      title: l(context).sort_controversial,
+      icon: Symbols.thumbs_up_down_rounded,
+    ),
+    SelectionMenuItem(
+      value: APIExploreSort.scaled,
+      title: l(context).sort_scaled,
+      icon: Symbols.scale_rounded,
+    ),
+    SelectionMenuItem(
+      value: APIExploreSort.topDay,
+      title: l(context).sort_topDay,
+      icon: Symbols.trending_up_rounded,
+    ),
+    SelectionMenuItem(
+      value: APIExploreSort.topWeek,
+      title: l(context).sort_topWeek,
+      icon: Symbols.trending_up_rounded,
+    ),
+    SelectionMenuItem(
+      value: APIExploreSort.topMonth,
+      title: l(context).sort_topMonth,
+      icon: Symbols.trending_up_rounded,
+    ),
+    SelectionMenuItem(
+      value: APIExploreSort.topYear,
+      title: l(context).sort_topYear,
+      icon: Symbols.trending_up_rounded,
+    ),
+    SelectionMenuItem(
+      value: APIExploreSort.topHour,
+      title: l(context).sort_topHour,
+      icon: Symbols.trending_up_rounded,
+    ),
+    SelectionMenuItem(
+      value: APIExploreSort.topSixHour,
+      title: l(context).sort_topSixHour,
+      icon: Symbols.trending_up_rounded,
+    ),
+    SelectionMenuItem(
+      value: APIExploreSort.topTwelveHour,
+      title: l(context).sort_topTwelveHour,
+      icon: Symbols.trending_up_rounded,
+    ),
+    SelectionMenuItem(
+      value: APIExploreSort.topThreeMonths,
+      title: l(context).sort_topThreeMonths,
+      icon: Symbols.trending_up_rounded,
+    ),
+    SelectionMenuItem(
+      value: APIExploreSort.topSixMonths,
+      title: l(context).sort_topSixMonths,
+      icon: Symbols.trending_up_rounded,
+    ),
+    SelectionMenuItem(
+      value: APIExploreSort.topNineMonths,
+      title: l(context).sort_topNineMonths,
+      icon: Symbols.trending_up_rounded,
+    ),
+  ];
 
   return SelectionMenu(
     l(context).sort,
-    [
-      SelectionMenuItem(
-        value: APIMagazinesSort.hot,
-        title: l(context).sort_hot,
-        icon: Symbols.local_fire_department_rounded,
-      ),
-      if (!isMbin)
-        SelectionMenuItem(
-          value: APIMagazinesSort.top,
-          title: l(context).sort_top,
-          icon: Symbols.trending_up_rounded,
-        ),
-      SelectionMenuItem(
-        value: APIMagazinesSort.newest,
-        title: l(context).sort_newest,
-        icon: Symbols.nest_eco_leaf_rounded,
-      ),
-      SelectionMenuItem(
-        value: APIMagazinesSort.active,
-        title: l(context).sort_active,
-        icon: Symbols.rocket_launch_rounded,
-      ),
-      if (isLemmy)
-        SelectionMenuItem(
-          value: APIMagazinesSort.commented,
-          title: l(context).sort_commented,
-          icon: Symbols.chat_rounded,
-        ),
-      if (isLemmy)
-        SelectionMenuItem(
-          value: APIMagazinesSort.oldest,
-          title: l(context).sort_oldest,
-          icon: Symbols.access_time_rounded,
-        ),
-      if (isLemmy)
-        SelectionMenuItem(
-          value: APIMagazinesSort.newComments,
-          title: l(context).sort_newComments,
-          icon: Symbols.mark_chat_unread_rounded,
-        ),
-      if (isLemmy)
-        SelectionMenuItem(
-          value: APIMagazinesSort.controversial,
-          title: l(context).sort_controversial,
-          icon: Symbols.thumbs_up_down_rounded,
-        ),
-      if (isLemmy)
-        SelectionMenuItem(
-          value: APIMagazinesSort.scaled,
-          title: l(context).sort_scaled,
-          icon: Symbols.scale_rounded,
-        ),
-      if (isLemmy)
-        SelectionMenuItem(
-          value: APIMagazinesSort.topDay,
-          title: l(context).sort_topDay,
-          icon: Symbols.trending_up_rounded,
-        ),
-      if (isLemmy)
-        SelectionMenuItem(
-          value: APIMagazinesSort.topWeek,
-          title: l(context).sort_topWeek,
-          icon: Symbols.trending_up_rounded,
-        ),
-      if (isLemmy)
-        SelectionMenuItem(
-          value: APIMagazinesSort.topMonth,
-          title: l(context).sort_topMonth,
-          icon: Symbols.trending_up_rounded,
-        ),
-      if (isLemmy)
-        SelectionMenuItem(
-          value: APIMagazinesSort.topYear,
-          title: l(context).sort_topYear,
-          icon: Symbols.trending_up_rounded,
-        ),
-      if (isLemmy)
-        SelectionMenuItem(
-          value: APIMagazinesSort.topHour,
-          title: l(context).sort_topHour,
-          icon: Symbols.trending_up_rounded,
-        ),
-      if (isLemmy)
-        SelectionMenuItem(
-          value: APIMagazinesSort.topSixHour,
-          title: l(context).sort_topSixHour,
-          icon: Symbols.trending_up_rounded,
-        ),
-      if (isLemmy)
-        SelectionMenuItem(
-          value: APIMagazinesSort.topTwelveHour,
-          title: l(context).sort_topTwelveHour,
-          icon: Symbols.trending_up_rounded,
-        ),
-      if (isLemmy)
-        SelectionMenuItem(
-          value: APIMagazinesSort.topThreeMonths,
-          title: l(context).sort_topThreeMonths,
-          icon: Symbols.trending_up_rounded,
-        ),
-      if (isLemmy)
-        SelectionMenuItem(
-          value: APIMagazinesSort.topSixMonths,
-          title: l(context).sort_topSixMonths,
-          icon: Symbols.trending_up_rounded,
-        ),
-      if (isLemmy)
-        SelectionMenuItem(
-          value: APIMagazinesSort.topNineMonths,
-          title: l(context).sort_topNineMonths,
-          icon: Symbols.trending_up_rounded,
-        ),
-    ],
+    APIExploreSort.valuesBySoftware(
+            context.read<AppController>().serverSoftware)
+        .map((value) => options.firstWhere((option) => option.value == value))
+        .toList(),
   );
 }
