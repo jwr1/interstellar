@@ -16,7 +16,7 @@ import '../../widgets/avatar.dart';
 
 class ProfileEditScreen extends StatefulWidget {
   final DetailedUserModel user;
-  final void Function(DetailedUserModel?) onUpdate;
+  final void Function(DetailedUserModel) onUpdate;
 
   const ProfileEditScreen(this.user, this.onUpdate, {super.key});
 
@@ -97,6 +97,11 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
             .users
             .updateCover(_coverFile!);
       }
+
+      if (!context.mounted) return;
+
+      user ??= await context.read<AppController>().api.users.getMe();
+
       if (!context.mounted) return;
 
       widget.onUpdate(user);
@@ -121,6 +126,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
               fit: StackFit.passthrough,
               children: [
                 Stack(
+                  fit: StackFit.passthrough,
                   children: [
                     Container(
                       constraints: BoxConstraints(
@@ -224,12 +230,13 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                   ),
                 ),
                 Positioned(
-                    bottom: 0,
-                    right: 16,
-                    child: FilledButton(
-                      onPressed: onSave,
-                      child: Text(l(context).saveChanges),
-                    )),
+                  bottom: 0,
+                  right: 16,
+                  child: LoadingFilledButton(
+                    onPressed: onSave,
+                    label: Text(l(context).saveChanges),
+                  ),
+                ),
               ],
             ),
             Padding(

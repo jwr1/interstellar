@@ -158,30 +158,30 @@ class APIUsers {
     }
   }
 
-  Future<UserModel> getMe() async {
+  Future<DetailedUserModel> getMe() async {
     switch (client.software) {
       case ServerSoftware.mbin:
         const path = '/users/me';
 
         final response = await client.send(HttpMethod.get, path);
 
-        return UserModel.fromMbin(response.bodyJson);
+        return DetailedUserModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
         const path = '/site';
 
         final response = await client.send(HttpMethod.get, path);
 
-        return UserModel.fromLemmy(((response.bodyJson as dynamic)['my_user']
-            ['local_user_view']['person']) as Map<String, Object?>);
+        return DetailedUserModel.fromLemmy(((response.bodyJson
+            as dynamic)['my_user']['local_user_view']) as Map<String, Object?>);
 
       case ServerSoftware.piefed:
         const path = '/site';
 
         final response = await client.send(HttpMethod.get, path);
 
-        return UserModel.fromPiefed(((response.bodyJson as dynamic)['my_user']
-            ['local_user_view']['person']) as Map<String, Object?>);
+        return DetailedUserModel.fromPiefed(((response.bodyJson
+            as dynamic)['my_user']['local_user_view']) as Map<String, Object?>);
     }
   }
 
@@ -332,7 +332,7 @@ class APIUsers {
     }
   }
 
-  Future<DetailedUserModel> deleteAvatar() async {
+  Future<DetailedUserModel?> deleteAvatar() async {
     switch (client.software) {
       case ServerSoftware.mbin:
         const path = '/users/avatar';
@@ -341,7 +341,15 @@ class APIUsers {
         return DetailedUserModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
-        throw UnimplementedError();
+        const path = '/user/save_user_settings';
+
+        final response = await client.send(
+          HttpMethod.put,
+          path,
+          body: {'avatar': ''},
+        );
+
+        return null;
 
       case ServerSoftware.piefed:
         throw UnimplementedError();
@@ -402,7 +410,7 @@ class APIUsers {
     }
   }
 
-  Future<DetailedUserModel> deleteCover() async {
+  Future<DetailedUserModel?> deleteCover() async {
     switch (client.software) {
       case ServerSoftware.mbin:
         const path = '/users/cover';
@@ -411,7 +419,15 @@ class APIUsers {
         return DetailedUserModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
-        throw UnimplementedError();
+        const path = '/user/save_user_settings';
+
+        final response = await client.send(
+          HttpMethod.put,
+          path,
+          body: {'banner': ''},
+        );
+
+        return null;
 
       case ServerSoftware.piefed:
         throw UnimplementedError();

@@ -13,7 +13,7 @@ class SelfFeed extends StatefulWidget {
 }
 
 class _SelfFeedState extends State<SelfFeed> {
-  UserModel? _meUser;
+  DetailedUserModel? _meUser;
 
   @override
   void initState() {
@@ -39,6 +39,6 @@ class _SelfFeedState extends State<SelfFeed> {
 
     final user = _meUser!;
 
-    return UserScreen(user.id);
+    return UserScreen(user.id, initData: _meUser);
   }
 }

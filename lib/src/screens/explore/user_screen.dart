@@ -179,7 +179,7 @@ class _UserScreenState extends State<UserScreen> {
                                             .push(MaterialPageRoute(
                                                 builder: (context) {
                                           return ProfileEditScreen(_data!,
-                                              (DetailedUserModel? user) {
+                                              (DetailedUserModel user) {
                                             setState(() {
                                               _data = user;
                                             });
@@ -486,7 +486,7 @@ class _UserScreenBodyState extends State<UserScreenBody> {
   }
 
   Future<void> _fetchPage(String pageKey) async {
-    final ac = context.watch<AppController>();
+    final ac = context.read<AppController>();
 
     const Map<FeedSort, CommentSort> feedToCommentSortMap = {
       FeedSort.active: CommentSort.active,
