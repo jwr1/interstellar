@@ -46,7 +46,7 @@ class API {
 }
 
 Future<ServerSoftware?> getServerSoftware(String server) async {
-  final response = await http.get(Uri.https(server, '/nodeinfo/2.0'));
+  final response = await http.get(Uri.https(server, '/nodeinfo/2.0.json'));
 
   try {
     return ServerSoftware.values.byName(((response.bodyJson['software']
