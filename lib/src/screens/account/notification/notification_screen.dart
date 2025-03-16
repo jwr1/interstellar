@@ -20,11 +20,14 @@ class NotificationsScreen extends StatefulWidget {
   State<NotificationsScreen> createState() => _NotificationsScreenState();
 }
 
-class _NotificationsScreenState extends State<NotificationsScreen> {
+class _NotificationsScreenState extends State<NotificationsScreen> with AutomaticKeepAliveClientMixin<NotificationsScreen> {
   NotificationsFilter filter = NotificationsFilter.all;
 
   final PagingController<String, NotificationModel> _pagingController =
       PagingController(firstPageKey: '');
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -62,6 +65,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final currentNotificationFilter =
         notificationFilterSelect(context).getOption(filter);
 

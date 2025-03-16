@@ -17,9 +17,14 @@ class AccountScreen extends StatefulWidget {
   State<AccountScreen> createState() => _AccountScreenState();
 }
 
-class _AccountScreenState extends State<AccountScreen> {
+class _AccountScreenState extends State<AccountScreen> with AutomaticKeepAliveClientMixin<AccountScreen> {
+
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return whenLoggedIn(
           context,
           context.read<AppController>().serverSoftware == ServerSoftware.lemmy

@@ -39,12 +39,15 @@ class FeedScreen extends StatefulWidget {
   State<FeedScreen> createState() => _FeedScreenState();
 }
 
-class _FeedScreenState extends State<FeedScreen> {
+class _FeedScreenState extends State<FeedScreen> with AutomaticKeepAliveClientMixin<FeedScreen> {
   final _fabKey = GlobalKey<FloatingMenuState>();
   final List<GlobalKey<_FeedScreenBodyState>> _feedKeyList = [];
   late FeedSource _filter;
   late PostType _mode;
   FeedSort? _sort;
+
+  @override
+  bool get wantKeepAlive => true;
 
   _getFeedKey(int index) {
     while (index >= _feedKeyList.length) {
@@ -73,6 +76,7 @@ class _FeedScreenState extends State<FeedScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final sort = _sort ?? _defaultSortFromMode(_mode);
 
     final currentFeedModeOption = feedTypeSelect(context).getOption(_mode);
@@ -574,7 +578,7 @@ class FeedScreenBody extends StatefulWidget {
   State<FeedScreenBody> createState() => _FeedScreenBodyState();
 }
 
-class _FeedScreenBodyState extends State<FeedScreenBody> {
+class _FeedScreenBodyState extends State<FeedScreenBody>  with AutomaticKeepAliveClientMixin<FeedScreenBody> {
   final _pagingController =
       PagingController<String, PostModel>(firstPageKey: '');
   final _scrollController = ScrollController();
@@ -589,6 +593,9 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
 
     _pagingController.addPageRequestListener(_fetchPage);
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
   Future<void> _fetchPage(String pageKey) async {
     if (pageKey.isEmpty) _filterListWarnings.clear();
@@ -700,6 +707,7 @@ class _FeedScreenBodyState extends State<FeedScreenBody> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return RefreshIndicator(
       onRefresh: () => Future.sync(
         () => _pagingController.refresh(),

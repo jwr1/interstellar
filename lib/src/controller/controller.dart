@@ -72,6 +72,8 @@ class AppController with ChangeNotifier {
   late Map<String, FilterList> _filterLists;
   Map<String, FilterList> get filterLists => _filterLists;
 
+  late Function refreshState;
+
   Future<void> init() async {
     final mainProfileTemp = await _mainProfileRecord.get(db) as String?;
     if (mainProfileTemp != null) {
@@ -346,6 +348,7 @@ class AppController with ChangeNotifier {
     magazineMentionCache.clear();
 
     notifyListeners();
+    refreshState();
 
     await _selectedAccountRecord.put(db, _selectedAccount);
   }
