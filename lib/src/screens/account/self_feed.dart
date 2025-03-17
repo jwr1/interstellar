@@ -12,8 +12,11 @@ class SelfFeed extends StatefulWidget {
   State<SelfFeed> createState() => _SelfFeedState();
 }
 
-class _SelfFeedState extends State<SelfFeed> {
+class _SelfFeedState extends State<SelfFeed> with AutomaticKeepAliveClientMixin<SelfFeed> {
   UserModel? _meUser;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -33,6 +36,7 @@ class _SelfFeedState extends State<SelfFeed> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     if (_meUser == null) {
       return const LoadingTemplate();
     }

@@ -72,7 +72,10 @@ class AppController with ChangeNotifier {
   late Map<String, FilterList> _filterLists;
   Map<String, FilterList> get filterLists => _filterLists;
 
+  late Function refreshState;
+
   Future<void> init() async {
+    refreshState = (){};
     final mainProfileTemp = await _mainProfileRecord.get(db) as String?;
     if (mainProfileTemp != null) {
       _mainProfile = mainProfileTemp;
@@ -134,6 +137,7 @@ class AppController with ChangeNotifier {
     _builtProfile = ProfileRequired.fromOptional(
       (await getProfile(_mainProfile)).merge(_selectedProfileValue),
     );
+    refreshState();
   }
 
   Future<void> updateProfile(ProfileOptional value) async {
@@ -346,6 +350,7 @@ class AppController with ChangeNotifier {
     magazineMentionCache.clear();
 
     notifyListeners();
+    refreshState();
 
     await _selectedAccountRecord.put(db, _selectedAccount);
   }

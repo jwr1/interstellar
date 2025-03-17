@@ -26,16 +26,28 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   int _navIndex = 0;
+  final PageController _pageController = PageController();
+  Key _feedKey = UniqueKey();
+  Key _exploreKey = UniqueKey();
+  Key _accountKey = UniqueKey();
 
   void _changeNav(int newIndex) {
     setState(() {
       _navIndex = newIndex;
     });
+    _pageController.jumpToPage(_navIndex);
   }
 
   @override
   Widget build(BuildContext context) {
     final appController = context.watch<AppController>();
+    appController.refreshState = () {
+      setState(() {
+        _feedKey = UniqueKey();
+        _exploreKey = UniqueKey();
+        _accountKey = UniqueKey();
+      });
+    };
 
     final intlLocale =
         intl_locale.Locale.tryParse(appController.profile.appLanguage);
@@ -189,12 +201,16 @@ class _AppState extends State<App> {
                         width: 1,
                       ),
                     Expanded(
-                        child: const [
-                      FeedScreen(),
-                      ExploreScreen(),
-                      AccountScreen(),
-                      SettingsScreen(),
-                    ][_navIndex]),
+                      child: PageView(
+                        controller: _pageController,
+                        children: [
+                          FeedScreen(key: _feedKey),
+                          ExploreScreen(key: _exploreKey),
+                          AccountScreen(key: _accountKey),
+                          SettingsScreen(),
+                        ],
+                      )
+                    ),
                   ]),
                 );
               },
