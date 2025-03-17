@@ -27,7 +27,9 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   int _navIndex = 0;
   final PageController _pageController = PageController();
-  Key _refreshKey = UniqueKey();
+  Key _feedKey = UniqueKey();
+  Key _exploreKey = UniqueKey();
+  Key _accountKey = UniqueKey();
 
   void _changeNav(int newIndex) {
     setState(() {
@@ -41,7 +43,9 @@ class _AppState extends State<App> {
     final appController = context.watch<AppController>();
     appController.refreshState = () {
       setState(() {
-        _refreshKey = UniqueKey();
+        _feedKey = UniqueKey();
+        _exploreKey = UniqueKey();
+        _accountKey = UniqueKey();
       });
     };
 
@@ -198,23 +202,15 @@ class _AppState extends State<App> {
                       ),
                     Expanded(
                       child: PageView(
-                        key: _refreshKey,
                         controller: _pageController,
                         children: [
-                          FeedScreen(),
-                          ExploreScreen(),
-                          AccountScreen(),
+                          FeedScreen(key: _feedKey),
+                          ExploreScreen(key: _exploreKey),
+                          AccountScreen(key: _accountKey),
                           SettingsScreen(),
                         ],
                       )
                     ),
-                    // Expanded(
-                    //     child: const [
-                    //   FeedScreen(),
-                    //   ExploreScreen(),
-                    //   AccountScreen(),
-                    //   SettingsScreen(),
-                    // ][_navIndex]),
                   ]),
                 );
               },
