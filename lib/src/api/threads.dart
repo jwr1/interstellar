@@ -387,7 +387,7 @@ class APIThreads {
           HttpMethod.post,
           path,
           body: {
-            'name': title,
+            'title': title,
             'community_id': magazineID,
             'body': body,
             'nsfw': isAdult
@@ -452,7 +452,7 @@ class APIThreads {
           HttpMethod.post,
           path,
           body: {
-            'name': title,
+            'title': title,
             'community_id': magazineID,
             'url': url,
             'body': body,

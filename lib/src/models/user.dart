@@ -105,7 +105,7 @@ class DetailedUserModel with _$DetailedUserModel {
     );
   }
 
-  factory DetailedUserModel.fromPiefed(Map<String, Object?> json) {
+  factory DetailedUserModel.fromPiefed(Map<String, Object?> json, {bool blocked = false}) {
     final piefedPerson = json['person'] as Map<String, Object?>;
 
     return DetailedUserModel(
@@ -120,7 +120,7 @@ class DetailedUserModel with _$DetailedUserModel {
       followersCount: null,
       isFollowedByUser: null,
       isFollowerOfUser: null,
-      isBlockedByUser: (json['blocked'] as bool?) ?? false,
+      isBlockedByUser: blocked,
       notificationControlStatus: null,
     );
   }

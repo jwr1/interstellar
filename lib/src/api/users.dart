@@ -274,7 +274,9 @@ class APIUsers {
         );
 
         return DetailedUserModel.fromPiefed(
-            response.bodyJson['person_view'] as Map<String, Object?>);
+            response.bodyJson['person_view'] as Map<String, Object?>,
+            blocked: response.bodyJson['blocked'] as bool? ?? false
+        );
     }
   }
 
