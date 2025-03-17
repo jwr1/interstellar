@@ -114,6 +114,7 @@ class _LoginConfirmScreenState extends State<LoginConfirmScreen> {
 
                           final response = await http.post(
                             loginEndpoint,
+                            headers: {'Content-Type': 'application/json'},
                             body: jsonEncode({
                               switch (widget.software) {
                                 ServerSoftware.lemmy => 'username_or_email',

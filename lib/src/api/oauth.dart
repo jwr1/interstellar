@@ -21,7 +21,7 @@ const oauthScopes = [
 ];
 
 Future<String> registerOauthApp(String instanceHost) async {
-  const path = '/client';
+  const path = '/api/client';
 
   final response = await http.post(
     Uri.https(instanceHost, path),
