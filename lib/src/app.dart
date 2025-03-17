@@ -40,8 +40,8 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    final appController = context.watch<AppController>();
-    appController.refreshState = () {
+    final ac = context.watch<AppController>();
+    ac.refreshState = () {
       setState(() {
         _feedKey = UniqueKey();
         _exploreKey = UniqueKey();
@@ -49,25 +49,24 @@ class _AppState extends State<App> {
       });
     };
 
-    final intlLocale =
-        intl_locale.Locale.tryParse(appController.profile.appLanguage);
+    final intlLocale = intl_locale.Locale.tryParse(ac.profile.appLanguage);
 
     return DynamicColorBuilder(
       builder: (lightColorScheme, darkColorScheme) {
         final dynamicLightColorScheme =
-            appController.profile.colorScheme == FlexScheme.custom
+            ac.profile.colorScheme == FlexScheme.custom
                 ? lightColorScheme
                 : null;
         final dynamicDarkColorScheme =
-            appController.profile.colorScheme == FlexScheme.custom
+            ac.profile.colorScheme == FlexScheme.custom
                 ? darkColorScheme
                 : null;
 
         return ChangeNotifierProxyProvider<AppController,
             NotificationCountController>(
           create: (_) => NotificationCountController(),
-          update: (_, appController, notificationCountController) =>
-              notificationCountController!..updateAppController(appController),
+          update: (_, ac, notificationCountController) =>
+              notificationCountController!..updateAppController(ac),
           child: MaterialApp(
             restorationScopeId: 'app',
             localizationsDelegates: const [
@@ -87,7 +86,7 @@ class _AppState extends State<App> {
               colorScheme: dynamicLightColorScheme,
               scheme: dynamicLightColorScheme != null
                   ? null
-                  : appController.profile.colorScheme,
+                  : ac.profile.colorScheme,
               surfaceMode: FlexSurfaceMode.highSurfaceLowScaffold,
               blendLevel: 13,
             ),
@@ -95,12 +94,12 @@ class _AppState extends State<App> {
               colorScheme: dynamicDarkColorScheme,
               scheme: dynamicDarkColorScheme != null
                   ? null
-                  : appController.profile.colorScheme,
+                  : ac.profile.colorScheme,
               surfaceMode: FlexSurfaceMode.highSurfaceLowScaffold,
               blendLevel: 13,
-              darkIsTrueBlack: appController.profile.enableTrueBlack,
+              darkIsTrueBlack: ac.profile.enableTrueBlack,
             ),
-            themeMode: appController.profile.themeMode,
+            themeMode: ac.profile.themeMode,
             scaffoldMessengerKey: scaffoldMessengerKey,
             home: OrientationBuilder(
               builder: (context, orientation) {
@@ -201,16 +200,15 @@ class _AppState extends State<App> {
                         width: 1,
                       ),
                     Expanded(
-                      child: PageView(
-                        controller: _pageController,
-                        children: [
-                          FeedScreen(key: _feedKey),
-                          ExploreScreen(key: _exploreKey),
-                          AccountScreen(key: _accountKey),
-                          SettingsScreen(),
-                        ],
-                      )
-                    ),
+                        child: PageView(
+                      controller: _pageController,
+                      children: [
+                        FeedScreen(key: _feedKey),
+                        ExploreScreen(key: _exploreKey),
+                        AccountScreen(key: _accountKey),
+                        SettingsScreen(),
+                      ],
+                    )),
                   ]),
                 );
               },

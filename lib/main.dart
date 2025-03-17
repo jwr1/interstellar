@@ -52,18 +52,16 @@ void main() async {
     return false;
   };
 
-  final appController = AppController();
-  await appController.init();
+  final ac = AppController();
+  await ac.init();
 
   if (Platform.isAndroid) {
-    await initPushNotifications(appController);
+    await initPushNotifications(ac);
   }
 
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider.value(
-        value: appController,
-      ),
+      ChangeNotifierProvider.value(value: ac),
       ChangeNotifierProvider(create: (context) => DraftsController())
     ],
     child: const App(),

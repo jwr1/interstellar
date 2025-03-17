@@ -466,7 +466,8 @@ class UserScreenBody extends StatefulWidget {
   State<UserScreenBody> createState() => _UserScreenBodyState();
 }
 
-class _UserScreenBodyState extends State<UserScreenBody> with AutomaticKeepAliveClientMixin<UserScreenBody> {
+class _UserScreenBodyState extends State<UserScreenBody>
+    with AutomaticKeepAliveClientMixin<UserScreenBody> {
   final PagingController<String, dynamic> _pagingController =
       PagingController(firstPageKey: '');
 
@@ -489,7 +490,7 @@ class _UserScreenBodyState extends State<UserScreenBody> with AutomaticKeepAlive
   }
 
   Future<void> _fetchPage(String pageKey) async {
-    final ac = context.watch<AppController>();
+    final ac = context.read<AppController>();
 
     const Map<FeedSort, CommentSort> feedToCommentSortMap = {
       FeedSort.active: CommentSort.active,

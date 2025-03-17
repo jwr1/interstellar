@@ -12,11 +12,10 @@ class NotificationCountController with ChangeNotifier {
   late API _api;
   Timer? _timer;
 
-  void updateAppController(AppController appController) {
-    _api = appController.api;
+  void updateAppController(AppController ac) {
+    _api = ac.api;
 
-    final newAccount =
-        appController.isLoggedIn ? appController.selectedAccount : null;
+    final newAccount = ac.isLoggedIn ? ac.selectedAccount : null;
 
     if (_account != newAccount) {
       _account = newAccount;
