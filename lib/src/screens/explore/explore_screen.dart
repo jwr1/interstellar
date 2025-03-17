@@ -20,7 +20,7 @@ class ExploreScreen extends StatefulWidget {
   State<ExploreScreen> createState() => _ExploreScreenState();
 }
 
-class _ExploreScreenState extends State<ExploreScreen> {
+class _ExploreScreenState extends State<ExploreScreen> with AutomaticKeepAliveClientMixin<ExploreScreen> {
   String search = '';
   final searchDebounce = Debouncer(duration: const Duration(milliseconds: 500));
 
@@ -31,6 +31,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
   final PagingController<String, dynamic> _pagingController =
       PagingController(firstPageKey: '');
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -140,6 +143,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     const chipPadding = EdgeInsets.symmetric(vertical: 6, horizontal: 4);
 
     final currentExploreSort = exploreSortSelection(context).getOption(sort);

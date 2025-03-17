@@ -466,9 +466,13 @@ class UserScreenBody extends StatefulWidget {
   State<UserScreenBody> createState() => _UserScreenBodyState();
 }
 
-class _UserScreenBodyState extends State<UserScreenBody> {
+class _UserScreenBodyState extends State<UserScreenBody>
+    with AutomaticKeepAliveClientMixin<UserScreenBody> {
   final PagingController<String, dynamic> _pagingController =
       PagingController(firstPageKey: '');
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void didUpdateWidget(covariant oldWidget) {
@@ -577,6 +581,7 @@ class _UserScreenBodyState extends State<UserScreenBody> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return RefreshIndicator(
       onRefresh: () => Future.sync(() => _pagingController.refresh()),
       child: CustomScrollView(

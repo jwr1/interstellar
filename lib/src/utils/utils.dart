@@ -171,13 +171,14 @@ class DefaultTabControllerListener extends StatefulWidget {
 
 class _DefaultTabControllerListenerState
     extends State<DefaultTabControllerListener> {
-  late final void Function()? _listener;
+  void Function()? _listener;
   TabController? _tabController;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       final tabController = DefaultTabController.of(context);
       _listener = () {
         if (tabController.indexIsChanging) {
@@ -202,7 +203,7 @@ class _DefaultTabControllerListenerState
   @override
   void dispose() {
     if (_listener != null && _tabController != null) {
-      _tabController!.removeListener(_listener);
+      _tabController!.removeListener(_listener!);
     }
     super.dispose();
   }

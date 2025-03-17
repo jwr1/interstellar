@@ -18,7 +18,7 @@ Future<ByteArrayAndroidBitmap> _downloadImageToAndroidBitmap(String url) async {
   return androidBitmap;
 }
 
-Future<void> initPushNotifications(AppController appController) async {
+Future<void> initPushNotifications(AppController ac) async {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
@@ -30,21 +30,21 @@ Future<void> initPushNotifications(AppController appController) async {
 
   await UnifiedPush.initialize(
     onNewEndpoint: (String endpoint, String instance) async {
-      await appController.api.notifications.pushRegister(
+      await ac.api.notifications.pushRegister(
         endpoint: endpoint,
-        serverKey: appController.webPushKeys.publicKey.auth,
-        contentPublicKey: appController.webPushKeys.publicKey.p256dh,
+        serverKey: ac.webPushKeys.publicKey.auth,
+        contentPublicKey: ac.webPushKeys.publicKey.p256dh,
       );
     },
     onRegistrationFailed: (String instance) {
-      appController.removePushRegistrationStatus(instance);
+      ac.removePushRegistrationStatus(instance);
     },
     onUnregistered: (String instance) {
-      appController.removePushRegistrationStatus(instance);
+      ac.removePushRegistrationStatus(instance);
     },
     onMessage: (Uint8List message, String instance) async {
-      final data = jsonDecode(utf8
-          .decode(await WebPush().decrypt(appController.webPushKeys, message)));
+      final data = jsonDecode(
+          utf8.decode(await WebPush().decrypt(ac.webPushKeys, message)));
 
       final hostDomain = instance.split('@').last;
       final avatarUrl = data['avatarUrl'] as String?;

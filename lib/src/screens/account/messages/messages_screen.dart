@@ -16,9 +16,12 @@ class MessagesScreen extends StatefulWidget {
   State<MessagesScreen> createState() => _MessagesScreenState();
 }
 
-class _MessagesScreenState extends State<MessagesScreen> {
+class _MessagesScreenState extends State<MessagesScreen> with AutomaticKeepAliveClientMixin<MessagesScreen> {
   final PagingController<String, MessageThreadModel> _pagingController =
       PagingController(firstPageKey: '');
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -51,6 +54,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return RefreshIndicator(
       onRefresh: () => Future.sync(
         () => _pagingController.refresh(),
