@@ -539,7 +539,38 @@ class APIThreads {
             response.bodyJson['post_view'] as Map<String, Object?>);
 
       case ServerSoftware.piefed:
-        throw UnimplementedError();
+        const uploadPath = '/upload/image';
+
+        var request =
+            http.MultipartRequest('POST', Uri.https(client.domain, client.software.apiPathPrefix + uploadPath));
+        var multipartFile = http.MultipartFile.fromBytes(
+          'file',
+          await image.readAsBytes(),
+          filename: basename(image.path),
+          contentType: MediaType.parse(lookupMimeType(image.path)!),
+        );
+        request.files.add(multipartFile);
+        var uploadResponse = await client.sendRequest(request);
+
+        final json = uploadResponse.bodyJson;
+
+        final imageUrl = json['url'] as String?;
+
+        const path = '/post';
+        final response = await client.send(
+          HttpMethod.post,
+          path,
+          body: {
+            'title': title,
+            'community_id': magazineID,
+            'url': imageUrl,
+            'body': body,
+            'nsfw': isAdult
+          },
+        );
+
+        return PostModel.fromPiefed(
+            response.bodyJson['post_view'] as Map<String, Object?>);
     }
   }
 
