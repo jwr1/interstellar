@@ -9,7 +9,7 @@ class APIMessages {
   APIMessages(this.client);
 
   Future<MessageListModel> list({
-    int myUserId = 0,
+    int? myUserId,
     String? page,
   }) async {
     switch (client.software) {
@@ -38,7 +38,7 @@ class APIMessages {
         json['next_page'] = lemmyCalcNextIntPage(
             json['private_messages'] as List<dynamic>, page);
 
-        return MessageListModel.fromLemmy(json, myUserId);
+        return MessageListModel.fromLemmy(json, myUserId!);
 
       case ServerSoftware.piefed:
         const path = '/private_message/list';
@@ -55,12 +55,13 @@ class APIMessages {
 
         json['next_page'] = page;
 
-        return MessageListModel.fromPiefed(json, myUserId);
+        return MessageListModel.fromPiefed(json, myUserId!);
     }
   }
 
   Future<MessageThreadModel> getThreadWithMessages({
     required int threadId,
+    int? myUserId,
     String? page,
   }) async {
     switch (client.software) {
@@ -77,8 +78,61 @@ class APIMessages {
         return MessageThreadModel.fromMbin(json);
 
       case ServerSoftware.lemmy:
+        const path = '/private_message/list';
+        final query = {
+          'unread_only': 'false',
+          'page': page,
+          'limit': '20',
+        };
+
+        final response =
+            await client.send(HttpMethod.get, path, queryParams: query);
+
+        final json = response.bodyJson;
+
+        return MessageListModel.fromLemmy(
+              json,
+              myUserId!,
+              filterByThreadId: threadId,
+            ).items.firstOrNull ??
+            MessageThreadModel(
+              id: threadId,
+              participants: [],
+              messages: [],
+              nextPage: null,
+            ).copyWith(
+              nextPage: lemmyCalcNextIntPage(
+                  json['private_messages'] as List<dynamic>, page),
+            );
+
       case ServerSoftware.piefed:
-        throw UnimplementedError();
+        const path = '/private_message/list';
+        final query = {
+          'unread_only': 'false',
+          'page': page,
+          'limit': '20',
+        };
+
+        final response =
+            await client.send(HttpMethod.get, path, queryParams: query);
+
+        final json = response.bodyJson;
+
+        return (MessageListModel.fromPiefed(
+                  json,
+                  myUserId!,
+                  filterByThreadId: threadId,
+                ).items.firstOrNull ??
+                MessageThreadModel(
+                  id: threadId,
+                  participants: [],
+                  messages: [],
+                  nextPage: null,
+                ))
+            .copyWith(
+          nextPage: lemmyCalcNextIntPage(
+              json['private_messages'] as List<dynamic>, page),
+        );
     }
   }
 

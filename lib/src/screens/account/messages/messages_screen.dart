@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/controller/controller.dart';
+import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/message.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/error_page.dart';
@@ -24,6 +25,8 @@ class _MessagesScreenState extends State<MessagesScreen>
   @override
   bool get wantKeepAlive => true;
 
+  int? _userId;
+
   @override
   void initState() {
     super.initState();
@@ -33,12 +36,18 @@ class _MessagesScreenState extends State<MessagesScreen>
 
   Future<void> _fetchPage(String pageKey) async {
     try {
-      // could probably
-      final user = await context.read<AppController>().api.users.getMe();
+      // Need to have user id for Lemmy and PieFed
+      if (_userId == null &&
+          context.read<AppController>().serverSoftware != ServerSoftware.mbin) {
+        _userId = (await context.read<AppController>().api.users.getMe()).id;
+      }
+
+      // Check BuildContext
       if (!mounted) return;
+
       final newPage = await context.read<AppController>().api.messages.list(
             page: nullIfEmpty(pageKey),
-            myUserId: user.id,
+            myUserId: _userId,
           );
 
       // Check BuildContext

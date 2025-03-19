@@ -11,9 +11,9 @@ import 'package:provider/provider.dart';
 
 class MessageThreadItem extends StatelessWidget {
   final bool fromMyUser;
-  final MessageItemModel? prevMessage;
-  final MessageItemModel currMessage;
-  final MessageItemModel? nextMessage;
+  final MessageThreadItemModel? prevMessage;
+  final MessageThreadItemModel currMessage;
+  final MessageThreadItemModel? nextMessage;
 
   const MessageThreadItem({
     required this.fromMyUser,

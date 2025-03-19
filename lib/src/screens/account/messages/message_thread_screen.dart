@@ -1,18 +1,13 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/controller/controller.dart';
+import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/message.dart';
 import 'package:interstellar/src/screens/account/messages/message_thread_item.dart';
-import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/utils/utils.dart';
-import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/error_page.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
-import 'package:interstellar/src/widgets/loading_template.dart';
 import 'package:interstellar/src/widgets/markdown/drafts_controller.dart';
-import 'package:interstellar/src/widgets/markdown/markdown.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
@@ -37,8 +32,10 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
   MessageThreadModel? _data;
   final TextEditingController _controller = TextEditingController();
 
-  final PagingController<String, MessageItemModel> _pagingController =
+  final PagingController<String, MessageThreadItemModel> _pagingController =
       PagingController(firstPageKey: '');
+
+  int? _userId;
 
   @override
   void initState() {
@@ -54,6 +51,15 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
 
   Future<void> _fetchPage(String pageKey) async {
     try {
+      // Need to have user id for Lemmy and PieFed
+      if (_userId == null &&
+          context.read<AppController>().serverSoftware != ServerSoftware.mbin) {
+        _userId = (await context.read<AppController>().api.users.getMe()).id;
+      }
+
+      // Check BuildContext
+      if (!mounted) return;
+
       final newPage = await context
           .read<AppController>()
           .api
@@ -61,6 +67,7 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
           .getThreadWithMessages(
             threadId: widget.threadId,
             page: nullIfEmpty(pageKey),
+            myUserId: _userId,
           );
 
       // Check BuildContext
@@ -161,7 +168,8 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
               padding: const EdgeInsets.all(16),
               sliver: PagedSliverList(
                 pagingController: _pagingController,
-                builderDelegate: PagedChildBuilderDelegate<MessageItemModel>(
+                builderDelegate:
+                    PagedChildBuilderDelegate<MessageThreadItemModel>(
                   firstPageErrorIndicatorBuilder: (context) =>
                       FirstPageErrorIndicator(
                     error: _pagingController.error,

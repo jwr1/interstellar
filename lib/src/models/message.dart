@@ -23,20 +23,21 @@ class MessageListModel with _$MessageListModel {
 
   factory MessageListModel.fromLemmy(
     Map<String, Object?> json,
-    int myUserId,
-  ) {
+    int myUserId, {
+    int? filterByThreadId,
+  }) {
     Map<int, Map<String, Object?>> threads = {};
 
-    for (var message in json['private_messages'] as List<dynamic>) {
-      var creator = (message)['creator'] as Map<String, Object?>;
-      var recipient = (message)['recipient'] as Map<String, Object?>;
+    for (final message in json['private_messages'] as List<dynamic>) {
+      final creator = (message)['creator'] as Map<String, Object?>;
+      final recipient = (message)['recipient'] as Map<String, Object?>;
 
-      var threadId = 0;
-      if ((creator['id'] as int) == myUserId) {
-        threadId = (recipient['actor_id'] as String).hashCode;
-      } else {
-        threadId = (creator['actor_id'] as String).hashCode;
-      }
+      // Use the userId of the other person as the threadId
+      final threadId = (creator['id'] as int) == myUserId
+          ? recipient['id'] as int
+          : creator['id'] as int;
+
+      if (filterByThreadId != null && filterByThreadId != threadId) continue;
 
       if (threads[threadId] == null) {
         threads[threadId] = {
@@ -46,7 +47,6 @@ class MessageListModel with _$MessageListModel {
         };
       }
 
-      message['threadId'] = threadId;
       (threads[threadId]!['messages'] as List<Map<String, Object?>>)
           .add(message);
     }
@@ -61,20 +61,21 @@ class MessageListModel with _$MessageListModel {
 
   factory MessageListModel.fromPiefed(
     Map<String, Object?> json,
-    int myUserId,
-  ) {
+    int myUserId, {
+    int? filterByThreadId,
+  }) {
     Map<int, Map<String, Object?>> threads = {};
 
-    for (var message in json['private_messages'] as List<dynamic>) {
-      var creator = (message)['creator'] as Map<String, Object?>;
-      var recipient = (message)['recipient'] as Map<String, Object?>;
+    for (final message in json['private_messages'] as List<dynamic>) {
+      final creator = (message)['creator'] as Map<String, Object?>;
+      final recipient = (message)['recipient'] as Map<String, Object?>;
 
-      var threadId = 0;
-      if ((creator['id'] as int) == myUserId) {
-        threadId = (recipient['actor_id'] as String).hashCode;
-      } else {
-        threadId = (creator['actor_id'] as String).hashCode;
-      }
+      // Use the userId of the other person as the threadId
+      final threadId = (creator['id'] as int) == myUserId
+          ? recipient['id'] as int
+          : creator['id'] as int;
+
+      if (filterByThreadId != null && filterByThreadId != threadId) continue;
 
       if (threads[threadId] == null) {
         threads[threadId] = {
@@ -84,7 +85,6 @@ class MessageListModel with _$MessageListModel {
         };
       }
 
-      message['threadId'] = threadId;
       (threads[threadId]!['messages'] as List<Map<String, Object?>>)
           .add(message);
     }
@@ -103,7 +103,7 @@ class MessageThreadModel with _$MessageThreadModel {
   const factory MessageThreadModel({
     required int id,
     required List<DetailedUserModel> participants,
-    required List<MessageItemModel> messages,
+    required List<MessageThreadItemModel> messages,
     required String? nextPage,
   }) = _MessageThreadModel;
 
@@ -115,8 +115,8 @@ class MessageThreadModel with _$MessageThreadModel {
                 DetailedUserModel.fromMbin(participant as Map<String, Object?>))
             .toList(),
         messages: ((json['messages'] ?? json['items']) as List<dynamic>)
-            .map((message) =>
-                MessageItemModel.fromMbin(message as Map<String, Object?>))
+            .map((message) => MessageThreadItemModel.fromMbin(
+                message as Map<String, Object?>))
             .toList(),
         nextPage: json['pagination'] == null
             ? null
@@ -132,7 +132,7 @@ class MessageThreadModel with _$MessageThreadModel {
                 {'person': participant as Map<String, Object?>}))
             .toList(),
         messages: (json['messages'] as List<Map<String, Object?>>)
-            .map((message) => MessageItemModel.fromLemmy(message))
+            .map((message) => MessageThreadItemModel.fromLemmy(message))
             .toList(),
         nextPage: null,
       );
@@ -146,24 +146,24 @@ class MessageThreadModel with _$MessageThreadModel {
             .toList(),
         messages: (json['messages'] as List<Map<String, Object?>>)
             .reversed
-            .map((message) => MessageItemModel.fromPiefed(message))
+            .map((message) => MessageThreadItemModel.fromPiefed(message))
             .toList(),
         nextPage: null,
       );
 }
 
 @freezed
-class MessageItemModel with _$MessageItemModel {
-  const factory MessageItemModel({
+class MessageThreadItemModel with _$MessageThreadItemModel {
+  const factory MessageThreadItemModel({
     required int id,
     required UserModel sender,
     required String body,
     required DateTime createdAt,
     required bool isRead,
-  }) = _MessageItemModel;
+  }) = _MessageThreadItemModel;
 
-  factory MessageItemModel.fromMbin(Map<String, Object?> json) =>
-      MessageItemModel(
+  factory MessageThreadItemModel.fromMbin(Map<String, Object?> json) =>
+      MessageThreadItemModel(
         id: json['messageId'] as int,
         sender: UserModel.fromMbin(json['sender'] as Map<String, Object?>),
         body: json['body'] as String,
@@ -171,10 +171,10 @@ class MessageItemModel with _$MessageItemModel {
         isRead: json['status'] as String == 'read',
       );
 
-  factory MessageItemModel.fromLemmy(Map<String, Object?> json) {
+  factory MessageThreadItemModel.fromLemmy(Map<String, Object?> json) {
     final pm = json['private_message'] as Map<String, Object?>;
 
-    return MessageItemModel(
+    return MessageThreadItemModel(
       id: pm['id'] as int,
       sender: UserModel.fromLemmy(json['creator'] as Map<String, Object?>),
       body: pm['content'] as String,
@@ -183,10 +183,10 @@ class MessageItemModel with _$MessageItemModel {
     );
   }
 
-  factory MessageItemModel.fromPiefed(Map<String, Object?> json) {
+  factory MessageThreadItemModel.fromPiefed(Map<String, Object?> json) {
     final pm = json['private_message'] as Map<String, Object?>;
 
-    return MessageItemModel(
+    return MessageThreadItemModel(
       id: pm['id'] as int,
       sender: UserModel.fromPiefed(json['creator'] as Map<String, Object?>),
       body: pm['content'] as String,
