@@ -359,6 +359,7 @@ class _UserScreenState extends State<UserScreen> {
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   MessageThreadScreen(
+                                                threadId: newThread.id,
                                                 initData: newThread,
                                               ),
                                             ),

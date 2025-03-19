@@ -16,7 +16,8 @@ class MessagesScreen extends StatefulWidget {
   State<MessagesScreen> createState() => _MessagesScreenState();
 }
 
-class _MessagesScreenState extends State<MessagesScreen> with AutomaticKeepAliveClientMixin<MessagesScreen> {
+class _MessagesScreenState extends State<MessagesScreen>
+    with AutomaticKeepAliveClientMixin<MessagesScreen> {
   final PagingController<String, MessageThreadModel> _pagingController =
       PagingController(firstPageKey: '');
 
@@ -37,18 +38,16 @@ class _MessagesScreenState extends State<MessagesScreen> with AutomaticKeepAlive
       if (!mounted) return;
       final newPage = await context.read<AppController>().api.messages.list(
             page: nullIfEmpty(pageKey),
-            id: user.id,
+            myUserId: user.id,
           );
 
       // Check BuildContext
       if (!mounted) return;
 
       // Prevent duplicates
-      final currentItemIds =
-          _pagingController.itemList?.map((e) => e.threadId) ?? [];
-      final newItems = newPage.items
-          .where((e) => !currentItemIds.contains(e.threadId))
-          .toList();
+      final currentItemIds = _pagingController.itemList?.map((e) => e.id) ?? [];
+      final newItems =
+          newPage.items.where((e) => !currentItemIds.contains(e.id)).toList();
 
       _pagingController.appendPage(newItems, newPage.nextPage);
     } catch (error) {
@@ -59,6 +58,7 @@ class _MessagesScreenState extends State<MessagesScreen> with AutomaticKeepAlive
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
     return RefreshIndicator(
       onRefresh: () => Future.sync(
         () => _pagingController.refresh(),
@@ -88,6 +88,7 @@ class _MessagesScreenState extends State<MessagesScreen> with AutomaticKeepAlive
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => MessageThreadScreen(
+                        threadId: item.id,
                         initData: item,
                         onUpdate: (newValue) {
                           var newList = _pagingController.itemList;

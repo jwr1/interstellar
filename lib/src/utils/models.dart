@@ -7,7 +7,7 @@ List<String>? optionalStringList(Object? json) =>
     json == null ? null : (json as List<dynamic>).cast<String>();
 
 String? mbinCalcNextPaginationPage(Map<String, Object?> pagination) {
-  return (pagination['currentPage'] as int) != (pagination['maxPage'] as int)
+  return (pagination['currentPage'] as int) < (pagination['maxPage'] as int)
       ? ((pagination['currentPage'] as int) + 1).toString()
       : null;
 }

@@ -4,6 +4,7 @@ import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/models/notification.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/models/user.dart';
+import 'package:interstellar/src/screens/account/messages/message_thread_screen.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/screens/feed/post_comment_screen.dart';
@@ -84,41 +85,51 @@ class _NotificationItemState extends State<NotificationItem> {
           ? null
           : Colors.transparent,
       child: InkWell(
-        onTap: widget.item.subject!.containsKey('commentId')
+        onTap: widget.item.subject!.containsKey('threadId')
             ? () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => PostCommentScreen(
-                        widget.item.subject!.containsKey('postId')
-                            ? PostType.microblog
-                            : PostType.thread,
-                        widget.item.subject!['commentId'] as int),
+                    builder: (context) => MessageThreadScreen(
+                      threadId: widget.item.subject!['threadId'] as int,
+                    ),
                   ),
                 );
               }
-            : widget.item.subject!.containsKey('entryId')
+            : widget.item.subject!.containsKey('commentId')
                 ? () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => PostPage(
-                          postType: PostType.thread,
-                          postId: widget.item.subject!['entryId'] as int,
-                        ),
+                        builder: (context) => PostCommentScreen(
+                            widget.item.subject!.containsKey('postId')
+                                ? PostType.microblog
+                                : PostType.thread,
+                            widget.item.subject!['commentId'] as int),
                       ),
                     );
                   }
-                : widget.item.subject!.containsKey('postId')
+                : widget.item.subject!.containsKey('entryId')
                     ? () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => PostPage(
-                              postType: PostType.microblog,
-                              postId: widget.item.subject!['postId'] as int,
+                              postType: PostType.thread,
+                              postId: widget.item.subject!['entryId'] as int,
                             ),
                           ),
                         );
                       }
-                    : null,
+                    : widget.item.subject!.containsKey('postId')
+                        ? () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => PostPage(
+                                  postType: PostType.microblog,
+                                  postId: widget.item.subject!['postId'] as int,
+                                ),
+                              ),
+                            );
+                          }
+                        : null,
         child: Padding(
           padding: const EdgeInsets.only(
             top: 4,

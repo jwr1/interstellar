@@ -21,16 +21,18 @@ class MessageListModel with _$MessageListModel {
             json['pagination'] as Map<String, Object?>),
       );
 
-  factory MessageListModel.fromLemmy(Map<String, Object?> json, int id, int limit) {
+  factory MessageListModel.fromLemmy(
+    Map<String, Object?> json,
+    int myUserId,
+  ) {
     Map<int, Map<String, Object?>> threads = {};
-    int messageCount = (json['private_messages'] as List<dynamic>).length;
 
     for (var message in json['private_messages'] as List<dynamic>) {
       var creator = (message)['creator'] as Map<String, Object?>;
       var recipient = (message)['recipient'] as Map<String, Object?>;
 
       var threadId = 0;
-      if ((creator['id'] as int) == id) {
+      if ((creator['id'] as int) == myUserId) {
         threadId = (recipient['actor_id'] as String).hashCode;
       } else {
         threadId = (creator['actor_id'] as String).hashCode;
@@ -49,27 +51,26 @@ class MessageListModel with _$MessageListModel {
           .add(message);
     }
 
-    var nextPage = threads.isEmpty || messageCount < limit
-        ? null
-        : (int.parse(json['next_page'] as String? ?? '1') + 1).toString();
-
     return MessageListModel(
-        items: threads.values.map((thread) =>
-            MessageThreadModel.fromLemmy(thread)).toList(),
-        nextPage: nextPage
+      items: threads.values
+          .map((thread) => MessageThreadModel.fromLemmy(thread))
+          .toList(),
+      nextPage: json['next_page'] as String?,
     );
   }
 
-  factory MessageListModel.fromPiefed(Map<String, Object?> json, int id, int limit) {
+  factory MessageListModel.fromPiefed(
+    Map<String, Object?> json,
+    int myUserId,
+  ) {
     Map<int, Map<String, Object?>> threads = {};
-    int messageCount = (json['private_messages'] as List<dynamic>).length;
 
     for (var message in json['private_messages'] as List<dynamic>) {
       var creator = (message)['creator'] as Map<String, Object?>;
       var recipient = (message)['recipient'] as Map<String, Object?>;
 
       var threadId = 0;
-      if ((creator['id'] as int) == id) {
+      if ((creator['id'] as int) == myUserId) {
         threadId = (recipient['actor_id'] as String).hashCode;
       } else {
         threadId = (creator['actor_id'] as String).hashCode;
@@ -88,14 +89,11 @@ class MessageListModel with _$MessageListModel {
           .add(message);
     }
 
-    var nextPage = threads.isEmpty || messageCount < limit
-        ? null
-        : (int.parse(json['next_page'] as String? ?? '1') + 1).toString();
-
     return MessageListModel(
-      items: threads.values.map((thread) =>
-          MessageThreadModel.fromPiefed(thread)).toList(),
-      nextPage: nextPage
+      items: threads.values
+          .map((thread) => MessageThreadModel.fromPiefed(thread))
+          .toList(),
+      nextPage: json['next_page'] as String?,
     );
   }
 }
@@ -103,90 +101,85 @@ class MessageListModel with _$MessageListModel {
 @freezed
 class MessageThreadModel with _$MessageThreadModel {
   const factory MessageThreadModel({
+    required int id,
     required List<DetailedUserModel> participants,
-    required int messageCount,
     required List<MessageItemModel> messages,
-    required int threadId,
+    required String? nextPage,
   }) = _MessageThreadModel;
 
   factory MessageThreadModel.fromMbin(Map<String, Object?> json) =>
       MessageThreadModel(
+        id: json['threadId'] as int,
         participants: (json['participants'] as List<dynamic>)
             .map((participant) =>
                 DetailedUserModel.fromMbin(participant as Map<String, Object?>))
             .toList(),
-        messageCount: json['messageCount'] as int,
-        messages: (json['messages'] as List<dynamic>)
+        messages: ((json['messages'] ?? json['items']) as List<dynamic>)
             .map((message) =>
                 MessageItemModel.fromMbin(message as Map<String, Object?>))
             .toList(),
-        threadId: json['threadId'] as int,
+        nextPage: json['pagination'] == null
+            ? null
+            : mbinCalcNextPaginationPage(
+                json['pagination'] as Map<String, Object?>),
       );
 
   factory MessageThreadModel.fromLemmy(Map<String, Object?> json) =>
       MessageThreadModel(
+        id: json['threadId'] as int,
         participants: (json['participants'] as List<dynamic>)
-            .map((participant) =>
-              DetailedUserModel.fromLemmy({
-                'person': participant as Map<String, Object?>
-              }))
+            .map((participant) => DetailedUserModel.fromLemmy(
+                {'person': participant as Map<String, Object?>}))
             .toList(),
-        messageCount: (json['messages'] as List<Map<String, Object?>>).length,
         messages: (json['messages'] as List<Map<String, Object?>>)
-            .map((message) =>
-              MessageItemModel.fromLemmy(message))
+            .map((message) => MessageItemModel.fromLemmy(message))
             .toList(),
-        threadId: json['threadId'] as int
-    );
+        nextPage: null,
+      );
 
   factory MessageThreadModel.fromPiefed(Map<String, Object?> json) =>
       MessageThreadModel(
+        id: json['threadId'] as int,
         participants: (json['participants'] as List<dynamic>)
-            .map((participant) =>
-                DetailedUserModel.fromPiefed({
-                  'person': participant as Map<String, Object?>
-                }))
+            .map((participant) => DetailedUserModel.fromPiefed(
+                {'person': participant as Map<String, Object?>}))
             .toList(),
-        messageCount: (json['messages'] as List<Map<String, Object?>>).length,
-        messages: (json['messages'] as List<Map<String, Object?>>).reversed
-            .map((message) =>
-              MessageItemModel.fromPiefed(message))
+        messages: (json['messages'] as List<Map<String, Object?>>)
+            .reversed
+            .map((message) => MessageItemModel.fromPiefed(message))
             .toList(),
-        threadId: json['threadId'] as int
+        nextPage: null,
       );
 }
 
 @freezed
 class MessageItemModel with _$MessageItemModel {
   const factory MessageItemModel({
+    required int id,
     required UserModel sender,
     required String body,
-    required String status,
-    required int threadId,
     required DateTime createdAt,
-    required int messageId,
+    required bool isRead,
   }) = _MessageItemModel;
 
   factory MessageItemModel.fromMbin(Map<String, Object?> json) =>
       MessageItemModel(
+        id: json['messageId'] as int,
         sender: UserModel.fromMbin(json['sender'] as Map<String, Object?>),
         body: json['body'] as String,
-        status: json['status'] as String,
-        threadId: json['threadId'] as int,
         createdAt: DateTime.parse(json['createdAt'] as String),
-        messageId: json['messageId'] as int,
+        isRead: json['status'] as String == 'read',
       );
 
   factory MessageItemModel.fromLemmy(Map<String, Object?> json) {
     final pm = json['private_message'] as Map<String, Object?>;
 
     return MessageItemModel(
+      id: pm['id'] as int,
       sender: UserModel.fromLemmy(json['creator'] as Map<String, Object?>),
       body: pm['content'] as String,
-      status: (pm['read'] as bool).toString(),
-      threadId: json['threadId'] as int,
       createdAt: DateTime.parse(pm['published'] as String),
-      messageId: pm['id'] as int,
+      isRead: pm['read'] as bool,
     );
   }
 
@@ -194,12 +187,11 @@ class MessageItemModel with _$MessageItemModel {
     final pm = json['private_message'] as Map<String, Object?>;
 
     return MessageItemModel(
+      id: pm['id'] as int,
       sender: UserModel.fromPiefed(json['creator'] as Map<String, Object?>),
       body: pm['content'] as String,
-      status: (pm['read'] as bool).toString(),
-      threadId: json['threadId'] as int,
       createdAt: DateTime.parse(pm['published'] as String),
-      messageId: pm['id'] as int,
+      isRead: pm['read'] as bool,
     );
   }
 }

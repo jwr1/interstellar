@@ -1,7 +1,7 @@
-
 import 'package:interstellar/src/api/client.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/message.dart';
+import 'package:interstellar/src/utils/models.dart';
 
 class APIMessages {
   final ServerClient client;
@@ -9,8 +9,8 @@ class APIMessages {
   APIMessages(this.client);
 
   Future<MessageListModel> list({
+    int myUserId = 0,
     String? page,
-    int id = 0,
   }) async {
     switch (client.software) {
       case ServerSoftware.mbin:
@@ -31,13 +31,14 @@ class APIMessages {
         };
 
         final response =
-        await client.send(HttpMethod.get, path, queryParams: query);
+            await client.send(HttpMethod.get, path, queryParams: query);
 
         final json = response.bodyJson;
 
-        json['next_page'] = page;
+        json['next_page'] = lemmyCalcNextIntPage(
+            json['private_messages'] as List<dynamic>, page);
 
-        return MessageListModel.fromLemmy(json, id, 20);
+        return MessageListModel.fromLemmy(json, myUserId);
 
       case ServerSoftware.piefed:
         const path = '/private_message/list';
@@ -54,7 +55,30 @@ class APIMessages {
 
         json['next_page'] = page;
 
-        return MessageListModel.fromPiefed(json, id, 20);
+        return MessageListModel.fromPiefed(json, myUserId);
+    }
+  }
+
+  Future<MessageThreadModel> getThreadWithMessages({
+    required int threadId,
+    String? page,
+  }) async {
+    switch (client.software) {
+      case ServerSoftware.mbin:
+        final path = '/messages/thread/$threadId/newest';
+        final query = {'p': page};
+
+        final response =
+            await client.send(HttpMethod.get, path, queryParams: query);
+
+        final json = response.bodyJson;
+        json['threadId'] = threadId;
+
+        return MessageThreadModel.fromMbin(json);
+
+      case ServerSoftware.lemmy:
+      case ServerSoftware.piefed:
+        throw UnimplementedError();
     }
   }
 
