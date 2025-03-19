@@ -4,11 +4,15 @@ An app for Mbin and Lemmy; connecting you to the fediverse.
 
 ## Downloads
 
+Interstellar supports Android, Linux, and Windows, with more to come.
+
 [![](assets/readme/GooglePlay-badge.png)](https://play.google.com/store/apps/details?id=one.jwr.interstellar)
 [![](assets/readme/IzzyOnDroid-badge.png)](https://apt.izzysoft.de/fdroid/index/apk/one.jwr.interstellar)
 [![](assets/readme/Flathub-badge.png)](https://flathub.org/apps/one.jwr.interstellar)
 
-See the [latest release](https://github.com/jwr1/interstellar/releases/latest) for direct APK files, an AppImage, and more platforms.
+Available for Arch Linux via the AUR: [interstellar-bin](https://aur.archlinux.org/packages/interstellar-bin).
+
+See the [latest release](https://github.com/jwr1/interstellar/releases/latest) for more downloads (.APK, .AppImage, .exe, etc.).
 
 ## Discussion
 
