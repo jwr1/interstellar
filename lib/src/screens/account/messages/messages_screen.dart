@@ -32,8 +32,12 @@ class _MessagesScreenState extends State<MessagesScreen> with AutomaticKeepAlive
 
   Future<void> _fetchPage(String pageKey) async {
     try {
+      // could probably
+      final user = await context.read<AppController>().api.users.getMe();
+      if (!mounted) return;
       final newPage = await context.read<AppController>().api.messages.list(
             page: nullIfEmpty(pageKey),
+            id: user.id,
           );
 
       // Check BuildContext
