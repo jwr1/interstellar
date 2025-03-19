@@ -214,7 +214,14 @@ class APIComments {
 
       case ServerSoftware.piefed:
         const path = '/comment/list';
-        final query = {'parent_id': commentId.toString()};
+        final query = {
+          'parent_id': commentId.toString(),
+          'page': '0',
+          'limit': '20',
+          'max_depth': '8',
+          'sort': lemmyCommentSortMap[CommentSort.newest],
+          'type_': 'All',
+        };
 
         final response =
             await client.send(HttpMethod.get, path, queryParams: query);
@@ -334,7 +341,7 @@ class APIComments {
           HttpMethod.post,
           path,
           body: {
-            'content': body,
+            'body': body,
             'post_id': postId,
             'parent_id': parentCommentId
           },
@@ -387,7 +394,7 @@ class APIComments {
           path,
           body: {
             'comment_id': commentId,
-            'content': body,
+            'body': body,
           },
         );
 
