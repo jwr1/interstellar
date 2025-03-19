@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:interstellar/src/api/client.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/magazine.dart';
@@ -121,7 +119,22 @@ class APIMagazineModeration {
             response.bodyJson['community_view'] as Map<String, Object?>);
 
       case ServerSoftware.piefed:
-        throw UnimplementedError();
+        const path = '/community';
+
+        final response = await client.send(
+          HttpMethod.post,
+          path,
+          body: {
+            'name': name,
+            'title': title,
+            'description': description,
+            'nsfw': isAdult,
+            'restricted_to_mods': isPostingRestrictedToMods,
+          },
+        );
+
+        return DetailedMagazineModel.fromPiefed(
+            response.bodyJson);
     }
   }
 
@@ -153,7 +166,22 @@ class APIMagazineModeration {
         throw Exception('Magazine edit not implemented on Lemmy yet');
 
       case ServerSoftware.piefed:
-        throw UnimplementedError();
+        const path = '/community';
+
+        final response = await client.send(
+          HttpMethod.put,
+          path,
+          body: {
+            'community_id': magazineId,
+            'title': title,
+            'description': description,
+            'nsfw': isAdult,
+            'restricted_to_mods': isPostingRestrictedToMods,
+          },
+        );
+
+        return DetailedMagazineModel.fromPiefed(
+            response.bodyJson);
     }
   }
 
@@ -209,7 +237,16 @@ class APIMagazineModeration {
         throw Exception('Magazine delete not implemented on Lemmy yet');
 
       case ServerSoftware.piefed:
-        throw UnimplementedError();
+        const path = '/community/delete';
+
+        final response = await client.send(
+          HttpMethod.post,
+          path,
+          body: {
+            'community_id': magazineId,
+            'deleted': true,
+          },
+        );
     }
   }
 }

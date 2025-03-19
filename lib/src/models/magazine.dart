@@ -130,8 +130,9 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
   }
 
   factory DetailedMagazineModel.fromPiefed(Map<String, Object?> json) {
-    final piefedCommunity = json['community'] as Map<String, Object?>;
-    final piefedCounts = json['counts'] as Map<String, Object?>;
+    final comunityView = json['community_view'] as Map<String, Object?>? ?? json;
+    final piefedCommunity = comunityView['community'] as Map<String, Object?>;
+    final piefedCounts = comunityView['counts'] as Map<String, Object?>;
 
     final magazine = DetailedMagazineModel(
       id: piefedCommunity['id'] as int,
@@ -139,16 +140,20 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
       title: piefedCommunity['title'] as String,
       icon: lemmyGetOptionalImage(piefedCommunity['icon'] as String?),
       description: piefedCommunity['description'] as String?,
-      owner: null,
-      moderators: [],
+      owner: ((json['moderators'] ?? []) as List<dynamic>)
+          .map((user) => UserModel.fromPiefed((user as Map<String, Object?>)['moderator'] as Map<String, Object?>))
+          .toList().firstOrNull,
+      moderators: ((json['moderators'] ?? []) as List<dynamic>)
+          .map((user) => UserModel.fromPiefed((user as Map<String, Object?>)['moderator'] as Map<String, Object?>))
+          .toList(),
       subscriptionsCount: piefedCounts['subscriptions_count'] as int,
       threadCount: piefedCounts['post_count'] as int,
       threadCommentCount: piefedCounts['post_reply_count'] as int,
       microblogCount: null,
       microblogCommentCount: null,
       isAdult: piefedCommunity['nsfw'] as bool,
-      isUserSubscribed: (json['subscribed'] as String) != 'NotSubscribed',
-      isBlockedByUser: json['blocked'] as bool?,
+      isUserSubscribed: (comunityView['subscribed'] as String) != 'NotSubscribed',
+      isBlockedByUser: comunityView['blocked'] as bool?,
       isPostingRestrictedToMods:
           (piefedCommunity['restricted_to_mods']) as bool,
       notificationControlStatus: null,

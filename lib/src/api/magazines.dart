@@ -258,8 +258,7 @@ class APIMagazines {
         final response =
             await client.send(HttpMethod.get, path, queryParams: query);
 
-        return DetailedMagazineModel.fromPiefed(
-            response.bodyJson['community_view'] as Map<String, Object?>);
+        return DetailedMagazineModel.fromPiefed(response.bodyJson);
     }
   }
 
@@ -289,8 +288,7 @@ class APIMagazines {
         final response =
             await client.send(HttpMethod.get, path, queryParams: query);
 
-        return DetailedMagazineModel.fromPiefed(
-            response.bodyJson['community_view'] as Map<String, Object?>);
+        return DetailedMagazineModel.fromPiefed(response.bodyJson);
     }
   }
 
@@ -331,8 +329,7 @@ class APIMagazines {
           },
         );
 
-        return DetailedMagazineModel.fromPiefed(
-            response.bodyJson['community_view'] as Map<String, Object?>);
+        return DetailedMagazineModel.fromPiefed(response.bodyJson);
     }
   }
 
@@ -372,8 +369,7 @@ class APIMagazines {
           },
         );
 
-        return DetailedMagazineModel.fromPiefed(
-            response.bodyJson['community_view'] as Map<String, Object?>);
+        return DetailedMagazineModel.fromPiefed(response.bodyJson);
     }
   }
 }
