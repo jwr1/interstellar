@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/models/message.dart';
+import 'package:interstellar/src/screens/account/messages/message_thread_item.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
@@ -182,141 +183,14 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
                         ? null
                         : messages.elementAt(index + 1);
 
-                    final isMyUser = currMessage.sender.name == myUsername;
+                    final fromMyUser = currMessage.sender.name == myUsername;
 
-                    final showDate = prevMessage == null ||
-                        !DateUtils.isSameDay(
-                            currMessage.createdAt, prevMessage.createdAt);
-                    final showTime = prevMessage == null ||
-                        currMessage.createdAt
-                                .difference(prevMessage.createdAt)
-                                .inMinutes >
-                            15;
-
-                    final showName = showTime ||
-                        currMessage.sender.name != prevMessage.sender.name;
-
-                    const defaultRadius = Radius.circular(20);
-                    const connectedRadius = Radius.circular(4);
-
-                    final topRadius =
-                        showName ? defaultRadius : connectedRadius;
-                    final bottomRadius = nextMessage == null ||
-                            currMessage.sender.name !=
-                                nextMessage.sender.name ||
-                            nextMessage.createdAt
-                                    .difference(currMessage.createdAt)
-                                    .inMinutes >
-                                15
-                        ? defaultRadius
-                        : connectedRadius;
-
-                    return LayoutBuilder(builder: (context, constraints) {
-                      return Column(
-                        crossAxisAlignment: isMyUser
-                            ? CrossAxisAlignment.end
-                            : CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (showDate)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 16),
-                              child: Row(
-                                children: [
-                                  const Expanded(child: Divider()),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 12),
-                                    child: Text(DateUtils.isSameDay(
-                                            currMessage.createdAt,
-                                            DateTime.now())
-                                        ? 'Today'
-                                        : dateOnlyFormat(
-                                            currMessage.createdAt)),
-                                  ),
-                                  const Expanded(child: Divider()),
-                                ],
-                              ),
-                            ),
-                          if (showTime || showName)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 16),
-                              child: Row(
-                                children: reverseList([
-                                  const Spacer(),
-                                  if (showTime)
-                                    Text(
-                                      timeOnlyFormat(currMessage.createdAt),
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w300),
-                                    ),
-                                  if (showName)
-                                    Expanded(
-                                      child: Row(
-                                        mainAxisAlignment: isMyUser
-                                            ? MainAxisAlignment.end
-                                            : MainAxisAlignment.start,
-                                        children: [
-                                          DisplayName(
-                                            currMessage.sender.name,
-                                            icon: currMessage.sender.avatar,
-                                            onTap: () =>
-                                                Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    UserScreen(
-                                                        currMessage.sender.id),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                ], !isMyUser),
-                              ),
-                            ),
-                          const SizedBox(height: 4),
-                          ConstrainedBox(
-                            constraints: BoxConstraints(
-                                maxWidth: max(constraints.maxWidth * (2 / 3),
-                                    min(constraints.maxWidth - 32, 600))),
-                            child: Card(
-                              color: isMyUser
-                                  ? Theme.of(context).colorScheme.primary
-                                  : null,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: isMyUser ? defaultRadius : topRadius,
-                                  topRight:
-                                      isMyUser ? topRadius : defaultRadius,
-                                  bottomLeft:
-                                      isMyUser ? defaultRadius : bottomRadius,
-                                  bottomRight:
-                                      isMyUser ? bottomRadius : defaultRadius,
-                                ),
-                              ),
-                              clipBehavior: Clip.antiAlias,
-                              margin: EdgeInsets.zero,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
-                                ),
-                                child: Markdown(
-                                  currMessage.body,
-                                  context.watch<AppController>().instanceHost,
-                                  themeData: Theme.of(context).copyWith(
-                                    textTheme: isMyUser
-                                        ? Theme.of(context).primaryTextTheme
-                                        : Theme.of(context).textTheme,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    });
+                    return MessageThreadItem(
+                      fromMyUser: fromMyUser,
+                      prevMessage: prevMessage,
+                      currMessage: currMessage,
+                      nextMessage: nextMessage,
+                    );
                   },
                 ),
               ),
