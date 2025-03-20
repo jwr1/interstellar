@@ -130,9 +130,10 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
   }
 
   factory DetailedMagazineModel.fromPiefed(Map<String, Object?> json) {
-    final comunityView = json['community_view'] as Map<String, Object?>? ?? json;
-    final piefedCommunity = comunityView['community'] as Map<String, Object?>;
-    final piefedCounts = comunityView['counts'] as Map<String, Object?>;
+    final communityView =
+        json['community_view'] as Map<String, Object?>? ?? json;
+    final piefedCommunity = communityView['community'] as Map<String, Object?>;
+    final piefedCounts = communityView['counts'] as Map<String, Object?>;
 
     final magazine = DetailedMagazineModel(
       id: piefedCommunity['id'] as int,
@@ -141,10 +142,13 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
       icon: lemmyGetOptionalImage(piefedCommunity['icon'] as String?),
       description: piefedCommunity['description'] as String?,
       owner: ((json['moderators'] ?? []) as List<dynamic>)
-          .map((user) => UserModel.fromPiefed((user as Map<String, Object?>)['moderator'] as Map<String, Object?>))
-          .toList().firstOrNull,
+          .map((user) => UserModel.fromPiefed((user
+              as Map<String, Object?>)['moderator'] as Map<String, Object?>))
+          .toList()
+          .firstOrNull,
       moderators: ((json['moderators'] ?? []) as List<dynamic>)
-          .map((user) => UserModel.fromPiefed((user as Map<String, Object?>)['moderator'] as Map<String, Object?>))
+          .map((user) => UserModel.fromPiefed((user
+              as Map<String, Object?>)['moderator'] as Map<String, Object?>))
           .toList(),
       subscriptionsCount: piefedCounts['subscriptions_count'] as int,
       threadCount: piefedCounts['post_count'] as int,
@@ -152,11 +156,16 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
       microblogCount: null,
       microblogCommentCount: null,
       isAdult: piefedCommunity['nsfw'] as bool,
-      isUserSubscribed: (comunityView['subscribed'] as String) != 'NotSubscribed',
-      isBlockedByUser: comunityView['blocked'] as bool?,
+      isUserSubscribed:
+          (communityView['subscribed'] as String) != 'NotSubscribed',
+      isBlockedByUser: communityView['blocked'] as bool?,
       isPostingRestrictedToMods:
           (piefedCommunity['restricted_to_mods']) as bool,
-      notificationControlStatus: null,
+      notificationControlStatus: communityView['activity_alert'] == null
+          ? null
+          : communityView['activity_alert'] as bool
+              ? NotificationControlStatus.loud
+              : NotificationControlStatus.default_,
     );
 
     magazineMentionCache[magazine.name] = magazine;

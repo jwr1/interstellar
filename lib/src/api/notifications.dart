@@ -9,7 +9,13 @@ import 'package:interstellar/src/models/notification.dart';
 // new_ is used because new is a reserved keyword
 enum NotificationsFilter { all, new_, read }
 
-enum NotificationControlUpdateTargetType { entry, post, magazine, user }
+enum NotificationControlUpdateTargetType {
+  entry,
+  post,
+  magazine,
+  user,
+  comment,
+}
 
 class MbinAPINotifications {
   final ServerClient client;
@@ -149,6 +155,7 @@ class MbinAPINotifications {
           NotificationControlUpdateTargetType.magazine =>
             '/community/subscribe',
           NotificationControlUpdateTargetType.user => '/user/subscribe',
+          NotificationControlUpdateTargetType.comment => '/comment/subscribe',
         };
 
         final response = await client.send(
@@ -161,6 +168,7 @@ class MbinAPINotifications {
                 throw UnsupportedError('Microblogs not on PieFed'),
               NotificationControlUpdateTargetType.magazine => 'community_id',
               NotificationControlUpdateTargetType.user => 'person_id',
+              NotificationControlUpdateTargetType.comment => 'comment_id',
             }: targetId,
             'subscribe': status == NotificationControlStatus.loud,
           },

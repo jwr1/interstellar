@@ -1,6 +1,7 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/bookmark.dart';
+import 'package:interstellar/src/api/notifications.dart';
 import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/comment.dart';
@@ -246,6 +247,22 @@ class _PostCommentState extends State<PostComment> {
                 },
                 matchesSoftware: ServerSoftware.mbin,
               ),
+              notificationControlStatus:
+                  widget.comment.notificationControlStatus,
+              onNotificationControlStatusChange:
+                  widget.comment.notificationControlStatus == null
+                      ? null
+                      : (newStatus) async {
+                          await ac.api.notifications.updateControl(
+                            targetType:
+                                NotificationControlUpdateTargetType.comment,
+                            targetId: widget.comment.id,
+                            status: newStatus,
+                          );
+
+                          widget.onUpdate(widget.comment
+                              .copyWith(notificationControlStatus: newStatus));
+                        },
             ),
           ),
         ),

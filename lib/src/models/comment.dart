@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:interstellar/src/models/image.dart';
 import 'package:interstellar/src/models/magazine.dart';
+import 'package:interstellar/src/models/notification.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/utils/models.dart';
@@ -94,6 +95,7 @@ class CommentModel with _$CommentModel {
     required int childCount,
     required String visibility,
     required bool? canAuthUserModerate,
+    required NotificationControlStatus? notificationControlStatus,
     required List<String>? bookmarks,
   }) = _CommentModel;
 
@@ -125,6 +127,7 @@ class CommentModel with _$CommentModel {
         childCount: json['childCount'] as int,
         visibility: json['visibility'] as String,
         canAuthUserModerate: json['canAuthUserModerate'] as bool?,
+        notificationControlStatus: null,
         bookmarks: optionalStringList(json['bookmarks']),
       );
 
@@ -178,6 +181,7 @@ class CommentModel with _$CommentModel {
       childCount: lemmyCounts['child_count'] as int,
       visibility: 'visible',
       canAuthUserModerate: null,
+      notificationControlStatus: null,
       bookmarks: [
         // Empty string indicates comment is saved. No string indicates comment is not saved.
         if (json['saved'] as bool) '',
@@ -235,6 +239,11 @@ class CommentModel with _$CommentModel {
       childCount: piefedCounts['child_count'] as int,
       visibility: 'visible',
       canAuthUserModerate: null,
+      notificationControlStatus: json['activity_alert'] == null
+          ? null
+          : json['activity_alert'] as bool
+              ? NotificationControlStatus.loud
+              : NotificationControlStatus.default_,
       bookmarks: [
         // Empty string indicates comment is saved. No string indicates comment is not saved.
         if (json['saved'] as bool) '',
