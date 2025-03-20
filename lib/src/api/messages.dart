@@ -53,7 +53,8 @@ class APIMessages {
 
         final json = response.bodyJson;
 
-        json['next_page'] = page;
+        json['next_page'] = lemmyCalcNextIntPage(
+            json['private_messages'] as List<dynamic>, page);
 
         return MessageListModel.fromPiefed(json, myUserId!);
     }
@@ -89,6 +90,9 @@ class APIMessages {
             await client.send(HttpMethod.get, path, queryParams: query);
 
         final json = response.bodyJson;
+        final nextPage = lemmyCalcNextIntPage(
+            json['private_messages'] as List<dynamic>, page);
+        json['next_page'] = nextPage;
 
         return MessageListModel.fromLemmy(
               json,
@@ -101,8 +105,7 @@ class APIMessages {
               messages: [],
               nextPage: null,
             ).copyWith(
-              nextPage: lemmyCalcNextIntPage(
-                  json['private_messages'] as List<dynamic>, page),
+              nextPage: nextPage,
             );
 
       case ServerSoftware.piefed:
@@ -117,6 +120,9 @@ class APIMessages {
             await client.send(HttpMethod.get, path, queryParams: query);
 
         final json = response.bodyJson;
+        final nextPage = lemmyCalcNextIntPage(
+            json['private_messages'] as List<dynamic>, page);
+        json['next_page'] = nextPage;
 
         return (MessageListModel.fromPiefed(
                   json,
@@ -130,8 +136,7 @@ class APIMessages {
                   nextPage: null,
                 ))
             .copyWith(
-          nextPage: lemmyCalcNextIntPage(
-              json['private_messages'] as List<dynamic>, page),
+          nextPage: nextPage,
         );
     }
   }

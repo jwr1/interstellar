@@ -44,6 +44,7 @@ class MessageListModel with _$MessageListModel {
           'threadId': threadId,
           'messages': <Map<String, Object?>>[],
           'participants': [creator, recipient],
+          'next_page': json['next_page'] as String?
         };
       }
 
@@ -82,6 +83,7 @@ class MessageListModel with _$MessageListModel {
           'threadId': threadId,
           'messages': <Map<String, Object?>>[],
           'participants': [creator, recipient],
+          'next_page': json['next_page'] as String?
         };
       }
 
@@ -134,7 +136,7 @@ class MessageThreadModel with _$MessageThreadModel {
         messages: (json['messages'] as List<Map<String, Object?>>)
             .map((message) => MessageThreadItemModel.fromLemmy(message))
             .toList(),
-        nextPage: null,
+        nextPage: json['next_page'] as String?,
       );
 
   factory MessageThreadModel.fromPiefed(Map<String, Object?> json) =>
@@ -148,7 +150,7 @@ class MessageThreadModel with _$MessageThreadModel {
             .reversed
             .map((message) => MessageThreadItemModel.fromPiefed(message))
             .toList(),
-        nextPage: null,
+        nextPage: json['next_page'] as String?,
       );
 }
 
