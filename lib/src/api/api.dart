@@ -24,7 +24,7 @@ class API {
   final APIMagazineModeration magazineModeration;
   final APIMessages messages;
   final APIModeration moderation;
-  final MbinAPINotifications notifications;
+  final APINotifications notifications;
   final MbinAPIMicroblogs microblogs;
   final APISearch search;
   final APIUsers users;
@@ -38,7 +38,7 @@ class API {
         magazineModeration = APIMagazineModeration(client),
         messages = APIMessages(client),
         moderation = APIModeration(client),
-        notifications = MbinAPINotifications(client),
+        notifications = APINotifications(client),
         microblogs = MbinAPIMicroblogs(client),
         search = APISearch(client),
         users = APIUsers(client),

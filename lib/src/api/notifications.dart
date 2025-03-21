@@ -1,10 +1,7 @@
-import 'dart:convert';
-
 import 'package:interstellar/src/api/client.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/notification.dart';
-
-// TODO: add missing switch statements to this file
+import 'package:interstellar/src/utils/models.dart';
 
 // new_ is used because new is a reserved keyword
 enum NotificationsFilter { all, new_, read }
@@ -17,23 +14,58 @@ enum NotificationControlUpdateTargetType {
   comment,
 }
 
-class MbinAPINotifications {
+class APINotifications {
   final ServerClient client;
 
-  MbinAPINotifications(this.client);
+  APINotifications(this.client);
 
   Future<NotificationListModel> list({
     String? page,
     NotificationsFilter? filter,
   }) async {
-    final path =
-        '/notifications/${filter == NotificationsFilter.new_ ? 'new' : (filter?.name ?? 'all')}';
-    final query = {'p': page};
+    switch (client.software) {
+      case ServerSoftware.mbin:
+        final path =
+            '/notifications/${filter == NotificationsFilter.new_ ? 'new' : (filter?.name ?? 'all')}';
+        final query = {'p': page};
 
-    final response =
-        await client.send(HttpMethod.get, path, queryParams: query);
+        final response =
+            await client.send(HttpMethod.get, path, queryParams: query);
 
-    return NotificationListModel.fromMbin(response.bodyJson);
+        return NotificationListModel.fromMbin(response.bodyJson);
+
+      case ServerSoftware.lemmy:
+        final query = {
+          'unread_only': (filter == NotificationsFilter.new_).toString(),
+          'page': page?.toString(),
+          'limit': '20',
+        };
+
+        final messagesFuture = client
+            .send(HttpMethod.get, '/private_message/list', queryParams: query);
+        final mentionFuture =
+            client.send(HttpMethod.get, '/user/mention', queryParams: query);
+        final repliesFuture =
+            client.send(HttpMethod.get, '/user/replies', queryParams: query);
+
+        final [messagesResponse, mentionResponse, repliesResponse] =
+            await Future.wait(
+          [messagesFuture, mentionFuture, repliesFuture],
+          eagerError: true,
+        );
+
+        final result = NotificationListModel.fromLemmy(
+          messagesResponse.bodyJson,
+          mentionResponse.bodyJson,
+          repliesResponse.bodyJson,
+        );
+
+        return result.copyWith(
+            nextPage: lemmyCalcNextIntPage(result.items, page));
+
+      case ServerSoftware.piefed:
+        throw UnimplementedError();
+    }
   }
 
   Future<int> getCount() async {
@@ -60,21 +92,78 @@ class MbinAPINotifications {
   }
 
   Future<void> putReadAll() async {
-    const path = '/notifications/read';
+    switch (client.software) {
+      case ServerSoftware.mbin:
+        const path = '/notifications/read';
 
-    final response = await client.send(HttpMethod.put, path);
+        final response = await client.send(HttpMethod.put, path);
+
+        return;
+
+      case ServerSoftware.lemmy:
+        const path = '/user/mark_all_as_read';
+
+        final response = await client.send(HttpMethod.post, path);
+
+        return;
+
+      case ServerSoftware.piefed:
+        throw UnimplementedError();
+    }
   }
 
   Future<NotificationModel> putRead(
     int notificationId,
     bool readState,
+    NotificationType notificationType, // Only needed for Lemmy
   ) async {
-    final path =
-        '/notifications/$notificationId/${readState ? 'read' : 'unread'}';
+    switch (client.software) {
+      case ServerSoftware.mbin:
+        final path =
+            '/notifications/$notificationId/${readState ? 'read' : 'unread'}';
 
-    final response = await client.send(HttpMethod.put, path);
+        final response = await client.send(HttpMethod.put, path);
 
-    return NotificationModel.fromMbin(response.bodyJson);
+        return NotificationModel.fromMbin(response.bodyJson);
+
+      case ServerSoftware.lemmy:
+        final path = switch (notificationType) {
+          NotificationType.message => '/private_message/mark_as_read',
+          NotificationType.mention => '/user/mention/mark_as_read',
+          NotificationType.reply =>
+            throw Exception("can't mark Lemmy reply as read"),
+          _ => throw Exception('invalid notification type for lemmy'),
+        };
+
+        final response = await client.send(
+          HttpMethod.post,
+          path,
+          body: {
+            switch (notificationType) {
+              NotificationType.message => 'private_message_id',
+              NotificationType.mention => 'person_mention_id',
+              NotificationType.reply =>
+                throw Exception("can't mark Lemmy reply as read"),
+              _ => throw Exception('invalid notification type for lemmy'),
+            }: notificationId,
+            'read': readState,
+          },
+        );
+
+        return switch (notificationType) {
+          NotificationType.message => NotificationModel.fromLemmyMessage(
+              response.bodyJson['private_message_view']
+                  as Map<String, Object?>),
+          NotificationType.mention => NotificationModel.fromLemmyMention(
+              response.bodyJson['person_mention_view'] as Map<String, Object?>),
+          NotificationType.reply =>
+            throw Exception("can't mark Lemmy reply as read"),
+          _ => throw Exception('invalid notification type for lemmy'),
+        };
+
+      case ServerSoftware.piefed:
+        throw UnimplementedError();
+    }
   }
 
   // Returns server's public key
@@ -100,7 +189,7 @@ class MbinAPINotifications {
         return;
 
       case ServerSoftware.lemmy:
-        throw Exception('Notifications not yet implemented on Lemmy');
+        throw Exception('No push notifications on Lemmy');
 
       case ServerSoftware.piefed:
         throw Exception('Notifications not yet implemented on PieFed');
@@ -120,7 +209,7 @@ class MbinAPINotifications {
         return;
 
       case ServerSoftware.lemmy:
-        throw Exception('Notifications not yet implemented on Lemmy');
+        throw Exception('No push notifications on Lemmy');
 
       case ServerSoftware.piefed:
         throw Exception('Notifications not yet implemented on PieFed');
@@ -145,7 +234,7 @@ class MbinAPINotifications {
         return;
 
       case ServerSoftware.lemmy:
-        throw Exception('Notification update control not implemented on Lemmy');
+        throw Exception('No notification controls on Lemmy');
 
       case ServerSoftware.piefed:
         final path = switch (targetType) {
