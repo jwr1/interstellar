@@ -139,16 +139,20 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                 onTryAgain: _pagingController.retryLastFailedRequest,
               ),
               itemBuilder: (context, item, index) =>
-                  // If Lemmy, then hide items that come from the current user, in order to show only real "notifications".
-                  // You also can't change the read state of said items anyway.
-                  context.watch<AppController>().serverSoftware ==
-                              ServerSoftware.lemmy &&
-                          item.creator?.name ==
-                              context
-                                  .watch<AppController>()
-                                  .selectedAccount
-                                  .split('@')
-                                  .first
+                  // Hide notifications that could not be matched correctly
+                  item.type == null ||
+                          item.subject == null ||
+                          item.creator == null ||
+                          // If Lemmy, then hide items that come from the current user, in order to show only real "notifications".
+                          // You also can't change the read state of said items anyway.
+                          context.watch<AppController>().serverSoftware ==
+                                  ServerSoftware.lemmy &&
+                              item.creator?.name ==
+                                  context
+                                      .watch<AppController>()
+                                      .selectedAccount
+                                      .split('@')
+                                      .first
                       ? SizedBox()
                       : Padding(
                           padding: const EdgeInsets.only(

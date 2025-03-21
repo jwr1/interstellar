@@ -56,11 +56,7 @@ class NotificationItem extends StatefulWidget {
 class _NotificationItemState extends State<NotificationItem> {
   @override
   Widget build(BuildContext context) {
-    if (widget.item.type == null ||
-        widget.item.subject == null ||
-        widget.item.creator == null) {
-      return const SizedBox();
-    }
+    // Notification type, subject, and creator must not be null at this point.
 
     final software = context.watch<AppController>().serverSoftware;
 
