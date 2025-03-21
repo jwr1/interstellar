@@ -35,15 +35,13 @@ class _AccountMigrationScreenState extends State<AccountMigrationScreen> {
         _destinationAccount != null &&
         _sourceAccount != _destinationAccount;
 
-    final bothAccountsMbin = _sourceAccount != null &&
-        _destinationAccount != null &&
+    final sourceIsMbin = _sourceAccount != null &&
         ac.servers[_sourceAccount!.split('@').last]!.software ==
-            ServerSoftware.mbin &&
+            ServerSoftware.mbin;
+    final bothAccountsMbin = sourceIsMbin &&
+        _destinationAccount != null &&
         ac.servers[_destinationAccount!.split('@').last]!.software ==
             ServerSoftware.mbin;
-    final sourceIsLemmy = _sourceAccount != null &&
-        ac.servers[_sourceAccount!.split('@').last]!.software ==
-            ServerSoftware.lemmy;
 
     void migrationCommand() async {
       try {
@@ -76,7 +74,7 @@ class _AccountMigrationScreenState extends State<AccountMigrationScreen> {
             if (progressAndCheckCancel()) return;
           } while (nextPage != null);
         }
-        if (_migrateMagazineBlocks.enabled && !sourceIsLemmy) {
+        if (_migrateMagazineBlocks.enabled && sourceIsMbin) {
           String? nextPage;
           do {
             final res = await sourceAPI.magazines
@@ -104,7 +102,7 @@ class _AccountMigrationScreenState extends State<AccountMigrationScreen> {
             if (progressAndCheckCancel()) return;
           } while (nextPage != null);
         }
-        if (_migrateUserBlocks.enabled && !sourceIsLemmy) {
+        if (_migrateUserBlocks.enabled && sourceIsMbin) {
           String? nextPage;
           do {
             final res = await sourceAPI.users
@@ -297,7 +295,7 @@ class _AccountMigrationScreenState extends State<AccountMigrationScreen> {
                             })
                         },
                       ),
-                      if (!sourceIsLemmy)
+                      if (sourceIsMbin)
                         CheckboxListTile(
                           title: Text(l(context)
                               .settings_accountMigration_step2_migrateMagazineBlocks),
@@ -321,7 +319,7 @@ class _AccountMigrationScreenState extends State<AccountMigrationScreen> {
                               })
                           },
                         ),
-                      if (!sourceIsLemmy)
+                      if (sourceIsMbin)
                         CheckboxListTile(
                           title: Text(l(context)
                               .settings_accountMigration_step2_migrateUserBlocks),

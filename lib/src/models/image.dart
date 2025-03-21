@@ -20,9 +20,9 @@ class ImageModel with _$ImageModel {
         blurHashHeight: json['height'] as int?,
       );
 
-  factory ImageModel.fromLemmy(String json) => ImageModel(
-        src: json,
-        altText: null,
+  factory ImageModel.fromLemmy(String src, [String? altText]) => ImageModel(
+        src: src,
+        altText: altText,
         blurHash: null,
         blurHashWidth: null,
         blurHashHeight: null,

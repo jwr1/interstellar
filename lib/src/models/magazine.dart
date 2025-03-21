@@ -32,6 +32,15 @@ class DetailedMagazineListModel with _$DetailedMagazineListModel {
             .toList(),
         nextPage: json['next_page'] as String?,
       );
+
+  factory DetailedMagazineListModel.fromPiefed(Map<String, Object?> json) =>
+      DetailedMagazineListModel(
+        items: (json['communities'] as List<dynamic>)
+            .map((item) =>
+                DetailedMagazineModel.fromPiefed(item as Map<String, Object?>))
+            .toList(),
+        nextPage: json['next_page'] as String?,
+      );
 }
 
 @freezed
@@ -61,7 +70,7 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
       id: json['magazineId'] as int,
       name: json['name'] as String,
       title: json['title'] as String,
-      icon: mbinGetImage(json['icon'] as Map<String, Object?>?),
+      icon: mbinGetOptionalImage(json['icon'] as Map<String, Object?>?),
       description: json['description'] as String?,
       owner: json['owner'] == null
           ? null
@@ -96,9 +105,9 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
 
     final magazine = DetailedMagazineModel(
       id: lemmyCommunity['id'] as int,
-      name: lemmyGetActorName(lemmyCommunity),
+      name: getLemmyPiefedActorName(lemmyCommunity),
       title: lemmyCommunity['title'] as String,
-      icon: lemmyGetImage(lemmyCommunity['icon'] as String?),
+      icon: lemmyGetOptionalImage(lemmyCommunity['icon'] as String?),
       description: lemmyCommunity['description'] as String?,
       owner: null,
       moderators: [],
@@ -119,6 +128,50 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
 
     return magazine;
   }
+
+  factory DetailedMagazineModel.fromPiefed(Map<String, Object?> json) {
+    final communityView =
+        json['community_view'] as Map<String, Object?>? ?? json;
+    final piefedCommunity = communityView['community'] as Map<String, Object?>;
+    final piefedCounts = communityView['counts'] as Map<String, Object?>;
+
+    final magazine = DetailedMagazineModel(
+      id: piefedCommunity['id'] as int,
+      name: getLemmyPiefedActorName(piefedCommunity),
+      title: piefedCommunity['title'] as String,
+      icon: lemmyGetOptionalImage(piefedCommunity['icon'] as String?),
+      description: piefedCommunity['description'] as String?,
+      owner: ((json['moderators'] ?? []) as List<dynamic>)
+          .map((user) => UserModel.fromPiefed((user
+              as Map<String, Object?>)['moderator'] as Map<String, Object?>))
+          .toList()
+          .firstOrNull,
+      moderators: ((json['moderators'] ?? []) as List<dynamic>)
+          .map((user) => UserModel.fromPiefed((user
+              as Map<String, Object?>)['moderator'] as Map<String, Object?>))
+          .toList(),
+      subscriptionsCount: piefedCounts['subscriptions_count'] as int,
+      threadCount: piefedCounts['post_count'] as int,
+      threadCommentCount: piefedCounts['post_reply_count'] as int,
+      microblogCount: null,
+      microblogCommentCount: null,
+      isAdult: piefedCommunity['nsfw'] as bool,
+      isUserSubscribed:
+          (communityView['subscribed'] as String) != 'NotSubscribed',
+      isBlockedByUser: communityView['blocked'] as bool?,
+      isPostingRestrictedToMods:
+          (piefedCommunity['restricted_to_mods']) as bool,
+      notificationControlStatus: communityView['activity_alert'] == null
+          ? null
+          : communityView['activity_alert'] as bool
+              ? NotificationControlStatus.loud
+              : NotificationControlStatus.default_,
+    );
+
+    magazineMentionCache[magazine.name] = magazine;
+
+    return magazine;
+  }
 }
 
 @freezed
@@ -132,13 +185,19 @@ class MagazineModel with _$MagazineModel {
   factory MagazineModel.fromMbin(Map<String, Object?> json) => MagazineModel(
         id: json['magazineId'] as int,
         name: json['name'] as String,
-        icon: mbinGetImage(json['icon'] as Map<String, Object?>?),
+        icon: mbinGetOptionalImage(json['icon'] as Map<String, Object?>?),
       );
 
   factory MagazineModel.fromLemmy(Map<String, Object?> json) => MagazineModel(
         id: json['id'] as int,
-        name: lemmyGetActorName(json),
-        icon: lemmyGetImage(json['icon'] as String?),
+        name: getLemmyPiefedActorName(json),
+        icon: lemmyGetOptionalImage(json['icon'] as String?),
+      );
+
+  factory MagazineModel.fromPiefed(Map<String, Object?> json) => MagazineModel(
+        id: json['id'] as int,
+        name: getLemmyPiefedActorName(json),
+        icon: lemmyGetOptionalImage(json['icon'] as String?),
       );
 }
 

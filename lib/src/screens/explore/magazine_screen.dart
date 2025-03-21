@@ -146,9 +146,9 @@ class _MagazineScreenState extends State<MagazineScreen> {
                                   context,
                                   Uri.https(
                                     ac.instanceHost,
-                                    ac.serverSoftware == ServerSoftware.lemmy
-                                        ? '/c/${_data!.name}'
-                                        : '/m/${_data!.name}',
+                                    ac.serverSoftware == ServerSoftware.mbin
+                                        ? '/m/${_data!.name}'
+                                        : '/c/${_data!.name}',
                                   )),
                               child: Text(l(context).openInBrowser),
                             ),

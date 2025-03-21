@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/controller/controller.dart';
-import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/screens/account/notification/notification_badge.dart';
 import 'package:interstellar/src/screens/account/notification/notification_screen.dart';
 import 'package:interstellar/src/screens/account/self_feed.dart';
@@ -27,9 +26,7 @@ class _AccountScreenState extends State<AccountScreen> with AutomaticKeepAliveCl
     super.build(context);
     return whenLoggedIn(
           context,
-          context.read<AppController>().serverSoftware == ServerSoftware.lemmy
-              ? const SelfFeed()
-              : DefaultTabController(
+              DefaultTabController(
                   length: 3,
                   child: Scaffold(
                     appBar: AppBar(

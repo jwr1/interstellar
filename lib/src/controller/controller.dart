@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:interstellar/src/api/api.dart';
+import 'package:interstellar/src/api/client.dart';
 import 'package:interstellar/src/api/oauth.dart';
 import 'package:interstellar/src/controller/account.dart';
 import 'package:interstellar/src/controller/database.dart';
@@ -63,7 +64,9 @@ class AppController with ChangeNotifier {
   Map<String, Server> get servers => _servers;
   Map<String, Account> get accounts => _accounts;
   late String _selectedAccount;
+  late int _selectedAccountId;
   String get selectedAccount => _selectedAccount;
+  int get selectedAccountId => _selectedAccountId;
   String get instanceHost => _selectedAccount.split('@').last;
   bool get isLoggedIn => _selectedAccount.split('@').first.isNotEmpty;
   ServerSoftware get serverSoftware => _servers[instanceHost]!.software;
@@ -129,6 +132,8 @@ class AppController with ChangeNotifier {
         (record) => MapEntry(record.key, FilterList.fromJson(record.value))));
 
     await _updateAPI();
+
+    _selectedAccountId = (await api.users.getMe()).id;
   }
 
   Future<void> _rebuildProfile() async {
@@ -263,8 +268,8 @@ class AppController with ChangeNotifier {
       return _servers[server]!.oauthIdentifier!;
     }
 
-    if (software == ServerSoftware.lemmy) {
-      throw Exception('Tried to register oauth for lemmy');
+    if (software != ServerSoftware.mbin) {
+      throw Exception('Register oauth only allowed on mbin');
     }
 
     String oauthIdentifier = await registerOauthApp(server);
@@ -289,6 +294,7 @@ class AppController with ChangeNotifier {
     }
 
     _updateAPI();
+    _selectedAccountId = (await api.users.getMe()).id;
 
     notifyListeners();
 
@@ -332,6 +338,7 @@ class AppController with ChangeNotifier {
     }
 
     _updateAPI();
+    _selectedAccountId = (await api.users.getMe()).id;
 
     notifyListeners();
 
@@ -344,7 +351,8 @@ class AppController with ChangeNotifier {
     if (newAccount == _selectedAccount) return;
 
     _selectedAccount = newAccount;
-    _updateAPI();
+    await _updateAPI();
+    _selectedAccountId = (await api.users.getMe()).id;
 
     userMentionCache.clear();
     magazineMentionCache.clear();
@@ -385,6 +393,7 @@ class AppController with ChangeNotifier {
         }
         break;
       case ServerSoftware.lemmy:
+      case ServerSoftware.piefed:
         String? jwt = _accounts[account]!.jwt;
         if (jwt != null) {
           httpClient = JwtHttpClient(jwt);
@@ -392,7 +401,11 @@ class AppController with ChangeNotifier {
         break;
     }
 
-    return API(software, httpClient, instance);
+    return API(ServerClient(
+      httpClient: httpClient,
+      software: software,
+      domain: instance,
+    ));
   }
 
   Future<void> addStar(String newStar) async {
@@ -417,7 +430,7 @@ class AppController with ChangeNotifier {
 
   Future<void> registerPush(BuildContext context) async {
     if (serverSoftware != ServerSoftware.mbin) {
-      throw Exception('Push notifications only supported on Mbin');
+      throw Exception('Push notifications only allowed on Mbin');
     }
 
     final permissionsResult = await FlutterLocalNotificationsPlugin()
@@ -440,7 +453,7 @@ class AppController with ChangeNotifier {
 
   Future<void> unregisterPush([String? overrideAccount]) async {
     if (serverSoftware != ServerSoftware.mbin) {
-      throw Exception('Push notifications only supported on Mbin');
+      throw Exception('Push notifications only allowed on Mbin');
     }
 
     final account = overrideAccount ?? _selectedAccount;

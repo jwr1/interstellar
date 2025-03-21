@@ -14,7 +14,7 @@ class SelfFeed extends StatefulWidget {
 
 class _SelfFeedState extends State<SelfFeed>
     with AutomaticKeepAliveClientMixin<SelfFeed> {
-  UserModel? _meUser;
+  DetailedUserModel? _meUser;
 
   @override
   bool get wantKeepAlive => true;
@@ -23,26 +23,23 @@ class _SelfFeedState extends State<SelfFeed>
   void initState() {
     super.initState();
 
-    context.read<AppController>().api.users.getMe().then((value) {
-      // Needed due to bug where switching from an Mbin account to Lemmy will cause widget to be unmounted but initState still called.
-      // TODO: recheck once notification and message tabs are added for Lemmy
-      if (!mounted) return;
-
-      setState(() {
-        _meUser = value;
-      });
-    });
+    context
+        .read<AppController>()
+        .api
+        .users
+        .getMe()
+        .then((value) => setState(() {
+              _meUser = value;
+            }));
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    if (_meUser == null) {
-      return const LoadingTemplate();
-    }
+    if (_meUser == null) return const LoadingTemplate();
 
     final user = _meUser!;
 
-    return UserScreen(user.id);
+    return UserScreen(user.id, initData: _meUser);
   }
 }

@@ -41,8 +41,7 @@ class _NavDrawerState extends State<NavDrawer> {
                   subbedMagazines = value.items;
                 }
               }));
-      if (context.read<AppController>().serverSoftware !=
-          ServerSoftware.lemmy) {
+      if (context.read<AppController>().serverSoftware == ServerSoftware.mbin) {
         context
             .read<AppController>()
             .api
@@ -201,8 +200,8 @@ class _NavDrawerState extends State<NavDrawer> {
                 ),
               ],
             ],
-            if (context.read<AppController>().serverSoftware !=
-                    ServerSoftware.lemmy &&
+            if (context.read<AppController>().serverSoftware ==
+                    ServerSoftware.mbin &&
                 subbedUsers != null) ...[
               ...subbedUsers!
                   .asMap()
@@ -250,8 +249,8 @@ class _NavDrawerState extends State<NavDrawer> {
                 ),
               ),
             ],
-            if (context.read<AppController>().serverSoftware !=
-                    ServerSoftware.lemmy &&
+            if (context.read<AppController>().serverSoftware ==
+                    ServerSoftware.mbin &&
                 subbedDomains != null) ...[
               ...subbedDomains!
                   .asMap()

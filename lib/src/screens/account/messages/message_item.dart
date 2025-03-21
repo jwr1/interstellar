@@ -28,7 +28,7 @@ class MessageItem extends StatelessWidget {
         overflow: TextOverflow.fade,
       ),
       subtitle: Text(
-        item.messages.first.body,
+        item.messages.first.body.replaceAll('\n', ' '),
         softWrap: false,
         overflow: TextOverflow.ellipsis,
       ),

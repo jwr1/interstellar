@@ -19,12 +19,14 @@ class PostPage extends StatefulWidget {
     this.initData,
     this.onUpdate,
     super.key,
+    this.userCanModerate = false,
   });
 
   final PostType? postType;
   final int? postId;
   final PostModel? initData;
   final void Function(PostModel)? onUpdate;
+  final bool userCanModerate;
 
   @override
   State<PostPage> createState() => _PostPageState();
@@ -231,6 +233,7 @@ class _PostPageState extends State<PostPage> {
                         matchesUsername: post.user.name,
                       )
                     : null,
+                userCanModerate: widget.userCanModerate,
               ),
             ),
             PagedSliverList(
@@ -261,6 +264,7 @@ class _PostPageState extends State<PostPage> {
                       });
                     },
                     opUserId: post.user.id,
+                    userCanModerate: widget.userCanModerate,
                   ),
                 ),
               ),
