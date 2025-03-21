@@ -82,6 +82,20 @@ class _FeedScreenState extends State<FeedScreen> with AutomaticKeepAliveClientMi
     final currentFeedModeOption = feedTypeSelect(context).getOption(_mode);
     final currentFeedSortOption = feedSortSelect(context).getOption(sort);
 
+    // in magazine check if user is moderator
+    // don't really need for mbin since mbin api returns
+    // canAuthUserModerate with content items
+    // lemmy and piefed don't return this info
+    bool userCanModerate = false;
+    if (widget.createPostMagazine != null) {
+      for (var moderator in widget.createPostMagazine!.moderators) {
+        if (moderator.id == context.read<AppController>().selectedAccountId) {
+          userCanModerate = true;
+          break;
+        }
+      }
+    }
+
     final actions = [
       feedActionCreateNew(context).withProps(
         context.watch<AppController>().isLoggedIn
@@ -330,6 +344,7 @@ class _FeedScreenState extends State<FeedScreen> with AutomaticKeepAliveClientMi
                         sort: sort,
                         mode: _mode,
                         details: widget.details,
+                        userCanModerate: userCanModerate,
                       ),
                       FeedScreenBody(
                         key: _getFeedKey(1),
@@ -337,6 +352,7 @@ class _FeedScreenState extends State<FeedScreen> with AutomaticKeepAliveClientMi
                         sort: sort,
                         mode: _mode,
                         details: widget.details,
+                        userCanModerate: userCanModerate,
                       ),
                       FeedScreenBody(
                         key: _getFeedKey(2),
@@ -344,6 +360,7 @@ class _FeedScreenState extends State<FeedScreen> with AutomaticKeepAliveClientMi
                         sort: sort,
                         mode: _mode,
                         details: widget.details,
+                        userCanModerate: userCanModerate,
                       ),
                       FeedScreenBody(
                         key: _getFeedKey(3),
@@ -351,6 +368,7 @@ class _FeedScreenState extends State<FeedScreen> with AutomaticKeepAliveClientMi
                         sort: sort,
                         mode: _mode,
                         details: widget.details,
+                        userCanModerate: userCanModerate,
                       ),
                     ],
                   String name when name == feedActionSetType(context).name => [
@@ -361,6 +379,7 @@ class _FeedScreenState extends State<FeedScreen> with AutomaticKeepAliveClientMi
                         sort: _sort ?? _defaultSortFromMode(PostType.thread),
                         mode: PostType.thread,
                         details: widget.details,
+                        userCanModerate: userCanModerate,
                       ),
                       FeedScreenBody(
                         key: _getFeedKey(1),
@@ -369,6 +388,7 @@ class _FeedScreenState extends State<FeedScreen> with AutomaticKeepAliveClientMi
                         sort: _sort ?? _defaultSortFromMode(PostType.microblog),
                         mode: PostType.microblog,
                         details: widget.details,
+                        userCanModerate: userCanModerate,
                       ),
                     ],
                   _ => [],
@@ -563,6 +583,7 @@ class FeedScreenBody extends StatefulWidget {
   final FeedSort sort;
   final PostType mode;
   final Widget? details;
+  final bool userCanModerate;
 
   const FeedScreenBody({
     super.key,
@@ -571,6 +592,7 @@ class FeedScreenBody extends StatefulWidget {
     required this.sort,
     required this.mode,
     this.details,
+    this.userCanModerate = false
   });
 
   @override
@@ -743,6 +765,7 @@ class _FeedScreenBodyState extends State<FeedScreenBody>  with AutomaticKeepAliv
                             _pagingController.itemList = newList;
                           });
                         },
+                        userCanModerate: widget.userCanModerate,
                       ),
                     ),
                   );
@@ -785,6 +808,7 @@ class _FeedScreenBodyState extends State<FeedScreenBody>  with AutomaticKeepAliv
                         },
                         isPreview: true,
                         filterListWarnings: _filterListWarnings[item.id],
+                        userCanModerate: widget.userCanModerate,
                       ),
                     ),
                   );

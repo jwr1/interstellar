@@ -19,7 +19,7 @@ class PostComment extends StatefulWidget {
     this.onUpdate, {
     this.opUserId,
     this.onClick,
-    this.canModerate = false,
+    this.userCanModerate = false,
     super.key,
   });
 
@@ -27,7 +27,7 @@ class PostComment extends StatefulWidget {
   final void Function(CommentModel) onUpdate;
   final int? opUserId;
   final void Function()? onClick;
-  final bool canModerate;
+  final bool userCanModerate;
 
   @override
   State<PostComment> createState() => _PostCommentState();
@@ -41,7 +41,8 @@ class _PostCommentState extends State<PostComment> {
   Widget build(BuildContext context) {
     final ac = context.watch<AppController>();
 
-    final canModerate = widget.comment.canAuthUserModerate ?? false;
+    final canModerate = widget.userCanModerate
+        || (widget.comment.canAuthUserModerate ?? false);
 
     return Column(
       children: [
@@ -312,7 +313,7 @@ class _PostCommentState extends State<PostComment> {
                           },
                           opUserId: widget.opUserId,
                           onClick: widget.onClick,
-                          canModerate: widget.canModerate,
+                          userCanModerate: widget.userCanModerate,
                         ))
                     .toList(),
               ),

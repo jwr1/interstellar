@@ -64,7 +64,9 @@ class AppController with ChangeNotifier {
   Map<String, Server> get servers => _servers;
   Map<String, Account> get accounts => _accounts;
   late String _selectedAccount;
+  late int _selectedAccountId;
   String get selectedAccount => _selectedAccount;
+  int get selectedAccountId => _selectedAccountId;
   String get instanceHost => _selectedAccount.split('@').last;
   bool get isLoggedIn => _selectedAccount.split('@').first.isNotEmpty;
   ServerSoftware get serverSoftware => _servers[instanceHost]!.software;
@@ -130,6 +132,8 @@ class AppController with ChangeNotifier {
         (record) => MapEntry(record.key, FilterList.fromJson(record.value))));
 
     await _updateAPI();
+
+    _selectedAccountId = (await api.users.getMe()).id;
   }
 
   Future<void> _rebuildProfile() async {
@@ -290,6 +294,7 @@ class AppController with ChangeNotifier {
     }
 
     _updateAPI();
+    _selectedAccountId = (await api.users.getMe()).id;
 
     notifyListeners();
 
@@ -333,6 +338,7 @@ class AppController with ChangeNotifier {
     }
 
     _updateAPI();
+    _selectedAccountId = (await api.users.getMe()).id;
 
     notifyListeners();
 
@@ -345,7 +351,8 @@ class AppController with ChangeNotifier {
     if (newAccount == _selectedAccount) return;
 
     _selectedAccount = newAccount;
-    _updateAPI();
+    await _updateAPI();
+    _selectedAccountId = (await api.users.getMe()).id;
 
     userMentionCache.clear();
     magazineMentionCache.clear();

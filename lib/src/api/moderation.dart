@@ -36,7 +36,20 @@ class APIModeration {
         throw Exception('Moderation not implemented on Lemmy yet');
 
       case ServerSoftware.piefed:
-        throw UnimplementedError();
+        final path = '/post/feature';
+
+        final response = await client.send(
+          HttpMethod.post,
+          path,
+          body: {
+            'post_id': postId,
+            'featured': true,
+            'feature_type': 'Community'
+          }
+        );
+
+        return PostModel.fromPiefed(
+            response.bodyJson['post_view'] as Map<String, Object?>);
     }
   }
 
@@ -84,7 +97,20 @@ class APIModeration {
         throw Exception('Moderation not implemented on Lemmy yet');
 
       case ServerSoftware.piefed:
-        throw UnimplementedError();
+        final path = '/post/remove';
+
+        final response = await client.send(
+          HttpMethod.post,
+          path,
+          body: {
+            'post_id': postId,
+            'removed': status,
+            'reason': 'Moderated'
+          }
+        );
+
+        return PostModel.fromPiefed(
+            response.bodyJson['post_view'] as Map<String, Object?>);
     }
   }
 
@@ -103,7 +129,20 @@ class APIModeration {
         throw Exception('Moderation not implemented on Lemmy yet');
 
       case ServerSoftware.piefed:
-        throw UnimplementedError();
+        final path = '/comment/remove';
+
+        final response = await client.send(
+          HttpMethod.post,
+          path,
+          body: {
+            'comment_id': commentId,
+            'removed': status,
+            'reason': 'Moderated'
+          }
+        );
+
+        return CommentModel.fromPiefed(
+            response.bodyJson['comment_view'] as Map<String, Object?>);
     }
   }
 }

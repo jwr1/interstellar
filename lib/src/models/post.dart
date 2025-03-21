@@ -234,7 +234,7 @@ class PostModel with _$PostModel {
       myBoost: null,
       isOC: null,
       isNSFW: piefedPost['nsfw'] as bool,
-      isPinned: false,
+      isPinned: piefedPost['sticky'] as bool,
       createdAt: DateTime.parse(piefedPost['published'] as String),
       editedAt: optionalDateTime(piefedPost['updated'] as String?),
       lastActive: DateTime.parse(piefedCounts['newest_comment_time'] as String),
