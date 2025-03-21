@@ -25,10 +25,15 @@ class MessageThreadItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Convert to local time so timelines markings are correct.
+    final prevCreatedAt = prevMessage?.createdAt.toLocal();
+    final currCreatedAt = currMessage.createdAt.toLocal();
+    final nextCreatedAt = nextMessage?.createdAt.toLocal();
+
     final showDate = prevMessage == null ||
-        !DateUtils.isSameDay(currMessage.createdAt, prevMessage!.createdAt);
+        !DateUtils.isSameDay(currCreatedAt, prevCreatedAt!);
     final showTime = prevMessage == null ||
-        currMessage.createdAt.difference(prevMessage!.createdAt).inMinutes > 15;
+        currCreatedAt.difference(prevCreatedAt!).inMinutes > 15;
 
     final showName =
         showTime || currMessage.sender.name != prevMessage!.sender.name;
@@ -39,8 +44,7 @@ class MessageThreadItem extends StatelessWidget {
     final topRadius = showName ? defaultRadius : connectedRadius;
     final bottomRadius = nextMessage == null ||
             currMessage.sender.name != nextMessage!.sender.name ||
-            nextMessage!.createdAt.difference(currMessage.createdAt).inMinutes >
-                15
+            nextCreatedAt!.difference(currCreatedAt).inMinutes > 15
         ? defaultRadius
         : connectedRadius;
 
@@ -58,10 +62,10 @@ class MessageThreadItem extends StatelessWidget {
                   const Expanded(child: Divider()),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: Text(DateUtils.isSameDay(
-                            currMessage.createdAt, DateTime.now())
-                        ? 'Today'
-                        : dateOnlyFormat(currMessage.createdAt)),
+                    child: Text(
+                        DateUtils.isSameDay(currCreatedAt, DateTime.now())
+                            ? 'Today'
+                            : dateOnlyFormat(currCreatedAt)),
                   ),
                   const Expanded(child: Divider()),
                 ],
@@ -75,7 +79,7 @@ class MessageThreadItem extends StatelessWidget {
                   const Spacer(),
                   if (showTime)
                     Text(
-                      timeOnlyFormat(currMessage.createdAt),
+                      timeOnlyFormat(currCreatedAt),
                       style: const TextStyle(fontWeight: FontWeight.w300),
                     ),
                   if (showName)

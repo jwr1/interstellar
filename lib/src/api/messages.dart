@@ -158,13 +158,33 @@ class APIMessages {
         return MessageThreadModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
+        final path = '/private_message';
+
+        final response = await client.send(
+          HttpMethod.post,
+          path,
+          body: {
+            'recipient_id': userId,
+            'content': body,
+          },
+        );
+
+        final json = response.bodyJson;
+
+        return MessageListModel.fromLemmy(
+          {
+            'private_messages': [json['private_message_view']]
+          },
+          (json as dynamic)['private_message_view']['creator']['id'] as int,
+        ).items.first;
+
       case ServerSoftware.piefed:
         throw UnimplementedError();
     }
   }
 
   Future<MessageThreadModel> postThreadReply(
-    int threadId,
+    int threadId, // Should be recipient user id for Lemmy
     String body,
   ) async {
     switch (client.software) {
@@ -180,6 +200,8 @@ class APIMessages {
         return MessageThreadModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
+        return await create(threadId, body);
+
       case ServerSoftware.piefed:
         throw UnimplementedError();
     }
