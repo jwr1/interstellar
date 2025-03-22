@@ -187,7 +187,9 @@ class _UserScreenState extends State<UserScreen> {
                                         })),
                                         child: Text(l(context).account_edit),
                                       ),
-                                    if (!isMyUser)
+                                    if (!isMyUser &&
+                                        ac.serverSoftware ==
+                                            ServerSoftware.mbin)
                                       SubscriptionButton(
                                         isSubscribed: user.isFollowedByUser,
                                         subscriptionCount:
