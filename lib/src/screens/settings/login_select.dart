@@ -14,7 +14,6 @@ final List<String> _recommendedInstances = [
   'lemm.ee',
   'lemmy.ml',
   'lemmy.world',
-  'programming.dev',
 ];
 
 class LoginSelectScreen extends StatefulWidget {
