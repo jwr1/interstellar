@@ -1,6 +1,6 @@
 # Interstellar
 
-An app for Mbin and Lemmy; connecting you to the fediverse.
+An app for Mbin/Lemmy/PieFed, connecting you to the fediverse.
 
 ## Downloads
 
