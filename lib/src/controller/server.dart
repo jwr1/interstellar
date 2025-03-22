@@ -13,6 +13,12 @@ enum ServerSoftware {
         ServerSoftware.lemmy => '/api/v3',
         ServerSoftware.piefed => '/api/alpha',
       };
+
+  String get title => switch (this) {
+        ServerSoftware.mbin => 'Mbin',
+        ServerSoftware.lemmy => 'Lemmy',
+        ServerSoftware.piefed => 'PieFed',
+      };
 }
 
 @freezed

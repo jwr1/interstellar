@@ -48,7 +48,7 @@ class _LoginConfirmScreenState extends State<LoginConfirmScreen> {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 Text(
-                  widget.software.name,
+                  widget.software.title,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ],
