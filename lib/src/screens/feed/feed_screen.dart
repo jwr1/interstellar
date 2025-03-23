@@ -39,7 +39,8 @@ class FeedScreen extends StatefulWidget {
   State<FeedScreen> createState() => _FeedScreenState();
 }
 
-class _FeedScreenState extends State<FeedScreen> with AutomaticKeepAliveClientMixin<FeedScreen> {
+class _FeedScreenState extends State<FeedScreen>
+    with AutomaticKeepAliveClientMixin<FeedScreen> {
   final _fabKey = GlobalKey<FloatingMenuState>();
   final List<GlobalKey<_FeedScreenBodyState>> _feedKeyList = [];
   late FeedSource _filter;
@@ -478,6 +479,13 @@ SelectionMenu<FeedSort> feedSortSelect(BuildContext context) {
         ),
       ],
 
+      if (isLemmy || isPiefed)
+        SelectionMenuItem(
+          value: FeedSort.scaled,
+          title: l(context).sort_scaled,
+          icon: Symbols.scale_rounded,
+        ),
+
       // lemmy specific
       if (isLemmy) ...[
         SelectionMenuItem(
@@ -489,11 +497,6 @@ SelectionMenu<FeedSort> feedSortSelect(BuildContext context) {
           value: FeedSort.controversial,
           title: l(context).sort_controversial,
           icon: Symbols.thumbs_up_down_rounded,
-        ),
-        SelectionMenuItem(
-          value: FeedSort.scaled,
-          title: l(context).sort_scaled,
-          icon: Symbols.scale_rounded,
         ),
         SelectionMenuItem(
           value: FeedSort.topDay,
@@ -592,14 +595,15 @@ class FeedScreenBody extends StatefulWidget {
     required this.sort,
     required this.mode,
     this.details,
-    this.userCanModerate = false
+    this.userCanModerate = false,
   });
 
   @override
   State<FeedScreenBody> createState() => _FeedScreenBodyState();
 }
 
-class _FeedScreenBodyState extends State<FeedScreenBody>  with AutomaticKeepAliveClientMixin<FeedScreenBody> {
+class _FeedScreenBodyState extends State<FeedScreenBody>
+    with AutomaticKeepAliveClientMixin<FeedScreenBody> {
   final _pagingController =
       PagingController<String, PostModel>(firstPageKey: '');
   final _scrollController = ScrollController();
