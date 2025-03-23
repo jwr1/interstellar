@@ -1,6 +1,6 @@
 # Interstellar
 
-An app for Mbin and Lemmy; connecting you to the fediverse.
+An app for Mbin/Lemmy/PieFed, connecting you to the fediverse.
 
 ## Downloads
 
@@ -33,7 +33,7 @@ You can ask questions, report bugs, make suggestions, etc., to any of the follow
 
 ## Contributing
 
-Interstellar uses [Flutter](https://flutter.dev) as its framework, so make sure you have the [Flutter SDK installed](https://docs.flutter.dev/get-started/install) before doing anything else. Then, run `flutter doctor -v` to see instructions for setting up different build platforms (e.g. android studio for APKs). While developing on Linux, you will also need to install `libmpv` from your distro. Once all that's done, use `dart run build_runner build` to build the generated code for models (this only needs to run once unless you modify one of the models). Finally, you can use `flutter run` to develop, and `flutter build {platform}` for release files.
+Interstellar uses [Flutter](https://flutter.dev) as its framework, so make sure you have the [Flutter SDK installed](https://docs.flutter.dev/get-started/install) before doing anything else. Then, run `flutter doctor -v` to see instructions for setting up different build platforms (e.g. android studio for APKs). While developing on Linux, you will also need to install `libmpv` from your distro. Once all that's done, use `dart run build_runner build -d` to build the generated code for models (this only needs to run once unless you modify one of the models). Finally, you can use `flutter run` to develop, and `flutter build {platform}` for release files.
 
 ### Generating app icon
 

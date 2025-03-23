@@ -7,29 +7,32 @@ List<String>? optionalStringList(Object? json) =>
     json == null ? null : (json as List<dynamic>).cast<String>();
 
 String? mbinCalcNextPaginationPage(Map<String, Object?> pagination) {
-  return (pagination['currentPage'] as int) != (pagination['maxPage'] as int)
+  return (pagination['currentPage'] as int) < (pagination['maxPage'] as int)
       ? ((pagination['currentPage'] as int) + 1).toString()
       : null;
 }
 
-ImageModel? mbinGetImage(Map<String, Object?>? json) {
+ImageModel? mbinGetOptionalImage(Map<String, Object?>? json) {
   return json == null || (json['storageUrl'] ?? json['sourceUrl']) == null
       ? null
       : ImageModel.fromMbin(json);
 }
 
-ImageModel? lemmyGetImage(String? json) {
-  return json == null ? null : ImageModel.fromLemmy(json);
+ImageModel? lemmyGetOptionalImage(String? src, [String? altText]) {
+  return src == null ? null : ImageModel.fromLemmy(src, altText);
 }
 
 String mbinNormalizeUsername(String username) {
   return username.startsWith('@') ? username.substring(1) : username;
 }
 
-String lemmyGetActorName(Map<String, Object?> json) {
+/// Converts lemmy and piefed's local name to Mbin's standard name
+String getLemmyPiefedActorName(Map<String, Object?> json) {
+  final name = (json['user_name'] ?? json['name']) as String;
+
   return (json['local'] as bool)
-      ? (json['name'] as String)
-      : '${json['name'] as String}@${Uri.parse(json['actor_id'] as String).host}';
+      ? name
+      : '$name@${Uri.parse(json['actor_id'] as String).host}';
 }
 
 String? lemmyCalcNextIntPage(

@@ -1,66 +1,200 @@
-import 'dart:convert';
-
-import 'package:http/http.dart' as http;
+import 'package:interstellar/src/api/client.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/message.dart';
-import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/utils/models.dart';
 
-class MbinAPIMessages {
-  final ServerSoftware software;
-  final http.Client httpClient;
-  final String server;
+class APIMessages {
+  final ServerClient client;
 
-  MbinAPIMessages(
-    this.software,
-    this.httpClient,
-    this.server,
-  );
+  APIMessages(this.client);
 
   Future<MessageListModel> list({
+    int? myUserId,
     String? page,
   }) async {
-    const path = '/api/messages';
-    final query = queryParams({'p': page});
+    switch (client.software) {
+      case ServerSoftware.mbin:
+        const path = '/messages';
+        final query = {'p': page};
 
-    final response = await httpClient.get(Uri.https(server, path, query));
+        final response = await client.get(path, queryParams: query);
 
-    httpErrorHandler(response, message: 'Failed to load messages');
+        return MessageListModel.fromMbin(response.bodyJson);
 
-    return MessageListModel.fromMbin(
-        jsonDecode(response.body) as Map<String, Object?>);
+      case ServerSoftware.lemmy:
+        const path = '/private_message/list';
+        final query = {
+          'unread_only': 'false',
+          'page': page,
+          'limit': '20',
+        };
+
+        final response = await client.get(path, queryParams: query);
+
+        final json = response.bodyJson;
+
+        json['next_page'] = lemmyCalcNextIntPage(
+            json['private_messages'] as List<dynamic>, page);
+
+        return MessageListModel.fromLemmy(json, myUserId!);
+
+      case ServerSoftware.piefed:
+        const path = '/private_message/list';
+        final query = {
+          'unread_only': 'false',
+          'page': page,
+          'limit': '20',
+        };
+
+        final response = await client.get(path, queryParams: query);
+
+        final json = response.bodyJson;
+
+        json['next_page'] = lemmyCalcNextIntPage(
+            json['private_messages'] as List<dynamic>, page);
+
+        return MessageListModel.fromPiefed(json, myUserId!);
+    }
+  }
+
+  Future<MessageThreadModel> getThreadWithMessages({
+    required int threadId,
+    int? myUserId,
+    String? page,
+  }) async {
+    switch (client.software) {
+      case ServerSoftware.mbin:
+        final path = '/messages/thread/$threadId/newest';
+        final query = {'p': page};
+
+        final response = await client.get(path, queryParams: query);
+
+        final json = response.bodyJson;
+        json['threadId'] = threadId;
+
+        return MessageThreadModel.fromMbin(json);
+
+      case ServerSoftware.lemmy:
+        const path = '/private_message/list';
+        final query = {
+          'unread_only': 'false',
+          'page': page,
+          'limit': '20',
+        };
+
+        final response = await client.get(path, queryParams: query);
+
+        final json = response.bodyJson;
+        final nextPage = lemmyCalcNextIntPage(
+            json['private_messages'] as List<dynamic>, page);
+        json['next_page'] = nextPage;
+
+        return MessageListModel.fromLemmy(
+              json,
+              myUserId!,
+              filterByThreadId: threadId,
+            ).items.firstOrNull ??
+            MessageThreadModel(
+              id: threadId,
+              participants: [],
+              messages: [],
+              nextPage: null,
+            ).copyWith(
+              nextPage: nextPage,
+            );
+
+      case ServerSoftware.piefed:
+        const path = '/private_message/list';
+        final query = {
+          'unread_only': 'false',
+          'page': page,
+          'limit': '20',
+        };
+
+        final response = await client.get(path, queryParams: query);
+
+        final json = response.bodyJson;
+        final nextPage = lemmyCalcNextIntPage(
+            json['private_messages'] as List<dynamic>, page);
+        json['next_page'] = nextPage;
+
+        return (MessageListModel.fromPiefed(
+                  json,
+                  myUserId!,
+                  filterByThreadId: threadId,
+                ).items.firstOrNull ??
+                MessageThreadModel(
+                  id: threadId,
+                  participants: [],
+                  messages: [],
+                  nextPage: null,
+                ))
+            .copyWith(
+          nextPage: nextPage,
+        );
+    }
   }
 
   Future<MessageThreadModel> create(
     int userId,
     String body,
   ) async {
-    final path = '/api/users/$userId/message';
+    switch (client.software) {
+      case ServerSoftware.mbin:
+        final path = '/users/$userId/message';
 
-    final response = await httpClient.post(
-      Uri.https(server, path),
-      body: jsonEncode({'body': body}),
-    );
+        final response = await client.post(
+          path,
+          body: {'body': body},
+        );
 
-    httpErrorHandler(response, message: 'Failed to send message');
+        return MessageThreadModel.fromMbin(response.bodyJson);
 
-    return MessageThreadModel.fromMbin(
-        jsonDecode(response.body) as Map<String, Object?>);
+      case ServerSoftware.lemmy:
+        final path = '/private_message';
+
+        final response = await client.post(
+          path,
+          body: {
+            'recipient_id': userId,
+            'content': body,
+          },
+        );
+
+        final json = response.bodyJson;
+
+        return MessageListModel.fromLemmy(
+          {
+            'private_messages': [json['private_message_view']]
+          },
+          (json as dynamic)['private_message_view']['creator']['id'] as int,
+        ).items.first;
+
+      case ServerSoftware.piefed:
+        throw UnimplementedError();
+    }
   }
 
   Future<MessageThreadModel> postThreadReply(
-    int threadId,
+    int threadId, // Should be recipient user id for Lemmy
     String body,
   ) async {
-    final path = '/api/messages/thread/$threadId/reply';
+    switch (client.software) {
+      case ServerSoftware.mbin:
+        final path = '/messages/thread/$threadId/reply';
 
-    final response = await httpClient.post(
-      Uri.https(server, path),
-      body: jsonEncode({'body': body}),
-    );
+        final response = await client.post(
+          path,
+          body: {'body': body},
+        );
 
-    httpErrorHandler(response, message: 'Failed to send message');
+        return MessageThreadModel.fromMbin(response.bodyJson);
 
-    return MessageThreadModel.fromMbin(
-        jsonDecode(response.body) as Map<String, Object?>);
+      case ServerSoftware.lemmy:
+        return await create(threadId, body);
+
+      case ServerSoftware.piefed:
+        throw UnimplementedError();
+    }
   }
 }

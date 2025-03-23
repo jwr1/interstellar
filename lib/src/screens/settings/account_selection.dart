@@ -82,7 +82,7 @@ class _AccountSelectWidgetState extends State<AccountSelectWidget> {
                   (account) => ListTile(
                     title: Text(account),
                     subtitle: Text(
-                        ac.servers[account.split('@').last]!.software.name),
+                        ac.servers[account.split('@').last]!.software.title),
                     onTap: () async {
                       Navigator.of(context).pop(account);
                     },

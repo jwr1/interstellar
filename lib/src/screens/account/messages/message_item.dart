@@ -15,9 +15,7 @@ class MessageItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final messageUser = item.participants.firstWhere(
-      (user) =>
-          user.name !=
-          context.watch<AppController>().selectedAccount.split('@').first,
+      (user) => user.name != context.watch<AppController>().localName,
       orElse: () => item.participants.first,
     );
 
@@ -28,7 +26,7 @@ class MessageItem extends StatelessWidget {
         overflow: TextOverflow.fade,
       ),
       subtitle: Text(
-        item.messages.first.body,
+        item.messages.first.body.replaceAll('\n', ' '),
         softWrap: false,
         overflow: TextOverflow.ellipsis,
       ),

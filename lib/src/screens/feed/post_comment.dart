@@ -1,6 +1,7 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:interstellar/src/api/bookmark.dart';
+import 'package:interstellar/src/api/notifications.dart';
 import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/comment.dart';
@@ -18,7 +19,7 @@ class PostComment extends StatefulWidget {
     this.onUpdate, {
     this.opUserId,
     this.onClick,
-    this.canModerate = false,
+    this.userCanModerate = false,
     super.key,
   });
 
@@ -26,7 +27,7 @@ class PostComment extends StatefulWidget {
   final void Function(CommentModel) onUpdate;
   final int? opUserId;
   final void Function()? onClick;
-  final bool canModerate;
+  final bool userCanModerate;
 
   @override
   State<PostComment> createState() => _PostCommentState();
@@ -40,7 +41,8 @@ class _PostCommentState extends State<PostComment> {
   Widget build(BuildContext context) {
     final ac = context.watch<AppController>();
 
-    final canModerate = widget.comment.canAuthUserModerate ?? false;
+    final canModerate =
+        widget.userCanModerate || (widget.comment.canAuthUserModerate ?? false);
 
     return Column(
       children: [
@@ -176,15 +178,15 @@ class _PostCommentState extends State<PostComment> {
                   : null,
               openLinkUri: Uri.https(
                 ac.instanceHost,
-                ac.serverSoftware == ServerSoftware.lemmy
-                    ? '/comment/${widget.comment.id}'
-                    : '/m/${widget.comment.magazine.name}/${switch (widget.comment.postType) {
+                ac.serverSoftware == ServerSoftware.mbin
+                    ? '/m/${widget.comment.magazine.name}/${switch (widget.comment.postType) {
                         PostType.thread => 't',
                         PostType.microblog => 'p',
                       }}/${widget.comment.postId}/-/${switch (widget.comment.postType) {
                         PostType.thread => 'comment',
                         PostType.microblog => 'reply',
-                      }}/${widget.comment.id}',
+                      }}/${widget.comment.id}'
+                    : '/comment/${widget.comment.id}',
               ),
               editDraftResourceId:
                   'edit:${widget.comment.postType.name}:comment:${context.watch<AppController>().instanceHost}:${widget.comment.id}',
@@ -246,6 +248,22 @@ class _PostCommentState extends State<PostComment> {
                 },
                 matchesSoftware: ServerSoftware.mbin,
               ),
+              notificationControlStatus:
+                  widget.comment.notificationControlStatus,
+              onNotificationControlStatusChange:
+                  widget.comment.notificationControlStatus == null
+                      ? null
+                      : (newStatus) async {
+                          await ac.api.notifications.updateControl(
+                            targetType:
+                                NotificationControlUpdateTargetType.comment,
+                            targetId: widget.comment.id,
+                            status: newStatus,
+                          );
+
+                          widget.onUpdate(widget.comment
+                              .copyWith(notificationControlStatus: newStatus));
+                        },
             ),
           ),
         ),
@@ -295,7 +313,7 @@ class _PostCommentState extends State<PostComment> {
                           },
                           opUserId: widget.opUserId,
                           onClick: widget.onClick,
-                          canModerate: widget.canModerate,
+                          userCanModerate: widget.userCanModerate,
                         ))
                     .toList(),
               ),

@@ -1,54 +1,45 @@
-import 'dart:convert';
-
-import 'package:http/http.dart' as http;
+import 'package:interstellar/src/api/client.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/search.dart';
-import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/screens/explore/explore_screen.dart';
 
 class APISearch {
-  final ServerSoftware software;
-  final http.Client httpClient;
-  final String server;
+  final ServerClient client;
 
-  APISearch(
-    this.software,
-    this.httpClient,
-    this.server,
-  );
+  APISearch(this.client);
 
   Future<SearchListModel> get({
     String? page,
     String? search,
+    ExploreFilter? filter,
   }) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        const path = '/api/search';
+        const path = '/search';
 
-        final response = await httpClient.get(Uri.https(
-          server,
+        final response = await client.get(
           path,
-          queryParams({'p': page, 'q': search}),
-        ));
+          queryParams: {'p': page, 'q': search},
+        );
 
-        httpErrorHandler(response, message: 'Failed to load search');
-
-        return SearchListModel.fromMbin(
-            jsonDecode(response.body) as Map<String, dynamic>);
+        return SearchListModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
-        const path = '/api/v3/search';
-        final query = queryParams({
+        const path = '/search';
+        final query = {
           'q': search,
           'page': page ?? '1',
           'type_': 'All',
-          'listing_type': 'All'
-        });
+          'listing_type': switch (filter) {
+            ExploreFilter.all => 'All',
+            ExploreFilter.local => 'Local',
+            _ => 'All',
+          },
+        };
 
-        final response = await httpClient.get(Uri.https(server, path, query));
+        final response = await client.get(path, queryParams: query);
 
-        httpErrorHandler(response, message: 'Failed to load search');
-
-        final json = jsonDecode(response.body) as Map<String, Object?>;
+        final json = response.bodyJson;
         String? nextPage;
         if ((json['comments'] as List<dynamic>).isNotEmpty ||
             (json['posts'] as List<dynamic>).isNotEmpty ||
@@ -60,6 +51,35 @@ class APISearch {
         json['next_page'] = nextPage;
 
         return SearchListModel.fromLemmy(json);
+
+      case ServerSoftware.piefed:
+        const path = '/search';
+        final query = {
+          'q': search,
+          'page': page ?? '1',
+          // Only use "Posts" type until "All" type is supported in PieFed
+          'type_': 'Posts',
+          'listing_type': switch (filter) {
+            ExploreFilter.all => 'All',
+            ExploreFilter.local => 'Local',
+            _ => 'All',
+          },
+        };
+
+        final response = await client.get(path, queryParams: query);
+
+        final json = response.bodyJson;
+        String? nextPage;
+        if ((json['comments'] as List<dynamic>).isNotEmpty ||
+            (json['posts'] as List<dynamic>).isNotEmpty ||
+            (json['communities'] as List<dynamic>).isNotEmpty ||
+            (json['users'] as List<dynamic>).isNotEmpty) {
+          nextPage = (int.parse(page ?? '1') + 1).toString();
+        }
+
+        json['next_page'] = nextPage;
+
+        return SearchListModel.fromPiefed(json);
     }
   }
 }

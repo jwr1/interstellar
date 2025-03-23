@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:interstellar/src/api/api.dart';
+import 'package:interstellar/src/api/client.dart';
 import 'package:interstellar/src/api/oauth.dart';
 import 'package:interstellar/src/controller/account.dart';
 import 'package:interstellar/src/controller/controller.dart';
@@ -47,13 +48,14 @@ class _LoginConfirmScreenState extends State<LoginConfirmScreen> {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 Text(
-                  widget.software.name,
+                  widget.software.title,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ],
             ),
           ),
-          if (widget.software == ServerSoftware.lemmy)
+          if (widget.software == ServerSoftware.lemmy ||
+              widget.software == ServerSoftware.piefed)
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(children: [
@@ -70,12 +72,14 @@ class _LoginConfirmScreenState extends State<LoginConfirmScreen> {
                   keyboardType: TextInputType.visiblePassword,
                   onChanged: (_) => setState(() {}),
                 ),
-                const SizedBox(height: 12),
-                TextEditor(
-                  _totpTokenTextController,
-                  label: l(context).totpToken,
-                  keyboardType: TextInputType.visiblePassword,
-                ),
+                if (widget.software == ServerSoftware.lemmy) ...[
+                  const SizedBox(height: 12),
+                  TextEditor(
+                    _totpTokenTextController,
+                    label: l(context).totpToken,
+                    keyboardType: TextInputType.visiblePassword,
+                  ),
+                ]
               ]),
             ),
           Row(
@@ -100,35 +104,45 @@ class _LoginConfirmScreenState extends State<LoginConfirmScreen> {
                             _passwordTextController.text.isEmpty)
                     ? null
                     : () async {
-                        if (widget.software == ServerSoftware.lemmy) {
+                        if (widget.software == ServerSoftware.lemmy ||
+                            widget.software == ServerSoftware.piefed) {
+                          final loginPath =
+                              '${widget.software.apiPathPrefix}/user/login';
+
                           final loginEndpoint =
-                              Uri.https(widget.server, '/api/v3/user/login');
+                              Uri.https(widget.server, loginPath);
 
                           final response = await http.post(
                             loginEndpoint,
                             headers: {'Content-Type': 'application/json'},
                             body: jsonEncode({
-                              'username_or_email':
-                                  _usernameEmailTextController.text,
+                              switch (widget.software) {
+                                ServerSoftware.lemmy => 'username_or_email',
+                                ServerSoftware.piefed => 'username',
+                                ServerSoftware.mbin =>
+                                  throw Exception('unreachable'),
+                              }: _usernameEmailTextController.text,
                               'password': _passwordTextController.text,
-                              'totp_2fa_token':
-                                  nullIfEmpty(_totpTokenTextController.text),
+                              if (widget.software == ServerSoftware.lemmy)
+                                'totp_2fa_token':
+                                    nullIfEmpty(_totpTokenTextController.text),
                             }),
                           );
-                          httpErrorHandler(response,
-                              message: 'Failed to login');
+                          ServerClient.checkResponseSuccess(
+                              loginEndpoint, response);
 
-                          final jwt = jsonDecode(response.body)['jwt'];
-                          final user = await API(widget.software,
-                                  JwtHttpClient(jwt), widget.server)
-                              .users
-                              .getMe();
+                          final jwt = response.bodyJson['jwt'] as String;
+                          final user = await API(ServerClient(
+                            httpClient: JwtHttpClient(jwt),
+                            software: widget.software,
+                            domain: widget.server,
+                          )).users.getMe();
 
                           // Check BuildContext
                           if (!mounted) return;
                           context.read<AppController>().setAccount(
                               '${user.name}@${widget.server}',
-                              Account(jwt: jsonDecode(response.body)['jwt']));
+                              Account(jwt: response.bodyJson['jwt'] as String));
                         } else {
                           final authorizationEndpoint =
                               Uri.https(widget.server, '/authorize');
@@ -173,10 +187,11 @@ class _LoginConfirmScreenState extends State<LoginConfirmScreen> {
                           var client =
                               await grant.handleAuthorizationResponse(result);
 
-                          var user =
-                              await API(widget.software, client, widget.server)
-                                  .users
-                                  .getMe();
+                          var user = await API(ServerClient(
+                            httpClient: client,
+                            software: widget.software,
+                            domain: widget.server,
+                          )).users.getMe();
 
                           // Check BuildContext
                           if (!mounted) return;

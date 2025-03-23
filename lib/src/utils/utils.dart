@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:interstellar/l10n/app_localizations.dart';
-import 'package:http/http.dart' as http;
 import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:intl/intl.dart';
@@ -60,31 +59,6 @@ String dateDiffFormat(DateTime input) {
 
   var seconds = difference.inSeconds;
   return '${seconds}s';
-}
-
-void httpErrorHandler(http.Response response, {String? message}) {
-  if (response.statusCode >= 400) {
-    String? errorDetails;
-
-    try {
-      errorDetails = jsonDecode(response.body)['detail'];
-    } catch (e) {
-      // No error details provided
-      errorDetails = response.reasonPhrase;
-    }
-
-    throw Exception(
-      '${message != null ? '$message: ' : ''}${response.statusCode} ${errorDetails ?? ''}',
-    );
-  }
-}
-
-Map<String, String> queryParams(Map<String, String?> map) {
-  return Map<String, String>.from(
-    Map.fromEntries(
-      map.entries.where((e) => (e.value != null && e.value!.isNotEmpty)),
-    ),
-  );
 }
 
 T? whenLoggedIn<T>(

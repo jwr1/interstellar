@@ -63,7 +63,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
             ? '!${_data!.name}'
             : '!${_data!.name}@${ac.instanceHost}';
 
-    final loggedInUser = ac.selectedAccount.split('@').first;
+    final loggedInUser = ac.localName;
 
     final isModerator = _data == null
         ? false
@@ -146,9 +146,9 @@ class _MagazineScreenState extends State<MagazineScreen> {
                                   context,
                                   Uri.https(
                                     ac.instanceHost,
-                                    ac.serverSoftware == ServerSoftware.lemmy
-                                        ? '/c/${_data!.name}'
-                                        : '/m/${_data!.name}',
+                                    ac.serverSoftware == ServerSoftware.mbin
+                                        ? '/m/${_data!.name}'
+                                        : '/c/${_data!.name}',
                                   )),
                               child: Text(l(context).openInBrowser),
                             ),
@@ -191,8 +191,7 @@ class _MagazineScreenState extends State<MagazineScreen> {
                                 child: Text(l(context).modPanel),
                               ),
                             if (_data!.owner != null &&
-                                _data!.owner!.name ==
-                                    ac.selectedAccount.split('@').first)
+                                _data!.owner!.name == ac.localName)
                               MenuItemButton(
                                 onPressed: () => Navigator.of(context).push(
                                   MaterialPageRoute(

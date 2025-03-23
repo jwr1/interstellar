@@ -19,6 +19,7 @@ class PostItem extends StatelessWidget {
     this.onEdit,
     this.onDelete,
     this.filterListWarnings,
+    this.userCanModerate = false,
   });
 
   final PostModel item;
@@ -28,12 +29,13 @@ class PostItem extends StatelessWidget {
   final Future<void> Function()? onDelete;
   final bool isPreview;
   final Set<String>? filterListWarnings;
+  final bool userCanModerate;
 
   @override
   Widget build(BuildContext context) {
     final ac = context.watch<AppController>();
 
-    final canModerate = item.canAuthUserModerate ?? false;
+    final canModerate = userCanModerate || (item.canAuthUserModerate ?? false);
 
     return ContentItem(
       originInstance: getNameHost(context, item.user.name),
@@ -126,12 +128,12 @@ class PostItem extends StatelessWidget {
       numComments: item.numComments,
       openLinkUri: Uri.https(
         ac.instanceHost,
-        ac.serverSoftware == ServerSoftware.lemmy
-            ? '/post/${item.id}'
-            : '/m/${item.magazine.name}/${switch (item.type) {
+        ac.serverSoftware == ServerSoftware.mbin
+            ? '/m/${item.magazine.name}/${switch (item.type) {
                 PostType.thread => 't',
                 PostType.microblog => 'p',
-              }}/${item.id}',
+              }}/${item.id}'
+            : '/post/${item.id}',
       ),
       editDraftResourceId:
           'edit:${item.type.name}:${ac.instanceHost}:${item.id}',

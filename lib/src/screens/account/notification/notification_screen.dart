@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:interstellar/src/api/notifications.dart';
 import 'package:interstellar/src/controller/controller.dart';
+import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/notification.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/error_page.dart';
@@ -20,7 +21,8 @@ class NotificationsScreen extends StatefulWidget {
   State<NotificationsScreen> createState() => _NotificationsScreenState();
 }
 
-class _NotificationsScreenState extends State<NotificationsScreen> with AutomaticKeepAliveClientMixin<NotificationsScreen> {
+class _NotificationsScreenState extends State<NotificationsScreen>
+    with AutomaticKeepAliveClientMixin<NotificationsScreen> {
   NotificationsFilter filter = NotificationsFilter.all;
 
   final PagingController<String, NotificationModel> _pagingController =
@@ -136,20 +138,32 @@ class _NotificationsScreenState extends State<NotificationsScreen> with Automati
                 error: _pagingController.error,
                 onTryAgain: _pagingController.retryLastFailedRequest,
               ),
-              itemBuilder: (context, item, index) => Padding(
-                padding: const EdgeInsets.only(
-                  left: 16,
-                  right: 16,
-                  bottom: 8,
-                ),
-                child: NotificationItem(item, (newValue) {
-                  var newList = _pagingController.itemList;
-                  newList![index] = newValue;
-                  setState(() {
-                    _pagingController.itemList = newList;
-                  });
-                }),
-              ),
+              itemBuilder: (context, item, index) =>
+                  // Hide notifications that could not be matched correctly
+                  item.type == null ||
+                          item.subject == null ||
+                          item.creator == null ||
+                          // If Lemmy, then hide items that come from the current user, in order to show only real "notifications".
+                          // You also can't change the read state of said items anyway.
+                          context.watch<AppController>().serverSoftware ==
+                                  ServerSoftware.lemmy &&
+                              item.creator?.name ==
+                                  context.watch<AppController>().localName
+                      ? SizedBox()
+                      : Padding(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                            bottom: 8,
+                          ),
+                          child: NotificationItem(item, (newValue) {
+                            var newList = _pagingController.itemList;
+                            newList![index] = newValue;
+                            setState(() {
+                              _pagingController.itemList = newList;
+                            });
+                          }),
+                        ),
             ),
           )
         ],
@@ -167,7 +181,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with Automati
 SelectionMenu<NotificationsFilter> notificationFilterSelect(
         BuildContext context) =>
     SelectionMenu(
-      l(context).feedType,
+      l(context).filter,
       [
         SelectionMenuItem(
           value: NotificationsFilter.all,
@@ -179,10 +193,11 @@ SelectionMenu<NotificationsFilter> notificationFilterSelect(
           title: l(context).filter_new,
           icon: Symbols.nest_eco_leaf_rounded,
         ),
-        SelectionMenuItem(
-          value: NotificationsFilter.read,
-          title: l(context).filter_read,
-          icon: Symbols.mark_chat_read_rounded,
-        ),
+        if (context.read<AppController>().serverSoftware == ServerSoftware.mbin)
+          SelectionMenuItem(
+            value: NotificationsFilter.read,
+            title: l(context).filter_read,
+            icon: Symbols.mark_chat_read_rounded,
+          ),
       ],
     );

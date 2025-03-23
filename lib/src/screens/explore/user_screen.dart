@@ -128,7 +128,7 @@ class _UserScreenState extends State<UserScreen> {
           ],
         ),
         body: DefaultTabController(
-          length: ac.serverSoftware == ServerSoftware.lemmy ? 2 : 6,
+          length: ac.serverSoftware == ServerSoftware.mbin ? 6 : 2,
           child: NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) => [
               SliverToBoxAdapter(
@@ -179,7 +179,7 @@ class _UserScreenState extends State<UserScreen> {
                                             .push(MaterialPageRoute(
                                                 builder: (context) {
                                           return ProfileEditScreen(_data!,
-                                              (DetailedUserModel? user) {
+                                              (DetailedUserModel user) {
                                             setState(() {
                                               _data = user;
                                             });
@@ -187,7 +187,9 @@ class _UserScreenState extends State<UserScreen> {
                                         })),
                                         child: Text(l(context).account_edit),
                                       ),
-                                    if (!isMyUser)
+                                    if (!isMyUser &&
+                                        ac.serverSoftware ==
+                                            ServerSoftware.mbin)
                                       SubscriptionButton(
                                         isSubscribed: user.isFollowedByUser,
                                         subscriptionCount:
@@ -359,6 +361,7 @@ class _UserScreenState extends State<UserScreen> {
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   MessageThreadScreen(
+                                                threadId: newThread.id,
                                                 initData: newThread,
                                               ),
                                             ),
@@ -392,14 +395,14 @@ class _UserScreenState extends State<UserScreen> {
                   tabAlignment: TabAlignment.start,
                   tabs: [
                     const Tab(text: 'Threads'),
-                    if (ac.serverSoftware != ServerSoftware.lemmy)
+                    if (ac.serverSoftware == ServerSoftware.mbin)
                       const Tab(text: 'Microblogs'),
                     const Tab(text: 'Comments'),
-                    if (ac.serverSoftware != ServerSoftware.lemmy)
+                    if (ac.serverSoftware == ServerSoftware.mbin)
                       const Tab(text: 'Replies'),
-                    if (ac.serverSoftware != ServerSoftware.lemmy)
+                    if (ac.serverSoftware == ServerSoftware.mbin)
                       const Tab(text: 'Followers'),
-                    if (ac.serverSoftware != ServerSoftware.lemmy)
+                    if (ac.serverSoftware == ServerSoftware.mbin)
                       const Tab(text: 'Following')
                   ],
                 ),
@@ -414,7 +417,7 @@ class _UserScreenState extends State<UserScreen> {
                   sort: _sort,
                   data: _data,
                 ),
-                if (ac.serverSoftware != ServerSoftware.lemmy)
+                if (ac.serverSoftware == ServerSoftware.mbin)
                   UserScreenBody(
                     mode: UserFeedType.microblog,
                     sort: _sort,
@@ -425,19 +428,19 @@ class _UserScreenState extends State<UserScreen> {
                   sort: _sort,
                   data: _data,
                 ),
-                if (ac.serverSoftware != ServerSoftware.lemmy)
+                if (ac.serverSoftware == ServerSoftware.mbin)
                   UserScreenBody(
                     mode: UserFeedType.reply,
                     sort: _sort,
                     data: _data,
                   ),
-                if (ac.serverSoftware != ServerSoftware.lemmy)
+                if (ac.serverSoftware == ServerSoftware.mbin)
                   UserScreenBody(
                     mode: UserFeedType.follower,
                     sort: _sort,
                     data: _data,
                   ),
-                if (ac.serverSoftware != ServerSoftware.lemmy)
+                if (ac.serverSoftware == ServerSoftware.mbin)
                   UserScreenBody(
                     mode: UserFeedType.following,
                     sort: _sort,

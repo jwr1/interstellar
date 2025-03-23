@@ -1,76 +1,55 @@
-import 'dart:convert';
-
-import 'package:http/http.dart' as http;
-import 'package:interstellar/src/controller/server.dart';
+import 'package:interstellar/src/api/client.dart';
 import 'package:interstellar/src/models/domain.dart';
 import 'package:interstellar/src/screens/explore/explore_screen.dart';
-import 'package:interstellar/src/utils/utils.dart';
 
 class MbinAPIDomains {
-  final ServerSoftware software;
-  final http.Client httpClient;
-  final String server;
+  final ServerClient client;
 
-  MbinAPIDomains(
-    this.software,
-    this.httpClient,
-    this.server,
-  );
+  MbinAPIDomains(this.client);
 
   Future<DomainListModel> list({
     String? page,
     ExploreFilter? filter,
     String? search,
   }) async {
-    final path = '/api/domains${switch (filter) {
+    final path = '/domains${switch (filter) {
       null || ExploreFilter.all => '',
       ExploreFilter.subscribed => '/subscribed',
       ExploreFilter.blocked => '/blocked',
       _ => throw Exception('Not allowed filter in domains request')
     }}';
 
-    final query = queryParams((filter == null || filter == ExploreFilter.all)
-        ? {'p': page, 'q': search}
-        : {'p': page});
+    final query = {
+      'p': page,
+      if (filter == null || filter == ExploreFilter.all) 'q': search
+    };
 
-    final response = await httpClient.get(Uri.https(server, path, query));
+    final response = await client.get(path, queryParams: query);
 
-    httpErrorHandler(response, message: 'Failed to load domains');
-
-    return DomainListModel.fromMbin(
-        jsonDecode(response.body) as Map<String, Object?>);
+    return DomainListModel.fromMbin(response.bodyJson);
   }
 
   Future<DomainModel> get(int domainId) async {
-    final path = '/api/domain/$domainId';
+    final path = '/domain/$domainId';
 
-    final response = await httpClient.get(Uri.https(server, path));
+    final response = await client.get(path);
 
-    httpErrorHandler(response, message: 'Failed to load domain');
-
-    return DomainModel.fromMbin(
-        jsonDecode(response.body) as Map<String, Object?>);
+    return DomainModel.fromMbin(response.bodyJson);
   }
 
   Future<DomainModel> putSubscribe(int domainId, bool state) async {
-    final path = '/api/domain/$domainId/${state ? 'subscribe' : 'unsubscribe'}';
+    final path = '/domain/$domainId/${state ? 'subscribe' : 'unsubscribe'}';
 
-    final response = await httpClient.put(Uri.https(server, path));
+    final response = await client.put(path);
 
-    httpErrorHandler(response, message: 'Failed to send subscribe');
-
-    return DomainModel.fromMbin(
-        jsonDecode(response.body) as Map<String, Object?>);
+    return DomainModel.fromMbin(response.bodyJson);
   }
 
   Future<DomainModel> putBlock(int domainId, bool state) async {
-    final path = '/api/domain/$domainId/${state ? 'block' : 'unblock'}';
+    final path = '/domain/$domainId/${state ? 'block' : 'unblock'}';
 
-    final response = await httpClient.put(Uri.https(server, path));
+    final response = await client.put(path);
 
-    httpErrorHandler(response, message: 'Failed to send block');
-
-    return DomainModel.fromMbin(
-        jsonDecode(response.body) as Map<String, Object?>);
+    return DomainModel.fromMbin(response.bodyJson);
   }
 }

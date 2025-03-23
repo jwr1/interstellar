@@ -39,7 +39,8 @@ class FeedScreen extends StatefulWidget {
   State<FeedScreen> createState() => _FeedScreenState();
 }
 
-class _FeedScreenState extends State<FeedScreen> with AutomaticKeepAliveClientMixin<FeedScreen> {
+class _FeedScreenState extends State<FeedScreen>
+    with AutomaticKeepAliveClientMixin<FeedScreen> {
   final _fabKey = GlobalKey<FloatingMenuState>();
   final List<GlobalKey<_FeedScreenBodyState>> _feedKeyList = [];
   late FeedSource _filter;
@@ -81,6 +82,16 @@ class _FeedScreenState extends State<FeedScreen> with AutomaticKeepAliveClientMi
 
     final currentFeedModeOption = feedTypeSelect(context).getOption(_mode);
     final currentFeedSortOption = feedSortSelect(context).getOption(sort);
+
+    // in magazine check if user is moderator
+    // don't really need for mbin since mbin api returns
+    // canAuthUserModerate with content items
+    // lemmy and piefed don't return this info
+    final localUserPart = context.read<AppController>().localName;
+    final userCanModerate = widget.createPostMagazine == null
+        ? false
+        : widget.createPostMagazine!.moderators
+            .any((mod) => mod.name == localUserPart);
 
     final actions = [
       feedActionCreateNew(context).withProps(
@@ -133,9 +144,8 @@ class _FeedScreenState extends State<FeedScreen> with AutomaticKeepAliveClientMi
         },
       ),
       feedActionSetType(context).withProps(
-        widget.source == FeedSource.domain &&
-                context.watch<AppController>().serverSoftware ==
-                    ServerSoftware.lemmy
+        context.watch<AppController>().serverSoftware != ServerSoftware.mbin ||
+                widget.source == FeedSource.domain
             ? ActionLocation.hide
             : parseEnum(
                 ActionLocation.values,
@@ -210,8 +220,8 @@ class _FeedScreenState extends State<FeedScreen> with AutomaticKeepAliveClientMi
                 .entries
                 .firstWhere((entry) =>
                     entry.value.value ==
-                    (context.watch<AppController>().serverSoftware !=
-                            ServerSoftware.lemmy
+                    (context.watch<AppController>().serverSoftware ==
+                            ServerSoftware.mbin
                         ? context.watch<AppController>().profile.feedDefaultType
                         : PostType.thread))
                 .key,
@@ -331,6 +341,7 @@ class _FeedScreenState extends State<FeedScreen> with AutomaticKeepAliveClientMi
                         sort: sort,
                         mode: _mode,
                         details: widget.details,
+                        userCanModerate: userCanModerate,
                       ),
                       FeedScreenBody(
                         key: _getFeedKey(1),
@@ -338,6 +349,7 @@ class _FeedScreenState extends State<FeedScreen> with AutomaticKeepAliveClientMi
                         sort: sort,
                         mode: _mode,
                         details: widget.details,
+                        userCanModerate: userCanModerate,
                       ),
                       FeedScreenBody(
                         key: _getFeedKey(2),
@@ -345,6 +357,7 @@ class _FeedScreenState extends State<FeedScreen> with AutomaticKeepAliveClientMi
                         sort: sort,
                         mode: _mode,
                         details: widget.details,
+                        userCanModerate: userCanModerate,
                       ),
                       FeedScreenBody(
                         key: _getFeedKey(3),
@@ -352,6 +365,7 @@ class _FeedScreenState extends State<FeedScreen> with AutomaticKeepAliveClientMi
                         sort: sort,
                         mode: _mode,
                         details: widget.details,
+                        userCanModerate: userCanModerate,
                       ),
                     ],
                   String name when name == feedActionSetType(context).name => [
@@ -362,6 +376,7 @@ class _FeedScreenState extends State<FeedScreen> with AutomaticKeepAliveClientMi
                         sort: _sort ?? _defaultSortFromMode(PostType.thread),
                         mode: PostType.thread,
                         details: widget.details,
+                        userCanModerate: userCanModerate,
                       ),
                       FeedScreenBody(
                         key: _getFeedKey(1),
@@ -370,6 +385,7 @@ class _FeedScreenState extends State<FeedScreen> with AutomaticKeepAliveClientMi
                         sort: _sort ?? _defaultSortFromMode(PostType.microblog),
                         mode: PostType.microblog,
                         details: widget.details,
+                        userCanModerate: userCanModerate,
                       ),
                     ],
                   _ => [],
@@ -415,29 +431,38 @@ SelectionMenu<PostType> feedTypeSelect(BuildContext context) => SelectionMenu(
       ],
     );
 
-SelectionMenu<FeedSort> feedSortSelect(BuildContext context) => SelectionMenu(
-      l(context).sort,
-      [
-        SelectionMenuItem(
-          value: FeedSort.hot,
-          title: l(context).sort_hot,
-          icon: Symbols.local_fire_department_rounded,
-        ),
-        SelectionMenuItem(
-          value: FeedSort.top,
-          title: l(context).sort_top,
-          icon: Symbols.trending_up_rounded,
-        ),
-        SelectionMenuItem(
-          value: FeedSort.newest,
-          title: l(context).sort_newest,
-          icon: Symbols.nest_eco_leaf_rounded,
-        ),
-        SelectionMenuItem(
-          value: FeedSort.active,
-          title: l(context).sort_active,
-          icon: Symbols.rocket_launch_rounded,
-        ),
+SelectionMenu<FeedSort> feedSortSelect(BuildContext context) {
+  final isLemmy =
+      context.read<AppController>().serverSoftware == ServerSoftware.lemmy;
+  final isPiefed =
+      context.read<AppController>().serverSoftware == ServerSoftware.piefed;
+
+  return SelectionMenu(
+    l(context).sort,
+    [
+      SelectionMenuItem(
+        value: FeedSort.hot,
+        title: l(context).sort_hot,
+        icon: Symbols.local_fire_department_rounded,
+      ),
+      SelectionMenuItem(
+        value: FeedSort.top,
+        title: l(context).sort_top,
+        icon: Symbols.trending_up_rounded,
+      ),
+      SelectionMenuItem(
+        value: FeedSort.newest,
+        title: l(context).sort_newest,
+        icon: Symbols.nest_eco_leaf_rounded,
+      ),
+      SelectionMenuItem(
+        value: FeedSort.active,
+        title: l(context).sort_active,
+        icon: Symbols.rocket_launch_rounded,
+      ),
+
+      // Not in PieFed
+      if (!isPiefed) ...[
         SelectionMenuItem(
           value: FeedSort.commented,
           title: l(context).sort_commented,
@@ -448,88 +473,81 @@ SelectionMenu<FeedSort> feedSortSelect(BuildContext context) => SelectionMenu(
           title: l(context).sort_oldest,
           icon: Symbols.access_time_rounded,
         ),
+      ],
 
-        //lemmy specific
+      if (isLemmy || isPiefed)
+        SelectionMenuItem(
+          value: FeedSort.scaled,
+          title: l(context).sort_scaled,
+          icon: Symbols.scale_rounded,
+        ),
+
+      // lemmy specific
+      if (isLemmy) ...[
         SelectionMenuItem(
           value: FeedSort.newComments,
           title: l(context).sort_newComments,
           icon: Symbols.mark_chat_unread_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.controversial,
           title: l(context).sort_controversial,
           icon: Symbols.thumbs_up_down_rounded,
-          validSoftware: ServerSoftware.lemmy,
-        ),
-        SelectionMenuItem(
-          value: FeedSort.scaled,
-          title: l(context).sort_scaled,
-          icon: Symbols.scale_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topDay,
           title: l(context).sort_topDay,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topWeek,
           title: l(context).sort_topWeek,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topMonth,
           title: l(context).sort_topMonth,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topYear,
           title: l(context).sort_topYear,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topHour,
           title: l(context).sort_topHour,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topSixHour,
           title: l(context).sort_topSixHour,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topTwelveHour,
           title: l(context).sort_topTwelveHour,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topThreeMonths,
           title: l(context).sort_topThreeMonths,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topSixMonths,
           title: l(context).sort_topSixMonths,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
         SelectionMenuItem(
           value: FeedSort.topNineMonths,
           title: l(context).sort_topNineMonths,
           icon: Symbols.trending_up_rounded,
-          validSoftware: ServerSoftware.lemmy,
         ),
       ],
-    );
+    ],
+  );
+}
 
 SelectionMenu<FeedSource> feedFilterSelect(BuildContext context) =>
     SelectionMenu(
@@ -564,6 +582,7 @@ class FeedScreenBody extends StatefulWidget {
   final FeedSort sort;
   final PostType mode;
   final Widget? details;
+  final bool userCanModerate;
 
   const FeedScreenBody({
     super.key,
@@ -572,13 +591,15 @@ class FeedScreenBody extends StatefulWidget {
     required this.sort,
     required this.mode,
     this.details,
+    this.userCanModerate = false,
   });
 
   @override
   State<FeedScreenBody> createState() => _FeedScreenBodyState();
 }
 
-class _FeedScreenBodyState extends State<FeedScreenBody>  with AutomaticKeepAliveClientMixin<FeedScreenBody> {
+class _FeedScreenBodyState extends State<FeedScreenBody>
+    with AutomaticKeepAliveClientMixin<FeedScreenBody> {
   final _pagingController =
       PagingController<String, PostModel>(firstPageKey: '');
   final _scrollController = ScrollController();
@@ -744,6 +765,7 @@ class _FeedScreenBodyState extends State<FeedScreenBody>  with AutomaticKeepAliv
                             _pagingController.itemList = newList;
                           });
                         },
+                        userCanModerate: widget.userCanModerate,
                       ),
                     ),
                   );
@@ -786,6 +808,7 @@ class _FeedScreenBodyState extends State<FeedScreenBody>  with AutomaticKeepAliv
                         },
                         isPreview: true,
                         filterListWarnings: _filterListWarnings[item.id],
+                        userCanModerate: widget.userCanModerate,
                       ),
                     ),
                   );

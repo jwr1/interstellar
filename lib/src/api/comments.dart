@@ -1,7 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/widgets.dart';
-import 'package:http/http.dart' as http;
+import 'package:interstellar/src/api/client.dart';
+import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/comment.dart';
 import 'package:interstellar/src/models/post.dart';
@@ -9,8 +8,15 @@ import 'package:interstellar/src/utils/models.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/selection_menu.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:provider/provider.dart';
 
-enum CommentSort { newest, top, hot, active, oldest }
+enum CommentSort {
+  hot,
+  top,
+  newest,
+  active,
+  oldest,
+}
 
 const Map<CommentSort, String> lemmyCommentSortMap = {
   CommentSort.active: 'Controversial',
@@ -39,16 +45,20 @@ SelectionMenu<CommentSort> commentSortSelect(BuildContext context) =>
           title: l(context).sort_newest,
           icon: Symbols.nest_eco_leaf_rounded,
         ),
-        SelectionMenuItem(
-          value: CommentSort.active,
-          title: l(context).sort_active,
-          icon: Symbols.rocket_launch_rounded,
-        ),
-        SelectionMenuItem(
-          value: CommentSort.oldest,
-          title: l(context).sort_oldest,
-          icon: Symbols.access_time_rounded,
-        ),
+        if (context.read<AppController>().serverSoftware !=
+            ServerSoftware.piefed)
+          SelectionMenuItem(
+            value: CommentSort.active,
+            title: l(context).sort_active,
+            icon: Symbols.rocket_launch_rounded,
+          ),
+        if (context.read<AppController>().serverSoftware !=
+            ServerSoftware.piefed)
+          SelectionMenuItem(
+            value: CommentSort.oldest,
+            title: l(context).sort_oldest,
+            icon: Symbols.access_time_rounded,
+          ),
       ],
     );
 
@@ -62,15 +72,9 @@ const _postTypeMbinComment = {
 };
 
 class APIComments {
-  final ServerSoftware software;
-  final http.Client httpClient;
-  final String server;
+  final ServerClient client;
 
-  APIComments(
-    this.software,
-    this.httpClient,
-    this.server,
-  );
+  APIComments(this.client);
 
   Future<CommentListModel> list(
     PostType postType,
@@ -80,39 +84,45 @@ class APIComments {
     List<String>? langs,
     bool? usePreferredLangs,
   }) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/${_postTypeMbin[postType]}/$postId/comments';
-        final query = queryParams({
+        final path = '/${_postTypeMbin[postType]}/$postId/comments';
+        final query = {
           'p': page,
           'sortBy': sort?.name,
           'lang': langs?.join(','),
           'usePreferredLangs': (usePreferredLangs ?? false).toString(),
-        });
+        };
 
-        final response = await httpClient.get(Uri.https(server, path, query));
+        final response = await client.get(path, queryParams: query);
 
-        httpErrorHandler(response, message: 'Failed to load comments');
-
-        return CommentListModel.fromMbin(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return CommentListModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
-        const path = '/api/v3/comment/list';
-        final query = queryParams({
+        const path = '/comment/list';
+        final query = {
           'post_id': postId.toString(),
           'page': page,
           'sort': lemmyCommentSortMap[sort],
           'max_depth': '8',
-        });
+        };
 
-        final response = await httpClient.get(Uri.https(server, path, query));
+        final response = await client.get(path, queryParams: query);
 
-        httpErrorHandler(response, message: 'Failed to load comments');
+        return CommentListModel.fromLemmyToTree(response.bodyJson);
 
-        return CommentListModel.fromLemmyToTree(
-            jsonDecode(utf8.decode(response.bodyBytes))
-                as Map<String, Object?>);
+      case ServerSoftware.piefed:
+        const path = '/comment/list';
+        final query = {
+          'post_id': postId.toString(),
+          'page': page,
+          'sort': lemmyCommentSortMap[sort],
+          'max_depth': '8',
+        };
+
+        final response = await client.get(path, queryParams: query);
+
+        return CommentListModel.fromPiefedToTree(response.bodyJson);
     }
   }
 
@@ -124,73 +134,90 @@ class APIComments {
     List<String>? langs,
     bool? usePreferredLangs,
   }) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/users/$userId/${_postTypeMbinComment[postType]}';
-        final query = queryParams({
+        final path = '/users/$userId/${_postTypeMbinComment[postType]}';
+        final query = {
           'p': page,
           'sort': sort?.name,
           'lang': langs?.join(','),
           'usePreferredLangs': (usePreferredLangs ?? false).toString(),
-        });
+        };
 
-        final response = await httpClient.get(Uri.https(server, path, query));
+        final response = await client.get(path, queryParams: query);
 
-        httpErrorHandler(response, message: 'Failed to load comments');
-
-        return CommentListModel.fromMbin(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return CommentListModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
-        const path = '/api/v3/user';
-        final query = queryParams({
+        const path = '/user';
+        final query = {
           'person_id': userId.toString(),
           'page': page,
           'sort': lemmyCommentSortMap[sort]
-        });
+        };
 
-        final response = await httpClient.get(Uri.https(server, path, query));
+        final response = await client.get(path, queryParams: query);
 
-        httpErrorHandler(response, message: 'Failed to load user');
-
-        final json =
-            jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, Object?>;
+        final json = response.bodyJson;
 
         json['next_page'] =
             lemmyCalcNextIntPage(json['comments'] as List<dynamic>, page);
 
         return CommentListModel.fromLemmyToFlat(json);
+
+      case ServerSoftware.piefed:
+        const path = '/user';
+        final query = {
+          'person_id': userId.toString(),
+          'page': page,
+          'sort': lemmyCommentSortMap[sort]
+        };
+
+        final response = await client.get(path, queryParams: query);
+
+        final json = response.bodyJson;
+
+        json['next_page'] =
+            lemmyCalcNextIntPage(json['comments'] as List<dynamic>, page);
+
+        return CommentListModel.fromPiefedToFlat(json);
     }
   }
 
   Future<CommentModel> get(PostType postType, int commentId) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/${_postTypeMbinComment[postType]}/$commentId';
+        final path = '/${_postTypeMbinComment[postType]}/$commentId';
 
-        final response = await httpClient.get(Uri.https(server, path));
+        final response = await client.get(path);
 
-        httpErrorHandler(response, message: 'Failed to load comment');
-
-        return CommentModel.fromMbin(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return CommentModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
-        const path = '/api/v3/comment/list';
-        final query = queryParams({
-          'parent_id': commentId.toString(),
-        });
+        const path = '/comment/list';
+        final query = {'parent_id': commentId.toString()};
 
-        final response = await httpClient.get(Uri.https(server, path, query));
-
-        httpErrorHandler(response, message: 'Failed to load comment');
+        final response = await client.get(path, queryParams: query);
 
         return CommentModel.fromLemmy(
-          (jsonDecode(response.body)['comments'] as List<dynamic>)
+          (response.bodyJson['comments'] as List<dynamic>)
               .firstWhere((item) => item['comment']['id'] == commentId),
-          possibleChildrenJson:
-              jsonDecode(utf8.decode(response.bodyBytes))['comments']
-                  as List<dynamic>,
+          possibleChildrenJson: response.bodyJson['comments'] as List<dynamic>,
+        );
+
+      case ServerSoftware.piefed:
+        const path = '/comment/list';
+        final query = {
+          'parent_id': commentId.toString(),
+          'max_depth': '100',
+        };
+
+        final response = await client.get(path, queryParams: query);
+
+        return CommentModel.fromPiefed(
+          (response.bodyJson['comments'] as List<dynamic>)
+              .firstWhere((item) => item['comment']['id'] == commentId),
+          possibleChildrenJson: response.bodyJson['comments'] as List<dynamic>,
         );
     }
   }
@@ -201,53 +228,60 @@ class APIComments {
     int choice,
     int newScore,
   ) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
         final path = choice == 1
-            ? '/api/${_postTypeMbinComment[postType]}/$commentId/favourite'
-            : '/api/${_postTypeMbinComment[postType]}/$commentId/vote/$choice';
+            ? '/${_postTypeMbinComment[postType]}/$commentId/favourite'
+            : '/${_postTypeMbinComment[postType]}/$commentId/vote/$choice';
 
-        final response = await httpClient.put(Uri.https(server, path));
+        final response = await client.put(path);
 
-        httpErrorHandler(response, message: 'Failed to send vote');
-
-        return CommentModel.fromMbin(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return CommentModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
-        const path = '/api/v3/comment/like';
+        const path = '/comment/like';
 
-        final response = await httpClient.post(
-          Uri.https(server, path),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
+        final response = await client.post(
+          path,
+          body: {
             'comment_id': commentId,
             'score': newScore,
-          }),
+          },
         );
 
-        httpErrorHandler(response, message: 'Failed to send vote');
-
         return CommentModel.fromLemmy(
-            jsonDecode(utf8.decode(response.bodyBytes))['comment_view']
-                as Map<String, Object?>);
+            response.bodyJson['comment_view'] as Map<String, Object?>);
+
+      case ServerSoftware.piefed:
+        const path = '/comment/like';
+
+        final response = await client.post(
+          path,
+          body: {
+            'comment_id': commentId,
+            'score': newScore,
+          },
+        );
+
+        return CommentModel.fromPiefed(
+            response.bodyJson['comment_view'] as Map<String, Object?>);
     }
   }
 
   Future<CommentModel> boost(PostType postType, int commentId) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/${_postTypeMbinComment[postType]}/$commentId/vote/1';
+        final path = '/${_postTypeMbinComment[postType]}/$commentId/vote/1';
 
-        final response = await httpClient.put(Uri.https(server, path));
+        final response = await client.put(path);
 
-        httpErrorHandler(response, message: 'Failed to send boost');
-
-        return CommentModel.fromMbin(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return CommentModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
         throw Exception('Tried to boost on lemmy');
+
+      case ServerSoftware.piefed:
+        throw Exception('Tried to boost on piefed');
     }
   }
 
@@ -257,39 +291,43 @@ class APIComments {
     String body, {
     int? parentCommentId,
   }) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
         final path =
-            '/api/${_postTypeMbin[postType]}/$postId/comments${parentCommentId != null ? '/$parentCommentId/reply' : ''}';
+            '/${_postTypeMbin[postType]}/$postId/comments${parentCommentId != null ? '/$parentCommentId/reply' : ''}';
 
-        final response = await httpClient.post(
-          Uri.https(server, path),
-          body: jsonEncode({'body': body}),
+        final response = await client.post(
+          path,
+          body: {'body': body},
         );
 
-        httpErrorHandler(response, message: 'Failed to create comment');
-
-        return CommentModel.fromMbin(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return CommentModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
-        const path = '/api/v3/comment';
+        const path = '/comment';
 
-        final response = await httpClient.post(
-          Uri.https(server, path),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
+        final response = await client.post(
+          path,
+          body: {
             'content': body,
             'post_id': postId,
             'parent_id': parentCommentId
-          }),
+          },
         );
 
-        httpErrorHandler(response, message: 'Failed to create comment');
-
         return CommentModel.fromLemmy(
-            jsonDecode(utf8.decode(response.bodyBytes))['comment_view']
-                as Map<String, Object?>);
+            response.bodyJson['comment_view'] as Map<String, Object?>);
+
+      case ServerSoftware.piefed:
+        const path = '/comment';
+
+        final response = await client.post(
+          path,
+          body: {'body': body, 'post_id': postId, 'parent_id': parentCommentId},
+        );
+
+        return CommentModel.fromPiefed(
+            response.bodyJson['comment_view'] as Map<String, Object?>);
     }
   }
 
@@ -298,94 +336,111 @@ class APIComments {
     int commentId,
     String body,
   ) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/${_postTypeMbinComment[postType]}/$commentId';
+        final path = '/${_postTypeMbinComment[postType]}/$commentId';
 
-        final response = await httpClient.put(
-          Uri.https(server, path),
-          body: jsonEncode({
+        final response = await client.put(
+          path,
+          body: {
             'body': body,
-          }),
+          },
         );
 
-        httpErrorHandler(response, message: 'Failed to edit comment');
-
-        return CommentModel.fromMbin(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return CommentModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
-        const path = '/api/v3/comment';
+        const path = '/comment';
 
-        final response = await httpClient.put(
-          Uri.https(server, path),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
+        final response = await client.put(
+          path,
+          body: {
             'comment_id': commentId,
             'content': body,
-          }),
+          },
         );
 
-        httpErrorHandler(response, message: 'Failed to edit comment');
-
         return CommentModel.fromLemmy(
-            jsonDecode(utf8.decode(response.bodyBytes))['comment_view']
-                as Map<String, Object?>);
+            response.bodyJson['comment_view'] as Map<String, Object?>);
+
+      case ServerSoftware.piefed:
+        const path = '/comment';
+
+        final response = await client.put(
+          path,
+          body: {
+            'comment_id': commentId,
+            'body': body,
+          },
+        );
+
+        return CommentModel.fromPiefed(
+            response.bodyJson['comment_view'] as Map<String, Object?>);
     }
   }
 
   Future<void> delete(PostType postType, int commentId) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/${_postTypeMbinComment[postType]}/$commentId';
+        final path = '/${_postTypeMbinComment[postType]}/$commentId';
 
-        final response = await httpClient.delete(Uri.https(server, path));
-
-        httpErrorHandler(response, message: 'Failed to delete comment');
+        final response = await client.delete(path);
 
       case ServerSoftware.lemmy:
-        const path = '/api/v3/comment/delete';
+        const path = '/comment/delete';
 
-        final response = await httpClient.post(
-          Uri.https(server, path),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
+        final response = await client.post(
+          path,
+          body: {
             'comment_id': commentId,
             'deleted': true,
-          }),
+          },
         );
 
-        httpErrorHandler(response, message: 'Failed to delete comment');
+      case ServerSoftware.piefed:
+        const path = '/comment/delete';
+
+        final response = await client.post(
+          path,
+          body: {
+            'comment_id': commentId,
+            'deleted': true,
+          },
+        );
     }
   }
 
   Future<void> report(PostType postType, int commentId, String reason) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/${_postTypeMbinComment[postType]}/$commentId/report';
+        final path = '/${_postTypeMbinComment[postType]}/$commentId/report';
 
-        final response = await httpClient.post(
-          Uri.https(server, path),
-          body: jsonEncode({
-            'reason': reason,
-          }),
+        final response = await client.post(
+          path,
+          body: {'reason': reason},
         );
-
-        httpErrorHandler(response, message: 'Failed to report comment');
 
       case ServerSoftware.lemmy:
-        const path = '/api/v3/comment/report';
+        const path = '/comment/report';
 
-        final response = await httpClient.post(
-          Uri.https(server, path),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
+        final response = await client.post(
+          path,
+          body: {
             'comment_id': commentId,
             'reason': reason,
-          }),
+          },
         );
 
-        httpErrorHandler(response, message: 'Failed to report comment');
+      case ServerSoftware.piefed:
+        const path = '/comment/report';
+
+        final response = await client.post(
+          path,
+          body: {
+            'comment_id': commentId,
+            'reason': reason,
+          },
+        );
     }
   }
 }

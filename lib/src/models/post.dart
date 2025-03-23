@@ -42,6 +42,13 @@ class PostListModel with _$PostListModel {
             .toList(),
         nextPage: json['next_page'] as String?,
       );
+
+  factory PostListModel.fromPiefed(Map<String, Object?> json) => PostListModel(
+        items: (json['posts'] as List<dynamic>)
+            .map((post) => PostModel.fromPiefed(post as Map<String, Object?>))
+            .toList(),
+        nextPage: json['next_page'] as String?,
+      );
 }
 
 @freezed
@@ -89,7 +96,7 @@ class PostModel with _$PostModel {
         url: (json['type'] == 'image' && json['image'] != null)
             ? null
             : json['url'] as String?,
-        image: mbinGetImage(json['image'] as Map<String, Object?>?),
+        image: mbinGetOptionalImage(json['image'] as Map<String, Object?>?),
         body: json['body'] as String?,
         lang: json['lang'] as String,
         numComments: json['numComments'] as int,
@@ -124,7 +131,7 @@ class PostModel with _$PostModel {
         domain: null,
         title: null,
         url: null,
-        image: mbinGetImage(json['image'] as Map<String, Object?>?),
+        image: mbinGetOptionalImage(json['image'] as Map<String, Object?>?),
         body: json['body'] as String,
         lang: json['lang'] as String,
         numComments: json['comments'] as int,
@@ -167,7 +174,10 @@ class PostModel with _$PostModel {
               (lemmyPost['url_content_type'] as String).startsWith('image/'))
           ? null
           : lemmyPost['url'] as String?,
-      image: lemmyGetImage(lemmyPost['thumbnail_url'] as String?),
+      image: lemmyGetOptionalImage(
+        lemmyPost['thumbnail_url'] as String?,
+        lemmyPost['alt_text'] as String?,
+      ),
       body: lemmyPost['body'] as String?,
       lang: null,
       numComments: lemmyCounts['comments'] as int,
@@ -186,6 +196,55 @@ class PostModel with _$PostModel {
       visibility: 'visible',
       canAuthUserModerate: null,
       notificationControlStatus: null,
+      bookmarks: [
+        // Empty string indicates post is saved. No string indicates post is not saved.
+        if (json['saved'] as bool) '',
+      ],
+    );
+  }
+
+  factory PostModel.fromPiefed(Map<String, Object?> json) {
+    final piefedPost = json['post'] as Map<String, Object?>;
+    final piefedCounts = json['counts'] as Map<String, Object?>;
+
+    return PostModel(
+      type: PostType.thread,
+      id: piefedPost['id'] as int,
+      user: UserModel.fromPiefed(json['creator'] as Map<String, Object?>),
+      magazine:
+          MagazineModel.fromPiefed(json['community'] as Map<String, Object?>),
+      domain: null,
+      title: piefedPost['title'] as String,
+      // Only include link if it's not an Image post
+      url: (piefedPost['url_content_type'] != null &&
+              (piefedPost['url_content_type'] as String).startsWith('image/'))
+          ? null
+          : piefedPost['url'] as String?,
+      image: lemmyGetOptionalImage(
+        piefedPost['thumbnail_url'] as String?,
+        piefedPost['alt_text'] as String?,
+      ),
+      body: piefedPost['body'] as String?,
+      lang: null,
+      numComments: piefedCounts['comments'] as int,
+      upvotes: piefedCounts['upvotes'] as int,
+      downvotes: piefedCounts['downvotes'] as int,
+      boosts: null,
+      myVote: json['my_vote'] as int?,
+      myBoost: null,
+      isOC: null,
+      isNSFW: piefedPost['nsfw'] as bool,
+      isPinned: piefedPost['sticky'] as bool,
+      createdAt: DateTime.parse(piefedPost['published'] as String),
+      editedAt: optionalDateTime(piefedPost['updated'] as String?),
+      lastActive: DateTime.parse(piefedCounts['newest_comment_time'] as String),
+      visibility: 'visible',
+      canAuthUserModerate: null,
+      notificationControlStatus: json['activity_alert'] == null
+          ? null
+          : json['activity_alert'] as bool
+              ? NotificationControlStatus.loud
+              : NotificationControlStatus.default_,
       bookmarks: [
         // Empty string indicates post is saved. No string indicates post is not saved.
         if (json['saved'] as bool) '',

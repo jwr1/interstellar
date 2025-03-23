@@ -1,11 +1,8 @@
-import 'dart:convert';
-
-import 'package:http/http.dart' as http;
+import 'package:interstellar/src/api/client.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/bookmark_list.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/utils/models.dart';
-import 'package:interstellar/src/utils/utils.dart';
 
 enum BookmarkListSubject {
   thread,
@@ -34,31 +31,24 @@ enum BookmarkListSubject {
 }
 
 class APIBookmark {
-  final ServerSoftware software;
-  final http.Client httpClient;
-  final String server;
+  final ServerClient client;
 
-  APIBookmark(
-    this.software,
-    this.httpClient,
-    this.server,
-  );
+  APIBookmark(this.client);
 
   Future<List<BookmarkListModel>> getBookmarkLists() async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        const path = '/api/bookmark-lists';
+        const path = '/bookmark-lists';
 
-        final response = await httpClient.get(Uri.https(server, path));
+        final response = await client.get(path);
 
-        httpErrorHandler(response, message: 'Failed to get bookmark lists');
-
-        return BookmarkListListModel.fromMbin(
-                jsonDecode(response.body) as Map<String, dynamic>)
-            .items;
+        return BookmarkListListModel.fromMbin(response.bodyJson).items;
 
       case ServerSoftware.lemmy:
         throw Exception('Bookmark lists not on Lemmy');
+
+      case ServerSoftware.piefed:
+        throw Exception('Bookmark lists not on piefed');
     }
   }
 
@@ -66,38 +56,53 @@ class APIBookmark {
     required BookmarkListSubject subjectType,
     required int subjectId,
   }) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/bos/$subjectId/${subjectType.toJson()}';
+        final path = '/bos/$subjectId/${subjectType.toJson()}';
 
-        final response = await httpClient.put(Uri.https(server, path));
+        final response = await client.put(path);
 
-        httpErrorHandler(response, message: 'Failed to add bookmark');
-
-        return optionalStringList(
-            (jsonDecode(response.body) as Map<String, dynamic>)['bookmarks']);
+        return optionalStringList((response.bodyJson['bookmarks']));
 
       case ServerSoftware.lemmy:
         final path = switch (subjectType) {
-          BookmarkListSubject.thread => '/api/v3/post/save',
-          BookmarkListSubject.threadComment => '/api/v3/comment/save',
+          BookmarkListSubject.thread => '/post/save',
+          BookmarkListSubject.threadComment => '/comment/save',
           _ => throw Exception('Tried to bookmark microblog on Lemmy')
         };
 
-        final response = await httpClient.put(
-          Uri.https(server, path),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
+        final response = await client.put(
+          path,
+          body: {
             switch (subjectType) {
               BookmarkListSubject.thread => 'post_id',
               BookmarkListSubject.threadComment => 'comment_id',
               _ => throw Exception('Tried to bookmark microblog on Lemmy')
             }: subjectId,
             'save': true,
-          }),
+          },
         );
 
-        httpErrorHandler(response, message: 'Failed to add bookmark');
+        return [''];
+
+      case ServerSoftware.piefed:
+        final path = switch (subjectType) {
+          BookmarkListSubject.thread => '/post/save',
+          BookmarkListSubject.threadComment => '/comment/save',
+          _ => throw Exception('Tried to bookmark microblog on piefed')
+        };
+
+        final response = await client.put(
+          path,
+          body: {
+            switch (subjectType) {
+              BookmarkListSubject.thread => 'post_id',
+              BookmarkListSubject.threadComment => 'comment_id',
+              _ => throw Exception('Tried to bookmark microblog on piefed')
+            }: subjectId,
+            'save': true,
+          },
+        );
 
         return [''];
     }
@@ -108,19 +113,19 @@ class APIBookmark {
     required int subjectId,
     required String listName,
   }) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/bol/$subjectId/${subjectType.toJson()}/$listName';
+        final path = '/bol/$subjectId/${subjectType.toJson()}/$listName';
 
-        final response = await httpClient.put(Uri.https(server, path));
+        final response = await client.put(path);
 
-        httpErrorHandler(response, message: 'Failed to add bookmark');
-
-        return optionalStringList(
-            (jsonDecode(response.body) as Map<String, dynamic>)['bookmarks']);
+        return optionalStringList((response.bodyJson['bookmarks']));
 
       case ServerSoftware.lemmy:
         throw Exception('Bookmark lists not on Lemmy');
+
+      case ServerSoftware.piefed:
+        throw Exception('Bookmark lists not on piefed');
     }
   }
 
@@ -128,38 +133,53 @@ class APIBookmark {
     required BookmarkListSubject subjectType,
     required int subjectId,
   }) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/rbo/$subjectId/${subjectType.toJson()}';
+        final path = '/rbo/$subjectId/${subjectType.toJson()}';
 
-        final response = await httpClient.delete(Uri.https(server, path));
+        final response = await client.delete(path);
 
-        httpErrorHandler(response, message: 'Failed to remove bookmark');
-
-        return optionalStringList(
-            (jsonDecode(response.body) as Map<String, dynamic>)['bookmarks']);
+        return optionalStringList((response.bodyJson['bookmarks']));
 
       case ServerSoftware.lemmy:
         final path = switch (subjectType) {
-          BookmarkListSubject.thread => '/api/v3/post/save',
-          BookmarkListSubject.threadComment => '/api/v3/comment/save',
+          BookmarkListSubject.thread => '/post/save',
+          BookmarkListSubject.threadComment => '/comment/save',
           _ => throw Exception('Tried to bookmark microblog on Lemmy')
         };
 
-        final response = await httpClient.put(
-          Uri.https(server, path),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
+        final response = await client.put(
+          path,
+          body: {
             switch (subjectType) {
               BookmarkListSubject.thread => 'post_id',
               BookmarkListSubject.threadComment => 'comment_id',
               _ => throw Exception('Tried to bookmark microblog on Lemmy')
             }: subjectId,
             'save': false,
-          }),
+          },
         );
 
-        httpErrorHandler(response, message: 'Failed to remove bookmark');
+        return [];
+
+      case ServerSoftware.piefed:
+        final path = switch (subjectType) {
+          BookmarkListSubject.thread => '/post/save',
+          BookmarkListSubject.threadComment => '/comment/save',
+          _ => throw Exception('Tried to bookmark microblog on piefed')
+        };
+
+        final response = await client.put(
+          path,
+          body: {
+            switch (subjectType) {
+              BookmarkListSubject.thread => 'post_id',
+              BookmarkListSubject.threadComment => 'comment_id',
+              _ => throw Exception('Tried to bookmark microblog on piefed')
+            }: subjectId,
+            'save': false,
+          },
+        );
 
         return [];
     }
@@ -170,19 +190,19 @@ class APIBookmark {
     required int subjectId,
     required String listName,
   }) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/rbol/$subjectId/${subjectType.toJson()}/$listName';
+        final path = '/rbol/$subjectId/${subjectType.toJson()}/$listName';
 
-        final response = await httpClient.delete(Uri.https(server, path));
+        final response = await client.delete(path);
 
-        httpErrorHandler(response, message: 'Failed to remove bookmark');
-
-        return optionalStringList(
-            (jsonDecode(response.body) as Map<String, dynamic>)['bookmarks']);
+        return optionalStringList((response.bodyJson['bookmarks']));
 
       case ServerSoftware.lemmy:
         throw Exception('Bookmark lists not on Lemmy');
+
+      case ServerSoftware.piefed:
+        throw Exception('Bookmark lists not on piefed');
     }
   }
 }

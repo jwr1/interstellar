@@ -1,10 +1,7 @@
-import 'dart:convert';
-
-import 'package:http/http.dart' as http;
+import 'package:interstellar/src/api/client.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/comment.dart';
 import 'package:interstellar/src/models/post.dart';
-import 'package:interstellar/src/utils/utils.dart';
 
 const _postTypeMbin = {
   PostType.thread: 'entry',
@@ -16,106 +13,126 @@ const _postTypeMbinComment = {
 };
 
 class APIModeration {
-  final ServerSoftware software;
-  final http.Client httpClient;
-  final String server;
+  final ServerClient client;
 
-  APIModeration(
-    this.software,
-    this.httpClient,
-    this.server,
-  );
+  APIModeration(this.client);
 
   Future<PostModel> postPin(PostType postType, int postId) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
-        final path = '/api/moderate/${_postTypeMbin[postType]}/$postId/pin';
+        final path = '/moderate/${_postTypeMbin[postType]}/$postId/pin';
 
-        final response = await httpClient.put(Uri.https(server, path));
+        final response = await client.put(path);
 
-        httpErrorHandler(response, message: 'Failed to send moderation pin');
-
-        switch (postType) {
-          case PostType.thread:
-            return PostModel.fromMbinEntry(
-                jsonDecode(response.body) as Map<String, Object?>);
-          case PostType.microblog:
-            return PostModel.fromMbinPost(
-                jsonDecode(response.body) as Map<String, Object?>);
-        }
+        return switch (postType) {
+          PostType.thread => PostModel.fromMbinEntry(response.bodyJson),
+          PostType.microblog => PostModel.fromMbinPost(response.bodyJson),
+        };
 
       case ServerSoftware.lemmy:
         throw Exception('Moderation not implemented on Lemmy yet');
+
+      case ServerSoftware.piefed:
+        final path = '/post/feature';
+
+        final response = await client.post(
+          path,
+          body: {
+            'post_id': postId,
+            'featured': true,
+            'feature_type': 'Community',
+          },
+        );
+
+        return PostModel.fromPiefed(
+            response.bodyJson['post_view'] as Map<String, Object?>);
     }
   }
 
   Future<PostModel> postMarkNSFW(
       PostType postType, int postId, bool status) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
         final path =
-            '/api/moderate/${_postTypeMbin[postType]}/$postId/adult/$status';
+            '/moderate/${_postTypeMbin[postType]}/$postId/adult/$status';
 
-        final response = await httpClient.put(Uri.https(server, path));
+        final response = await client.put(path);
 
-        httpErrorHandler(response,
-            message: 'Failed to send moderation mark NSFW');
-
-        switch (postType) {
-          case PostType.thread:
-            return PostModel.fromMbinEntry(
-                jsonDecode(response.body) as Map<String, Object?>);
-          case PostType.microblog:
-            return PostModel.fromMbinPost(
-                jsonDecode(response.body) as Map<String, Object?>);
-        }
+        return switch (postType) {
+          PostType.thread => PostModel.fromMbinEntry(response.bodyJson),
+          PostType.microblog => PostModel.fromMbinPost(response.bodyJson),
+        };
 
       case ServerSoftware.lemmy:
         throw Exception('Moderation not implemented on Lemmy yet');
+
+      case ServerSoftware.piefed:
+        throw UnimplementedError();
     }
   }
 
   Future<PostModel> postDelete(
       PostType postType, int postId, bool status) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
         final path =
-            '/api/moderate/${_postTypeMbin[postType]}/$postId/${status ? 'trash' : 'restore'}';
+            '/moderate/${_postTypeMbin[postType]}/$postId/${status ? 'trash' : 'restore'}';
 
-        final response = await httpClient.put(Uri.https(server, path));
+        final response = await client.put(path);
 
-        httpErrorHandler(response, message: 'Failed to send moderation delete');
-
-        switch (postType) {
-          case PostType.thread:
-            return PostModel.fromMbinEntry(
-                jsonDecode(response.body) as Map<String, Object?>);
-          case PostType.microblog:
-            return PostModel.fromMbinPost(
-                jsonDecode(response.body) as Map<String, Object?>);
-        }
+        return switch (postType) {
+          PostType.thread => PostModel.fromMbinEntry(response.bodyJson),
+          PostType.microblog => PostModel.fromMbinPost(response.bodyJson),
+        };
 
       case ServerSoftware.lemmy:
         throw Exception('Moderation not implemented on Lemmy yet');
+
+      case ServerSoftware.piefed:
+        final path = '/post/remove';
+
+        final response = await client.post(
+          path,
+          body: {
+            'post_id': postId,
+            'removed': status,
+            'reason': 'Moderated',
+          },
+        );
+
+        return PostModel.fromPiefed(
+            response.bodyJson['post_view'] as Map<String, Object?>);
     }
   }
 
   Future<CommentModel> commentDelete(
       PostType postType, int commentId, bool status) async {
-    switch (software) {
+    switch (client.software) {
       case ServerSoftware.mbin:
         final path =
-            '/api/moderate/${_postTypeMbinComment[postType]}/$commentId/${status ? 'trash' : 'restore'}';
+            '/moderate/${_postTypeMbinComment[postType]}/$commentId/${status ? 'trash' : 'restore'}';
 
-        final response = await httpClient.put(Uri.https(server, path));
+        final response = await client.put(path);
 
-        httpErrorHandler(response, message: 'Failed to send moderation delete');
-
-        return CommentModel.fromMbin(
-            jsonDecode(response.body) as Map<String, Object?>);
+        return CommentModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
         throw Exception('Moderation not implemented on Lemmy yet');
+
+      case ServerSoftware.piefed:
+        final path = '/comment/remove';
+
+        final response = await client.post(
+          path,
+          body: {
+            'comment_id': commentId,
+            'removed': status,
+            'reason': 'Moderated',
+          },
+        );
+
+        return CommentModel.fromPiefed(
+            response.bodyJson['comment_view'] as Map<String, Object?>);
     }
   }
 }

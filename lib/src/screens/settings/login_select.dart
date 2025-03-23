@@ -14,7 +14,6 @@ final List<String> _recommendedInstances = [
   'lemm.ee',
   'lemmy.ml',
   'lemmy.world',
-  'programming.dev',
 ];
 
 class LoginSelectScreen extends StatefulWidget {
@@ -42,7 +41,7 @@ class _LoginSelectScreenState extends State<LoginSelectScreen> {
     // Check BuildContext
     if (!mounted) return;
 
-    final shouldPop = await Navigator.push(
+    final shouldPop = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
         builder: (context) => LoginConfirmScreen(
