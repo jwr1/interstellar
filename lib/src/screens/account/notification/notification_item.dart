@@ -139,8 +139,7 @@ class _NotificationItemState extends State<NotificationItem> {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => MessageThreadScreen(
-                    threadId:
-                        widget.item.subject['creator']['id'] as int,
+                    threadId: widget.item.subject['creator']['id'] as int,
                   ),
                 ),
               );

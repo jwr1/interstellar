@@ -148,11 +148,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                           context.watch<AppController>().serverSoftware ==
                                   ServerSoftware.lemmy &&
                               item.creator?.name ==
-                                  context
-                                      .watch<AppController>()
-                                      .selectedAccount
-                                      .split('@')
-                                      .first
+                                  context.watch<AppController>().localName
                       ? SizedBox()
                       : Padding(
                           padding: const EdgeInsets.only(

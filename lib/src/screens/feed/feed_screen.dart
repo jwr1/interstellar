@@ -87,15 +87,11 @@ class _FeedScreenState extends State<FeedScreen>
     // don't really need for mbin since mbin api returns
     // canAuthUserModerate with content items
     // lemmy and piefed don't return this info
-    bool userCanModerate = false;
-    if (widget.createPostMagazine != null) {
-      for (var moderator in widget.createPostMagazine!.moderators) {
-        if (moderator.id == context.read<AppController>().selectedAccountId) {
-          userCanModerate = true;
-          break;
-        }
-      }
-    }
+    final localUserPart = context.read<AppController>().localName;
+    final userCanModerate = widget.createPostMagazine == null
+        ? false
+        : widget.createPostMagazine!.moderators
+            .any((mod) => mod.name == localUserPart);
 
     final actions = [
       feedActionCreateNew(context).withProps(

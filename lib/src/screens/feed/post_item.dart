@@ -35,8 +35,7 @@ class PostItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final ac = context.watch<AppController>();
 
-    final canModerate = userCanModerate
-        || (item.canAuthUserModerate ?? false);
+    final canModerate = userCanModerate || (item.canAuthUserModerate ?? false);
 
     return ContentItem(
       originInstance: getNameHost(context, item.user.name),

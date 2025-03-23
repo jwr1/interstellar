@@ -41,8 +41,8 @@ class _PostCommentState extends State<PostComment> {
   Widget build(BuildContext context) {
     final ac = context.watch<AppController>();
 
-    final canModerate = widget.userCanModerate
-        || (widget.comment.canAuthUserModerate ?? false);
+    final canModerate =
+        widget.userCanModerate || (widget.comment.canAuthUserModerate ?? false);
 
     return Column(
       children: [

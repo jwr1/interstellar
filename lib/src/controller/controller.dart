@@ -64,11 +64,10 @@ class AppController with ChangeNotifier {
   Map<String, Server> get servers => _servers;
   Map<String, Account> get accounts => _accounts;
   late String _selectedAccount;
-  late int _selectedAccountId;
   String get selectedAccount => _selectedAccount;
-  int get selectedAccountId => _selectedAccountId;
+  String get localName => _selectedAccount.split('@').first;
   String get instanceHost => _selectedAccount.split('@').last;
-  bool get isLoggedIn => _selectedAccount.split('@').first.isNotEmpty;
+  bool get isLoggedIn => localName.isNotEmpty;
   ServerSoftware get serverSoftware => _servers[instanceHost]!.software;
   API get api => _api;
 
@@ -78,7 +77,7 @@ class AppController with ChangeNotifier {
   late Function refreshState;
 
   Future<void> init() async {
-    refreshState = (){};
+    refreshState = () {};
     final mainProfileTemp = await _mainProfileRecord.get(db) as String?;
     if (mainProfileTemp != null) {
       _mainProfile = mainProfileTemp;
@@ -132,8 +131,6 @@ class AppController with ChangeNotifier {
         (record) => MapEntry(record.key, FilterList.fromJson(record.value))));
 
     await _updateAPI();
-
-    _selectedAccountId = (await api.users.getMe()).id;
   }
 
   Future<void> _rebuildProfile() async {
@@ -294,7 +291,6 @@ class AppController with ChangeNotifier {
     }
 
     _updateAPI();
-    _selectedAccountId = (await api.users.getMe()).id;
 
     notifyListeners();
 
@@ -338,7 +334,6 @@ class AppController with ChangeNotifier {
     }
 
     _updateAPI();
-    _selectedAccountId = (await api.users.getMe()).id;
 
     notifyListeners();
 
@@ -352,7 +347,6 @@ class AppController with ChangeNotifier {
 
     _selectedAccount = newAccount;
     await _updateAPI();
-    _selectedAccountId = (await api.users.getMe()).id;
 
     userMentionCache.clear();
     magazineMentionCache.clear();

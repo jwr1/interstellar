@@ -93,8 +93,7 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final myUsername =
-        context.watch<AppController>().selectedAccount.split('@').first;
+    final myUsername = context.watch<AppController>().localName;
 
     final messageUser = _data?.participants.firstWhere(
       (user) => user.name != myUsername,
