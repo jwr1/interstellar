@@ -1,4 +1,3 @@
-
 import 'package:interstellar/src/api/client.dart';
 import 'package:interstellar/src/models/domain.dart';
 import 'package:interstellar/src/screens/explore/explore_screen.dart';
@@ -25,8 +24,7 @@ class MbinAPIDomains {
       if (filter == null || filter == ExploreFilter.all) 'q': search
     };
 
-    final response =
-        await client.send(HttpMethod.get, path, queryParams: query);
+    final response = await client.get(path, queryParams: query);
 
     return DomainListModel.fromMbin(response.bodyJson);
   }
@@ -34,7 +32,7 @@ class MbinAPIDomains {
   Future<DomainModel> get(int domainId) async {
     final path = '/domain/$domainId';
 
-    final response = await client.send(HttpMethod.get, path);
+    final response = await client.get(path);
 
     return DomainModel.fromMbin(response.bodyJson);
   }
@@ -42,7 +40,7 @@ class MbinAPIDomains {
   Future<DomainModel> putSubscribe(int domainId, bool state) async {
     final path = '/domain/$domainId/${state ? 'subscribe' : 'unsubscribe'}';
 
-    final response = await client.send(HttpMethod.put, path);
+    final response = await client.put(path);
 
     return DomainModel.fromMbin(response.bodyJson);
   }
@@ -50,7 +48,7 @@ class MbinAPIDomains {
   Future<DomainModel> putBlock(int domainId, bool state) async {
     final path = '/domain/$domainId/${state ? 'block' : 'unblock'}';
 
-    final response = await client.send(HttpMethod.put, path);
+    final response = await client.put(path);
 
     return DomainModel.fromMbin(response.bodyJson);
   }

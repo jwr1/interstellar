@@ -111,8 +111,7 @@ class APIMagazines {
           },
         };
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         return DetailedMagazineListModel.fromMbin(response.bodyJson);
 
@@ -134,8 +133,7 @@ class APIMagazines {
             'page': page,
           };
 
-          final response =
-              await client.send(HttpMethod.get, path, queryParams: query);
+          final response = await client.get(path, queryParams: query);
 
           final json = response.bodyJson;
 
@@ -162,8 +160,7 @@ class APIMagazines {
             'q': search,
           };
 
-          final response =
-              await client.send(HttpMethod.get, path, queryParams: query);
+          final response = await client.get(path, queryParams: query);
 
           final json = response.bodyJson;
 
@@ -191,8 +188,7 @@ class APIMagazines {
             'page': page,
           };
 
-          final response =
-              await client.send(HttpMethod.get, path, queryParams: query);
+          final response = await client.get(path, queryParams: query);
 
           final json = response.bodyJson;
 
@@ -219,8 +215,7 @@ class APIMagazines {
             'q': search,
           };
 
-          final response =
-              await client.send(HttpMethod.get, path, queryParams: query);
+          final response = await client.get(path, queryParams: query);
 
           final json = response.bodyJson;
 
@@ -237,7 +232,7 @@ class APIMagazines {
       case ServerSoftware.mbin:
         final path = '/magazine/$magazineId';
 
-        final response = await client.send(HttpMethod.get, path);
+        final response = await client.get(path);
 
         return DetailedMagazineModel.fromMbin(response.bodyJson);
 
@@ -245,8 +240,7 @@ class APIMagazines {
         const path = '/community';
         final query = {'id': magazineId.toString()};
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         return DetailedMagazineModel.fromLemmy(
             response.bodyJson['community_view'] as Map<String, Object?>);
@@ -255,8 +249,7 @@ class APIMagazines {
         const path = '/community';
         final query = {'id': magazineId.toString()};
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         return DetailedMagazineModel.fromPiefed(response.bodyJson);
     }
@@ -267,7 +260,7 @@ class APIMagazines {
       case ServerSoftware.mbin:
         final path = '/magazine/name/$magazineName';
 
-        final response = await client.send(HttpMethod.get, path);
+        final response = await client.get(path);
 
         return DetailedMagazineModel.fromMbin(response.bodyJson);
 
@@ -275,8 +268,7 @@ class APIMagazines {
         const path = '/community';
         final query = {'name': magazineName.toString()};
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         return DetailedMagazineModel.fromLemmy(
             response.bodyJson['community_view'] as Map<String, Object?>);
@@ -285,8 +277,7 @@ class APIMagazines {
         const path = '/community';
         final query = {'name': magazineName.toString()};
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         return DetailedMagazineModel.fromPiefed(response.bodyJson);
     }
@@ -298,15 +289,14 @@ class APIMagazines {
         final path =
             '/magazine/$magazineId/${state ? 'subscribe' : 'unsubscribe'}';
 
-        final response = await client.send(HttpMethod.put, path);
+        final response = await client.put(path);
 
         return DetailedMagazineModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
         const path = '/community/follow';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'community_id': magazineId,
@@ -320,8 +310,7 @@ class APIMagazines {
       case ServerSoftware.piefed:
         const path = '/community/follow';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'community_id': magazineId,
@@ -338,15 +327,14 @@ class APIMagazines {
       case ServerSoftware.mbin:
         final path = '/magazine/$magazineId/${state ? 'block' : 'unblock'}';
 
-        final response = await client.send(HttpMethod.put, path);
+        final response = await client.put(path);
 
         return DetailedMagazineModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
         const path = '/community/block';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'community_id': magazineId,
@@ -360,8 +348,7 @@ class APIMagazines {
       case ServerSoftware.piefed:
         const path = '/community/block';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'community_id': magazineId,

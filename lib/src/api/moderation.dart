@@ -1,4 +1,3 @@
-
 import 'package:interstellar/src/api/client.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/comment.dart';
@@ -23,14 +22,12 @@ class APIModeration {
       case ServerSoftware.mbin:
         final path = '/moderate/${_postTypeMbin[postType]}/$postId/pin';
 
-        final response = await client.send(HttpMethod.put, path);
+        final response = await client.put(path);
 
-        switch (postType) {
-          case PostType.thread:
-            return PostModel.fromMbinEntry(response.bodyJson);
-          case PostType.microblog:
-            return PostModel.fromMbinPost(response.bodyJson);
-        }
+        return switch (postType) {
+          PostType.thread => PostModel.fromMbinEntry(response.bodyJson),
+          PostType.microblog => PostModel.fromMbinPost(response.bodyJson),
+        };
 
       case ServerSoftware.lemmy:
         throw Exception('Moderation not implemented on Lemmy yet');
@@ -38,14 +35,13 @@ class APIModeration {
       case ServerSoftware.piefed:
         final path = '/post/feature';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'post_id': postId,
             'featured': true,
-            'feature_type': 'Community'
-          }
+            'feature_type': 'Community',
+          },
         );
 
         return PostModel.fromPiefed(
@@ -60,14 +56,12 @@ class APIModeration {
         final path =
             '/moderate/${_postTypeMbin[postType]}/$postId/adult/$status';
 
-        final response = await client.send(HttpMethod.put, path);
+        final response = await client.put(path);
 
-        switch (postType) {
-          case PostType.thread:
-            return PostModel.fromMbinEntry(response.bodyJson);
-          case PostType.microblog:
-            return PostModel.fromMbinPost(response.bodyJson);
-        }
+        return switch (postType) {
+          PostType.thread => PostModel.fromMbinEntry(response.bodyJson),
+          PostType.microblog => PostModel.fromMbinPost(response.bodyJson),
+        };
 
       case ServerSoftware.lemmy:
         throw Exception('Moderation not implemented on Lemmy yet');
@@ -84,14 +78,12 @@ class APIModeration {
         final path =
             '/moderate/${_postTypeMbin[postType]}/$postId/${status ? 'trash' : 'restore'}';
 
-        final response = await client.send(HttpMethod.put, path);
+        final response = await client.put(path);
 
-        switch (postType) {
-          case PostType.thread:
-            return PostModel.fromMbinEntry(response.bodyJson);
-          case PostType.microblog:
-            return PostModel.fromMbinPost(response.bodyJson);
-        }
+        return switch (postType) {
+          PostType.thread => PostModel.fromMbinEntry(response.bodyJson),
+          PostType.microblog => PostModel.fromMbinPost(response.bodyJson),
+        };
 
       case ServerSoftware.lemmy:
         throw Exception('Moderation not implemented on Lemmy yet');
@@ -99,14 +91,13 @@ class APIModeration {
       case ServerSoftware.piefed:
         final path = '/post/remove';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'post_id': postId,
             'removed': status,
-            'reason': 'Moderated'
-          }
+            'reason': 'Moderated',
+          },
         );
 
         return PostModel.fromPiefed(
@@ -121,7 +112,7 @@ class APIModeration {
         final path =
             '/moderate/${_postTypeMbinComment[postType]}/$commentId/${status ? 'trash' : 'restore'}';
 
-        final response = await client.send(HttpMethod.put, path);
+        final response = await client.put(path);
 
         return CommentModel.fromMbin(response.bodyJson);
 
@@ -131,14 +122,13 @@ class APIModeration {
       case ServerSoftware.piefed:
         final path = '/comment/remove';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'comment_id': commentId,
             'removed': status,
-            'reason': 'Moderated'
-          }
+            'reason': 'Moderated',
+          },
         );
 
         return CommentModel.fromPiefed(

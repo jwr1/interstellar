@@ -17,8 +17,7 @@ class APIMessages {
         const path = '/messages';
         final query = {'p': page};
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         return MessageListModel.fromMbin(response.bodyJson);
 
@@ -30,8 +29,7 @@ class APIMessages {
           'limit': '20',
         };
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         final json = response.bodyJson;
 
@@ -48,8 +46,7 @@ class APIMessages {
           'limit': '20',
         };
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         final json = response.bodyJson;
 
@@ -70,8 +67,7 @@ class APIMessages {
         final path = '/messages/thread/$threadId/newest';
         final query = {'p': page};
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         final json = response.bodyJson;
         json['threadId'] = threadId;
@@ -86,8 +82,7 @@ class APIMessages {
           'limit': '20',
         };
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         final json = response.bodyJson;
         final nextPage = lemmyCalcNextIntPage(
@@ -116,8 +111,7 @@ class APIMessages {
           'limit': '20',
         };
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         final json = response.bodyJson;
         final nextPage = lemmyCalcNextIntPage(
@@ -149,8 +143,7 @@ class APIMessages {
       case ServerSoftware.mbin:
         final path = '/users/$userId/message';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {'body': body},
         );
@@ -160,8 +153,7 @@ class APIMessages {
       case ServerSoftware.lemmy:
         final path = '/private_message';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'recipient_id': userId,
@@ -191,8 +183,7 @@ class APIMessages {
       case ServerSoftware.mbin:
         final path = '/messages/thread/$threadId/reply';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {'body': body},
         );

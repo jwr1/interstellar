@@ -40,7 +40,7 @@ class APIBookmark {
       case ServerSoftware.mbin:
         const path = '/bookmark-lists';
 
-        final response = await client.send(HttpMethod.get, path);
+        final response = await client.get(path);
 
         return BookmarkListListModel.fromMbin(response.bodyJson).items;
 
@@ -60,7 +60,7 @@ class APIBookmark {
       case ServerSoftware.mbin:
         final path = '/bos/$subjectId/${subjectType.toJson()}';
 
-        final response = await client.send(HttpMethod.put, path);
+        final response = await client.put(path);
 
         return optionalStringList((response.bodyJson['bookmarks']));
 
@@ -71,8 +71,7 @@ class APIBookmark {
           _ => throw Exception('Tried to bookmark microblog on Lemmy')
         };
 
-        final response = await client.send(
-          HttpMethod.put,
+        final response = await client.put(
           path,
           body: {
             switch (subjectType) {
@@ -93,8 +92,7 @@ class APIBookmark {
           _ => throw Exception('Tried to bookmark microblog on piefed')
         };
 
-        final response = await client.send(
-          HttpMethod.put,
+        final response = await client.put(
           path,
           body: {
             switch (subjectType) {
@@ -119,7 +117,7 @@ class APIBookmark {
       case ServerSoftware.mbin:
         final path = '/bol/$subjectId/${subjectType.toJson()}/$listName';
 
-        final response = await client.send(HttpMethod.put, path);
+        final response = await client.put(path);
 
         return optionalStringList((response.bodyJson['bookmarks']));
 
@@ -139,7 +137,7 @@ class APIBookmark {
       case ServerSoftware.mbin:
         final path = '/rbo/$subjectId/${subjectType.toJson()}';
 
-        final response = await client.send(HttpMethod.delete, path);
+        final response = await client.delete(path);
 
         return optionalStringList((response.bodyJson['bookmarks']));
 
@@ -150,8 +148,7 @@ class APIBookmark {
           _ => throw Exception('Tried to bookmark microblog on Lemmy')
         };
 
-        final response = await client.send(
-          HttpMethod.put,
+        final response = await client.put(
           path,
           body: {
             switch (subjectType) {
@@ -172,8 +169,7 @@ class APIBookmark {
           _ => throw Exception('Tried to bookmark microblog on piefed')
         };
 
-        final response = await client.send(
-          HttpMethod.put,
+        final response = await client.put(
           path,
           body: {
             switch (subjectType) {
@@ -198,7 +194,7 @@ class APIBookmark {
       case ServerSoftware.mbin:
         final path = '/rbol/$subjectId/${subjectType.toJson()}/$listName';
 
-        final response = await client.send(HttpMethod.delete, path);
+        final response = await client.delete(path);
 
         return optionalStringList((response.bodyJson['bookmarks']));
 

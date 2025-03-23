@@ -94,8 +94,7 @@ class APIComments {
           'usePreferredLangs': (usePreferredLangs ?? false).toString(),
         };
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         return CommentListModel.fromMbin(response.bodyJson);
 
@@ -108,8 +107,7 @@ class APIComments {
           'max_depth': '8',
         };
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         return CommentListModel.fromLemmyToTree(response.bodyJson);
 
@@ -122,8 +120,7 @@ class APIComments {
           'max_depth': '8',
         };
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         return CommentListModel.fromPiefedToTree(response.bodyJson);
     }
@@ -147,8 +144,7 @@ class APIComments {
           'usePreferredLangs': (usePreferredLangs ?? false).toString(),
         };
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         return CommentListModel.fromMbin(response.bodyJson);
 
@@ -160,8 +156,7 @@ class APIComments {
           'sort': lemmyCommentSortMap[sort]
         };
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         final json = response.bodyJson;
 
@@ -178,8 +173,7 @@ class APIComments {
           'sort': lemmyCommentSortMap[sort]
         };
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         final json = response.bodyJson;
 
@@ -195,7 +189,7 @@ class APIComments {
       case ServerSoftware.mbin:
         final path = '/${_postTypeMbinComment[postType]}/$commentId';
 
-        final response = await client.send(HttpMethod.get, path);
+        final response = await client.get(path);
 
         return CommentModel.fromMbin(response.bodyJson);
 
@@ -203,8 +197,7 @@ class APIComments {
         const path = '/comment/list';
         final query = {'parent_id': commentId.toString()};
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         return CommentModel.fromLemmy(
           (response.bodyJson['comments'] as List<dynamic>)
@@ -219,8 +212,7 @@ class APIComments {
           'max_depth': '100',
         };
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         return CommentModel.fromPiefed(
           (response.bodyJson['comments'] as List<dynamic>)
@@ -242,15 +234,14 @@ class APIComments {
             ? '/${_postTypeMbinComment[postType]}/$commentId/favourite'
             : '/${_postTypeMbinComment[postType]}/$commentId/vote/$choice';
 
-        final response = await client.send(HttpMethod.put, path);
+        final response = await client.put(path);
 
         return CommentModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
         const path = '/comment/like';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'comment_id': commentId,
@@ -264,8 +255,7 @@ class APIComments {
       case ServerSoftware.piefed:
         const path = '/comment/like';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'comment_id': commentId,
@@ -283,7 +273,7 @@ class APIComments {
       case ServerSoftware.mbin:
         final path = '/${_postTypeMbinComment[postType]}/$commentId/vote/1';
 
-        final response = await client.send(HttpMethod.put, path);
+        final response = await client.put(path);
 
         return CommentModel.fromMbin(response.bodyJson);
 
@@ -306,8 +296,7 @@ class APIComments {
         final path =
             '/${_postTypeMbin[postType]}/$postId/comments${parentCommentId != null ? '/$parentCommentId/reply' : ''}';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {'body': body},
         );
@@ -317,8 +306,7 @@ class APIComments {
       case ServerSoftware.lemmy:
         const path = '/comment';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'content': body,
@@ -333,8 +321,7 @@ class APIComments {
       case ServerSoftware.piefed:
         const path = '/comment';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {'body': body, 'post_id': postId, 'parent_id': parentCommentId},
         );
@@ -353,8 +340,7 @@ class APIComments {
       case ServerSoftware.mbin:
         final path = '/${_postTypeMbinComment[postType]}/$commentId';
 
-        final response = await client.send(
-          HttpMethod.put,
+        final response = await client.put(
           path,
           body: {
             'body': body,
@@ -366,8 +352,7 @@ class APIComments {
       case ServerSoftware.lemmy:
         const path = '/comment';
 
-        final response = await client.send(
-          HttpMethod.put,
+        final response = await client.put(
           path,
           body: {
             'comment_id': commentId,
@@ -381,8 +366,7 @@ class APIComments {
       case ServerSoftware.piefed:
         const path = '/comment';
 
-        final response = await client.send(
-          HttpMethod.put,
+        final response = await client.put(
           path,
           body: {
             'comment_id': commentId,
@@ -400,13 +384,12 @@ class APIComments {
       case ServerSoftware.mbin:
         final path = '/${_postTypeMbinComment[postType]}/$commentId';
 
-        final response = await client.send(HttpMethod.delete, path);
+        final response = await client.delete(path);
 
       case ServerSoftware.lemmy:
         const path = '/comment/delete';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'comment_id': commentId,
@@ -417,8 +400,7 @@ class APIComments {
       case ServerSoftware.piefed:
         const path = '/comment/delete';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'comment_id': commentId,
@@ -433,8 +415,7 @@ class APIComments {
       case ServerSoftware.mbin:
         final path = '/${_postTypeMbinComment[postType]}/$commentId/report';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {'reason': reason},
         );
@@ -442,8 +423,7 @@ class APIComments {
       case ServerSoftware.lemmy:
         const path = '/comment/report';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'comment_id': commentId,
@@ -454,8 +434,7 @@ class APIComments {
       case ServerSoftware.piefed:
         const path = '/comment/report';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'comment_id': commentId,

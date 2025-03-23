@@ -38,8 +38,7 @@ class APIUsers {
           'q': search,
         };
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         return DetailedUserListModel.fromMbin(response.bodyJson);
 
@@ -58,8 +57,7 @@ class APIUsers {
           },
         };
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         final json = response.bodyJson;
 
@@ -83,8 +81,7 @@ class APIUsers {
           },
         };
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         final json = response.bodyJson;
 
@@ -100,7 +97,7 @@ class APIUsers {
       case ServerSoftware.mbin:
         final path = '/users/$userId';
 
-        final response = await client.send(HttpMethod.get, path);
+        final response = await client.get(path);
 
         return DetailedUserModel.fromMbin(response.bodyJson);
 
@@ -108,8 +105,7 @@ class APIUsers {
         const path = '/user';
         final query = {'person_id': userId.toString()};
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         return DetailedUserModel.fromLemmy(
             response.bodyJson['person_view'] as Map<String, Object?>);
@@ -118,8 +114,7 @@ class APIUsers {
         const path = '/user';
         final query = {'person_id': userId.toString()};
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         return DetailedUserModel.fromPiefed(
             response.bodyJson['person_view'] as Map<String, Object?>);
@@ -132,7 +127,7 @@ class APIUsers {
         final path =
             '/users/name/${username.contains('@') ? '@$username' : username}';
 
-        final response = await client.send(HttpMethod.get, path);
+        final response = await client.get(path);
 
         return DetailedUserModel.fromMbin(response.bodyJson);
 
@@ -140,8 +135,7 @@ class APIUsers {
         const path = '/user';
         final query = {'username': username};
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         return DetailedUserModel.fromLemmy(
             response.bodyJson['person_view'] as Map<String, Object?>);
@@ -150,8 +144,7 @@ class APIUsers {
         const path = '/user';
         final query = {'username': username};
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         return DetailedUserModel.fromPiefed(
             response.bodyJson['person_view'] as Map<String, Object?>);
@@ -163,14 +156,14 @@ class APIUsers {
       case ServerSoftware.mbin:
         const path = '/users/me';
 
-        final response = await client.send(HttpMethod.get, path);
+        final response = await client.get(path);
 
         return DetailedUserModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
         const path = '/site';
 
-        final response = await client.send(HttpMethod.get, path);
+        final response = await client.get(path);
 
         return DetailedUserModel.fromLemmy(((response.bodyJson
             as dynamic)['my_user']['local_user_view']) as Map<String, Object?>);
@@ -178,7 +171,7 @@ class APIUsers {
       case ServerSoftware.piefed:
         const path = '/site';
 
-        final response = await client.send(HttpMethod.get, path);
+        final response = await client.get(path);
 
         return DetailedUserModel.fromPiefed(((response.bodyJson
             as dynamic)['my_user']['local_user_view']) as Map<String, Object?>);
@@ -193,7 +186,7 @@ class APIUsers {
       case ServerSoftware.mbin:
         final path = '/users/$userId/${state ? 'follow' : 'unfollow'}';
 
-        final response = await client.send(HttpMethod.put, path);
+        final response = await client.put(path);
 
         return DetailedUserModel.fromMbin(response.bodyJson);
 
@@ -210,8 +203,7 @@ class APIUsers {
       case ServerSoftware.mbin:
         const path = '/users/profile';
 
-        final response = await client.send(
-          HttpMethod.put,
+        final response = await client.put(
           path,
           body: {'about': about},
         );
@@ -221,8 +213,7 @@ class APIUsers {
       case ServerSoftware.lemmy:
         const path = '/user/save_user_settings';
 
-        final response = await client.send(
-          HttpMethod.put,
+        final response = await client.put(
           path,
           body: {'bio': about},
         );
@@ -242,15 +233,14 @@ class APIUsers {
       case ServerSoftware.mbin:
         final path = '/users/$userId/${state ? 'block' : 'unblock'}';
 
-        final response = await client.send(HttpMethod.put, path);
+        final response = await client.put(path);
 
         return DetailedUserModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
         const path = '/user/block';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'person_id': userId,
@@ -264,8 +254,7 @@ class APIUsers {
       case ServerSoftware.piefed:
         const path = '/user/block';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'person_id': userId,
@@ -274,8 +263,8 @@ class APIUsers {
         );
 
         return DetailedUserModel.fromPiefed(
-            response.bodyJson['person_view'] as Map<String, Object?>,
-            blocked: response.bodyJson['blocked'] as bool? ?? false
+          response.bodyJson['person_view'] as Map<String, Object?>,
+          blocked: response.bodyJson['blocked'] as bool? ?? false,
         );
     }
   }
@@ -319,8 +308,7 @@ class APIUsers {
 
         const path = '/user/save_user_settings';
 
-        final response = await client.send(
-          HttpMethod.put,
+        final response = await client.put(
           path,
           body: {
             'avatar': 'https://${client.domain}/pictrs/image/$imageName',
@@ -338,15 +326,14 @@ class APIUsers {
     switch (client.software) {
       case ServerSoftware.mbin:
         const path = '/users/avatar';
-        var response = await client.send(HttpMethod.delete, path);
+        var response = await client.delete(path);
 
         return DetailedUserModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
         const path = '/user/save_user_settings';
 
-        final response = await client.send(
-          HttpMethod.put,
+        final response = await client.put(
           path,
           body: {'avatar': ''},
         );
@@ -397,8 +384,7 @@ class APIUsers {
 
         const path = '/user/save_user_settings';
 
-        final response = await client.send(
-          HttpMethod.put,
+        final response = await client.put(
           path,
           body: {
             'banner': 'https://${client.domain}/pictrs/image/$imageName',
@@ -416,15 +402,14 @@ class APIUsers {
     switch (client.software) {
       case ServerSoftware.mbin:
         const path = '/users/cover';
-        var response = await client.send(HttpMethod.delete, path);
+        var response = await client.delete(path);
 
         return DetailedUserModel.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
         const path = '/user/save_user_settings';
 
-        final response = await client.send(
-          HttpMethod.put,
+        final response = await client.put(
           path,
           body: {'banner': ''},
         );
@@ -445,8 +430,7 @@ class APIUsers {
         final path = '/users/$userId/followers';
         final query = {'p': page};
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         return DetailedUserListModel.fromMbin(response.bodyJson);
 
@@ -467,8 +451,7 @@ class APIUsers {
         final path = '/users/$userId/followed';
         final query = {'p': page};
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         return DetailedUserListModel.fromMbin(response.bodyJson);
 
@@ -484,14 +467,14 @@ class APIUsers {
     switch (client.software) {
       case ServerSoftware.mbin:
         const path = '/users/settings';
-        final response = await client.send(HttpMethod.get, path);
+        final response = await client.get(path);
 
         return UserSettings.fromMbin(response.bodyJson);
 
       case ServerSoftware.lemmy:
         const path = '/site';
 
-        final response = await client.send(HttpMethod.get, path);
+        final response = await client.get(path);
 
         return UserSettings.fromLemmy(((response.bodyJson as dynamic)['my_user']
             ['local_user_view']['local_user']) as Map<String, Object?>);
@@ -499,7 +482,7 @@ class APIUsers {
       case ServerSoftware.piefed:
         const path = '/site';
 
-        final response = await client.send(HttpMethod.get, path);
+        final response = await client.get(path);
 
         return UserSettings.fromPiefed(
             ((response.bodyJson as dynamic)['my_user']['local_user_view']
@@ -511,7 +494,7 @@ class APIUsers {
     switch (client.software) {
       case ServerSoftware.mbin:
         const path = '/users/settings';
-        final response = await client.send(HttpMethod.put, path, body: {
+        final response = await client.put(path, body: {
           'hideAdult': !settings.showNSFW,
           'showSubscribedUsers': settings.showSubscribedUsers,
           'showSubscribedMagazines': settings.showSubscribedMagazines,
@@ -531,7 +514,7 @@ class APIUsers {
       case ServerSoftware.lemmy:
         const path = '/user/save_user_settings';
 
-        final response = await client.send(HttpMethod.put, path, body: {
+        final response = await client.put(path, body: {
           'show_nsfw': settings.showNSFW,
           'blur_nsfw': settings.blurNSFW,
           'show_read_posts': settings.showReadPosts
@@ -543,7 +526,7 @@ class APIUsers {
       case ServerSoftware.piefed:
         const path = '/user/save_user_settings';
 
-        final response = await client.send(HttpMethod.put, path, body: {
+        final response = await client.put(path, body: {
           'show_nsfw': settings.showNSFW,
           'show_read_posts': settings.showReadPosts
         });

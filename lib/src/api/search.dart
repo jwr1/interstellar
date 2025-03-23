@@ -17,8 +17,7 @@ class APISearch {
       case ServerSoftware.mbin:
         const path = '/search';
 
-        final response = await client.send(
-          HttpMethod.get,
+        final response = await client.get(
           path,
           queryParams: {'p': page, 'q': search},
         );
@@ -38,8 +37,7 @@ class APISearch {
           },
         };
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         final json = response.bodyJson;
         String? nextPage;
@@ -68,8 +66,7 @@ class APISearch {
           },
         };
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         final json = response.bodyJson;
         String? nextPage;

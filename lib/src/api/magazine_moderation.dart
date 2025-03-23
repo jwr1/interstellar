@@ -16,8 +16,7 @@ class APIMagazineModeration {
         final path = '/moderate/magazine/$magazineId/bans';
         final query = {'p': page};
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         return MagazineBanListModel.fromMbin(response.bodyJson);
 
@@ -39,8 +38,7 @@ class APIMagazineModeration {
       case ServerSoftware.mbin:
         final path = '/moderate/magazine/$magazineId/ban/$userId';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'reason': reason,
@@ -63,7 +61,7 @@ class APIMagazineModeration {
       case ServerSoftware.mbin:
         final path = '/moderate/magazine/$magazineId/ban/$userId';
 
-        final response = await client.send(HttpMethod.delete, path);
+        final response = await client.delete(path);
 
         return MagazineBanModel.fromMbin(response.bodyJson);
 
@@ -86,8 +84,7 @@ class APIMagazineModeration {
       case ServerSoftware.mbin:
         final path = '/moderate/magazine/new';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'name': name,
@@ -103,8 +100,7 @@ class APIMagazineModeration {
       case ServerSoftware.lemmy:
         const path = '/community';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'name': name,
@@ -121,8 +117,7 @@ class APIMagazineModeration {
       case ServerSoftware.piefed:
         const path = '/community';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'name': name,
@@ -133,8 +128,7 @@ class APIMagazineModeration {
           },
         );
 
-        return DetailedMagazineModel.fromPiefed(
-            response.bodyJson);
+        return DetailedMagazineModel.fromPiefed(response.bodyJson);
     }
   }
 
@@ -149,8 +143,7 @@ class APIMagazineModeration {
       case ServerSoftware.mbin:
         final path = '/moderate/magazine/$magazineId';
 
-        final response = await client.send(
-          HttpMethod.put,
+        final response = await client.put(
           path,
           body: {
             'title': title,
@@ -168,8 +161,7 @@ class APIMagazineModeration {
       case ServerSoftware.piefed:
         const path = '/community';
 
-        final response = await client.send(
-          HttpMethod.put,
+        final response = await client.put(
           path,
           body: {
             'community_id': magazineId,
@@ -180,8 +172,7 @@ class APIMagazineModeration {
           },
         );
 
-        return DetailedMagazineModel.fromPiefed(
-            response.bodyJson);
+        return DetailedMagazineModel.fromPiefed(response.bodyJson);
     }
   }
 
@@ -194,8 +185,8 @@ class APIMagazineModeration {
       case ServerSoftware.mbin:
         final path = '/moderate/magazine/$magazineId/mod/$userId';
 
-        final response = await client.send(
-            state ? HttpMethod.post : HttpMethod.delete, path);
+        final response =
+            state ? await client.post(path) : await client.delete(path);
 
         return DetailedMagazineModel.fromMbin(response.bodyJson);
 
@@ -212,7 +203,7 @@ class APIMagazineModeration {
       case ServerSoftware.mbin:
         final path = '/moderate/magazine/$magazineId/icon';
 
-        final response = await client.send(HttpMethod.delete, path);
+        final response = await client.delete(path);
 
         return;
 
@@ -229,7 +220,7 @@ class APIMagazineModeration {
       case ServerSoftware.mbin:
         final path = '/moderate/magazine/$magazineId';
 
-        final response = await client.send(HttpMethod.delete, path);
+        final response = await client.delete(path);
 
         return;
 
@@ -239,8 +230,7 @@ class APIMagazineModeration {
       case ServerSoftware.piefed:
         const path = '/community/delete';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'community_id': magazineId,

@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:interstellar/src/controller/server.dart';
 
-enum HttpMethod { get, post, put, delete }
-
 class ServerClient {
   http.Client httpClient;
   ServerSoftware software;
@@ -16,15 +14,71 @@ class ServerClient {
     required this.domain,
   });
 
+  Future<http.Response> get(
+    String path, {
+    Map<String, String>? headers,
+    Map<String, Object?>? body,
+    Map<String, String?>? queryParams,
+  }) =>
+      send(
+        'GET',
+        path,
+        headers: headers,
+        body: body,
+        queryParams: queryParams,
+      );
+
+  Future<http.Response> post(
+    String path, {
+    Map<String, String>? headers,
+    Map<String, Object?>? body,
+    Map<String, String?>? queryParams,
+  }) =>
+      send(
+        'POST',
+        path,
+        headers: headers,
+        body: body,
+        queryParams: queryParams,
+      );
+
+  Future<http.Response> put(
+    String path, {
+    Map<String, String>? headers,
+    Map<String, Object?>? body,
+    Map<String, String?>? queryParams,
+  }) =>
+      send(
+        'PUT',
+        path,
+        headers: headers,
+        body: body,
+        queryParams: queryParams,
+      );
+
+  Future<http.Response> delete(
+    String path, {
+    Map<String, String>? headers,
+    Map<String, Object?>? body,
+    Map<String, String?>? queryParams,
+  }) =>
+      send(
+        'DELETE',
+        path,
+        headers: headers,
+        body: body,
+        queryParams: queryParams,
+      );
+
   Future<http.Response> send(
-    HttpMethod method,
+    String method,
     String path, {
     Map<String, String>? headers,
     Map<String, Object?>? body,
     Map<String, String?>? queryParams,
   }) async {
     var request = http.Request(
-      method.name.toUpperCase(),
+      method,
       Uri.https(
         domain,
         software.apiPathPrefix + path,

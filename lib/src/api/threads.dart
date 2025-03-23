@@ -65,8 +65,7 @@ class APIThreads {
           'usePreferredLangs': (usePreferredLangs ?? false).toString(),
         };
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         return PostListModel.fromMbinEntries(response.bodyJson);
 
@@ -79,8 +78,7 @@ class APIThreads {
             'sort': lemmyFeedSortMap[sort]
           };
 
-          final response =
-              await client.send(HttpMethod.get, path, queryParams: query);
+          final response = await client.get(path, queryParams: query);
 
           final json = response.bodyJson;
 
@@ -106,8 +104,7 @@ class APIThreads {
               throw Exception('Domain source not allowed for lemmy'),
           });
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         return PostListModel.fromLemmy(response.bodyJson);
 
@@ -120,8 +117,7 @@ class APIThreads {
             'sort': lemmyFeedSortMap[sort]
           };
 
-          final response =
-              await client.send(HttpMethod.get, path, queryParams: query);
+          final response = await client.get(path, queryParams: query);
 
           final json = response.bodyJson;
 
@@ -147,8 +143,7 @@ class APIThreads {
               throw Exception('Domain source not allowed for fromPiefed'),
           });
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         return PostListModel.fromPiefed(response.bodyJson);
     }
@@ -159,7 +154,7 @@ class APIThreads {
       case ServerSoftware.mbin:
         final path = '/entry/$postId';
 
-        final response = await client.send(HttpMethod.get, path);
+        final response = await client.get(path);
 
         return PostModel.fromMbinEntry(response.bodyJson);
 
@@ -167,8 +162,7 @@ class APIThreads {
         const path = '/post';
         final query = {'id': postId.toString()};
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         return PostModel.fromLemmy(
             response.bodyJson['post_view'] as Map<String, Object?>);
@@ -177,8 +171,7 @@ class APIThreads {
         const path = '/post';
         final query = {'id': postId.toString()};
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         return PostModel.fromPiefed(
             response.bodyJson['post_view'] as Map<String, Object?>);
@@ -192,13 +185,12 @@ class APIThreads {
             ? '/entry/$postId/favourite'
             : '/entry/$postId/vote/$choice';
 
-        final response = await client.send(HttpMethod.put, path);
+        final response = await client.put(path);
 
         return PostModel.fromMbinEntry(response.bodyJson);
 
       case ServerSoftware.lemmy:
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           '/post/like',
           body: {
             'post_id': postId,
@@ -210,8 +202,7 @@ class APIThreads {
             response.bodyJson['post_view'] as Map<String, Object?>);
 
       case ServerSoftware.piefed:
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           '/post/like',
           body: {
             'post_id': postId,
@@ -229,7 +220,7 @@ class APIThreads {
       case ServerSoftware.mbin:
         final path = '/entry/$postId/vote/1';
 
-        final response = await client.send(HttpMethod.put, path);
+        final response = await client.put(path);
 
         return PostModel.fromMbinEntry(response.bodyJson);
 
@@ -253,8 +244,7 @@ class APIThreads {
       case ServerSoftware.mbin:
         final path = '/entry/$entryID';
 
-        final response = await client.send(
-          HttpMethod.put,
+        final response = await client.put(
           path,
           body: {
             'title': title,
@@ -271,8 +261,7 @@ class APIThreads {
       case ServerSoftware.lemmy:
         const path = '/post';
 
-        final response = await client.send(
-          HttpMethod.put,
+        final response = await client.put(
           path,
           body: {
             'post_id': entryID,
@@ -288,8 +277,7 @@ class APIThreads {
       case ServerSoftware.piefed:
         const path = '/post';
 
-        final response = await client.send(
-          HttpMethod.put,
+        final response = await client.put(
           path,
           body: {
             'post_id': entryID,
@@ -307,13 +295,12 @@ class APIThreads {
   Future<void> delete(int postID) async {
     switch (client.software) {
       case ServerSoftware.mbin:
-        final response = await client.send(HttpMethod.delete, '/entry/$postID');
+        final response = await client.delete('/entry/$postID');
 
         break;
 
       case ServerSoftware.lemmy:
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           '/post/delete',
           body: {
             'post_id': postID,
@@ -324,8 +311,7 @@ class APIThreads {
         break;
 
       case ServerSoftware.piefed:
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           '/post/delete',
           body: {
             'post_id': postID,
@@ -350,8 +336,7 @@ class APIThreads {
       case ServerSoftware.mbin:
         final path = '/magazine/$magazineID/article';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'title': title,
@@ -367,8 +352,7 @@ class APIThreads {
 
       case ServerSoftware.lemmy:
         const path = '/post';
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'name': title,
@@ -383,8 +367,7 @@ class APIThreads {
 
       case ServerSoftware.piefed:
         const path = '/post';
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'title': title,
@@ -413,8 +396,7 @@ class APIThreads {
       case ServerSoftware.mbin:
         final path = '/magazine/$magazineID/link';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'title': title,
@@ -431,8 +413,7 @@ class APIThreads {
 
       case ServerSoftware.lemmy:
         const path = '/post';
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'name': title,
@@ -448,8 +429,7 @@ class APIThreads {
 
       case ServerSoftware.piefed:
         const path = '/post';
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'title': title,
@@ -522,8 +502,7 @@ class APIThreads {
             as Map<String, Object?>)['file'] as String?;
 
         const path = '/post';
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'name': title,
@@ -541,8 +520,10 @@ class APIThreads {
       case ServerSoftware.piefed:
         const uploadPath = '/upload/image';
 
-        var request =
-            http.MultipartRequest('POST', Uri.https(client.domain, client.software.apiPathPrefix + uploadPath));
+        var request = http.MultipartRequest(
+            'POST',
+            Uri.https(
+                client.domain, client.software.apiPathPrefix + uploadPath));
         var multipartFile = http.MultipartFile.fromBytes(
           'file',
           await image.readAsBytes(),
@@ -557,8 +538,7 @@ class APIThreads {
         final imageUrl = json['url'] as String?;
 
         const path = '/post';
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'title': title,
@@ -579,8 +559,7 @@ class APIThreads {
       case ServerSoftware.mbin:
         final path = '/entry/$postId/report';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {'reason': reason},
         );
@@ -588,8 +567,7 @@ class APIThreads {
       case ServerSoftware.lemmy:
         const path = '/post/report';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'post_id': postId,
@@ -600,8 +578,7 @@ class APIThreads {
       case ServerSoftware.piefed:
         const path = '/post/report';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'post_id': postId,

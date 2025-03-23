@@ -1,4 +1,3 @@
-
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
@@ -39,8 +38,7 @@ class MbinAPIMicroblogs {
       'usePreferredLangs': (usePreferredLangs ?? false).toString(),
     };
 
-    final response =
-        await client.send(HttpMethod.get, path, queryParams: query);
+    final response = await client.get(path, queryParams: query);
 
     return PostListModel.fromMbinPosts(response.bodyJson);
   }
@@ -48,7 +46,7 @@ class MbinAPIMicroblogs {
   Future<PostModel> get(int postId) async {
     final path = '/post/$postId';
 
-    final response = await client.send(HttpMethod.get, path);
+    final response = await client.get(path);
 
     return PostModel.fromMbinPost(response.bodyJson);
   }
@@ -56,7 +54,7 @@ class MbinAPIMicroblogs {
   Future<PostModel> putVote(int postID, int choice) async {
     final path = '/post/$postID/vote/$choice';
 
-    final response = await client.send(HttpMethod.put, path);
+    final response = await client.put(path);
 
     return PostModel.fromMbinPost(response.bodyJson);
   }
@@ -64,7 +62,7 @@ class MbinAPIMicroblogs {
   Future<PostModel> putFavorite(int postID) async {
     final path = '/post/$postID/favourite';
 
-    final response = await client.send(HttpMethod.put, path);
+    final response = await client.put(path);
 
     return PostModel.fromMbinPost(response.bodyJson);
   }
@@ -77,8 +75,7 @@ class MbinAPIMicroblogs {
   ) async {
     final path = '/post/$postID';
 
-    final response = await client.send(
-      HttpMethod.put,
+    final response = await client.put(
       path,
       body: {
         'body': body,
@@ -95,7 +92,7 @@ class MbinAPIMicroblogs {
   ) async {
     final path = '/post/$postID';
 
-    final response = await client.send(HttpMethod.delete, path);
+    final response = await client.delete(path);
   }
 
   Future<PostModel> create(
@@ -106,8 +103,7 @@ class MbinAPIMicroblogs {
   }) async {
     final path = '/magazine/$magazineID/posts';
 
-    final response = await client.send(
-      HttpMethod.post,
+    final response = await client.post(
       path,
       body: {'body': body, 'lang': lang, 'isAdult': isAdult},
     );
@@ -147,8 +143,7 @@ class MbinAPIMicroblogs {
   Future<void> report(int postId, String reason) async {
     final path = '/post/$postId/report';
 
-    final response = await client.send(
-      HttpMethod.post,
+    final response = await client.post(
       path,
       body: {'reason': reason},
     );

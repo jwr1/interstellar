@@ -29,8 +29,7 @@ class APINotifications {
             '/notifications/${filter == NotificationsFilter.new_ ? 'new' : (filter?.name ?? 'all')}';
         final query = {'p': page};
 
-        final response =
-            await client.send(HttpMethod.get, path, queryParams: query);
+        final response = await client.get(path, queryParams: query);
 
         return NotificationListModel.fromMbin(response.bodyJson);
 
@@ -41,12 +40,10 @@ class APINotifications {
           'limit': '20',
         };
 
-        final messagesFuture = client
-            .send(HttpMethod.get, '/private_message/list', queryParams: query);
-        final mentionFuture =
-            client.send(HttpMethod.get, '/user/mention', queryParams: query);
-        final repliesFuture =
-            client.send(HttpMethod.get, '/user/replies', queryParams: query);
+        final messagesFuture =
+            client.get('/private_message/list', queryParams: query);
+        final mentionFuture = client.get('/user/mention', queryParams: query);
+        final repliesFuture = client.get('/user/replies', queryParams: query);
 
         final [messagesResponse, mentionResponse, repliesResponse] =
             await Future.wait(
@@ -73,14 +70,14 @@ class APINotifications {
       case ServerSoftware.mbin:
         const path = '/notifications/count';
 
-        final response = await client.send(HttpMethod.get, path);
+        final response = await client.get(path);
 
         return response.bodyJson['count'] as int;
 
       case ServerSoftware.lemmy:
         const path = '/user/unread_count';
 
-        final response = await client.send(HttpMethod.get, path);
+        final response = await client.get(path);
 
         return (response.bodyJson['replies'] as int) +
             (response.bodyJson['mentions'] as int) +
@@ -96,14 +93,14 @@ class APINotifications {
       case ServerSoftware.mbin:
         const path = '/notifications/read';
 
-        final response = await client.send(HttpMethod.put, path);
+        final response = await client.put(path);
 
         return;
 
       case ServerSoftware.lemmy:
         const path = '/user/mark_all_as_read';
 
-        final response = await client.send(HttpMethod.post, path);
+        final response = await client.post(path);
 
         return;
 
@@ -122,7 +119,7 @@ class APINotifications {
         final path =
             '/notifications/$notificationId/${readState ? 'read' : 'unread'}';
 
-        final response = await client.send(HttpMethod.put, path);
+        final response = await client.put(path);
 
         return NotificationModel.fromMbin(response.bodyJson);
 
@@ -135,8 +132,7 @@ class APINotifications {
           _ => throw Exception('invalid notification type for lemmy'),
         };
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             switch (notificationType) {
@@ -176,8 +172,7 @@ class APINotifications {
       case ServerSoftware.mbin:
         const path = '/notification/push';
 
-        final response = await client.send(
-          HttpMethod.post,
+        final response = await client.post(
           path,
           body: {
             'endpoint': endpoint,
@@ -201,8 +196,7 @@ class APINotifications {
       case ServerSoftware.mbin:
         const path = '/notification/push';
 
-        final response = await client.send(
-          HttpMethod.delete,
+        final response = await client.delete(
           path,
         );
 
@@ -226,8 +220,7 @@ class APINotifications {
         final path =
             '/notification/update/${targetType.name}/$targetId/${status.toJson()}';
 
-        final response = await client.send(
-          HttpMethod.put,
+        final response = await client.put(
           path,
         );
 
@@ -247,8 +240,7 @@ class APINotifications {
           NotificationControlUpdateTargetType.comment => '/comment/subscribe',
         };
 
-        final response = await client.send(
-          HttpMethod.put,
+        final response = await client.put(
           path,
           body: {
             switch (targetType) {
