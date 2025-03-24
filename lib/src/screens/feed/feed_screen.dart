@@ -474,6 +474,55 @@ SelectionMenu<FeedSort> feedSortSelect(BuildContext context) {
         value: FeedSort.top,
         title: l(context).sort_top,
         icon: Symbols.trending_up_rounded,
+        subItems: isPiefed ? null : [
+          if (isLemmy)
+            SelectionMenuItem(
+                value: FeedSort.topHour,
+                title: 'Top 1 Hours'
+            ),
+          SelectionMenuItem(
+              value: FeedSort.topSixHour,
+              title: 'Top 6 Hours'
+          ),
+          SelectionMenuItem(
+              value: FeedSort.topTwelveHour,
+              title: 'Top 12 Hours'
+          ),
+          SelectionMenuItem(
+            value: FeedSort.topDay,
+            title: 'Top 1 Day'
+          ),
+          SelectionMenuItem(
+              value: FeedSort.topWeek,
+              title: 'Top 1 Week'
+          ),
+          SelectionMenuItem(
+              value: FeedSort.topMonth,
+              title: 'Top 1 Month'
+          ),
+          if (isLemmy) ...[
+            SelectionMenuItem(
+                value: FeedSort.topThreeMonths,
+                title: 'Top 3 Months'
+            ),
+            SelectionMenuItem(
+                value: FeedSort.topSixMonths,
+                title: 'Top 6 Months'
+            ),
+            SelectionMenuItem(
+                value: FeedSort.topNineMonths,
+                title: 'Top 9 Months'
+            ),
+          ],
+          SelectionMenuItem(
+              value: FeedSort.topYear,
+              title: 'Top 1 Year'
+          ),
+          SelectionMenuItem(
+              value: FeedSort.top,
+              title: 'Top All Time'
+          ),
+        ]
       ),
       SelectionMenuItem(
         value: FeedSort.newest,
@@ -518,56 +567,6 @@ SelectionMenu<FeedSort> feedSortSelect(BuildContext context) {
           value: FeedSort.controversial,
           title: l(context).sort_controversial,
           icon: Symbols.thumbs_up_down_rounded,
-        ),
-        SelectionMenuItem(
-          value: FeedSort.topDay,
-          title: l(context).sort_topDay,
-          icon: Symbols.trending_up_rounded,
-        ),
-        SelectionMenuItem(
-          value: FeedSort.topWeek,
-          title: l(context).sort_topWeek,
-          icon: Symbols.trending_up_rounded,
-        ),
-        SelectionMenuItem(
-          value: FeedSort.topMonth,
-          title: l(context).sort_topMonth,
-          icon: Symbols.trending_up_rounded,
-        ),
-        SelectionMenuItem(
-          value: FeedSort.topYear,
-          title: l(context).sort_topYear,
-          icon: Symbols.trending_up_rounded,
-        ),
-        SelectionMenuItem(
-          value: FeedSort.topHour,
-          title: l(context).sort_topHour,
-          icon: Symbols.trending_up_rounded,
-        ),
-        SelectionMenuItem(
-          value: FeedSort.topSixHour,
-          title: l(context).sort_topSixHour,
-          icon: Symbols.trending_up_rounded,
-        ),
-        SelectionMenuItem(
-          value: FeedSort.topTwelveHour,
-          title: l(context).sort_topTwelveHour,
-          icon: Symbols.trending_up_rounded,
-        ),
-        SelectionMenuItem(
-          value: FeedSort.topThreeMonths,
-          title: l(context).sort_topThreeMonths,
-          icon: Symbols.trending_up_rounded,
-        ),
-        SelectionMenuItem(
-          value: FeedSort.topSixMonths,
-          title: l(context).sort_topSixMonths,
-          icon: Symbols.trending_up_rounded,
-        ),
-        SelectionMenuItem(
-          value: FeedSort.topNineMonths,
-          title: l(context).sort_topNineMonths,
-          icon: Symbols.trending_up_rounded,
         ),
       ],
     ],
