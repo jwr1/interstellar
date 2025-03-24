@@ -199,7 +199,8 @@ class _FeedScreenState extends State<FeedScreen>
         actions.firstWhere(
             (action) => action.name == feedActionSetFilter(context).name),
       if (context.watch<AppController>().profile.feedActionSetView ==
-          ActionLocationWithTabs.tabs)
+          ActionLocationWithTabs.tabs &&
+          context.watch<AppController>().serverSoftware == ServerSoftware.mbin)
         actions.firstWhere(
             (action) => action.name == feedActionSetView(context).name),
     ].firstOrNull;
@@ -227,7 +228,7 @@ class _FeedScreenState extends State<FeedScreen>
                     (context.watch<AppController>().serverSoftware ==
                             ServerSoftware.mbin
                         ? context.watch<AppController>().profile.feedDefaultView
-                        : PostType.thread))
+                        : FeedView.threads))
                 .key,
           _ => 0
         },
