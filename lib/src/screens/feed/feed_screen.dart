@@ -64,7 +64,7 @@ class _FeedScreenState extends State<FeedScreen>
             context.read<AppController>().profile.feedDefaultThreadsSort,
           FeedView.microblog =>
             context.read<AppController>().profile.feedDefaultMicroblogSort,
-          FeedView.timeline => throw Exception('unreachable'),
+          FeedView.timeline => FeedSort.newest,
         };
 
   @override
