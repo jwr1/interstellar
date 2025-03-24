@@ -60,7 +60,8 @@ class APIThreads {
         };
         final query = {
           'p': page,
-          'sort': sort?.name,
+          'sort': mbinGetSort(sort)?.name,
+          'time': mbinGetSortTime(sort),
           'lang': langs?.join(','),
           'usePreferredLangs': (usePreferredLangs ?? false).toString(),
         };

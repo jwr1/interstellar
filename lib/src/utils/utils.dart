@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:interstellar/l10n/app_localizations.dart';
+import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/controller/controller.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:intl/intl.dart';
@@ -222,4 +223,52 @@ String strToMd5Base64(String input) {
   final hashBase64 = base64.encode(hashBytes);
 
   return hashBase64;
+}
+
+FeedSort? mbinGetSort(FeedSort? sort) {
+  return switch (sort?? FeedSort.hot) {
+    FeedSort.active => FeedSort.active,
+    FeedSort.hot => FeedSort.hot,
+    FeedSort.newest => FeedSort.newest,
+    FeedSort.oldest => FeedSort.oldest,
+    FeedSort.top => FeedSort.top,
+    FeedSort.commented => FeedSort.commented,
+    FeedSort.topDay => FeedSort.top,
+    FeedSort.topWeek => FeedSort.top,
+    FeedSort.topMonth => FeedSort.top,
+    FeedSort.topYear => FeedSort.top,
+    FeedSort.newComments => null,
+    FeedSort.topHour => FeedSort.top,
+    FeedSort.topSixHour => FeedSort.top,
+    FeedSort.topTwelveHour => FeedSort.top,
+    FeedSort.topThreeMonths => FeedSort.top,
+    FeedSort.topSixMonths => FeedSort.top,
+    FeedSort.topNineMonths => FeedSort.top,
+    FeedSort.controversial => null,
+    FeedSort.scaled => null,
+  };
+}
+
+String? mbinGetSortTime(FeedSort? sort) {
+  return switch (sort?? FeedSort.top) {
+    FeedSort.active => null,
+    FeedSort.hot => null,
+    FeedSort.newest => null,
+    FeedSort.oldest => null,
+    FeedSort.top => null,
+    FeedSort.commented => null,
+    FeedSort.topDay => '1d',
+    FeedSort.topWeek => '1w',
+    FeedSort.topMonth => '1m',
+    FeedSort.topYear => '1y',
+    FeedSort.newComments => null,
+    FeedSort.topHour => null,
+    FeedSort.topSixHour => '6h',
+    FeedSort.topTwelveHour => '12h',
+    FeedSort.topThreeMonths => null,
+    FeedSort.topSixMonths => null,
+    FeedSort.topNineMonths => null,
+    FeedSort.controversial => null,
+    FeedSort.scaled => null,
+  };
 }

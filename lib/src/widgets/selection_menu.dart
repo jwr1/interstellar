@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:interstellar/src/controller/controller.dart';
-import 'package:interstellar/src/controller/server.dart';
-import 'package:provider/provider.dart';
+import 'package:collection/collection.dart';
 
 class SelectionMenuItem<T> {
   final T value;
@@ -9,6 +7,7 @@ class SelectionMenuItem<T> {
   final IconData? icon;
   final Color? iconColor;
   final String? subtitle;
+  final List<SelectionMenuItem<T>>? subItems;
 
   const SelectionMenuItem({
     required this.value,
@@ -16,6 +15,7 @@ class SelectionMenuItem<T> {
     this.icon,
     this.iconColor,
     this.subtitle,
+    this.subItems,
   });
 }
 
@@ -59,6 +59,19 @@ class SelectionMenu<T> {
                       subtitle: option.subtitle != null
                           ? Text(option.subtitle!)
                           : null,
+                      trailing:
+                          option.subItems != null && option.subItems!.isNotEmpty
+                          ? GestureDetector(
+                              onTap: () async {
+                                final subSelection = await SelectionMenu<T>(
+                                    'sort', option.subItems!)
+                                    .askSelection(context, oldSelection);
+                                if (!context.mounted) return;
+                                Navigator.pop(context, subSelection);
+                              },
+                              child: Icon(Icons.arrow_right),
+                            )
+                          : null,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -70,8 +83,17 @@ class SelectionMenu<T> {
       );
 
   SelectionMenuItem<T> getOption(T value) {
-    return options.firstWhere(
+    final option = options.firstWhereOrNull(
       (option) => option.value == value,
     );
+    if (option != null) return option;
+    for (var option in options) {
+      if (option.subItems == null) continue;
+      final subOption = option.subItems!.firstWhereOrNull(
+        (option) => option.value == value,
+      );
+      if (subOption != null) return subOption;
+    }
+    return SelectionMenuItem(value: value, title: title);
   }
 }

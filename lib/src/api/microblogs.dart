@@ -6,6 +6,7 @@ import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart';
+import 'package:interstellar/src/utils/utils.dart';
 
 class MbinAPIMicroblogs {
   final ServerClient client;
@@ -33,7 +34,8 @@ class MbinAPIMicroblogs {
 
     final query = {
       'p': page,
-      'sort': sort?.name,
+      'sort': mbinGetSort(sort)?.name,
+      'time': mbinGetSortTime(sort),
       'lang': langs?.join(','),
       'usePreferredLangs': (usePreferredLangs ?? false).toString(),
     };
