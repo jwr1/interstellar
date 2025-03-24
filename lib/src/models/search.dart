@@ -4,6 +4,7 @@ import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/utils/models.dart';
+import 'package:interstellar/src/utils/utils.dart';
 
 part 'search.freezed.dart';
 
@@ -20,28 +21,25 @@ class SearchListModel with _$SearchListModel {
     for (var actor in json['apActors']) {
       var type = actor['type'];
       if (type == 'user') {
-        items.add(DetailedUserModel.fromMbin(
-            actor['object'] as Map<String, Object?>));
+        items.add(DetailedUserModel.fromMbin(actor['object'] as JsonMap));
       } else if (type == 'magazine') {
-        items.add(DetailedMagazineModel.fromMbin(
-            actor['object'] as Map<String, Object?>));
+        items.add(DetailedMagazineModel.fromMbin(actor['object'] as JsonMap));
       }
     }
     for (var item in json['items']) {
       var itemType = item['itemType'];
       if (itemType == 'entry') {
-        items.add(PostModel.fromMbinEntry(item as Map<String, Object?>));
+        items.add(PostModel.fromMbinEntry(item as JsonMap));
       } else if (itemType == 'post') {
-        items.add(PostModel.fromMbinPost(item as Map<String, Object?>));
+        items.add(PostModel.fromMbinPost(item as JsonMap));
       } else if (itemType == 'entry_comment' || itemType == 'post_comment') {
-        items.add(CommentModel.fromMbin(item as Map<String, Object?>));
+        items.add(CommentModel.fromMbin(item as JsonMap));
       }
     }
 
     return SearchListModel(
       items: items,
-      nextPage: mbinCalcNextPaginationPage(
-          json['pagination'] as Map<String, Object?>),
+      nextPage: mbinCalcNextPaginationPage(json['pagination'] as JsonMap),
     );
   }
 
@@ -53,16 +51,15 @@ class SearchListModel with _$SearchListModel {
     }
 
     for (var community in json['communities']) {
-      items.add(
-          DetailedMagazineModel.fromLemmy(community as Map<String, Object?>));
+      items.add(DetailedMagazineModel.fromLemmy(community as JsonMap));
     }
 
     for (var post in json['posts']) {
-      items.add(PostModel.fromLemmy(post as Map<String, Object?>));
+      items.add(PostModel.fromLemmy(post as JsonMap));
     }
 
     for (var comment in json['comments']) {
-      items.add(CommentModel.fromLemmy(comment as Map<String, Object?>));
+      items.add(CommentModel.fromLemmy(comment as JsonMap));
     }
 
     return SearchListModel(
@@ -77,16 +74,15 @@ class SearchListModel with _$SearchListModel {
     }
 
     for (var community in json['communities']) {
-      items.add(
-          DetailedMagazineModel.fromPiefed(community as Map<String, Object?>));
+      items.add(DetailedMagazineModel.fromPiefed(community as JsonMap));
     }
 
     for (var post in json['posts']) {
-      items.add(PostModel.fromPiefed(post as Map<String, Object?>));
+      items.add(PostModel.fromPiefed(post as JsonMap));
     }
 
     for (var comment in json['comments']) {
-      items.add(CommentModel.fromPiefed(comment as Map<String, Object?>));
+      items.add(CommentModel.fromPiefed(comment as JsonMap));
     }
 
     return SearchListModel(

@@ -226,7 +226,7 @@ String strToMd5Base64(String input) {
 }
 
 FeedSort? mbinGetSort(FeedSort? sort) {
-  return switch (sort?? FeedSort.hot) {
+  return switch (sort ?? FeedSort.hot) {
     FeedSort.active => FeedSort.active,
     FeedSort.hot => FeedSort.hot,
     FeedSort.newest => FeedSort.newest,
@@ -250,7 +250,7 @@ FeedSort? mbinGetSort(FeedSort? sort) {
 }
 
 String? mbinGetSortTime(FeedSort? sort) {
-  return switch (sort?? FeedSort.top) {
+  return switch (sort ?? FeedSort.top) {
     FeedSort.active => null,
     FeedSort.hot => null,
     FeedSort.newest => null,
@@ -272,3 +272,5 @@ String? mbinGetSortTime(FeedSort? sort) {
     FeedSort.scaled => null,
   };
 }
+
+typedef JsonMap = Map<String, Object?>;

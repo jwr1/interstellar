@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:interstellar/src/controller/database.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:sembast/sembast_io.dart';
 
 part 'drafts_controller.freezed.dart';
@@ -15,7 +16,7 @@ class Draft with _$Draft {
     String? resourceId,
   }) = _Draft;
 
-  factory Draft.fromJson(Map<String, Object?> json) => _$DraftFromJson(json);
+  factory Draft.fromJson(JsonMap json) => _$DraftFromJson(json);
 }
 
 class DraftAutoController {
@@ -31,7 +32,7 @@ class DraftAutoController {
 }
 
 class DraftsController with ChangeNotifier {
-  final _draftsStore = StoreRef<int, Map<String, Object?>>('draft');
+  final _draftsStore = StoreRef<int, JsonMap>('draft');
 
   List<Draft> _drafts = [];
   List<Draft> get drafts => _drafts;

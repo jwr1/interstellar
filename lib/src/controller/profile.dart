@@ -4,6 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:interstellar/src/api/comments.dart';
 import 'package:interstellar/src/api/feed_source.dart';
 import 'package:interstellar/src/screens/feed/feed_screen.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/actions.dart';
 
 part 'profile.freezed.dart';
@@ -57,7 +58,7 @@ class ProfileRequired with _$ProfileRequired {
     required Map<String, bool> filterLists,
   }) = _ProfileRequired;
 
-  factory ProfileRequired.fromJson(Map<String, Object?> json) =>
+  factory ProfileRequired.fromJson(JsonMap json) =>
       _$ProfileRequiredFromJson(json);
 
   factory ProfileRequired.fromOptional(ProfileOptional? profile) =>
@@ -200,7 +201,7 @@ class ProfileOptional with _$ProfileOptional {
     required Map<String, bool>? filterLists,
   }) = _ProfileOptional;
 
-  factory ProfileOptional.fromJson(Map<String, Object?> json) =>
+  factory ProfileOptional.fromJson(JsonMap json) =>
       _$ProfileOptionalFromJson(json);
 
   static const nullProfile = ProfileOptional(

@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:interstellar/src/models/image.dart';
 import 'package:interstellar/src/models/notification.dart';
 import 'package:interstellar/src/utils/models.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_mention.dart';
 
 part 'user.freezed.dart';
@@ -13,30 +14,25 @@ class DetailedUserListModel with _$DetailedUserListModel {
     required String? nextPage,
   }) = _DetailedUserListModel;
 
-  factory DetailedUserListModel.fromMbin(Map<String, Object?> json) =>
-      DetailedUserListModel(
+  factory DetailedUserListModel.fromMbin(JsonMap json) => DetailedUserListModel(
         items: (json['items'] as List<dynamic>)
-            .map((post) =>
-                DetailedUserModel.fromMbin(post as Map<String, Object?>))
+            .map((post) => DetailedUserModel.fromMbin(post as JsonMap))
             .toList(),
-        nextPage: mbinCalcNextPaginationPage(
-            json['pagination'] as Map<String, Object?>),
+        nextPage: mbinCalcNextPaginationPage(json['pagination'] as JsonMap),
       );
 
-  factory DetailedUserListModel.fromLemmy(Map<String, Object?> json) =>
+  factory DetailedUserListModel.fromLemmy(JsonMap json) =>
       DetailedUserListModel(
         items: (json['users'] as List<dynamic>)
-            .map((item) =>
-                DetailedUserModel.fromLemmy(item as Map<String, Object?>))
+            .map((item) => DetailedUserModel.fromLemmy(item as JsonMap))
             .toList(),
         nextPage: json['next_page'] as String?,
       );
 
-  factory DetailedUserListModel.fromPiefed(Map<String, Object?> json) =>
+  factory DetailedUserListModel.fromPiefed(JsonMap json) =>
       DetailedUserListModel(
         items: (json['users'] as List<dynamic>)
-            .map((item) =>
-                DetailedUserModel.fromPiefed(item as Map<String, Object?>))
+            .map((item) => DetailedUserModel.fromPiefed(item as JsonMap))
             .toList(),
         nextPage: json['next_page'] as String?,
       );
@@ -60,13 +56,13 @@ class DetailedUserModel with _$DetailedUserModel {
     required NotificationControlStatus? notificationControlStatus,
   }) = _DetailedUserModel;
 
-  factory DetailedUserModel.fromMbin(Map<String, Object?> json) {
+  factory DetailedUserModel.fromMbin(JsonMap json) {
     final user = DetailedUserModel(
       id: json['userId'] as int,
       name: mbinNormalizeUsername(json['username'] as String),
       displayName: null,
-      avatar: mbinGetOptionalImage(json['avatar'] as Map<String, Object?>?),
-      cover: mbinGetOptionalImage(json['cover'] as Map<String, Object?>?),
+      avatar: mbinGetOptionalImage(json['avatar'] as JsonMap?),
+      cover: mbinGetOptionalImage(json['cover'] as JsonMap?),
       createdAt: DateTime.parse(json['createdAt'] as String),
       isBot: json['isBot'] as bool,
       about: json['about'] as String?,
@@ -85,8 +81,8 @@ class DetailedUserModel with _$DetailedUserModel {
     return user;
   }
 
-  factory DetailedUserModel.fromLemmy(Map<String, Object?> json) {
-    final lemmyPerson = json['person'] as Map<String, Object?>;
+  factory DetailedUserModel.fromLemmy(JsonMap json) {
+    final lemmyPerson = json['person'] as JsonMap;
 
     return DetailedUserModel(
       id: lemmyPerson['id'] as int,
@@ -106,10 +102,10 @@ class DetailedUserModel with _$DetailedUserModel {
   }
 
   factory DetailedUserModel.fromPiefed(
-    Map<String, Object?> json, {
+    JsonMap json, {
     bool blocked = false,
   }) {
-    final piefedPerson = json['person'] as Map<String, Object?>;
+    final piefedPerson = json['person'] as JsonMap;
 
     return DetailedUserModel(
       id: piefedPerson['id'] as int,
@@ -143,15 +139,15 @@ class UserModel with _$UserModel {
     required bool isBot,
   }) = _UserModel;
 
-  factory UserModel.fromMbin(Map<String, Object?> json) => UserModel(
+  factory UserModel.fromMbin(JsonMap json) => UserModel(
         id: json['userId'] as int,
         name: mbinNormalizeUsername(json['username'] as String),
-        avatar: mbinGetOptionalImage(json['avatar'] as Map<String, Object?>?),
+        avatar: mbinGetOptionalImage(json['avatar'] as JsonMap?),
         createdAt: optionalDateTime(json['createdAt'] as String?),
         isBot: (json['isBot'] ?? false) as bool,
       );
 
-  factory UserModel.fromLemmy(Map<String, Object?> json) => UserModel(
+  factory UserModel.fromLemmy(JsonMap json) => UserModel(
         id: json['id'] as int,
         name: getLemmyPiefedActorName(json),
         avatar: lemmyGetOptionalImage(json['avatar'] as String?),
@@ -159,7 +155,7 @@ class UserModel with _$UserModel {
         isBot: json['bot_account'] as bool,
       );
 
-  factory UserModel.fromPiefed(Map<String, Object?> json) => UserModel(
+  factory UserModel.fromPiefed(JsonMap json) => UserModel(
         id: json['id'] as int,
         name: getLemmyPiefedActorName(json),
         avatar: null,
@@ -195,7 +191,7 @@ class UserSettings with _$UserSettings {
     required bool? notifyOnNewPostCommentReply,
   }) = _UserSettings;
 
-  factory UserSettings.fromMbin(Map<String, Object?> json) => UserSettings(
+  factory UserSettings.fromMbin(JsonMap json) => UserSettings(
         showNSFW: !(json['hideAdult'] as bool),
         blurNSFW: null,
         showReadPosts: null,
@@ -214,7 +210,7 @@ class UserSettings with _$UserSettings {
             json['notifyOnNewPostCommentReply'] as bool?,
       );
 
-  factory UserSettings.fromLemmy(Map<String, Object?> json) => UserSettings(
+  factory UserSettings.fromLemmy(JsonMap json) => UserSettings(
         showNSFW: json['show_nsfw'] as bool,
         blurNSFW: json['blur_nsfw'] as bool?,
         showReadPosts: json['show_read_posts'] as bool?,
@@ -231,7 +227,7 @@ class UserSettings with _$UserSettings {
         notifyOnNewPostCommentReply: null,
       );
 
-  factory UserSettings.fromPiefed(Map<String, Object?> json) => UserSettings(
+  factory UserSettings.fromPiefed(JsonMap json) => UserSettings(
         showNSFW: json['show_nsfw'] as bool,
         blurNSFW: null,
         showReadPosts: json['show_read_posts'] as bool?,

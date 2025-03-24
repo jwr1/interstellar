@@ -63,8 +63,7 @@ class _NotificationItemState extends State<NotificationItem> {
     MagazineModel? bannedMagazine = switch (software) {
       ServerSoftware.mbin => widget.item.type == NotificationType.ban &&
               widget.item.subject['magazine'] != null
-          ? MagazineModel.fromMbin(
-              widget.item.subject['magazine'] as Map<String, Object?>)
+          ? MagazineModel.fromMbin(widget.item.subject['magazine'] as JsonMap)
           : null,
       ServerSoftware.lemmy => null,
       ServerSoftware.piefed => null,

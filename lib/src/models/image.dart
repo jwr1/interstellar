@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:interstellar/src/utils/utils.dart';
 
 part 'image.freezed.dart';
 
@@ -12,7 +13,7 @@ class ImageModel with _$ImageModel {
     required int? blurHashHeight,
   }) = _ImageModel;
 
-  factory ImageModel.fromMbin(Map<String, Object?> json) => ImageModel(
+  factory ImageModel.fromMbin(JsonMap json) => ImageModel(
         src: (json['storageUrl'] ?? json['sourceUrl']) as String,
         altText: json['altText'] as String?,
         blurHash: json['blurHash'] as String?,

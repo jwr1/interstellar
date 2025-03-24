@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:interstellar/src/utils/utils.dart';
 
 part 'bookmark_list.freezed.dart';
 
@@ -8,11 +9,9 @@ class BookmarkListListModel with _$BookmarkListListModel {
     required List<BookmarkListModel> items,
   }) = _BookmarkListListModel;
 
-  factory BookmarkListListModel.fromMbin(Map<String, Object?> json) =>
-      BookmarkListListModel(
+  factory BookmarkListListModel.fromMbin(JsonMap json) => BookmarkListListModel(
         items: (json['items'] as List<dynamic>)
-            .map((post) =>
-                BookmarkListModel.fromMbin(post as Map<String, Object?>))
+            .map((post) => BookmarkListModel.fromMbin(post as JsonMap))
             .toList(),
       );
 }
@@ -25,8 +24,7 @@ class BookmarkListModel with _$BookmarkListModel {
     required int count,
   }) = _BookmarkListModel;
 
-  factory BookmarkListModel.fromMbin(Map<String, Object?> json) =>
-      BookmarkListModel(
+  factory BookmarkListModel.fromMbin(JsonMap json) => BookmarkListModel(
         name: json['name'] as String,
         isDefault: json['isDefault'] as bool,
         count: json['count'] as int,

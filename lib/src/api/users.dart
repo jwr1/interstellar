@@ -9,6 +9,7 @@ import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/screens/explore/explore_screen.dart';
 import 'package:interstellar/src/utils/models.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart';
 
@@ -108,7 +109,7 @@ class APIUsers {
         final response = await client.get(path, queryParams: query);
 
         return DetailedUserModel.fromLemmy(
-            response.bodyJson['person_view'] as Map<String, Object?>);
+            response.bodyJson['person_view'] as JsonMap);
 
       case ServerSoftware.piefed:
         const path = '/user';
@@ -117,7 +118,7 @@ class APIUsers {
         final response = await client.get(path, queryParams: query);
 
         return DetailedUserModel.fromPiefed(
-            response.bodyJson['person_view'] as Map<String, Object?>);
+            response.bodyJson['person_view'] as JsonMap);
     }
   }
 
@@ -138,7 +139,7 @@ class APIUsers {
         final response = await client.get(path, queryParams: query);
 
         return DetailedUserModel.fromLemmy(
-            response.bodyJson['person_view'] as Map<String, Object?>);
+            response.bodyJson['person_view'] as JsonMap);
 
       case ServerSoftware.piefed:
         const path = '/user';
@@ -147,7 +148,7 @@ class APIUsers {
         final response = await client.get(path, queryParams: query);
 
         return DetailedUserModel.fromPiefed(
-            response.bodyJson['person_view'] as Map<String, Object?>);
+            response.bodyJson['person_view'] as JsonMap);
     }
   }
 
@@ -166,7 +167,7 @@ class APIUsers {
         final response = await client.get(path);
 
         return DetailedUserModel.fromLemmy(((response.bodyJson
-            as dynamic)['my_user']['local_user_view']) as Map<String, Object?>);
+            as dynamic)['my_user']['local_user_view']) as JsonMap);
 
       case ServerSoftware.piefed:
         const path = '/site';
@@ -174,7 +175,7 @@ class APIUsers {
         final response = await client.get(path);
 
         return DetailedUserModel.fromPiefed(((response.bodyJson
-            as dynamic)['my_user']['local_user_view']) as Map<String, Object?>);
+            as dynamic)['my_user']['local_user_view']) as JsonMap);
     }
   }
 
@@ -249,7 +250,7 @@ class APIUsers {
         );
 
         return DetailedUserModel.fromLemmy(
-            response.bodyJson['person_view'] as Map<String, Object?>);
+            response.bodyJson['person_view'] as JsonMap);
 
       case ServerSoftware.piefed:
         const path = '/user/block';
@@ -263,7 +264,7 @@ class APIUsers {
         );
 
         return DetailedUserModel.fromPiefed(
-          response.bodyJson['person_view'] as Map<String, Object?>,
+          response.bodyJson['person_view'] as JsonMap,
           blocked: response.bodyJson['blocked'] as bool? ?? false,
         );
     }
@@ -301,10 +302,10 @@ class APIUsers {
         request.files.add(multipartFile);
         final pictrsResponse = await client.sendRequest(request);
 
-        final json = jsonDecode(pictrsResponse.body) as Map<String, Object?>;
+        final json = jsonDecode(pictrsResponse.body) as JsonMap;
 
         final imageName = ((json['files'] as List<Object?>).first
-            as Map<String, Object?>)['file'] as String?;
+            as JsonMap)['file'] as String?;
 
         const path = '/user/save_user_settings';
 
@@ -377,10 +378,10 @@ class APIUsers {
         request.files.add(multipartFile);
         var pictrsResponse = await client.sendRequest(request);
 
-        final json = jsonDecode(pictrsResponse.body) as Map<String, Object?>;
+        final json = jsonDecode(pictrsResponse.body) as JsonMap;
 
         final imageName = ((json['files'] as List<Object?>).first
-            as Map<String, Object?>)['file'] as String?;
+            as JsonMap)['file'] as String?;
 
         const path = '/user/save_user_settings';
 
@@ -477,7 +478,7 @@ class APIUsers {
         final response = await client.get(path);
 
         return UserSettings.fromLemmy(((response.bodyJson as dynamic)['my_user']
-            ['local_user_view']['local_user']) as Map<String, Object?>);
+            ['local_user_view']['local_user']) as JsonMap);
 
       case ServerSoftware.piefed:
         const path = '/site';
@@ -486,7 +487,7 @@ class APIUsers {
 
         return UserSettings.fromPiefed(
             ((response.bodyJson as dynamic)['my_user']['local_user_view']
-                ['local_user']) as Map<String, Object?>);
+                ['local_user']) as JsonMap);
     }
   }
 
@@ -521,7 +522,7 @@ class APIUsers {
         });
 
         return UserSettings.fromLemmy(((response.bodyJson as dynamic)['my_user']
-            ['local_user_view']['local_user']) as Map<String, Object?>);
+            ['local_user_view']['local_user']) as JsonMap);
 
       case ServerSoftware.piefed:
         const path = '/user/save_user_settings';
@@ -533,7 +534,7 @@ class APIUsers {
 
         return UserSettings.fromPiefed(
             ((response.bodyJson as dynamic)['my_user']['local_user_view']
-                ['local_user']) as Map<String, Object?>);
+                ['local_user']) as JsonMap);
     }
   }
 }

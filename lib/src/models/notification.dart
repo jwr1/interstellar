@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/utils/models.dart';
+import 'package:interstellar/src/utils/utils.dart';
 
 part 'notification.freezed.dart';
 
@@ -11,29 +12,26 @@ class NotificationListModel with _$NotificationListModel {
     required String? nextPage,
   }) = _NotificationListModel;
 
-  factory NotificationListModel.fromMbin(Map<String, Object?> json) =>
-      NotificationListModel(
+  factory NotificationListModel.fromMbin(JsonMap json) => NotificationListModel(
         items: (json['items'] as List<dynamic>)
-            .map((post) =>
-                NotificationModel.fromMbin(post as Map<String, Object?>))
+            .map((post) => NotificationModel.fromMbin(post as JsonMap))
             .toList(),
-        nextPage: mbinCalcNextPaginationPage(
-            json['pagination'] as Map<String, Object?>),
+        nextPage: mbinCalcNextPaginationPage(json['pagination'] as JsonMap),
       );
 
   factory NotificationListModel.fromLemmy(
-    Map<String, Object?> messagesJson,
-    Map<String, Object?> mentionsJson,
-    Map<String, Object?> repliesJson,
+    JsonMap messagesJson,
+    JsonMap mentionsJson,
+    JsonMap repliesJson,
   ) =>
       NotificationListModel(
         items: [
-          ...(messagesJson['private_messages'] as List<dynamic>).map((item) =>
-              NotificationModel.fromLemmyMessage(item as Map<String, Object?>)),
-          ...(mentionsJson['mentions'] as List<dynamic>).map((item) =>
-              NotificationModel.fromLemmyMention(item as Map<String, Object?>)),
-          ...(repliesJson['replies'] as List<dynamic>).map((item) =>
-              NotificationModel.fromLemmyReply(item as Map<String, Object?>)),
+          ...(messagesJson['private_messages'] as List<dynamic>).map(
+              (item) => NotificationModel.fromLemmyMessage(item as JsonMap)),
+          ...(mentionsJson['mentions'] as List<dynamic>).map(
+              (item) => NotificationModel.fromLemmyMention(item as JsonMap)),
+          ...(repliesJson['replies'] as List<dynamic>)
+              .map((item) => NotificationModel.fromLemmyReply(item as JsonMap)),
         ],
         nextPage: null,
       );
@@ -49,8 +47,8 @@ class NotificationModel with _$NotificationModel {
     required UserModel? creator,
   }) = _NotificationModel;
 
-  factory NotificationModel.fromMbin(Map<String, Object?> json) {
-    final subject = json['subject'] as Map<String, Object?>?;
+  factory NotificationModel.fromMbin(JsonMap json) {
+    final subject = json['subject'] as JsonMap?;
 
     return NotificationModel(
         id: json['notificationId'] as int,
@@ -61,42 +59,42 @@ class NotificationModel with _$NotificationModel {
             ? null
             : UserModel.fromMbin((subject['user'] ??
                 subject['sender'] ??
-                subject['bannedBy']) as Map<String, Object?>));
+                subject['bannedBy']) as JsonMap));
   }
 
-  factory NotificationModel.fromLemmyMessage(Map<String, Object?> json) {
-    final pm = json['private_message'] as Map<String, Object?>;
+  factory NotificationModel.fromLemmyMessage(JsonMap json) {
+    final pm = json['private_message'] as JsonMap;
 
     return NotificationModel(
       id: pm['id'] as int,
       type: NotificationType.message,
       isRead: pm['read'] as bool,
       subject: json,
-      creator: UserModel.fromLemmy(json['creator'] as Map<String, Object?>),
+      creator: UserModel.fromLemmy(json['creator'] as JsonMap),
     );
   }
 
-  factory NotificationModel.fromLemmyMention(Map<String, Object?> json) {
-    final pm = json['person_mention'] as Map<String, Object?>;
+  factory NotificationModel.fromLemmyMention(JsonMap json) {
+    final pm = json['person_mention'] as JsonMap;
 
     return NotificationModel(
       id: pm['id'] as int,
       type: NotificationType.mention,
       isRead: pm['read'] as bool,
       subject: json,
-      creator: UserModel.fromLemmy(json['creator'] as Map<String, Object?>),
+      creator: UserModel.fromLemmy(json['creator'] as JsonMap),
     );
   }
 
-  factory NotificationModel.fromLemmyReply(Map<String, Object?> json) {
-    final cr = json['comment_reply'] as Map<String, Object?>;
+  factory NotificationModel.fromLemmyReply(JsonMap json) {
+    final cr = json['comment_reply'] as JsonMap;
 
     return NotificationModel(
       id: cr['id'] as int,
       type: NotificationType.reply,
       isRead: cr['read'] as bool,
       subject: json,
-      creator: UserModel.fromLemmy(json['creator'] as Map<String, Object?>),
+      creator: UserModel.fromLemmy(json['creator'] as JsonMap),
     );
   }
 }

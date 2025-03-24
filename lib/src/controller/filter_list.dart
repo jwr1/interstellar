@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:interstellar/src/utils/utils.dart';
 
 part 'filter_list.freezed.dart';
 part 'filter_list.g.dart';
@@ -21,8 +22,7 @@ class FilterList with _$FilterList {
     required bool showWithWarning,
   }) = _FilterList;
 
-  factory FilterList.fromJson(Map<String, Object?> json) =>
-      _$FilterListFromJson(json);
+  factory FilterList.fromJson(JsonMap json) => _$FilterListFromJson(json);
 
   static const nullFilterList = FilterList(
     phrases: {},

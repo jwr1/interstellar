@@ -5,6 +5,7 @@ import 'package:interstellar/src/models/notification.dart';
 import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/utils/models.dart';
+import 'package:interstellar/src/utils/utils.dart';
 
 part 'comment.freezed.dart';
 
@@ -15,23 +16,20 @@ class CommentListModel with _$CommentListModel {
     required String? nextPage,
   }) = _CommentListModel;
 
-  factory CommentListModel.fromMbin(Map<String, Object?> json) =>
-      CommentListModel(
+  factory CommentListModel.fromMbin(JsonMap json) => CommentListModel(
         items: (json['items'] as List<dynamic>)
-            .map((post) => CommentModel.fromMbin(post as Map<String, Object?>))
+            .map((post) => CommentModel.fromMbin(post as JsonMap))
             .toList(),
-        nextPage: mbinCalcNextPaginationPage(
-            json['pagination'] as Map<String, Object?>),
+        nextPage: mbinCalcNextPaginationPage(json['pagination'] as JsonMap),
       );
 
   // Lemmy comment list that needs to be converted to tree format. Used for post comments and comment replies.
-  factory CommentListModel.fromLemmyToTree(Map<String, Object?> json) =>
-      CommentListModel(
+  factory CommentListModel.fromLemmyToTree(JsonMap json) => CommentListModel(
         items: (json['comments'] as List<dynamic>)
             .where(
                 (c) => (c['comment']['path'] as String).split('.').length == 2)
             .map((c) => CommentModel.fromLemmy(
-                  c as Map<String, Object?>,
+                  c as JsonMap,
                   possibleChildrenJson: json['comments'] as List<dynamic>,
                 ))
             .toList(),
@@ -39,22 +37,20 @@ class CommentListModel with _$CommentListModel {
       );
 
   // Lemmy comment list that needs to be converted to flat format. Used for a list of user comments.
-  factory CommentListModel.fromLemmyToFlat(Map<String, Object?> json) =>
-      CommentListModel(
+  factory CommentListModel.fromLemmyToFlat(JsonMap json) => CommentListModel(
         items: (json['comments'] as List<dynamic>)
-            .map((c) => CommentModel.fromLemmy(c as Map<String, Object?>))
+            .map((c) => CommentModel.fromLemmy(c as JsonMap))
             .toList(),
         nextPage: json['next_page'] as String?,
       );
 
   // Piefed comment list that needs to be converted to tree format. Used for post comments and comment replies.
-  factory CommentListModel.fromPiefedToTree(Map<String, Object?> json) =>
-      CommentListModel(
+  factory CommentListModel.fromPiefedToTree(JsonMap json) => CommentListModel(
         items: (json['comments'] as List<dynamic>)
             .where(
                 (c) => (c['comment']['path'] as String).split('.').length == 2)
             .map((c) => CommentModel.fromPiefed(
-                  c as Map<String, Object?>,
+                  c as JsonMap,
                   possibleChildrenJson: json['comments'] as List<dynamic>,
                 ))
             .toList(),
@@ -62,10 +58,9 @@ class CommentListModel with _$CommentListModel {
       );
 
   // Piefed comment list that needs to be converted to flat format. Used for a list of user comments.
-  factory CommentListModel.fromPiefedToFlat(Map<String, Object?> json) =>
-      CommentListModel(
+  factory CommentListModel.fromPiefedToFlat(JsonMap json) => CommentListModel(
         items: (json['comments'] as List<dynamic>)
-            .map((c) => CommentModel.fromPiefed(c as Map<String, Object?>))
+            .map((c) => CommentModel.fromPiefed(c as JsonMap))
             .toList(),
         nextPage: json['next_page'] as String?,
       );
@@ -99,17 +94,16 @@ class CommentModel with _$CommentModel {
     required List<String>? bookmarks,
   }) = _CommentModel;
 
-  factory CommentModel.fromMbin(Map<String, Object?> json) => CommentModel(
+  factory CommentModel.fromMbin(JsonMap json) => CommentModel(
         id: json['commentId'] as int,
-        user: UserModel.fromMbin(json['user'] as Map<String, Object?>),
-        magazine:
-            MagazineModel.fromMbin(json['magazine'] as Map<String, Object?>),
+        user: UserModel.fromMbin(json['user'] as JsonMap),
+        magazine: MagazineModel.fromMbin(json['magazine'] as JsonMap),
         postType:
             (json['postId'] != null ? PostType.microblog : PostType.thread),
         postId: (json['entryId'] ?? json['postId']) as int,
         rootId: json['rootId'] as int?,
         parentId: json['parentId'] as int?,
-        image: mbinGetOptionalImage(json['image'] as Map<String, Object?>?),
+        image: mbinGetOptionalImage(json['image'] as JsonMap?),
         body: json['body'] as String?,
         lang: json['lang'] as String,
         upvotes: json['favourites'] as int?,
@@ -122,7 +116,7 @@ class CommentModel with _$CommentModel {
         createdAt: DateTime.parse(json['createdAt'] as String),
         editedAt: optionalDateTime(json['editedAt'] as String?),
         children: (json['children'] as List<dynamic>)
-            .map((c) => CommentModel.fromMbin(c as Map<String, Object?>))
+            .map((c) => CommentModel.fromMbin(c as JsonMap))
             .toList(),
         childCount: json['childCount'] as int,
         visibility: json['visibility'] as String,
@@ -132,11 +126,11 @@ class CommentModel with _$CommentModel {
       );
 
   factory CommentModel.fromLemmy(
-    Map<String, Object?> json, {
+    JsonMap json, {
     List<dynamic> possibleChildrenJson = const [],
   }) {
-    final lemmyComment = json['comment'] as Map<String, Object?>;
-    final lemmyCounts = json['counts'] as Map<String, Object?>;
+    final lemmyComment = json['comment'] as JsonMap;
+    final lemmyCounts = json['counts'] as JsonMap;
 
     final lemmyPath = lemmyComment['path'] as String;
     final lemmyPathSegments =
@@ -155,11 +149,10 @@ class CommentModel with _$CommentModel {
 
     return CommentModel(
       id: lemmyComment['id'] as int,
-      user: UserModel.fromLemmy(json['creator'] as Map<String, Object?>),
-      magazine:
-          MagazineModel.fromLemmy(json['community'] as Map<String, Object?>),
+      user: UserModel.fromLemmy(json['creator'] as JsonMap),
+      magazine: MagazineModel.fromLemmy(json['community'] as JsonMap),
       postType: PostType.thread,
-      postId: (json['post'] as Map<String, Object?>)['id'] as int,
+      postId: (json['post'] as JsonMap)['id'] as int,
       rootId: lemmyPathSegments.length > 2 ? lemmyPathSegments[1] : null,
       parentId: lemmyPathSegments.length > 2
           ? lemmyPathSegments[lemmyPathSegments.length - 2]
@@ -190,11 +183,11 @@ class CommentModel with _$CommentModel {
   }
 
   factory CommentModel.fromPiefed(
-    Map<String, Object?> json, {
+    JsonMap json, {
     List<dynamic> possibleChildrenJson = const [],
   }) {
-    final piefedComment = json['comment'] as Map<String, Object?>;
-    final piefedCounts = json['counts'] as Map<String, Object?>;
+    final piefedComment = json['comment'] as JsonMap;
+    final piefedCounts = json['counts'] as JsonMap;
 
     final piefedPath = piefedComment['path'] as String;
     final piefedPathSegments =
@@ -213,11 +206,10 @@ class CommentModel with _$CommentModel {
 
     return CommentModel(
       id: piefedComment['id'] as int,
-      user: UserModel.fromPiefed(json['creator'] as Map<String, Object?>),
-      magazine:
-          MagazineModel.fromPiefed(json['community'] as Map<String, Object?>),
+      user: UserModel.fromPiefed(json['creator'] as JsonMap),
+      magazine: MagazineModel.fromPiefed(json['community'] as JsonMap),
       postType: PostType.thread,
-      postId: (json['post'] as Map<String, Object?>)['id'] as int,
+      postId: (json['post'] as JsonMap)['id'] as int,
       rootId: piefedPathSegments.length > 2 ? piefedPathSegments[1] : null,
       parentId: piefedPathSegments.length > 2
           ? piefedPathSegments[piefedPathSegments.length - 2]

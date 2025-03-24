@@ -5,6 +5,7 @@ import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/models/notification.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/utils/models.dart';
+import 'package:interstellar/src/utils/utils.dart';
 
 part 'post.freezed.dart';
 
@@ -17,35 +18,30 @@ class PostListModel with _$PostListModel {
     required String? nextPage,
   }) = _PostListModel;
 
-  factory PostListModel.fromMbinEntries(Map<String, Object?> json) =>
-      PostListModel(
+  factory PostListModel.fromMbinEntries(JsonMap json) => PostListModel(
         items: (json['items'] as List<dynamic>)
-            .map(
-                (post) => PostModel.fromMbinEntry(post as Map<String, Object?>))
+            .map((post) => PostModel.fromMbinEntry(post as JsonMap))
             .toList(),
-        nextPage: mbinCalcNextPaginationPage(
-            json['pagination'] as Map<String, Object?>),
+        nextPage: mbinCalcNextPaginationPage(json['pagination'] as JsonMap),
       );
 
-  factory PostListModel.fromMbinPosts(Map<String, Object?> json) =>
-      PostListModel(
+  factory PostListModel.fromMbinPosts(JsonMap json) => PostListModel(
         items: (json['items'] as List<dynamic>)
-            .map((post) => PostModel.fromMbinPost(post as Map<String, Object?>))
+            .map((post) => PostModel.fromMbinPost(post as JsonMap))
             .toList(),
-        nextPage: mbinCalcNextPaginationPage(
-            json['pagination'] as Map<String, Object?>),
+        nextPage: mbinCalcNextPaginationPage(json['pagination'] as JsonMap),
       );
 
-  factory PostListModel.fromLemmy(Map<String, Object?> json) => PostListModel(
+  factory PostListModel.fromLemmy(JsonMap json) => PostListModel(
         items: (json['posts'] as List<dynamic>)
-            .map((post) => PostModel.fromLemmy(post as Map<String, Object?>))
+            .map((post) => PostModel.fromLemmy(post as JsonMap))
             .toList(),
         nextPage: json['next_page'] as String?,
       );
 
-  factory PostListModel.fromPiefed(Map<String, Object?> json) => PostListModel(
+  factory PostListModel.fromPiefed(JsonMap json) => PostListModel(
         items: (json['posts'] as List<dynamic>)
-            .map((post) => PostModel.fromPiefed(post as Map<String, Object?>))
+            .map((post) => PostModel.fromPiefed(post as JsonMap))
             .toList(),
         nextPage: json['next_page'] as String?,
       );
@@ -82,21 +78,20 @@ class PostModel with _$PostModel {
     required List<String>? bookmarks,
   }) = _PostModel;
 
-  factory PostModel.fromMbinEntry(Map<String, Object?> json) => PostModel(
+  factory PostModel.fromMbinEntry(JsonMap json) => PostModel(
         type: PostType.thread,
         id: json['entryId'] as int,
-        user: UserModel.fromMbin(json['user'] as Map<String, Object?>),
-        magazine:
-            MagazineModel.fromMbin(json['magazine'] as Map<String, Object?>),
+        user: UserModel.fromMbin(json['user'] as JsonMap),
+        magazine: MagazineModel.fromMbin(json['magazine'] as JsonMap),
         domain: json['domain'] == null
             ? null
-            : DomainModel.fromMbin(json['domain'] as Map<String, Object?>),
+            : DomainModel.fromMbin(json['domain'] as JsonMap),
         title: json['title'] as String?,
         // Only include link if it's not an Image post
         url: (json['type'] == 'image' && json['image'] != null)
             ? null
             : json['url'] as String?,
-        image: mbinGetOptionalImage(json['image'] as Map<String, Object?>?),
+        image: mbinGetOptionalImage(json['image'] as JsonMap?),
         body: json['body'] as String?,
         lang: json['lang'] as String,
         numComments: json['numComments'] as int,
@@ -122,16 +117,15 @@ class PostModel with _$PostModel {
         bookmarks: optionalStringList(json['bookmarks']),
       );
 
-  factory PostModel.fromMbinPost(Map<String, Object?> json) => PostModel(
+  factory PostModel.fromMbinPost(JsonMap json) => PostModel(
         type: PostType.microblog,
         id: json['postId'] as int,
-        user: UserModel.fromMbin(json['user'] as Map<String, Object?>),
-        magazine:
-            MagazineModel.fromMbin(json['magazine'] as Map<String, Object?>),
+        user: UserModel.fromMbin(json['user'] as JsonMap),
+        magazine: MagazineModel.fromMbin(json['magazine'] as JsonMap),
         domain: null,
         title: null,
         url: null,
-        image: mbinGetOptionalImage(json['image'] as Map<String, Object?>?),
+        image: mbinGetOptionalImage(json['image'] as JsonMap?),
         body: json['body'] as String,
         lang: json['lang'] as String,
         numComments: json['comments'] as int,
@@ -157,16 +151,15 @@ class PostModel with _$PostModel {
         bookmarks: optionalStringList(json['bookmarks']),
       );
 
-  factory PostModel.fromLemmy(Map<String, Object?> json) {
-    final lemmyPost = json['post'] as Map<String, Object?>;
-    final lemmyCounts = json['counts'] as Map<String, Object?>;
+  factory PostModel.fromLemmy(JsonMap json) {
+    final lemmyPost = json['post'] as JsonMap;
+    final lemmyCounts = json['counts'] as JsonMap;
 
     return PostModel(
       type: PostType.thread,
       id: lemmyPost['id'] as int,
-      user: UserModel.fromLemmy(json['creator'] as Map<String, Object?>),
-      magazine:
-          MagazineModel.fromLemmy(json['community'] as Map<String, Object?>),
+      user: UserModel.fromLemmy(json['creator'] as JsonMap),
+      magazine: MagazineModel.fromLemmy(json['community'] as JsonMap),
       domain: null,
       title: lemmyPost['name'] as String,
       // Only include link if it's not an Image post
@@ -203,16 +196,15 @@ class PostModel with _$PostModel {
     );
   }
 
-  factory PostModel.fromPiefed(Map<String, Object?> json) {
-    final piefedPost = json['post'] as Map<String, Object?>;
-    final piefedCounts = json['counts'] as Map<String, Object?>;
+  factory PostModel.fromPiefed(JsonMap json) {
+    final piefedPost = json['post'] as JsonMap;
+    final piefedCounts = json['counts'] as JsonMap;
 
     return PostModel(
       type: PostType.thread,
       id: piefedPost['id'] as int,
-      user: UserModel.fromPiefed(json['creator'] as Map<String, Object?>),
-      magazine:
-          MagazineModel.fromPiefed(json['community'] as Map<String, Object?>),
+      user: UserModel.fromPiefed(json['creator'] as JsonMap),
+      magazine: MagazineModel.fromPiefed(json['community'] as JsonMap),
       domain: null,
       title: piefedPost['title'] as String,
       // Only include link if it's not an Image post

@@ -165,8 +165,7 @@ class APIThreads {
 
         final response = await client.get(path, queryParams: query);
 
-        return PostModel.fromLemmy(
-            response.bodyJson['post_view'] as Map<String, Object?>);
+        return PostModel.fromLemmy(response.bodyJson['post_view'] as JsonMap);
 
       case ServerSoftware.piefed:
         const path = '/post';
@@ -174,8 +173,7 @@ class APIThreads {
 
         final response = await client.get(path, queryParams: query);
 
-        return PostModel.fromPiefed(
-            response.bodyJson['post_view'] as Map<String, Object?>);
+        return PostModel.fromPiefed(response.bodyJson['post_view'] as JsonMap);
     }
   }
 
@@ -199,8 +197,7 @@ class APIThreads {
           },
         );
 
-        return PostModel.fromLemmy(
-            response.bodyJson['post_view'] as Map<String, Object?>);
+        return PostModel.fromLemmy(response.bodyJson['post_view'] as JsonMap);
 
       case ServerSoftware.piefed:
         final response = await client.post(
@@ -211,8 +208,7 @@ class APIThreads {
           },
         );
 
-        return PostModel.fromPiefed(
-            response.bodyJson['post_view'] as Map<String, Object?>);
+        return PostModel.fromPiefed(response.bodyJson['post_view'] as JsonMap);
     }
   }
 
@@ -272,8 +268,7 @@ class APIThreads {
           },
         );
 
-        return PostModel.fromLemmy(
-            response.bodyJson['post_view'] as Map<String, Object?>);
+        return PostModel.fromLemmy(response.bodyJson['post_view'] as JsonMap);
 
       case ServerSoftware.piefed:
         const path = '/post';
@@ -288,8 +283,7 @@ class APIThreads {
           },
         );
 
-        return PostModel.fromPiefed(
-            response.bodyJson['post_view'] as Map<String, Object?>);
+        return PostModel.fromPiefed(response.bodyJson['post_view'] as JsonMap);
     }
   }
 
@@ -363,8 +357,7 @@ class APIThreads {
           },
         );
 
-        return PostModel.fromLemmy(
-            response.bodyJson['post_view'] as Map<String, Object?>);
+        return PostModel.fromLemmy(response.bodyJson['post_view'] as JsonMap);
 
       case ServerSoftware.piefed:
         const path = '/post';
@@ -378,8 +371,7 @@ class APIThreads {
           },
         );
 
-        return PostModel.fromPiefed(
-            response.bodyJson['post_view'] as Map<String, Object?>);
+        return PostModel.fromPiefed(response.bodyJson['post_view'] as JsonMap);
     }
   }
 
@@ -425,8 +417,7 @@ class APIThreads {
           },
         );
 
-        return PostModel.fromLemmy(
-            response.bodyJson['post_view'] as Map<String, Object?>);
+        return PostModel.fromLemmy(response.bodyJson['post_view'] as JsonMap);
 
       case ServerSoftware.piefed:
         const path = '/post';
@@ -441,8 +432,7 @@ class APIThreads {
           },
         );
 
-        return PostModel.fromPiefed(
-            response.bodyJson['post_view'] as Map<String, Object?>);
+        return PostModel.fromPiefed(response.bodyJson['post_view'] as JsonMap);
     }
   }
 
@@ -497,10 +487,10 @@ class APIThreads {
         request.files.add(multipartFile);
         var pictrsResponse = await client.sendRequest(request);
 
-        final json = jsonDecode(pictrsResponse.body) as Map<String, Object?>;
+        final json = jsonDecode(pictrsResponse.body) as JsonMap;
 
         final imageName = ((json['files'] as List<Object?>).first
-            as Map<String, Object?>)['file'] as String?;
+            as JsonMap)['file'] as String?;
 
         const path = '/post';
         final response = await client.post(
@@ -515,8 +505,7 @@ class APIThreads {
           },
         );
 
-        return PostModel.fromLemmy(
-            response.bodyJson['post_view'] as Map<String, Object?>);
+        return PostModel.fromLemmy(response.bodyJson['post_view'] as JsonMap);
 
       case ServerSoftware.piefed:
         const uploadPath = '/upload/image';
@@ -550,8 +539,7 @@ class APIThreads {
           },
         );
 
-        return PostModel.fromPiefed(
-            response.bodyJson['post_view'] as Map<String, Object?>);
+        return PostModel.fromPiefed(response.bodyJson['post_view'] as JsonMap);
     }
   }
 

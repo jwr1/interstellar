@@ -1,6 +1,7 @@
 import 'package:interstellar/src/api/client.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/magazine.dart';
+import 'package:interstellar/src/utils/utils.dart';
 
 class APIMagazineModeration {
   final ServerClient client;
@@ -112,7 +113,7 @@ class APIMagazineModeration {
         );
 
         return DetailedMagazineModel.fromLemmy(
-            response.bodyJson['community_view'] as Map<String, Object?>);
+            response.bodyJson['community_view'] as JsonMap);
 
       case ServerSoftware.piefed:
         const path = '/community';

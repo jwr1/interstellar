@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:oauth2/oauth2.dart';
 
 part 'account.freezed.dart';
@@ -13,6 +14,5 @@ class Account with _$Account {
     bool? isPushRegistered,
   }) = _Account;
 
-  factory Account.fromJson(Map<String, Object?> json) =>
-      _$AccountFromJson(json);
+  factory Account.fromJson(JsonMap json) => _$AccountFromJson(json);
 }

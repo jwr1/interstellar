@@ -250,7 +250,7 @@ class APIComments {
         );
 
         return CommentModel.fromLemmy(
-            response.bodyJson['comment_view'] as Map<String, Object?>);
+            response.bodyJson['comment_view'] as JsonMap);
 
       case ServerSoftware.piefed:
         const path = '/comment/like';
@@ -264,7 +264,7 @@ class APIComments {
         );
 
         return CommentModel.fromPiefed(
-            response.bodyJson['comment_view'] as Map<String, Object?>);
+            response.bodyJson['comment_view'] as JsonMap);
     }
   }
 
@@ -316,7 +316,7 @@ class APIComments {
         );
 
         return CommentModel.fromLemmy(
-            response.bodyJson['comment_view'] as Map<String, Object?>);
+            response.bodyJson['comment_view'] as JsonMap);
 
       case ServerSoftware.piefed:
         const path = '/comment';
@@ -327,7 +327,7 @@ class APIComments {
         );
 
         return CommentModel.fromPiefed(
-            response.bodyJson['comment_view'] as Map<String, Object?>);
+            response.bodyJson['comment_view'] as JsonMap);
     }
   }
 
@@ -361,7 +361,7 @@ class APIComments {
         );
 
         return CommentModel.fromLemmy(
-            response.bodyJson['comment_view'] as Map<String, Object?>);
+            response.bodyJson['comment_view'] as JsonMap);
 
       case ServerSoftware.piefed:
         const path = '/comment';
@@ -375,7 +375,7 @@ class APIComments {
         );
 
         return CommentModel.fromPiefed(
-            response.bodyJson['comment_view'] as Map<String, Object?>);
+            response.bodyJson['comment_view'] as JsonMap);
     }
   }
 

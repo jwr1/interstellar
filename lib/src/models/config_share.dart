@@ -20,17 +20,16 @@ class ConfigShare with _$ConfigShare {
     required ConfigShareType type,
     required String name,
     required DateTime date,
-    required Map<String, Object?> payload,
+    required JsonMap payload,
     required String hash,
   }) = _ConfigShare;
 
-  factory ConfigShare.fromJson(Map<String, Object?> json) =>
-      _$ConfigShareFromJson(json);
+  factory ConfigShare.fromJson(JsonMap json) => _$ConfigShareFromJson(json);
 
   static Future<ConfigShare> create({
     required ConfigShareType type,
     required String name,
-    required Map<String, Object?> payload,
+    required JsonMap payload,
   }) async {
     final packageInfo = await PackageInfo.fromPlatform();
 

@@ -2,6 +2,7 @@ import 'package:interstellar/src/api/client.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/comment.dart';
 import 'package:interstellar/src/models/post.dart';
+import 'package:interstellar/src/utils/utils.dart';
 
 const _postTypeMbin = {
   PostType.thread: 'entry',
@@ -44,8 +45,7 @@ class APIModeration {
           },
         );
 
-        return PostModel.fromPiefed(
-            response.bodyJson['post_view'] as Map<String, Object?>);
+        return PostModel.fromPiefed(response.bodyJson['post_view'] as JsonMap);
     }
   }
 
@@ -100,8 +100,7 @@ class APIModeration {
           },
         );
 
-        return PostModel.fromPiefed(
-            response.bodyJson['post_view'] as Map<String, Object?>);
+        return PostModel.fromPiefed(response.bodyJson['post_view'] as JsonMap);
     }
   }
 
@@ -132,7 +131,7 @@ class APIModeration {
         );
 
         return CommentModel.fromPiefed(
-            response.bodyJson['comment_view'] as Map<String, Object?>);
+            response.bodyJson['comment_view'] as JsonMap);
     }
   }
 }

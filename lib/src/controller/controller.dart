@@ -10,6 +10,7 @@ import 'package:interstellar/src/controller/filter_list.dart';
 import 'package:interstellar/src/controller/profile.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/utils/jwt_http_client.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_mention.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:sembast/sembast_io.dart';
@@ -19,10 +20,10 @@ import 'package:webpush_encryption/webpush_encryption.dart';
 
 class AppController with ChangeNotifier {
   final _mainStore = StoreRef.main();
-  final _accountStore = StoreRef<String, Map<String, Object?>>('account');
-  final _filterListStore = StoreRef<String, Map<String, Object?>>('filterList');
-  final _profileStore = StoreRef<String, Map<String, Object?>>('profile');
-  final _serverStore = StoreRef<String, Map<String, Object?>>('server');
+  final _accountStore = StoreRef<String, JsonMap>('account');
+  final _filterListStore = StoreRef<String, JsonMap>('filterList');
+  final _profileStore = StoreRef<String, JsonMap>('profile');
+  final _serverStore = StoreRef<String, JsonMap>('server');
 
   late final _mainProfileRecord = _mainStore.record('mainProfile');
   late final _selectedProfileRecord = _mainStore.record('selectedProfile');
@@ -32,7 +33,7 @@ class AppController with ChangeNotifier {
   late final _starsRecord = _mainStore.record('stars');
   late final _webPushKeysRecord = _mainStore.record('webPushKeys');
 
-  RecordRef<String, Map<String, Object?>> _profileRecord(String name) =>
+  RecordRef<String, JsonMap> _profileRecord(String name) =>
       _profileStore.record(FieldKey.escape(name));
 
   late String _mainProfile;

@@ -3,6 +3,7 @@ import 'package:interstellar/src/models/image.dart';
 import 'package:interstellar/src/models/notification.dart';
 import 'package:interstellar/src/models/user.dart';
 import 'package:interstellar/src/utils/models.dart';
+import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_mention.dart';
 
 part 'magazine.freezed.dart';
@@ -14,30 +15,26 @@ class DetailedMagazineListModel with _$DetailedMagazineListModel {
     required String? nextPage,
   }) = _DetailedMagazineListModel;
 
-  factory DetailedMagazineListModel.fromMbin(Map<String, Object?> json) =>
+  factory DetailedMagazineListModel.fromMbin(JsonMap json) =>
       DetailedMagazineListModel(
         items: (json['items'] as List<dynamic>)
-            .map((item) =>
-                DetailedMagazineModel.fromMbin(item as Map<String, Object?>))
+            .map((item) => DetailedMagazineModel.fromMbin(item as JsonMap))
             .toList(),
-        nextPage: mbinCalcNextPaginationPage(
-            json['pagination'] as Map<String, Object?>),
+        nextPage: mbinCalcNextPaginationPage(json['pagination'] as JsonMap),
       );
 
-  factory DetailedMagazineListModel.fromLemmy(Map<String, Object?> json) =>
+  factory DetailedMagazineListModel.fromLemmy(JsonMap json) =>
       DetailedMagazineListModel(
         items: (json['communities'] as List<dynamic>)
-            .map((item) =>
-                DetailedMagazineModel.fromLemmy(item as Map<String, Object?>))
+            .map((item) => DetailedMagazineModel.fromLemmy(item as JsonMap))
             .toList(),
         nextPage: json['next_page'] as String?,
       );
 
-  factory DetailedMagazineListModel.fromPiefed(Map<String, Object?> json) =>
+  factory DetailedMagazineListModel.fromPiefed(JsonMap json) =>
       DetailedMagazineListModel(
         items: (json['communities'] as List<dynamic>)
-            .map((item) =>
-                DetailedMagazineModel.fromPiefed(item as Map<String, Object?>))
+            .map((item) => DetailedMagazineModel.fromPiefed(item as JsonMap))
             .toList(),
         nextPage: json['next_page'] as String?,
       );
@@ -65,18 +62,18 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
     required NotificationControlStatus? notificationControlStatus,
   }) = _DetailedMagazineModel;
 
-  factory DetailedMagazineModel.fromMbin(Map<String, Object?> json) {
+  factory DetailedMagazineModel.fromMbin(JsonMap json) {
     final magazine = DetailedMagazineModel(
       id: json['magazineId'] as int,
       name: json['name'] as String,
       title: json['title'] as String,
-      icon: mbinGetOptionalImage(json['icon'] as Map<String, Object?>?),
+      icon: mbinGetOptionalImage(json['icon'] as JsonMap?),
       description: json['description'] as String?,
       owner: json['owner'] == null
           ? null
-          : UserModel.fromMbin(json['owner'] as Map<String, Object?>),
+          : UserModel.fromMbin(json['owner'] as JsonMap),
       moderators: ((json['moderators'] ?? []) as List<dynamic>)
-          .map((user) => UserModel.fromMbin(user as Map<String, Object?>))
+          .map((user) => UserModel.fromMbin(user as JsonMap))
           .toList(),
       subscriptionsCount: json['subscriptionsCount'] as int,
       threadCount: json['entryCount'] as int,
@@ -99,9 +96,9 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
     return magazine;
   }
 
-  factory DetailedMagazineModel.fromLemmy(Map<String, Object?> json) {
-    final lemmyCommunity = json['community'] as Map<String, Object?>;
-    final lemmyCounts = json['counts'] as Map<String, Object?>;
+  factory DetailedMagazineModel.fromLemmy(JsonMap json) {
+    final lemmyCommunity = json['community'] as JsonMap;
+    final lemmyCounts = json['counts'] as JsonMap;
 
     final magazine = DetailedMagazineModel(
       id: lemmyCommunity['id'] as int,
@@ -129,11 +126,10 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
     return magazine;
   }
 
-  factory DetailedMagazineModel.fromPiefed(Map<String, Object?> json) {
-    final communityView =
-        json['community_view'] as Map<String, Object?>? ?? json;
-    final piefedCommunity = communityView['community'] as Map<String, Object?>;
-    final piefedCounts = communityView['counts'] as Map<String, Object?>;
+  factory DetailedMagazineModel.fromPiefed(JsonMap json) {
+    final communityView = json['community_view'] as JsonMap? ?? json;
+    final piefedCommunity = communityView['community'] as JsonMap;
+    final piefedCounts = communityView['counts'] as JsonMap;
 
     final magazine = DetailedMagazineModel(
       id: piefedCommunity['id'] as int,
@@ -142,13 +138,13 @@ class DetailedMagazineModel with _$DetailedMagazineModel {
       icon: lemmyGetOptionalImage(piefedCommunity['icon'] as String?),
       description: piefedCommunity['description'] as String?,
       owner: ((json['moderators'] ?? []) as List<dynamic>)
-          .map((user) => UserModel.fromPiefed((user
-              as Map<String, Object?>)['moderator'] as Map<String, Object?>))
+          .map((user) =>
+              UserModel.fromPiefed((user as JsonMap)['moderator'] as JsonMap))
           .toList()
           .firstOrNull,
       moderators: ((json['moderators'] ?? []) as List<dynamic>)
-          .map((user) => UserModel.fromPiefed((user
-              as Map<String, Object?>)['moderator'] as Map<String, Object?>))
+          .map((user) =>
+              UserModel.fromPiefed((user as JsonMap)['moderator'] as JsonMap))
           .toList(),
       subscriptionsCount: piefedCounts['subscriptions_count'] as int,
       threadCount: piefedCounts['post_count'] as int,
@@ -182,19 +178,19 @@ class MagazineModel with _$MagazineModel {
     required ImageModel? icon,
   }) = _MagazineModel;
 
-  factory MagazineModel.fromMbin(Map<String, Object?> json) => MagazineModel(
+  factory MagazineModel.fromMbin(JsonMap json) => MagazineModel(
         id: json['magazineId'] as int,
         name: json['name'] as String,
-        icon: mbinGetOptionalImage(json['icon'] as Map<String, Object?>?),
+        icon: mbinGetOptionalImage(json['icon'] as JsonMap?),
       );
 
-  factory MagazineModel.fromLemmy(Map<String, Object?> json) => MagazineModel(
+  factory MagazineModel.fromLemmy(JsonMap json) => MagazineModel(
         id: json['id'] as int,
         name: getLemmyPiefedActorName(json),
         icon: lemmyGetOptionalImage(json['icon'] as String?),
       );
 
-  factory MagazineModel.fromPiefed(Map<String, Object?> json) => MagazineModel(
+  factory MagazineModel.fromPiefed(JsonMap json) => MagazineModel(
         id: json['id'] as int,
         name: getLemmyPiefedActorName(json),
         icon: lemmyGetOptionalImage(json['icon'] as String?),
@@ -208,14 +204,11 @@ class MagazineBanListModel with _$MagazineBanListModel {
     required String? nextPage,
   }) = _MagazineBanListModel;
 
-  factory MagazineBanListModel.fromMbin(Map<String, Object?> json) =>
-      MagazineBanListModel(
+  factory MagazineBanListModel.fromMbin(JsonMap json) => MagazineBanListModel(
         items: (json['items'] as List<dynamic>)
-            .map((item) =>
-                MagazineBanModel.fromMbin(item as Map<String, Object?>))
+            .map((item) => MagazineBanModel.fromMbin(item as JsonMap))
             .toList(),
-        nextPage: mbinCalcNextPaginationPage(
-            json['pagination'] as Map<String, Object?>),
+        nextPage: mbinCalcNextPaginationPage(json['pagination'] as JsonMap),
       );
 }
 
@@ -231,16 +224,13 @@ class MagazineBanModel with _$MagazineBanModel {
     required bool expired,
   }) = _MagazineBanModel;
 
-  factory MagazineBanModel.fromMbin(Map<String, Object?> json) =>
-      MagazineBanModel(
+  factory MagazineBanModel.fromMbin(JsonMap json) => MagazineBanModel(
         id: json['banId'] as int,
         reason: json['reason'] as String?,
         expiresAt: optionalDateTime(json['expiresAt'] as String?),
-        magazine:
-            MagazineModel.fromMbin(json['magazine'] as Map<String, Object?>),
-        bannedUser:
-            UserModel.fromMbin(json['bannedUser'] as Map<String, Object?>),
-        bannedBy: UserModel.fromMbin(json['bannedBy'] as Map<String, Object?>),
+        magazine: MagazineModel.fromMbin(json['magazine'] as JsonMap),
+        bannedUser: UserModel.fromMbin(json['bannedUser'] as JsonMap),
+        bannedBy: UserModel.fromMbin(json['bannedBy'] as JsonMap),
         expired: json['expired'] as bool,
       );
 }

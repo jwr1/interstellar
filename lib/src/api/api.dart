@@ -13,6 +13,7 @@ import 'package:interstellar/src/api/search.dart';
 import 'package:interstellar/src/api/threads.dart';
 import 'package:interstellar/src/api/users.dart';
 import 'package:interstellar/src/controller/server.dart';
+import 'package:interstellar/src/utils/utils.dart';
 
 class API {
   final ServerClient client;
@@ -49,9 +50,9 @@ Future<ServerSoftware?> getServerSoftware(String server) async {
   final response = await http.get(Uri.https(server, '/nodeinfo/2.0.json'));
 
   try {
-    return ServerSoftware.values.byName(((response.bodyJson['software']
-            as Map<String, Object?>)['name'] as String)
-        .toLowerCase());
+    return ServerSoftware.values.byName(
+        ((response.bodyJson['software'] as JsonMap)['name'] as String)
+            .toLowerCase());
   } catch (_) {
     return null;
   }

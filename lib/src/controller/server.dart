@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:interstellar/src/utils/utils.dart';
 
 part 'server.freezed.dart';
 part 'server.g.dart';
@@ -29,5 +30,5 @@ class Server with _$Server {
     String? oauthIdentifier,
   }) = _Server;
 
-  factory Server.fromJson(Map<String, Object?> json) => _$ServerFromJson(json);
+  factory Server.fromJson(JsonMap json) => _$ServerFromJson(json);
 }

@@ -3,6 +3,7 @@ import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/magazine.dart';
 import 'package:interstellar/src/screens/explore/explore_screen.dart';
 import 'package:interstellar/src/utils/models.dart';
+import 'package:interstellar/src/utils/utils.dart';
 
 enum APIExploreSort {
   hot,
@@ -243,7 +244,7 @@ class APIMagazines {
         final response = await client.get(path, queryParams: query);
 
         return DetailedMagazineModel.fromLemmy(
-            response.bodyJson['community_view'] as Map<String, Object?>);
+            response.bodyJson['community_view'] as JsonMap);
 
       case ServerSoftware.piefed:
         const path = '/community';
@@ -271,7 +272,7 @@ class APIMagazines {
         final response = await client.get(path, queryParams: query);
 
         return DetailedMagazineModel.fromLemmy(
-            response.bodyJson['community_view'] as Map<String, Object?>);
+            response.bodyJson['community_view'] as JsonMap);
 
       case ServerSoftware.piefed:
         const path = '/community';
@@ -305,7 +306,7 @@ class APIMagazines {
         );
 
         return DetailedMagazineModel.fromLemmy(
-            response.bodyJson['community_view'] as Map<String, Object?>);
+            response.bodyJson['community_view'] as JsonMap);
 
       case ServerSoftware.piefed:
         const path = '/community/follow';
@@ -343,7 +344,7 @@ class APIMagazines {
         );
 
         return DetailedMagazineModel.fromLemmy(
-            response.bodyJson['community_view'] as Map<String, Object?>);
+            response.bodyJson['community_view'] as JsonMap);
 
       case ServerSoftware.piefed:
         const path = '/community/block';

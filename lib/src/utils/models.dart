@@ -1,4 +1,5 @@
 import 'package:interstellar/src/models/image.dart';
+import 'package:interstellar/src/utils/utils.dart';
 
 DateTime? optionalDateTime(String? value) =>
     value == null ? null : DateTime.parse(value);
@@ -6,13 +7,13 @@ DateTime? optionalDateTime(String? value) =>
 List<String>? optionalStringList(Object? json) =>
     json == null ? null : (json as List<dynamic>).cast<String>();
 
-String? mbinCalcNextPaginationPage(Map<String, Object?> pagination) {
+String? mbinCalcNextPaginationPage(JsonMap pagination) {
   return (pagination['currentPage'] as int) < (pagination['maxPage'] as int)
       ? ((pagination['currentPage'] as int) + 1).toString()
       : null;
 }
 
-ImageModel? mbinGetOptionalImage(Map<String, Object?>? json) {
+ImageModel? mbinGetOptionalImage(JsonMap? json) {
   return json == null || (json['storageUrl'] ?? json['sourceUrl']) == null
       ? null
       : ImageModel.fromMbin(json);
@@ -27,7 +28,7 @@ String mbinNormalizeUsername(String username) {
 }
 
 /// Converts lemmy and piefed's local name to Mbin's standard name
-String getLemmyPiefedActorName(Map<String, Object?> json) {
+String getLemmyPiefedActorName(JsonMap json) {
   final name = (json['user_name'] ?? json['name']) as String;
 
   return (json['local'] as bool)

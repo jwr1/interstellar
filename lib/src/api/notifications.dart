@@ -2,6 +2,7 @@ import 'package:interstellar/src/api/client.dart';
 import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/notification.dart';
 import 'package:interstellar/src/utils/models.dart';
+import 'package:interstellar/src/utils/utils.dart';
 
 // new_ is used because new is a reserved keyword
 enum NotificationsFilter { all, new_, read }
@@ -148,10 +149,9 @@ class APINotifications {
 
         return switch (notificationType) {
           NotificationType.message => NotificationModel.fromLemmyMessage(
-              response.bodyJson['private_message_view']
-                  as Map<String, Object?>),
+              response.bodyJson['private_message_view'] as JsonMap),
           NotificationType.mention => NotificationModel.fromLemmyMention(
-              response.bodyJson['person_mention_view'] as Map<String, Object?>),
+              response.bodyJson['person_mention_view'] as JsonMap),
           NotificationType.reply =>
             throw Exception("can't mark Lemmy reply as read"),
           _ => throw Exception('invalid notification type for lemmy'),

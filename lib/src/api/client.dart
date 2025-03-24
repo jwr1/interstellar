@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:interstellar/src/controller/server.dart';
+import 'package:interstellar/src/utils/utils.dart';
 
 class ServerClient {
   http.Client httpClient;
@@ -17,7 +18,7 @@ class ServerClient {
   Future<http.Response> get(
     String path, {
     Map<String, String>? headers,
-    Map<String, Object?>? body,
+    JsonMap? body,
     Map<String, String?>? queryParams,
   }) =>
       send(
@@ -31,7 +32,7 @@ class ServerClient {
   Future<http.Response> post(
     String path, {
     Map<String, String>? headers,
-    Map<String, Object?>? body,
+    JsonMap? body,
     Map<String, String?>? queryParams,
   }) =>
       send(
@@ -45,7 +46,7 @@ class ServerClient {
   Future<http.Response> put(
     String path, {
     Map<String, String>? headers,
-    Map<String, Object?>? body,
+    JsonMap? body,
     Map<String, String?>? queryParams,
   }) =>
       send(
@@ -59,7 +60,7 @@ class ServerClient {
   Future<http.Response> delete(
     String path, {
     Map<String, String>? headers,
-    Map<String, Object?>? body,
+    JsonMap? body,
     Map<String, String?>? queryParams,
   }) =>
       send(
@@ -74,7 +75,7 @@ class ServerClient {
     String method,
     String path, {
     Map<String, String>? headers,
-    Map<String, Object?>? body,
+    JsonMap? body,
     Map<String, String?>? queryParams,
   }) async {
     var request = http.Request(
@@ -132,8 +133,8 @@ class ServerClient {
 }
 
 extension BodyJson on http.Response {
-  Map<String, Object?> get bodyJson {
+  JsonMap get bodyJson {
     // Force utf8 decoding due to Lemmy not providing correct content type headers (https://github.com/jwr1/interstellar/pull/50)
-    return jsonDecode(utf8.decode(bodyBytes)) as Map<String, Object?>;
+    return jsonDecode(utf8.decode(bodyBytes)) as JsonMap;
   }
 }
