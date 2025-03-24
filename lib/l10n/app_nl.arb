@@ -191,8 +191,6 @@
   "@totpToken": {},
   "subscriptions_user_all": "All Gebruiker Volgers",
   "@subscriptions_user_all": {},
-  "feedType": "Tijdslijn Type",
-  "@feedType": {},
   "account_settings_notifyOnMicroblog": "Meld nieuwe microblogs in geabonneerde tijdschriften",
   "@account_settings_notifyOnMicroblog": {},
   "sort_topWeek": "Week Top",

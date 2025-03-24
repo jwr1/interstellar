@@ -69,8 +69,6 @@
   "@sort_controversial": {},
   "sort_scaled": "Zbalansowane",
   "@sort_scaled": {},
-  "feedType": "Typ feeda",
-  "@feedType": {},
   "threads": "Wątki",
   "@threads": {},
   "microblog": "Mikroblog",
@@ -507,7 +505,5 @@
   "action_setFilter": "Ustaw filtr",
   "@action_setFilter": {},
   "action_setSort": "Ustaw sortowanie",
-  "@action_setSort": {},
-  "action_setType": "Ustaw typ",
-  "@action_setType": {}
+  "@action_setSort": {}
 }

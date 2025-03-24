@@ -31,8 +31,6 @@
   "@sort_newest": {},
   "sort_oldest": "Les plus anciens",
   "@sort_oldest": {},
-  "feedType": "Type de flux",
-  "@feedType": {},
   "openReplies": "Ouvrir {count} {count, plural, =1{réponse} other{réponses}}",
   "@openReplies": {
     "placeholders": {
