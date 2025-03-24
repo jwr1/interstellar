@@ -21,13 +21,13 @@ class FeedDefaultSettingsScreen extends StatelessWidget {
       body: ListView(
         children: [
           ListTileSelect(
-            title: l(context).settings_feedDefaults_type,
+            title: l(context).settings_feedDefaults_view,
             icon: Symbols.tab,
-            selectionMenu: feedTypeSelect(context),
-            value: ac.profile.feedDefaultType,
-            oldValue: ac.selectedProfileValue.feedDefaultType,
+            selectionMenu: feedViewSelect(context),
+            value: ac.profile.feedDefaultView,
+            oldValue: ac.selectedProfileValue.feedDefaultView,
             onChange: (newValue) => ac.updateProfile(
-              ac.selectedProfileValue.copyWith(feedDefaultType: newValue),
+              ac.selectedProfileValue.copyWith(feedDefaultView: newValue),
             ),
           ),
           ListTileSelect(

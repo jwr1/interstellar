@@ -44,7 +44,7 @@ class _FeedScreenState extends State<FeedScreen>
   final _fabKey = GlobalKey<FloatingMenuState>();
   final List<GlobalKey<_FeedScreenBodyState>> _feedKeyList = [];
   late FeedSource _filter;
-  late PostType _mode;
+  late FeedView _view;
   FeedSort? _sort;
 
   @override
@@ -57,11 +57,15 @@ class _FeedScreenState extends State<FeedScreen>
     return _feedKeyList[index];
   }
 
-  FeedSort _defaultSortFromMode(PostType mode) => widget.source == null
-      ? mode == PostType.thread
-          ? context.read<AppController>().profile.feedDefaultThreadsSort
-          : context.read<AppController>().profile.feedDefaultMicroblogSort
-      : context.read<AppController>().profile.feedDefaultExploreSort;
+  FeedSort _defaultSortFromMode(FeedView view) => widget.source != null
+      ? context.read<AppController>().profile.feedDefaultExploreSort
+      : switch (view) {
+          FeedView.threads =>
+            context.read<AppController>().profile.feedDefaultThreadsSort,
+          FeedView.microblog =>
+            context.read<AppController>().profile.feedDefaultMicroblogSort,
+          FeedView.timeline => throw Exception('unreachable'),
+        };
 
   @override
   void initState() {
@@ -70,17 +74,17 @@ class _FeedScreenState extends State<FeedScreen>
     _filter = whenLoggedIn(
             context, context.read<AppController>().profile.feedDefaultFilter) ??
         FeedSource.all;
-    _mode = context.read<AppController>().serverSoftware != ServerSoftware.lemmy
-        ? context.read<AppController>().profile.feedDefaultType
-        : PostType.thread;
+    _view = context.read<AppController>().serverSoftware == ServerSoftware.mbin
+        ? context.read<AppController>().profile.feedDefaultView
+        : FeedView.threads;
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final sort = _sort ?? _defaultSortFromMode(_mode);
+    final sort = _sort ?? _defaultSortFromMode(_view);
 
-    final currentFeedModeOption = feedTypeSelect(context).getOption(_mode);
+    final currentFeedModeOption = feedViewSelect(context).getOption(_view);
     final currentFeedSortOption = feedSortSelect(context).getOption(sort);
 
     // in magazine check if user is moderator
@@ -143,22 +147,22 @@ class _FeedScreenState extends State<FeedScreen>
           }
         },
       ),
-      feedActionSetType(context).withProps(
+      feedActionSetView(context).withProps(
         context.watch<AppController>().serverSoftware != ServerSoftware.mbin ||
                 widget.source == FeedSource.domain
             ? ActionLocation.hide
             : parseEnum(
                 ActionLocation.values,
                 ActionLocation.hide,
-                context.watch<AppController>().profile.feedActionSetType.name,
+                context.watch<AppController>().profile.feedActionSetView.name,
               ),
         () async {
           final newMode =
-              await feedTypeSelect(context).askSelection(context, _mode);
+              await feedViewSelect(context).askSelection(context, _view);
 
-          if (newMode != null && newMode != _mode) {
+          if (newMode != null && newMode != _view) {
             setState(() {
-              _mode = newMode;
+              _view = newMode;
             });
           }
         },
@@ -194,10 +198,10 @@ class _FeedScreenState extends State<FeedScreen>
           context.watch<AppController>().isLoggedIn)
         actions.firstWhere(
             (action) => action.name == feedActionSetFilter(context).name),
-      if (context.watch<AppController>().profile.feedActionSetType ==
+      if (context.watch<AppController>().profile.feedActionSetView ==
           ActionLocationWithTabs.tabs)
         actions.firstWhere(
-            (action) => action.name == feedActionSetType(context).name),
+            (action) => action.name == feedActionSetView(context).name),
     ].firstOrNull;
 
     return Wrapper(
@@ -213,8 +217,8 @@ class _FeedScreenState extends State<FeedScreen>
                     entry.value.value ==
                     context.watch<AppController>().profile.feedDefaultFilter)
                 .key,
-          String name when name == feedActionSetType(context).name =>
-            feedTypeSelect(context)
+          String name when name == feedActionSetView(context).name =>
+            feedViewSelect(context)
                 .options
                 .asMap()
                 .entries
@@ -222,7 +226,7 @@ class _FeedScreenState extends State<FeedScreen>
                     entry.value.value ==
                     (context.watch<AppController>().serverSoftware ==
                             ServerSoftware.mbin
-                        ? context.watch<AppController>().profile.feedDefaultType
+                        ? context.watch<AppController>().profile.feedDefaultView
                         : PostType.thread))
                 .key,
           _ => 0
@@ -230,20 +234,23 @@ class _FeedScreenState extends State<FeedScreen>
         length: switch (tabsAction?.name) {
           String name when name == feedActionSetFilter(context).name =>
             feedFilterSelect(context).options.length,
-          String name when name == feedActionSetType(context).name =>
-            feedTypeSelect(context).options.length,
+          String name when name == feedActionSetView(context).name =>
+            feedViewSelect(context).options.length,
           _ => 0
         },
         child: DefaultTabControllerListener(
-          onTabSelected: tabsAction?.name == feedActionSetType(context).name
+          onTabSelected: tabsAction?.name == feedActionSetView(context).name
               ? (newIndex) {
                   setState(() {
                     switch (newIndex) {
                       case 0:
-                        _mode = PostType.thread;
+                        _view = FeedView.threads;
                         break;
                       case 1:
-                        _mode = PostType.microblog;
+                        _view = FeedView.microblog;
+                        break;
+                      case 2:
+                        _view = FeedView.timeline;
                         break;
                       default:
                     }
@@ -269,13 +276,15 @@ class _FeedScreenState extends State<FeedScreen>
             subtitle: Row(
               children: [
                 Text(currentFeedModeOption.title),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  child: Text('•'),
-                ),
-                Icon(currentFeedSortOption.icon, size: 20),
-                const SizedBox(width: 2),
-                Text(currentFeedSortOption.title),
+                if (currentFeedModeOption.value != FeedView.timeline) ...[
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    child: Text('•'),
+                  ),
+                  Icon(currentFeedSortOption.icon, size: 20),
+                  const SizedBox(width: 2),
+                  Text(currentFeedSortOption.title),
+                ]
               ],
             ),
           ),
@@ -307,8 +316,8 @@ class _FeedScreenState extends State<FeedScreen>
                             ),
                           )
                           .toList(),
-                    String name when name == feedActionSetType(context).name =>
-                      feedTypeSelect(context)
+                    String name when name == feedActionSetView(context).name =>
+                      feedViewSelect(context)
                           .options
                           .map(
                             (option) => Tab(
@@ -327,7 +336,7 @@ class _FeedScreenState extends State<FeedScreen>
                 source: widget.source ?? _filter,
                 sourceId: widget.sourceId,
                 sort: sort,
-                mode: _mode,
+                view: _view,
                 details: widget.details,
               )
             : TabBarView(
@@ -339,7 +348,7 @@ class _FeedScreenState extends State<FeedScreen>
                         key: _getFeedKey(0),
                         source: FeedSource.subscribed,
                         sort: sort,
-                        mode: _mode,
+                        view: _view,
                         details: widget.details,
                         userCanModerate: userCanModerate,
                       ),
@@ -347,7 +356,7 @@ class _FeedScreenState extends State<FeedScreen>
                         key: _getFeedKey(1),
                         source: FeedSource.moderated,
                         sort: sort,
-                        mode: _mode,
+                        view: _view,
                         details: widget.details,
                         userCanModerate: userCanModerate,
                       ),
@@ -355,7 +364,7 @@ class _FeedScreenState extends State<FeedScreen>
                         key: _getFeedKey(2),
                         source: FeedSource.favorited,
                         sort: sort,
-                        mode: _mode,
+                        view: _view,
                         details: widget.details,
                         userCanModerate: userCanModerate,
                       ),
@@ -363,18 +372,18 @@ class _FeedScreenState extends State<FeedScreen>
                         key: _getFeedKey(3),
                         source: FeedSource.all,
                         sort: sort,
-                        mode: _mode,
+                        view: _view,
                         details: widget.details,
                         userCanModerate: userCanModerate,
                       ),
                     ],
-                  String name when name == feedActionSetType(context).name => [
+                  String name when name == feedActionSetView(context).name => [
                       FeedScreenBody(
                         key: _getFeedKey(0),
                         source: widget.source ?? _filter,
                         sourceId: widget.sourceId,
-                        sort: _sort ?? _defaultSortFromMode(PostType.thread),
-                        mode: PostType.thread,
+                        sort: _sort ?? _defaultSortFromMode(FeedView.threads),
+                        view: FeedView.threads,
                         details: widget.details,
                         userCanModerate: userCanModerate,
                       ),
@@ -382,8 +391,17 @@ class _FeedScreenState extends State<FeedScreen>
                         key: _getFeedKey(1),
                         source: widget.source ?? _filter,
                         sourceId: widget.sourceId,
-                        sort: _sort ?? _defaultSortFromMode(PostType.microblog),
-                        mode: PostType.microblog,
+                        sort: _sort ?? _defaultSortFromMode(FeedView.microblog),
+                        view: FeedView.microblog,
+                        details: widget.details,
+                        userCanModerate: userCanModerate,
+                      ),
+                      FeedScreenBody(
+                        key: _getFeedKey(2),
+                        source: widget.source ?? _filter,
+                        sourceId: widget.sourceId,
+                        sort: FeedSort.newest,
+                        view: FeedView.timeline,
                         details: widget.details,
                         userCanModerate: userCanModerate,
                       ),
@@ -415,18 +433,25 @@ class _FeedScreenState extends State<FeedScreen>
   }
 }
 
-SelectionMenu<PostType> feedTypeSelect(BuildContext context) => SelectionMenu(
-      l(context).feedType,
+enum FeedView { threads, microblog, timeline }
+
+SelectionMenu<FeedView> feedViewSelect(BuildContext context) => SelectionMenu(
+      l(context).feedView,
       [
         SelectionMenuItem(
-          value: PostType.thread,
+          value: FeedView.threads,
           title: l(context).threads,
           icon: Symbols.feed_rounded,
         ),
         SelectionMenuItem(
-          value: PostType.microblog,
+          value: FeedView.microblog,
           title: l(context).microblog,
           icon: Symbols.chat_rounded,
+        ),
+        SelectionMenuItem(
+          value: FeedView.timeline,
+          title: l(context).timeline,
+          icon: Symbols.view_timeline_rounded,
         ),
       ],
     );
@@ -580,7 +605,7 @@ class FeedScreenBody extends StatefulWidget {
   final FeedSource source;
   final int? sourceId;
   final FeedSort sort;
-  final PostType mode;
+  final FeedView view;
   final Widget? details;
   final bool userCanModerate;
 
@@ -589,7 +614,7 @@ class FeedScreenBody extends StatefulWidget {
     required this.source,
     this.sourceId,
     required this.sort,
-    required this.mode,
+    required this.view,
     this.details,
     this.userCanModerate = false,
   });
@@ -606,7 +631,10 @@ class _FeedScreenBodyState extends State<FeedScreenBody>
 
   // Map of postId to FilterList names for posts that match lists that are marked as warnings.
   // If a post matches any FilterList that is not shown with warning, then the post is not shown at all.
-  final Map<int, Set<String>> _filterListWarnings = {};
+  final Map<(PostType, int), Set<String>> _filterListWarnings = {};
+
+  PostType _timelineViewLeftoverType = PostType.thread;
+  List<PostModel> _timelineViewLeftoverPosts = [];
 
   @override
   void initState() {
@@ -621,55 +649,155 @@ class _FeedScreenBodyState extends State<FeedScreenBody>
   Future<void> _fetchPage(String pageKey) async {
     if (pageKey.isEmpty) _filterListWarnings.clear();
 
+    List<PostModel> newItems;
+    String? nextPageKey;
+
     try {
-      PostListModel newPage = await (switch (widget.mode) {
-        PostType.thread => context.read<AppController>().api.threads.list(
-              widget.source,
-              sourceId: widget.sourceId,
-              page: nullIfEmpty(pageKey),
-              sort: widget.sort,
-              usePreferredLangs: whenLoggedIn(
-                  context,
-                  context
-                      .read<AppController>()
-                      .profile
-                      .useAccountLanguageFilter),
-              langs: context
-                  .read<AppController>()
-                  .profile
-                  .customLanguageFilter
-                  .toList(),
-            ),
-        PostType.microblog => context.read<AppController>().api.microblogs.list(
-              widget.source,
-              sourceId: widget.sourceId,
-              page: nullIfEmpty(pageKey),
-              sort: widget.sort,
-              usePreferredLangs: whenLoggedIn(
-                  context,
-                  context
-                      .read<AppController>()
-                      .profile
-                      .useAccountLanguageFilter),
-              langs: context
-                  .read<AppController>()
-                  .profile
-                  .customLanguageFilter
-                  .toList(),
-            ),
-      });
+      switch (widget.view) {
+        case FeedView.threads:
+          final postListModel =
+              await context.read<AppController>().api.threads.list(
+                    widget.source,
+                    sourceId: widget.sourceId,
+                    page: nullIfEmpty(pageKey),
+                    sort: widget.sort,
+                    usePreferredLangs: whenLoggedIn(
+                        context,
+                        context
+                            .read<AppController>()
+                            .profile
+                            .useAccountLanguageFilter),
+                    langs: context
+                        .read<AppController>()
+                        .profile
+                        .customLanguageFilter
+                        .toList(),
+                  );
+
+          newItems = postListModel.items;
+          nextPageKey = postListModel.nextPage;
+
+          break;
+
+        case FeedView.microblog:
+          final postListModel =
+              await context.read<AppController>().api.microblogs.list(
+                    widget.source,
+                    sourceId: widget.sourceId,
+                    page: nullIfEmpty(pageKey),
+                    sort: widget.sort,
+                    usePreferredLangs: whenLoggedIn(
+                        context,
+                        context
+                            .read<AppController>()
+                            .profile
+                            .useAccountLanguageFilter),
+                    langs: context
+                        .read<AppController>()
+                        .profile
+                        .customLanguageFilter
+                        .toList(),
+                  );
+
+          newItems = postListModel.items;
+          nextPageKey = postListModel.nextPage;
+
+          break;
+
+        case FeedView.timeline:
+          final threadsFuture = context.read<AppController>().api.threads.list(
+                widget.source,
+                sourceId: widget.sourceId,
+                page: nullIfEmpty(pageKey),
+                sort: FeedSort.newest,
+                usePreferredLangs: whenLoggedIn(
+                    context,
+                    context
+                        .read<AppController>()
+                        .profile
+                        .useAccountLanguageFilter),
+                langs: context
+                    .read<AppController>()
+                    .profile
+                    .customLanguageFilter
+                    .toList(),
+              );
+          final microblogFuture =
+              context.read<AppController>().api.microblogs.list(
+                    widget.source,
+                    sourceId: widget.sourceId,
+                    page: nullIfEmpty(pageKey),
+                    sort: FeedSort.newest,
+                    usePreferredLangs: whenLoggedIn(
+                        context,
+                        context
+                            .read<AppController>()
+                            .profile
+                            .useAccountLanguageFilter),
+                    langs: context
+                        .read<AppController>()
+                        .profile
+                        .customLanguageFilter
+                        .toList(),
+                  );
+
+          final [threadsResult, microblogResult] =
+              await Future.wait([threadsFuture, microblogFuture]);
+
+          final newThreads = [
+            if (_timelineViewLeftoverType == PostType.thread)
+              ..._timelineViewLeftoverPosts,
+            ...threadsResult.items,
+          ];
+          final newMicroblog = [
+            if (_timelineViewLeftoverType == PostType.microblog)
+              ..._timelineViewLeftoverPosts,
+            ...microblogResult.items,
+          ];
+
+          newItems = [];
+
+          // While both lists still have items, keep popping the item from the front that is newer.
+          while (newThreads.isNotEmpty && newMicroblog.isNotEmpty) {
+            if (newThreads.first.createdAt
+                    .compareTo(newMicroblog.first.createdAt) >
+                0) {
+              newItems.add(newThreads.removeAt(0));
+            } else {
+              newItems.add(newMicroblog.removeAt(0));
+            }
+          }
+
+          // Once one of the lists is drained out, if one of the next page's is null, then just add the rest of the items.
+          if (threadsResult.nextPage == null ||
+              microblogResult.nextPage == null) {
+            newItems.addAll([...newThreads, ...newMicroblog]);
+          } else {
+            // Otherwise, store the leftover (unsorted) posts for next round.
+            if (newThreads.isNotEmpty) {
+              _timelineViewLeftoverType = PostType.thread;
+              _timelineViewLeftoverPosts = newThreads;
+            } else {
+              _timelineViewLeftoverType = PostType.microblog;
+              _timelineViewLeftoverPosts = newMicroblog;
+            }
+          }
+
+          nextPageKey = threadsResult.nextPage ?? microblogResult.nextPage;
+
+          break;
+      }
 
       // Check BuildContext
       if (!mounted) return;
 
       // Prevent duplicates
-      List<PostModel> newItems = [];
       final currentItemIds =
-          _pagingController.itemList?.map((post) => post.id) ?? [];
+          _pagingController.itemList?.map((post) => (post.type, post.id)) ?? [];
       final filterListActivations =
           context.read<AppController>().profile.filterLists;
-      newItems = newPage.items
-          .where((post) => !currentItemIds.contains(post.id))
+      final items = newItems
+          .where((post) => !currentItemIds.contains((post.type, post.id)))
           .where((post) {
         // Skip feed filters if it's an explore page
         if (widget.sourceId != null) return true;
@@ -683,10 +811,11 @@ class _FeedScreenBodyState extends State<FeedScreenBody>
                 (post.body != null && filterList.hasMatch(post.body!))) {
               if (filterList.showWithWarning) {
                 if (!_filterListWarnings.containsKey(post.id)) {
-                  _filterListWarnings[post.id] = {};
+                  _filterListWarnings[(post.type, post.id)] = {};
                 }
 
-                _filterListWarnings[post.id]!.add(filterListEntry.key);
+                _filterListWarnings[(post.type, post.id)]!
+                    .add(filterListEntry.key);
               } else {
                 return false;
               }
@@ -697,7 +826,7 @@ class _FeedScreenBodyState extends State<FeedScreenBody>
         return true;
       }).toList();
 
-      _pagingController.appendPage(newItems, newPage.nextPage);
+      _pagingController.appendPage(items, nextPageKey);
     } catch (error) {
       _pagingController.error = error;
     }
@@ -718,7 +847,7 @@ class _FeedScreenBodyState extends State<FeedScreenBody>
   @override
   void didUpdateWidget(covariant FeedScreenBody oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.mode != oldWidget.mode ||
+    if (widget.view != oldWidget.view ||
         widget.sort != oldWidget.sort ||
         widget.source != oldWidget.source ||
         widget.sourceId != oldWidget.sourceId) {
