@@ -49,8 +49,8 @@ ActionItem feedActionSetSort(BuildContext context) => ActionItem(
       name: l(context).action_setSort,
       icon: Symbols.sort_rounded,
     );
-ActionItem feedActionSetType(BuildContext context) => ActionItem(
-      name: l(context).action_setType,
+ActionItem feedActionSetView(BuildContext context) => ActionItem(
+      name: l(context).action_setView,
       icon: Symbols.tab_rounded,
     );
 

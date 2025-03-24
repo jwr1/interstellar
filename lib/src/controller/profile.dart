@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:interstellar/src/api/comments.dart';
 import 'package:interstellar/src/api/feed_source.dart';
-import 'package:interstellar/src/models/post.dart';
+import 'package:interstellar/src/screens/feed/feed_screen.dart';
 import 'package:interstellar/src/widgets/actions.dart';
 
 part 'profile.freezed.dart';
@@ -39,7 +39,7 @@ class ProfileRequired with _$ProfileRequired {
     required bool fullImageSizeThreads,
     required bool fullImageSizeMicroblogs,
     // Feed defaults
-    required PostType feedDefaultType,
+    required FeedView feedDefaultView,
     required FeedSource feedDefaultFilter,
     required FeedSort feedDefaultThreadsSort,
     required FeedSort feedDefaultMicroblogSort,
@@ -52,7 +52,7 @@ class ProfileRequired with _$ProfileRequired {
     required ActionLocation feedActionRefresh,
     required ActionLocationWithTabs feedActionSetFilter,
     required ActionLocation feedActionSetSort,
-    required ActionLocationWithTabs feedActionSetType,
+    required ActionLocationWithTabs feedActionSetView,
     // Filter list activations
     required Map<String, bool> filterLists,
   }) = _ProfileRequired;
@@ -91,8 +91,8 @@ class ProfileRequired with _$ProfileRequired {
             defaultProfile.fullImageSizeThreads,
         fullImageSizeMicroblogs: profile?.fullImageSizeMicroblogs ??
             defaultProfile.fullImageSizeMicroblogs,
-        feedDefaultType:
-            profile?.feedDefaultType ?? defaultProfile.feedDefaultType,
+        feedDefaultView:
+            profile?.feedDefaultView ?? defaultProfile.feedDefaultView,
         feedDefaultFilter:
             profile?.feedDefaultFilter ?? defaultProfile.feedDefaultFilter,
         feedDefaultThreadsSort: profile?.feedDefaultThreadsSort ??
@@ -115,8 +115,8 @@ class ProfileRequired with _$ProfileRequired {
             profile?.feedActionSetFilter ?? defaultProfile.feedActionSetFilter,
         feedActionSetSort:
             profile?.feedActionSetSort ?? defaultProfile.feedActionSetSort,
-        feedActionSetType:
-            profile?.feedActionSetType ?? defaultProfile.feedActionSetType,
+        feedActionSetView:
+            profile?.feedActionSetView ?? defaultProfile.feedActionSetView,
         filterLists: profile?.filterLists ?? defaultProfile.filterLists,
       );
 
@@ -138,7 +138,7 @@ class ProfileRequired with _$ProfileRequired {
     coverMediaMarkedSensitive: true,
     fullImageSizeThreads: false,
     fullImageSizeMicroblogs: true,
-    feedDefaultType: PostType.thread,
+    feedDefaultView: FeedView.threads,
     feedDefaultFilter: FeedSource.subscribed,
     feedDefaultThreadsSort: FeedSort.hot,
     feedDefaultMicroblogSort: FeedSort.hot,
@@ -150,7 +150,7 @@ class ProfileRequired with _$ProfileRequired {
     feedActionRefresh: ActionLocation.fabMenu,
     feedActionSetFilter: ActionLocationWithTabs.tabs,
     feedActionSetSort: ActionLocation.appBar,
-    feedActionSetType: ActionLocationWithTabs.appBar,
+    feedActionSetView: ActionLocationWithTabs.appBar,
     filterLists: {},
   );
 }
@@ -182,7 +182,7 @@ class ProfileOptional with _$ProfileOptional {
     required bool? fullImageSizeThreads,
     required bool? fullImageSizeMicroblogs,
     // Feed defaults
-    required PostType? feedDefaultType,
+    required FeedView? feedDefaultView,
     required FeedSource? feedDefaultFilter,
     required FeedSort? feedDefaultThreadsSort,
     required FeedSort? feedDefaultMicroblogSort,
@@ -195,7 +195,7 @@ class ProfileOptional with _$ProfileOptional {
     required ActionLocation? feedActionRefresh,
     required ActionLocationWithTabs? feedActionSetFilter,
     required ActionLocation? feedActionSetSort,
-    required ActionLocationWithTabs? feedActionSetType,
+    required ActionLocationWithTabs? feedActionSetView,
     // Filter list activations
     required Map<String, bool>? filterLists,
   }) = _ProfileOptional;
@@ -221,7 +221,7 @@ class ProfileOptional with _$ProfileOptional {
     coverMediaMarkedSensitive: null,
     fullImageSizeThreads: null,
     fullImageSizeMicroblogs: null,
-    feedDefaultType: null,
+    feedDefaultView: null,
     feedDefaultFilter: null,
     feedDefaultThreadsSort: null,
     feedDefaultMicroblogSort: null,
@@ -233,7 +233,7 @@ class ProfileOptional with _$ProfileOptional {
     feedActionRefresh: null,
     feedActionSetFilter: null,
     feedActionSetSort: null,
-    feedActionSetType: null,
+    feedActionSetView: null,
     filterLists: null,
   );
 
@@ -262,7 +262,7 @@ class ProfileOptional with _$ProfileOptional {
       fullImageSizeThreads: other.fullImageSizeThreads ?? fullImageSizeThreads,
       fullImageSizeMicroblogs:
           other.fullImageSizeMicroblogs ?? fullImageSizeMicroblogs,
-      feedDefaultType: other.feedDefaultType ?? feedDefaultType,
+      feedDefaultView: other.feedDefaultView ?? feedDefaultView,
       feedDefaultFilter: other.feedDefaultFilter ?? feedDefaultFilter,
       feedDefaultThreadsSort:
           other.feedDefaultThreadsSort ?? feedDefaultThreadsSort,
@@ -282,7 +282,7 @@ class ProfileOptional with _$ProfileOptional {
       feedActionSetFilter:
           other.feedActionSetFilter ?? this.feedActionSetFilter,
       feedActionSetSort: other.feedActionSetSort ?? this.feedActionSetSort,
-      feedActionSetType: other.feedActionSetType ?? this.feedActionSetType,
+      feedActionSetView: other.feedActionSetView ?? this.feedActionSetView,
       filterLists: filterLists != null && other.filterLists != null
           ? {
               ...filterLists!,
@@ -322,9 +322,9 @@ class ProfileOptional with _$ProfileOptional {
       feedActionSetSort: builtProfile.feedActionSetSort.name == actionName
           ? ActionLocation.hide
           : this.feedActionSetSort,
-      feedActionSetType: builtProfile.feedActionSetType.name == actionName
+      feedActionSetView: builtProfile.feedActionSetView.name == actionName
           ? ActionLocationWithTabs.hide
-          : this.feedActionSetType,
+          : this.feedActionSetView,
     );
   }
 
