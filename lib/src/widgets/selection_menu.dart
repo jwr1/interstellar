@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:collection/collection.dart';
 
 class SelectionMenuItem<T> {
   final T value;
@@ -17,6 +16,13 @@ class SelectionMenuItem<T> {
     this.subtitle,
     this.subItems,
   });
+
+  SelectionMenu<T>? get subItemsSelectionMenu => subItems == null
+      ? null
+      : SelectionMenu<T>(
+          title,
+          subItems!,
+        );
 }
 
 class SelectionMenu<T> {
@@ -61,17 +67,17 @@ class SelectionMenu<T> {
                           : null,
                       trailing:
                           option.subItems != null && option.subItems!.isNotEmpty
-                          ? GestureDetector(
-                              onTap: () async {
-                                final subSelection = await SelectionMenu<T>(
-                                    'sort', option.subItems!)
-                                    .askSelection(context, oldSelection);
-                                if (!context.mounted) return;
-                                Navigator.pop(context, subSelection);
-                              },
-                              child: Icon(Icons.arrow_right),
-                            )
-                          : null,
+                              ? IconButton(
+                                  icon: Icon(Icons.arrow_right),
+                                  onPressed: () async {
+                                    final subSelection = await option
+                                        .subItemsSelectionMenu!
+                                        .askSelection(context, oldSelection);
+                                    if (!context.mounted) return;
+                                    Navigator.pop(context, subSelection);
+                                  },
+                                )
+                              : null,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -83,17 +89,14 @@ class SelectionMenu<T> {
       );
 
   SelectionMenuItem<T> getOption(T value) {
-    final option = options.firstWhereOrNull(
-      (option) => option.value == value,
-    );
-    if (option != null) return option;
     for (var option in options) {
       if (option.subItems == null) continue;
-      final subOption = option.subItems!.firstWhereOrNull(
-        (option) => option.value == value,
-      );
-      if (subOption != null) return subOption;
+      try {
+        return option.subItemsSelectionMenu!.getOption(value);
+      } catch (_) {}
     }
-    return SelectionMenuItem(value: value, title: title);
+    return options.firstWhere(
+      (option) => option.value == value,
+    );
   }
 }
