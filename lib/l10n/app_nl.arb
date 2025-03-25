@@ -440,5 +440,224 @@
   "profile_edit": "Wijzig profiel",
   "@profile_edit": {},
   "profile_delete": "Verwijder profiel",
-  "@profile_delete": {}
+  "@profile_delete": {},
+  "notSafeForWork_long": "Niet veilig voor werk",
+  "@notSafeForWork_long": {},
+  "editedAt": "Gewijzigd op {datetime}",
+  "@editedAt": {
+    "placeholders": {
+      "datetime": {
+        "type": "String"
+      }
+    }
+  },
+  "expand": "Uitklappen",
+  "@expand": {},
+  "submit": "Versturen",
+  "@submit": {},
+  "link": "Link",
+  "@link": {},
+  "markdownEditor_drafts_manuallySave": "Handmatig opslaan",
+  "@markdownEditor_drafts_manuallySave": {},
+  "profile_about_title": "Over profielen",
+  "@profile_about_title": {},
+  "unsupportedSoftware": "{host} maakt gebruik van niet-ondersteunde software",
+  "@unsupportedSoftware": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "originalContent_short": "OC",
+  "@originalContent_short": {},
+  "originalContent_long": "Originele Content",
+  "@originalContent_long": {},
+  "createdAt": "Aangemaakt op {datetime}",
+  "@createdAt": {
+    "placeholders": {
+      "datetime": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteX": "Verwijder {name}",
+  "@deleteX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "delete": "Verwijderen",
+  "@delete": {},
+  "viewSource": "Bekijk broncode",
+  "@viewSource": {},
+  "markdownEditor_heading": "Kop",
+  "@markdownEditor_heading": {},
+  "markdownEditor_horizontalRule": "Horizontale lijn",
+  "@markdownEditor_horizontalRule": {},
+  "markdownEditor_bulletedList": "Opsommingstekenlijst",
+  "@markdownEditor_bulletedList": {},
+  "markdownEditor_drafts_applyAndDiscard": "Toepassen en weggooien",
+  "@markdownEditor_drafts_applyAndDiscard": {},
+  "markdownEditor_drafts_savedAutomatically": "Automatisch opgeslagen",
+  "@markdownEditor_drafts_savedAutomatically": {},
+  "openLink": "Open link",
+  "@openLink": {},
+  "webView": "Webweergave",
+  "@webView": {},
+  "browser": "Browser",
+  "@browser": {},
+  "tags": "Labels",
+  "@tags": {},
+  "tags_hint": "Gescheiden met spaties",
+  "@tags_hint": {},
+  "language": "Taal",
+  "@language": {},
+  "originalPoster_short": "OP",
+  "@originalPoster_short": {},
+  "pin": "Vastpinnen",
+  "@pin": {},
+  "collapse": "Inklappen",
+  "@collapse": {},
+  "moreFrom": "Meer van {name}",
+  "@moreFrom": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "report": "Rapporteren",
+  "@report": {},
+  "edit": "Wijzigen",
+  "@edit": {},
+  "close": "Sluiten",
+  "@close": {},
+  "banUser": "Ban gebruiker",
+  "@banUser": {},
+  "reason": "Reden",
+  "@reason": {},
+  "moderate": "Modereren",
+  "@moderate": {},
+  "alternativeSources": "Alternatieve bronnen",
+  "@alternativeSources": {},
+  "markdownEditor_bold": "Vetgedrukt",
+  "@markdownEditor_bold": {},
+  "markdownEditor_spoiler": "Spoiler",
+  "@markdownEditor_spoiler": {},
+  "markdownEditor_drafts_applyAndKeep": "Toepassen en behouden",
+  "@markdownEditor_drafts_applyAndKeep": {},
+  "markdownEditor_drafts_savedManually": "Handmatig opgeslagen",
+  "@markdownEditor_drafts_savedManually": {},
+  "uploadFromGallery": "Uploaden vanuit galerij",
+  "@uploadFromGallery": {},
+  "continueInBrowser_manual": "Als de browser niet start, klikt om te kopiëren en handmatig te plakken",
+  "@continueInBrowser_manual": {},
+  "redirectReceivedMessage": "Omleiding ontvangen. U kunt dit tabblad nu sluiten en terugkeren naar de app.",
+  "@redirectReceivedMessage": {},
+  "selectMagazine": "Selecteer een tijdschrift ...",
+  "@selectMagazine": {},
+  "title": "Titel",
+  "@title": {},
+  "magazine": "Tijdschrift",
+  "@magazine": {},
+  "action_setLocation": "Zet Actielocatie",
+  "@action_setLocation": {},
+  "action_hide": "Verbergen",
+  "@action_hide": {},
+  "notSafeForWork_short": "NSFW",
+  "@notSafeForWork_short": {},
+  "notSafeForWork_mark": "Markeer als NSFW",
+  "@notSafeForWork_mark": {},
+  "reportX": "Rapporteer {name}",
+  "@reportX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "markdownEditor_superscript": "Bovenschrift",
+  "@markdownEditor_superscript": {},
+  "markdownEditor_link": "Link",
+  "@markdownEditor_link": {},
+  "markdownEditor_drafts": "Concepten",
+  "@markdownEditor_drafts": {},
+  "markdownEditor_image": "Afbeelding",
+  "@markdownEditor_image": {},
+  "markdownEditor_codeBlock": "Codeblok",
+  "@markdownEditor_codeBlock": {},
+  "originalPoster_long": "Originele poster",
+  "@originalPoster_long": {},
+  "pinnedInMagazine": "Vastgezet in tijdschrift",
+  "@pinnedInMagazine": {},
+  "markdownEditor_preview": "Voorbeeld",
+  "@markdownEditor_preview": {},
+  "markdownEditor_drafts_apply": "Concept toepassen",
+  "@markdownEditor_drafts_apply": {},
+  "action_appBar": "App-balk",
+  "@action_appBar": {},
+  "profile_autoSelectAccount_none": "Geen",
+  "@profile_autoSelectAccount_none": {},
+  "profile_about_body": "Met profielen kunt u eenvoudig groepen instellingen opslaan en ertussen schakelen. Het **hoofdprofiel** fungeert als standaard, waarbij andere profielen specifieke instellingen indien nodig overschrijven.\n\n## Profielen wijzigen\n\nOm een profiel te wijzigen, schakelt u ernaar over en past u de instellingen aan. Momenteel moet u het profiel verwijderen en opnieuw maken om een overschreven instelling terug te zetten naar de standaardinstelling.\n\n## Meegeleverde instellingen\n\n- Gedragsinstellingen\n- Weergave-instellingen\n- Tijdlijn acties\n- Tijdlijn standaarden\n- Activeringsstatus filterlijst\n\n## Extra opties\n\n- Wisselen welk profiel het hoofdprofiel is\n- Automatisch een specifiek profiel activeren bij het opstarten\n- Automatisch overschakelen naar een account wanneer een bepaald profiel wordt geactiveerd\n\n\nAls u geen profielen gebruikt, blijft dan gewoon op het hoofdprofiel en functioneert de app zoals gewoonlijk.",
+  "@profile_about_body": {},
+  "markdownEditor_subscript": "Onderschrift",
+  "@markdownEditor_subscript": {},
+  "markdownEditor_numberedList": "Genummerde lijst",
+  "@markdownEditor_numberedList": {},
+  "action_fabTap": "FAB-kraan",
+  "@action_fabTap": {},
+  "markdownEditor_drafts_discardAll": "Alles weggooien",
+  "@markdownEditor_drafts_discardAll": {},
+  "microblog_magazineHelperText": "Standaard wordt het 'willekeurige' tijdschrift gebruikt voor microblogs, aangezien Mbin daar niet-gecategoriseerde microblogs opslaat.",
+  "@microblog_magazineHelperText": {},
+  "markdownEditor_inlineCode": "Inline-code",
+  "@markdownEditor_inlineCode": {},
+  "markdownEditor_quote": "Citaat",
+  "@markdownEditor_quote": {},
+  "markdownEditor_strikethrough": "Doorstreept",
+  "@markdownEditor_strikethrough": {},
+  "uploadFromCamera": "Uploaden vanaf camera",
+  "@uploadFromCamera": {},
+  "markdownEditor_italic": "Cursief",
+  "@markdownEditor_italic": {},
+  "markdownEditor_edit": "Wijzigen",
+  "@markdownEditor_edit": {},
+  "banUserX": "Ban {user}",
+  "@banUserX": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      }
+    }
+  },
+  "banUser_help": "Je staat op het punt om de gebruiker {user} te bannen van {magazine}.",
+  "@banUser_help": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      },
+      "magazine": {
+        "type": "String"
+      }
+    }
+  },
+  "continueInBrowser": "Doorgaan in web browser",
+  "@continueInBrowser": {},
+  "body": "Bericht",
+  "@body": {},
+  "create_text": "Tekst",
+  "@create_text": {},
+  "create_image": "Afbeelding",
+  "@create_image": {},
+  "create_link": "Link",
+  "@create_link": {},
+  "create_link_invalid": "Url is ongeldig",
+  "@create_link_invalid": {},
+  "create_microblog": "Microblog",
+  "@create_microblog": {},
+  "create_magazine": "Tijdschrift",
+  "@create_magazine": {}
 }
