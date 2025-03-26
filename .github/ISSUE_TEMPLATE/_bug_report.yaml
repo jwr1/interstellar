@@ -32,14 +32,25 @@ body:
     validations:
       required: true
   - type: dropdown
-    id: platform
+    id: platform-client
     attributes:
-      label: What platform(s) are you seeing the problem on?
+      label: What client platform(s) are you seeing the problem on?
       multiple: true
       options:
         - Android
         - Linux
         - Windows
+    validations:
+      required: true
+  - type: dropdown
+    id: platform-server
+    attributes:
+      label: What server platform(s) are you seeing the problem on?
+      multiple: true
+      options:
+        - Mbin
+        - Lemmy
+        - PieFed
     validations:
       required: true
   - type: textarea
