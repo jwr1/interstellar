@@ -936,6 +936,13 @@ class _FeedScreenBodyState extends State<FeedScreenBody>
                           });
                         },
                         isPreview: true,
+                        onReply: whenLoggedIn(context, (body) async {
+                            await context.read<AppController>().api.comments.create(
+                                item.type,
+                                item.id,
+                                body,
+                            );
+                        }),
                         filterListWarnings: _filterListWarnings[item.id],
                         userCanModerate: widget.userCanModerate,
                       ),

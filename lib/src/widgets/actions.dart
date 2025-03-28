@@ -160,7 +160,7 @@ ActionItem swipeActionBookmark(BuildContext context) => ActionItem(
 );
 ActionItem swipeActionReply(BuildContext context) => ActionItem(
   name: l(context).action_reply,
-  icon: Symbols.bookmark,
+  icon: Symbols.reply_rounded,
   color: Colors.cyanAccent,
 );
 ActionItem swipeActionModeratePin(BuildContext context) => ActionItem(

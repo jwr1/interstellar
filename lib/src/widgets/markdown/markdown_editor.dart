@@ -244,6 +244,7 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
                                 },
                                 enabled: widget.enabled,
                                 focusNode: _focusNodeTextField,
+                                autofocus: true,
                               ),
                             ),
                           ),
