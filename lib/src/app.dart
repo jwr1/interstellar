@@ -202,6 +202,7 @@ class _AppState extends State<App> {
                     Expanded(
                         child: PageView(
                       controller: _pageController,
+                      physics: const NeverScrollableScrollPhysics(),
                       children: [
                         FeedScreen(key: _feedKey),
                         ExploreScreen(key: _exploreKey),
