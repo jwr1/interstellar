@@ -79,6 +79,7 @@ class AppController with ChangeNotifier {
 
   Future<void> init() async {
     refreshState = () {};
+
     final mainProfileTemp = await _mainProfileRecord.get(db) as String?;
     if (mainProfileTemp != null) {
       _mainProfile = mainProfileTemp;
@@ -112,20 +113,19 @@ class AppController with ChangeNotifier {
 
     _servers = Map.fromEntries((await _serverStore.find(db))
         .map((record) => MapEntry(record.key, Server.fromJson(record.value))));
-    if (_servers.isEmpty) {
-      _servers['kbin.earth'] = const Server(software: ServerSoftware.mbin);
-    }
+
     if (_autoSelectProfile != null && _builtProfile.autoSwitchAccount != null) {
       _selectedAccount = _builtProfile.autoSwitchAccount!;
     } else {
-      _selectedAccount =
-          await _selectedAccountRecord.get(db) as String? ?? '@kbin.earth';
+      _selectedAccount = await _selectedAccountRecord.get(db) as String? ?? '';
     }
 
     _accounts = Map.fromEntries((await _accountStore.find(db))
         .map((record) => MapEntry(record.key, Account.fromJson(record.value))));
-    if (_accounts.isEmpty) {
-      _accounts['@kbin.earth'] = const Account();
+
+    if (_servers.isEmpty || _accounts.isEmpty || _selectedAccount.isEmpty) {
+      await saveServer(ServerSoftware.mbin, 'kbin.earth');
+      await setAccount('@kbin.earth', const Account(), switchNow: true);
     }
 
     _filterLists = Map.fromEntries((await _filterListStore.find(db)).map(
@@ -286,16 +286,16 @@ class AppController with ChangeNotifier {
   }) async {
     _accounts[key] = value;
 
-    if (switchNow) {
-      _selectedAccount = key;
-      await _selectedAccountRecord.put(db, _selectedAccount);
-    }
-
-    _updateAPI();
-
-    notifyListeners();
-
     await _accountStore.record(key).put(db, _accounts[key]!.toJson());
+
+    if (switchNow) {
+      await switchAccounts(key);
+    } else {
+      // The following is already done when switchAccounts is run, so only needed without switchAccounts.
+      _updateAPI();
+
+      notifyListeners();
+    }
   }
 
   Future<void> removeAccount(String key) async {

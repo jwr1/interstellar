@@ -5,7 +5,8 @@ import 'package:interstellar/src/utils/utils.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
-Future<String?> switchAccount(BuildContext context, String oldAccount) async {
+Future<String?> switchAccount(BuildContext context,
+    [String? oldAccount]) async {
   return await showModalBottomSheet(
     context: context,
     builder: (BuildContext context) {
@@ -15,8 +16,8 @@ Future<String?> switchAccount(BuildContext context, String oldAccount) async {
   );
 }
 
-Future<String?> selectAccountWithNone(
-    BuildContext context, String oldAccount) async {
+Future<String?> selectAccountWithNone(BuildContext context,
+    [String? oldAccount]) async {
   return await showModalBottomSheet<String>(
     context: context,
     builder: (BuildContext context) {
@@ -29,13 +30,13 @@ class AccountSelectWidget extends StatefulWidget {
   final bool showNoneOption;
   final bool showAccountControls;
   final bool onlyNonGuestAccounts;
-  final String oldAccount;
+  final String? oldAccount;
 
   const AccountSelectWidget({
     this.showNoneOption = false,
     this.showAccountControls = false,
     this.onlyNonGuestAccounts = false,
-    required this.oldAccount,
+    this.oldAccount,
     super.key,
   });
 
@@ -52,6 +53,8 @@ class _AccountSelectWidgetState extends State<AccountSelectWidget> {
   @override
   Widget build(BuildContext context) {
     final ac = context.watch<AppController>();
+
+    final oldAccount = widget.oldAccount ?? ac.selectedAccount;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -86,7 +89,7 @@ class _AccountSelectWidgetState extends State<AccountSelectWidget> {
                     onTap: () async {
                       Navigator.of(context).pop(account);
                     },
-                    selected: account == widget.oldAccount,
+                    selected: account == oldAccount,
                     selectedTileColor: Theme.of(context)
                         .colorScheme
                         .primaryContainer

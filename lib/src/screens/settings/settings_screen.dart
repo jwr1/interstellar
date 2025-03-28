@@ -119,8 +119,7 @@ class SettingsScreen extends StatelessWidget {
             title: Text(l(context).account_switch),
             subtitle: Text(ac.selectedAccount),
             onTap: () async {
-              final newAccount =
-                  await switchAccount(context, ac.selectedAccount);
+              final newAccount = await switchAccount(context);
 
               if (newAccount == null || newAccount == ac.selectedAccount) {
                 return;
