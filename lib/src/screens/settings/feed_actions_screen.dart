@@ -5,6 +5,7 @@ import 'package:interstellar/src/widgets/actions.dart';
 import 'package:interstellar/src/widgets/list_tile_select.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
+import 'package:interstellar/src/widgets/list_tile_switch.dart';
 
 class FeedActionsSettingsScreen extends StatelessWidget {
   const FeedActionsSettingsScreen({super.key});
@@ -101,6 +102,96 @@ class FeedActionsSettingsScreen extends StatelessWidget {
               ac.selectedProfileValue
                   .cleanupActions(newValue.name, ac.profile)
                   .copyWith(feedActionSetView: newValue),
+            ),
+          ),
+          const Divider(),
+          ListTileSwitch(
+            leading: const Icon(Symbols.swipe),
+            title: Text('Enable swipe gestures'),
+            value: ac.profile.enableSwipeActions,
+            onChanged: (newValue) => ac.updateProfile(
+                ac.selectedProfileValue.copyWith(enableSwipeActions: newValue)),
+          ),
+          ListTileSelect(
+            title: 'Swipe Action 0',
+            icon: Symbols.comment_rounded,
+            selectionMenu: swipeActionSelect(context),
+            value: ac.profile.swipeActions[0],
+            oldValue: ac.selectedProfileValue.swipeActions?[0],
+            onChange: (newValue) {
+              var newActions = List<SwipeAction>.from(
+                  ac.selectedProfileValue.swipeActions?? ac.profile.swipeActions);
+              newActions[0] = newValue;
+              ac.updateProfile(
+                ac.selectedProfileValue
+                    .copyWith(swipeActions: newActions),
+              );
+            },
+          ),
+          ListTileSelect(
+            title: 'Swipe Action 1',
+            icon: Symbols.comment_rounded,
+            selectionMenu: swipeActionSelect(context),
+            value: ac.profile.swipeActions[1],
+            oldValue: ac.selectedProfileValue.swipeActions?[1],
+            onChange: (newValue) {
+              var newActions = List<SwipeAction>.from(
+                  ac.selectedProfileValue.swipeActions?? ac.profile.swipeActions);
+              newActions[1] = newValue;
+              ac.updateProfile(
+                ac.selectedProfileValue
+                    .copyWith(swipeActions: newActions),
+              );
+            },
+          ),
+          ListTileSelect(
+            title: 'Swipe Action 2',
+            icon: Symbols.comment_rounded,
+            selectionMenu: swipeActionSelect(context),
+            value: ac.profile.swipeActions[2],
+            oldValue: ac.selectedProfileValue.swipeActions?[2],
+            onChange: (newValue) {
+              var newActions = List<SwipeAction>.from(
+                  ac.selectedProfileValue.swipeActions?? ac.profile.swipeActions);
+              newActions[2] = newValue;
+              ac.updateProfile(
+                ac.selectedProfileValue
+                    .copyWith(swipeActions: newActions),
+              );
+            },
+          ),
+          ListTileSelect(
+            title: 'Swipe Action 3',
+            icon: Symbols.comment_rounded,
+            selectionMenu: swipeActionSelect(context),
+            value: ac.profile.swipeActions[3],
+            oldValue: ac.selectedProfileValue.swipeActions?[3],
+            onChange: (newValue) {
+              var newActions = List<SwipeAction>.from(
+                  ac.selectedProfileValue.swipeActions?? ac.profile.swipeActions);
+              newActions[3] = newValue;
+              ac.updateProfile(
+                ac.selectedProfileValue
+                    .copyWith(swipeActions: newActions),
+              );
+            },
+          ),
+          ListTile(
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('SwipeActionThreshold: '
+                    '${ac.profile.swipeActionThreshold.toStringAsFixed(2)}'),
+                Slider(
+                    value: ac.profile.swipeActionThreshold,
+                    max: 1,
+                    min: 0,
+                    onChanged: (newValue) => ac.updateProfile(
+                      ac.selectedProfileValue
+                          .copyWith(swipeActionThreshold: newValue)
+                    )
+                )
+              ],
             ),
           ),
         ],
