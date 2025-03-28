@@ -12,17 +12,19 @@ class ActionItem {
   final IconData icon;
   final void Function()? callback;
   final ActionLocation? location;
+  final Color? color;
 
   const ActionItem({
     required this.name,
     required this.icon,
     this.callback,
     this.location,
+    this.color,
   });
 
   ActionItem withProps(ActionLocation location, void Function() callback) =>
       ActionItem(
-          name: name, icon: icon, callback: callback, location: location);
+          name: name, icon: icon, callback: callback, location: location, color: color);
 }
 
 ActionItem feedActionBackToTop(BuildContext context) => ActionItem(
@@ -120,6 +122,105 @@ SelectionMenu<ActionLocationWithTabs> actionLocationWithTabsSelect(
           value: ActionLocationWithTabs.tabs,
           title: l(context).action_tabs,
           icon: Symbols.tab_rounded,
+        ),
+      ],
+    );
+
+enum SwipeAction {
+  upvote,
+  downvote,
+  boost,
+  bookmark,
+  moderatePin,
+  moderateMarkNSFW,
+  moderateDelete,
+  moderateBan
+}
+
+ActionItem swipeActionUpvote(BuildContext context) => ActionItem(
+  name: 'upvote',
+  icon: Symbols.arrow_upward_rounded,
+  color: Colors.green,
+);
+ActionItem swipeActionDownvote(BuildContext context) => ActionItem(
+  name: 'downvote',
+  icon: Symbols.arrow_downward_rounded,
+  color: Colors.red,
+);
+ActionItem swipeActionBoost(BuildContext context) => ActionItem(
+  name: 'boost',
+  icon: Symbols.rocket_launch_rounded,
+  color: Colors.purple,
+);
+ActionItem swipeActionBookmark(BuildContext context) => ActionItem(
+  name: 'bookmark',
+  icon: Symbols.bookmark,
+  color: Colors.yellow,
+);
+ActionItem swipeActionModeratePin(BuildContext context) => ActionItem(
+  name: 'moderate pin',
+  icon: Symbols.push_pin_rounded,
+  color: Colors.blue,
+);
+ActionItem swipeActionModerateMarkNSFW(BuildContext context) => ActionItem(
+  name: 'moderate mark NSFW',
+  icon: Symbols.stop_circle_rounded,
+  color: Colors.pink,
+);
+ActionItem swipeActionModerateDelete(BuildContext context) => ActionItem(
+  name: 'moderate delete',
+  icon: Symbols.delete_rounded,
+  color: Colors.black,
+);
+ActionItem swipeActionModerateBan(BuildContext context) => ActionItem(
+  name: 'moderate ban',
+  icon: Symbols.block_rounded,
+  color: Colors.orange,
+);
+
+SelectionMenu<SwipeAction> swipeActionSelect(BuildContext context) =>
+    SelectionMenu(
+      'Swipe Action',
+      [
+        SelectionMenuItem(
+          value: SwipeAction.upvote,
+          title: 'upvote',
+          icon: Symbols.arrow_upward_rounded,
+        ),
+        SelectionMenuItem(
+          value: SwipeAction.downvote,
+          title: 'downvote',
+          icon: Symbols.arrow_downward_rounded,
+        ),
+        SelectionMenuItem(
+          value: SwipeAction.boost,
+          title: 'boost',
+          icon: Symbols.rocket_launch_rounded,
+        ),
+        SelectionMenuItem(
+          value: SwipeAction.bookmark,
+          title: 'bookmark',
+          icon: Symbols.bookmark,
+        ),
+        SelectionMenuItem(
+          value: SwipeAction.moderatePin,
+          title: 'moderate pin',
+          icon: Symbols.push_pin_rounded,
+        ),
+        SelectionMenuItem(
+          value: SwipeAction.moderateMarkNSFW,
+          title: 'moderate mark NSFW',
+          icon: Symbols.stop_circle_rounded,
+        ),
+        SelectionMenuItem(
+          value: SwipeAction.moderateDelete,
+          title: 'moderate delete',
+          icon: Symbols.delete_rounded,
+        ),
+        SelectionMenuItem(
+          value: SwipeAction.moderateBan,
+          title: 'moderate ban',
+          icon: Symbols.block_rounded,
         ),
       ],
     );

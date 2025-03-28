@@ -1,3 +1,4 @@
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:interstellar/src/controller/controller.dart';
@@ -23,7 +24,8 @@ import 'package:interstellar/src/widgets/wrapper.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
-import './content_item_link_panel.dart';
+import 'package:interstellar/src/widgets/actions.dart';
+import 'package:interstellar/src/widgets/content_item/content_item_link_panel.dart';
 
 class ContentItem extends StatefulWidget {
   final String originInstance;
@@ -169,9 +171,26 @@ class ContentItem extends StatefulWidget {
 class _ContentItemState extends State<ContentItem> {
   TextEditingController? _replyTextController;
   TextEditingController? _editTextController;
+  Color _color = Colors.green;
+  double _dismissThreshold = 0;
+  DismissDirection _dismissDirection = DismissDirection.startToEnd;
+  int _currentAction = 0;
 
   bool _bookmarkMenuWasOpened = false;
   List<String>? _possibleBookmarkLists;
+
+  ActionItem getSwipeAction(SwipeAction action) {
+    return switch (action) {
+      SwipeAction.upvote => swipeActionUpvote(context).withProps(ActionLocation.hide, widget.onUpVote?? (){}),
+      SwipeAction.downvote => swipeActionDownvote(context).withProps(ActionLocation.hide, widget.onDownVote?? (){}),
+      SwipeAction.boost => swipeActionBoost(context).withProps(ActionLocation.hide, widget.onBoost?? (){}),
+      SwipeAction.bookmark => swipeActionBookmark(context).withProps(ActionLocation.hide, widget.onAddBookmark?? (){}),
+      SwipeAction.moderatePin => swipeActionModeratePin(context).withProps(ActionLocation.hide, widget.onModeratePin?? (){}),
+      SwipeAction.moderateMarkNSFW => swipeActionModerateMarkNSFW(context).withProps(ActionLocation.hide, widget.onModerateMarkNSFW?? (){}),
+      SwipeAction.moderateDelete => swipeActionModerateDelete(context).withProps(ActionLocation.hide, widget.onModerateDelete?? (){}),
+      SwipeAction.moderateBan => swipeActionModerateBan(context).withProps(ActionLocation.hide, widget.onModerateBan?? (){}),
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -512,396 +531,475 @@ class _ContentItemState extends State<ContentItem> {
         ],
       );
 
-      return Column(
-        children: <Widget>[
-          if ((!isRightImage && imageWidget != null) ||
-              (!widget.isPreview && isVideo))
-            Wrapper(
-              shouldWrap: widget.fullImageSize,
-              parentBuilder: (child) => Container(
-                  constraints: BoxConstraints(
-                    maxHeight: MediaQuery.of(context).size.height / 2,
-                  ),
-                  child: child),
-              child: (!widget.isPreview && isVideo)
-                  ? VideoPlayer(widget.link!)
-                  : imageWidget!,
+      double actionThreshold = context.watch<AppController>().profile.swipeActionThreshold;
+
+      List<ActionItem> actions = context.watch<AppController>().profile.swipeActions.map((swipeAction) {
+        return getSwipeAction(swipeAction);
+      }).toList();
+
+      return Wrapper(
+        shouldWrap: context.watch<AppController>().profile.enableSwipeActions,
+        parentBuilder: (child) => Listener(
+          onPointerUp: (event) {
+            if (_dismissDirection == DismissDirection.startToEnd) {
+              for (int i = 0; i < 2; i++) {
+                if (_dismissThreshold > actionThreshold && (_dismissThreshold < (actionThreshold * (i + 2)) || i == 1)) {
+                  actions[i].callback!();
+                  break;
+                }
+              }
+            } else {
+              for (int i = 0; i < 2; i++) {
+                if (_dismissThreshold > actionThreshold && (_dismissThreshold < (actionThreshold * (i + 2)) || i == 1)) {
+                  actions[i + 2].callback!();
+                  break;
+                }
+              }
+            }
+          },
+          child: Dismissible(
+            key: ObjectKey(widget.title),
+            background: Container(
+              color: _color,
+              alignment: _dismissDirection == DismissDirection.startToEnd
+                  ? Alignment.centerLeft
+                  : Alignment.centerRight,
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Icon(_dismissDirection == DismissDirection.startToEnd
+                    ? actions[_currentAction].icon
+                    : actions[_currentAction + 2].icon
+                ),
+              ),
             ),
-          Container(
-            padding: widget.title != null
-                ? const EdgeInsets.all(12)
-                : const EdgeInsets.fromLTRB(12, 0, 8, 12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      if (widget.title != null)
+            dismissThresholds: const {DismissDirection.startToEnd: 1, DismissDirection.endToStart: 1},
+            onUpdate: (DismissUpdateDetails details) {
+              setState(() {
+                _dismissThreshold = details.progress;
+                _dismissDirection = details.direction;
+                if (details.direction == DismissDirection.startToEnd) {
+                  for (int i = 0; i < 2; i++) {
+                    if (details.progress < actionThreshold) {
+                      _color = actions[i].color!.darken(30);
+                      break;
+                    }
+                    if (details.progress < (actionThreshold * (i + 2))) {
+                      _color = actions[i].color!;
+                      _currentAction = i;
+                      break;
+                    }
+                  }
+                } else {
+                  for (int i = 0; i < 2; i++) {
+                    if (details.progress < actionThreshold) {
+                      _color = actions[i + 2].color!.darken(30);
+                      break;
+                    }
+                    if (details.progress < (actionThreshold * (i + 2))) {
+                      _color = actions[i + 2].color!;
+                      _currentAction = i;
+                      break;
+                    }
+                  }
+                }
+
+              });
+            },
+            confirmDismiss: (direction) async => false,
+            child: child,
+          )
+        ),
+        child: Column(
+          children: <Widget>[
+            if ((!isRightImage && imageWidget != null) ||
+                (!widget.isPreview && isVideo))
+              Wrapper(
+                shouldWrap: widget.fullImageSize,
+                parentBuilder: (child) => Container(
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height / 2,
+                    ),
+                    child: child),
+                child: (!widget.isPreview && isVideo)
+                    ? VideoPlayer(widget.link!)
+                    : imageWidget!,
+              ),
+            Container(
+              padding: widget.title != null
+                  ? const EdgeInsets.all(12)
+                  : const EdgeInsets.fromLTRB(12, 0, 8, 12),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        if (widget.title != null)
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(bottom: 10),
+                                  child: Text(
+                                    widget.title!,
+                                    style: titleStyle,
+                                    overflow: titleOverflow,
+                                  ),
+                                ),
+                              ),
+                              menuWidget,
+                            ],
+                          ),
+                        if (widget.link != null)
+                          ContentItemLinkPanel(link: widget.link!),
                         Row(
                           children: [
                             Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: Text(
-                                  widget.title!,
-                                  style: titleStyle,
-                                  overflow: titleOverflow,
-                                ),
+                              child: Row(
+                                children: [
+                                  if (widget.filterListWarnings?.isNotEmpty ==
+                                      true)
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 10),
+                                      child: Tooltip(
+                                        message: l(context).filterListWarningX(
+                                            widget.filterListWarnings!
+                                                .join(', ')),
+                                        triggerMode: TooltipTriggerMode.tap,
+                                        child: const Icon(
+                                          Symbols.warning_amber_rounded,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    ),
+                                  if (widget.isPinned)
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 10),
+                                      child: Tooltip(
+                                        message: l(context).pinnedInMagazine,
+                                        triggerMode: TooltipTriggerMode.tap,
+                                        child: const Icon(
+                                            Symbols.push_pin_rounded,
+                                            size: 20),
+                                      ),
+                                    ),
+                                  if (widget.isNSFW)
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 10),
+                                      child: Tooltip(
+                                        message: l(context).notSafeForWork_long,
+                                        triggerMode: TooltipTriggerMode.tap,
+                                        child: Text(
+                                          l(context).notSafeForWork_short,
+                                          style: const TextStyle(
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  if (widget.isOC)
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 10),
+                                      child: Tooltip(
+                                        message: l(context).originalContent_long,
+                                        triggerMode: TooltipTriggerMode.tap,
+                                        child: Text(
+                                          l(context).originalContent_short,
+                                          style: const TextStyle(
+                                            color: Colors.lightGreen,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  if (!widget.showMagazineFirst &&
+                                      userWidget != null)
+                                    userWidget,
+                                  if (widget.showMagazineFirst &&
+                                      magazineWidget != null)
+                                    magazineWidget,
+                                  if (widget.createdAt != null)
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 10),
+                                      child: Tooltip(
+                                        message: l(context).createdAt(
+                                                dateTimeFormat(
+                                                    widget.createdAt!)) +
+                                            (widget.editedAt == null
+                                                ? ''
+                                                : '\n${l(context).editedAt(dateTimeFormat(widget.editedAt!))}'),
+                                        triggerMode: TooltipTriggerMode.tap,
+                                        child: Text(
+                                          dateDiffFormat(widget.createdAt!),
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.w300),
+                                        ),
+                                      ),
+                                    ),
+                                  if (widget.showMagazineFirst &&
+                                      userWidget != null)
+                                    userWidget,
+                                  if (!widget.showMagazineFirst &&
+                                      magazineWidget != null)
+                                    magazineWidget,
+                                ],
                               ),
                             ),
-                            menuWidget,
+                            if (widget.title == null) menuWidget,
                           ],
                         ),
-                      if (widget.link != null)
-                        ContentItemLinkPanel(link: widget.link!),
-                      Row(
-                        children: [
-                          Expanded(
+                        // The menu button on the info row provides padding; add this padding when the menu button is not present
+                        if (widget.title != null) SizedBox(height: 10),
+                        if (widget.body != null &&
+                            widget.body!.isNotEmpty &&
+                            !(widget.isPreview &&
+                                context
+                                    .watch<AppController>()
+                                    .profile
+                                    .compactMode))
+                          widget.isPreview
+                              ? Text(
+                                  widget.body!,
+                                  maxLines: 4,
+                                  overflow: TextOverflow.ellipsis,
+                                )
+                              : Markdown(widget.body!, widget.originInstance),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: LayoutBuilder(builder: (context, constrains) {
+                            final votingWidgets = [
+                              if (widget.activeBookmarkLists != null)
+                                widget.activeBookmarkLists!.isEmpty
+                                    ? LoadingIconButton(
+                                        onPressed: widget.onAddBookmark,
+                                        icon: const Icon(
+                                          Symbols.bookmark_rounded,
+                                          fill: 0,
+                                        ),
+                                      )
+                                    : LoadingIconButton(
+                                        onPressed: widget.onRemoveBookmark,
+                                        icon: const Icon(
+                                          Symbols.bookmark_rounded,
+                                          fill: 1,
+                                        ),
+                                      ),
+                              if (widget.boosts != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8),
+                                  child: Row(
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(
+                                            Symbols.rocket_launch_rounded),
+                                        color: widget.isBoosted
+                                            ? Colors.purple.shade400
+                                            : null,
+                                        onPressed: widget.onBoost,
+                                      ),
+                                      Text(intFormat(widget.boosts!))
+                                    ],
+                                  ),
+                                ),
+                              if (widget.upVotes != null ||
+                                  widget.downVotes != null)
+                                Row(
+                                  children: [
+                                    if (widget.upVotes != null)
+                                      IconButton(
+                                        icon: const Icon(
+                                            Symbols.arrow_upward_rounded),
+                                        color: widget.isUpVoted
+                                            ? Colors.green.shade400
+                                            : null,
+                                        onPressed: widget.onUpVote,
+                                      ),
+                                    Text(intFormat((widget.upVotes ?? 0) -
+                                        (widget.downVotes ?? 0))),
+                                    if (widget.downVotes != null)
+                                      IconButton(
+                                        icon: const Icon(
+                                            Symbols.arrow_downward_rounded),
+                                        color: widget.isDownVoted
+                                            ? Colors.red.shade400
+                                            : null,
+                                        onPressed: widget.onDownVote,
+                                      ),
+                                  ],
+                                ),
+                            ];
+                            final commentWidgets = [
+                              if (widget.numComments != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8),
+                                  child: Row(
+                                    children: [
+                                      const Icon(Symbols.comment_rounded),
+                                      const SizedBox(width: 4),
+                                      Text(intFormat(widget.numComments!))
+                                    ],
+                                  ),
+                                ),
+                              if (widget.onReply != null)
+                                IconButton(
+                                  icon: const Icon(Symbols.reply_rounded),
+                                  onPressed: () => setState(() {
+                                    _replyTextController =
+                                        TextEditingController();
+                                  }),
+                                ),
+                              if (widget.onCollapse != null)
+                                IconButton(
+                                    tooltip: widget.isCollapsed
+                                        ? l(context).expand
+                                        : l(context).collapse,
+                                    onPressed: widget.onCollapse,
+                                    icon: widget.isCollapsed
+                                        ? const Icon(Symbols.expand_more_rounded)
+                                        : const Icon(
+                                            Symbols.expand_less_rounded)),
+                            ];
+
+                            return constrains.maxWidth < 300
+                                ? Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: votingWidgets,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Row(
+                                        children: <Widget>[
+                                          ...commentWidgets,
+                                          const Spacer(),
+                                        ],
+                                      ),
+                                    ],
+                                  )
+                                : Row(
+                                    children: <Widget>[
+                                      ...commentWidgets,
+                                      const Spacer(),
+                                      ...votingWidgets,
+                                    ],
+                                  );
+                          }),
+                        ),
+                        if (!widget.isPreview &&
+                            widget.notificationControlStatus != null &&
+                            widget.onNotificationControlStatusChange != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8),
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                if (widget.filterListWarnings?.isNotEmpty ==
-                                    true)
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 10),
-                                    child: Tooltip(
-                                      message: l(context).filterListWarningX(
-                                          widget.filterListWarnings!
-                                              .join(', ')),
-                                      triggerMode: TooltipTriggerMode.tap,
-                                      child: const Icon(
-                                        Symbols.warning_amber_rounded,
-                                        color: Colors.red,
-                                      ),
-                                    ),
-                                  ),
-                                if (widget.isPinned)
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 10),
-                                    child: Tooltip(
-                                      message: l(context).pinnedInMagazine,
-                                      triggerMode: TooltipTriggerMode.tap,
-                                      child: const Icon(
-                                          Symbols.push_pin_rounded,
-                                          size: 20),
-                                    ),
-                                  ),
-                                if (widget.isNSFW)
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 10),
-                                    child: Tooltip(
-                                      message: l(context).notSafeForWork_long,
-                                      triggerMode: TooltipTriggerMode.tap,
-                                      child: Text(
-                                        l(context).notSafeForWork_short,
-                                        style: const TextStyle(
-                                          color: Colors.red,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                if (widget.isOC)
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 10),
-                                    child: Tooltip(
-                                      message: l(context).originalContent_long,
-                                      triggerMode: TooltipTriggerMode.tap,
-                                      child: Text(
-                                        l(context).originalContent_short,
-                                        style: const TextStyle(
-                                          color: Colors.lightGreen,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                if (!widget.showMagazineFirst &&
-                                    userWidget != null)
-                                  userWidget,
-                                if (widget.showMagazineFirst &&
-                                    magazineWidget != null)
-                                  magazineWidget,
-                                if (widget.createdAt != null)
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 10),
-                                    child: Tooltip(
-                                      message: l(context).createdAt(
-                                              dateTimeFormat(
-                                                  widget.createdAt!)) +
-                                          (widget.editedAt == null
-                                              ? ''
-                                              : '\n${l(context).editedAt(dateTimeFormat(widget.editedAt!))}'),
-                                      triggerMode: TooltipTriggerMode.tap,
-                                      child: Text(
-                                        dateDiffFormat(widget.createdAt!),
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w300),
-                                      ),
-                                    ),
-                                  ),
-                                if (widget.showMagazineFirst &&
-                                    userWidget != null)
-                                  userWidget,
-                                if (!widget.showMagazineFirst &&
-                                    magazineWidget != null)
-                                  magazineWidget,
+                                NotificationControlSegment(
+                                  widget.notificationControlStatus!,
+                                  widget.onNotificationControlStatusChange!,
+                                )
                               ],
                             ),
                           ),
-                          if (widget.title == null) menuWidget,
-                        ],
-                      ),
-                      // The menu button on the info row provides padding; add this padding when the menu button is not present
-                      if (widget.title != null) SizedBox(height: 10),
-                      if (widget.body != null &&
-                          widget.body!.isNotEmpty &&
-                          !(widget.isPreview &&
-                              context
-                                  .watch<AppController>()
-                                  .profile
-                                  .compactMode))
-                        widget.isPreview
-                            ? Text(
-                                widget.body!,
-                                maxLines: 4,
-                                overflow: TextOverflow.ellipsis,
-                              )
-                            : Markdown(widget.body!, widget.originInstance),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: LayoutBuilder(builder: (context, constrains) {
-                          final votingWidgets = [
-                            if (widget.activeBookmarkLists != null)
-                              widget.activeBookmarkLists!.isEmpty
-                                  ? LoadingIconButton(
-                                      onPressed: widget.onAddBookmark,
-                                      icon: const Icon(
-                                        Symbols.bookmark_rounded,
-                                        fill: 0,
-                                      ),
-                                    )
-                                  : LoadingIconButton(
-                                      onPressed: widget.onRemoveBookmark,
-                                      icon: const Icon(
-                                        Symbols.bookmark_rounded,
-                                        fill: 1,
-                                      ),
-                                    ),
-                            if (widget.boosts != null)
-                              Padding(
-                                padding: const EdgeInsets.only(right: 8),
-                                child: Row(
-                                  children: [
-                                    IconButton(
-                                      icon: const Icon(
-                                          Symbols.rocket_launch_rounded),
-                                      color: widget.isBoosted
-                                          ? Colors.purple.shade400
-                                          : null,
-                                      onPressed: widget.onBoost,
-                                    ),
-                                    Text(intFormat(widget.boosts!))
-                                  ],
+                        if (widget.onReply != null &&
+                            _replyTextController != null)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: [
+                                MarkdownEditor(
+                                  _replyTextController!,
+                                  originInstance: null,
+                                  draftController: replyDraftController,
                                 ),
-                              ),
-                            if (widget.upVotes != null ||
-                                widget.downVotes != null)
-                              Row(
-                                children: [
-                                  if (widget.upVotes != null)
-                                    IconButton(
-                                      icon: const Icon(
-                                          Symbols.arrow_upward_rounded),
-                                      color: widget.isUpVoted
-                                          ? Colors.green.shade400
-                                          : null,
-                                      onPressed: widget.onUpVote,
-                                    ),
-                                  Text(intFormat((widget.upVotes ?? 0) -
-                                      (widget.downVotes ?? 0))),
-                                  if (widget.downVotes != null)
-                                    IconButton(
-                                      icon: const Icon(
-                                          Symbols.arrow_downward_rounded),
-                                      color: widget.isDownVoted
-                                          ? Colors.red.shade400
-                                          : null,
-                                      onPressed: widget.onDownVote,
-                                    ),
-                                ],
-                              ),
-                          ];
-                          final commentWidgets = [
-                            if (widget.numComments != null)
-                              Padding(
-                                padding: const EdgeInsets.only(right: 8),
-                                child: Row(
+                                const SizedBox(height: 10),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    const Icon(Symbols.comment_rounded),
-                                    const SizedBox(width: 4),
-                                    Text(intFormat(widget.numComments!))
-                                  ],
-                                ),
-                              ),
-                            if (widget.onReply != null)
-                              IconButton(
-                                icon: const Icon(Symbols.reply_rounded),
-                                onPressed: () => setState(() {
-                                  _replyTextController =
-                                      TextEditingController();
-                                }),
-                              ),
-                            if (widget.onCollapse != null)
-                              IconButton(
-                                  tooltip: widget.isCollapsed
-                                      ? l(context).expand
-                                      : l(context).collapse,
-                                  onPressed: widget.onCollapse,
-                                  icon: widget.isCollapsed
-                                      ? const Icon(Symbols.expand_more_rounded)
-                                      : const Icon(
-                                          Symbols.expand_less_rounded)),
-                          ];
+                                    OutlinedButton(
+                                        onPressed: () => setState(() {
+                                              _replyTextController!.dispose();
+                                              _replyTextController = null;
+                                            }),
+                                        child: Text(l(context).cancel)),
+                                    const SizedBox(width: 8),
+                                    LoadingFilledButton(
+                                      onPressed: () async {
+                                        await widget
+                                            .onReply!(_replyTextController!.text);
 
-                          return constrains.maxWidth < 300
-                              ? Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: votingWidgets,
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Row(
-                                      children: <Widget>[
-                                        ...commentWidgets,
-                                        const Spacer(),
-                                      ],
-                                    ),
+                                        await replyDraftController.discard();
+
+                                        setState(() {
+                                          _replyTextController!.dispose();
+                                          _replyTextController = null;
+                                        });
+                                      },
+                                      label: Text(l(context).submit),
+                                    )
                                   ],
                                 )
-                              : Row(
-                                  children: <Widget>[
-                                    ...commentWidgets,
-                                    const Spacer(),
-                                    ...votingWidgets,
+                              ],
+                            ),
+                          ),
+                        if (widget.onEdit != null && _editTextController != null)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: [
+                                MarkdownEditor(
+                                  _editTextController!,
+                                  originInstance: null,
+                                  draftController: editDraftController,
+                                ),
+                                const SizedBox(height: 10),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    OutlinedButton(
+                                        onPressed: () => setState(() {
+                                              _editTextController!.dispose();
+                                              _editTextController = null;
+                                            }),
+                                        child: Text(l(context).cancel)),
+                                    const SizedBox(width: 8),
+                                    LoadingFilledButton(
+                                      onPressed: () async {
+                                        await widget
+                                            .onEdit!(_editTextController!.text);
+
+                                        await editDraftController.discard();
+
+                                        setState(() {
+                                          _editTextController!.dispose();
+                                          _editTextController = null;
+                                        });
+                                      },
+                                      label: Text(l(context).submit),
+                                    )
                                   ],
-                                );
-                        }),
-                      ),
-                      if (!widget.isPreview &&
-                          widget.notificationControlStatus != null &&
-                          widget.onNotificationControlStatusChange != null)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              NotificationControlSegment(
-                                widget.notificationControlStatus!,
-                                widget.onNotificationControlStatusChange!,
-                              )
-                            ],
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                      if (widget.onReply != null &&
-                          _replyTextController != null)
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              MarkdownEditor(
-                                _replyTextController!,
-                                originInstance: null,
-                                draftController: replyDraftController,
-                              ),
-                              const SizedBox(height: 10),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  OutlinedButton(
-                                      onPressed: () => setState(() {
-                                            _replyTextController!.dispose();
-                                            _replyTextController = null;
-                                          }),
-                                      child: Text(l(context).cancel)),
-                                  const SizedBox(width: 8),
-                                  LoadingFilledButton(
-                                    onPressed: () async {
-                                      await widget
-                                          .onReply!(_replyTextController!.text);
-
-                                      await replyDraftController.discard();
-
-                                      setState(() {
-                                        _replyTextController!.dispose();
-                                        _replyTextController = null;
-                                      });
-                                    },
-                                    label: Text(l(context).submit),
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
-                      if (widget.onEdit != null && _editTextController != null)
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              MarkdownEditor(
-                                _editTextController!,
-                                originInstance: null,
-                                draftController: editDraftController,
-                              ),
-                              const SizedBox(height: 10),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  OutlinedButton(
-                                      onPressed: () => setState(() {
-                                            _editTextController!.dispose();
-                                            _editTextController = null;
-                                          }),
-                                      child: Text(l(context).cancel)),
-                                  const SizedBox(width: 8),
-                                  LoadingFilledButton(
-                                    onPressed: () async {
-                                      await widget
-                                          .onEdit!(_editTextController!.text);
-
-                                      await editDraftController.discard();
-
-                                      setState(() {
-                                        _editTextController!.dispose();
-                                        _editTextController = null;
-                                      });
-                                    },
-                                    label: Text(l(context).submit),
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-                if (isRightImage && imageWidget != null)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: imageWidget,
+                      ],
                     ),
                   ),
-              ],
+                  if (isRightImage && imageWidget != null)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: imageWidget,
+                      ),
+                    ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        )
       );
     });
   }

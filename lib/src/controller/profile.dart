@@ -54,6 +54,10 @@ class ProfileRequired with _$ProfileRequired {
     required ActionLocationWithTabs feedActionSetFilter,
     required ActionLocation feedActionSetSort,
     required ActionLocationWithTabs feedActionSetView,
+    // Swipe Actions
+    required bool enableSwipeActions,
+    required List<SwipeAction> swipeActions,
+    required double swipeActionThreshold,
     // Filter list activations
     required Map<String, bool> filterLists,
   }) = _ProfileRequired;
@@ -118,6 +122,9 @@ class ProfileRequired with _$ProfileRequired {
             profile?.feedActionSetSort ?? defaultProfile.feedActionSetSort,
         feedActionSetView:
             profile?.feedActionSetView ?? defaultProfile.feedActionSetView,
+        enableSwipeActions: profile?.enableSwipeActions ?? defaultProfile.enableSwipeActions,
+        swipeActions: profile?.swipeActions ?? defaultProfile.swipeActions,
+        swipeActionThreshold: profile?.swipeActionThreshold ?? defaultProfile.swipeActionThreshold,
         filterLists: profile?.filterLists ?? defaultProfile.filterLists,
       );
 
@@ -152,6 +159,14 @@ class ProfileRequired with _$ProfileRequired {
     feedActionSetFilter: ActionLocationWithTabs.tabs,
     feedActionSetSort: ActionLocation.appBar,
     feedActionSetView: ActionLocationWithTabs.appBar,
+    enableSwipeActions: false,
+    swipeActions: [
+      SwipeAction.upvote,
+      SwipeAction.boost,
+      SwipeAction.downvote,
+      SwipeAction.bookmark,
+    ],
+    swipeActionThreshold: 0.20,
     filterLists: {},
   );
 }
@@ -197,6 +212,9 @@ class ProfileOptional with _$ProfileOptional {
     required ActionLocationWithTabs? feedActionSetFilter,
     required ActionLocation? feedActionSetSort,
     required ActionLocationWithTabs? feedActionSetView,
+    required bool? enableSwipeActions,
+    required List<SwipeAction>? swipeActions,
+    required double? swipeActionThreshold,
     // Filter list activations
     required Map<String, bool>? filterLists,
   }) = _ProfileOptional;
@@ -235,6 +253,9 @@ class ProfileOptional with _$ProfileOptional {
     feedActionSetFilter: null,
     feedActionSetSort: null,
     feedActionSetView: null,
+    enableSwipeActions: null,
+    swipeActions: null,
+    swipeActionThreshold: null,
     filterLists: null,
   );
 
@@ -284,6 +305,9 @@ class ProfileOptional with _$ProfileOptional {
           other.feedActionSetFilter ?? this.feedActionSetFilter,
       feedActionSetSort: other.feedActionSetSort ?? this.feedActionSetSort,
       feedActionSetView: other.feedActionSetView ?? this.feedActionSetView,
+      enableSwipeActions: other.enableSwipeActions ?? this.enableSwipeActions,
+      swipeActions: other.swipeActions ?? this.swipeActions,
+      swipeActionThreshold: other.swipeActionThreshold ?? this.swipeActionThreshold,
       filterLists: filterLists != null && other.filterLists != null
           ? {
               ...filterLists!,
