@@ -181,14 +181,35 @@ class _ContentItemState extends State<ContentItem> {
 
   ActionItem getSwipeAction(SwipeAction action) {
     return switch (action) {
-      SwipeAction.upvote => swipeActionUpvote(context).withProps(ActionLocation.hide, widget.onUpVote?? (){}),
-      SwipeAction.downvote => swipeActionDownvote(context).withProps(ActionLocation.hide, widget.onDownVote?? (){}),
-      SwipeAction.boost => swipeActionBoost(context).withProps(ActionLocation.hide, widget.onBoost?? (){}),
-      SwipeAction.bookmark => swipeActionBookmark(context).withProps(ActionLocation.hide, widget.onAddBookmark?? (){}),
-      SwipeAction.moderatePin => swipeActionModeratePin(context).withProps(ActionLocation.hide, widget.onModeratePin?? (){}),
-      SwipeAction.moderateMarkNSFW => swipeActionModerateMarkNSFW(context).withProps(ActionLocation.hide, widget.onModerateMarkNSFW?? (){}),
-      SwipeAction.moderateDelete => swipeActionModerateDelete(context).withProps(ActionLocation.hide, widget.onModerateDelete?? (){}),
-      SwipeAction.moderateBan => swipeActionModerateBan(context).withProps(ActionLocation.hide, widget.onModerateBan?? (){}),
+      SwipeAction.upvote => swipeActionUpvote(context).withProps(
+          ActionLocation.hide, widget.onUpVote?? (){}),
+      SwipeAction.downvote => swipeActionDownvote(context).withProps(
+          ActionLocation.hide, widget.onDownVote?? (){}),
+      SwipeAction.boost => swipeActionBoost(context).withProps(
+          ActionLocation.hide, widget.onBoost?? (){}),
+      SwipeAction.bookmark => swipeActionBookmark(context).withProps(
+          ActionLocation.hide, () {
+        if (widget.activeBookmarkLists != null &&
+            widget.onAddBookmark != null &&
+            widget.onRemoveBookmark != null) {
+          widget.activeBookmarkLists!.isEmpty
+              ? widget.onAddBookmark!()
+              : widget.onRemoveBookmark!();
+        }
+      }),
+      SwipeAction.reply => swipeActionReply(context).withProps(
+          ActionLocation.hide, widget.onReply != null
+          ? () =>
+            setState(() { _replyTextController = TextEditingController(); })
+          : (){}),
+      SwipeAction.moderatePin => swipeActionModeratePin(context).withProps(
+          ActionLocation.hide, widget.onModeratePin?? (){}),
+      SwipeAction.moderateMarkNSFW => swipeActionModerateMarkNSFW(context).withProps(
+          ActionLocation.hide, widget.onModerateMarkNSFW?? (){}),
+      SwipeAction.moderateDelete => swipeActionModerateDelete(context).withProps(
+          ActionLocation.hide, widget.onModerateDelete?? (){}),
+      SwipeAction.moderateBan => swipeActionModerateBan(context).withProps(
+          ActionLocation.hide, widget.onModerateBan?? (){}),
     };
   }
 

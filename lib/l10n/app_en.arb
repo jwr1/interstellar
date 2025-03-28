@@ -396,6 +396,7 @@
   "action_downvote": "Downvote",
   "action_boost": "Boost",
   "action_bookmark": "Bookmark",
+  "action_reply": "Reply",
   "action_moderatePin": "Pin Post",
   "action_moderateMarkNSFW": "Mark NSFW",
   "action_moderateDelete": "Mod Delete",

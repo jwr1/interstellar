@@ -131,6 +131,7 @@ enum SwipeAction {
   downvote,
   boost,
   bookmark,
+  reply,
   moderatePin,
   moderateMarkNSFW,
   moderateDelete,
@@ -156,6 +157,11 @@ ActionItem swipeActionBookmark(BuildContext context) => ActionItem(
   name: l(context).action_bookmark,
   icon: Symbols.bookmark,
   color: Colors.yellow,
+);
+ActionItem swipeActionReply(BuildContext context) => ActionItem(
+  name: l(context).action_reply,
+  icon: Symbols.bookmark,
+  color: Colors.cyanAccent,
 );
 ActionItem swipeActionModeratePin(BuildContext context) => ActionItem(
   name: l(context).action_moderatePin,
@@ -201,6 +207,11 @@ SelectionMenu<SwipeAction> swipeActionSelect(BuildContext context) =>
           value: SwipeAction.bookmark,
           title: l(context).action_bookmark,
           icon: Symbols.bookmark,
+        ),
+        SelectionMenuItem(
+          value: SwipeAction.reply,
+          title: l(context).action_reply,
+          icon: Symbols.reply_rounded,
         ),
         SelectionMenuItem(
           value: SwipeAction.moderatePin,
