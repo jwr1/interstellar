@@ -107,13 +107,13 @@ class FeedActionsSettingsScreen extends StatelessWidget {
           const Divider(),
           ListTileSwitch(
             leading: const Icon(Symbols.swipe),
-            title: Text('Enable swipe gestures'),
+            title: Text(l(context).settings_enableSwipeActions),
             value: ac.profile.enableSwipeActions,
             onChanged: (newValue) => ac.updateProfile(
                 ac.selectedProfileValue.copyWith(enableSwipeActions: newValue)),
           ),
           ListTileSelect(
-            title: 'Swipe Action 0',
+            title: '${l(context).settings_swipeAction} 0',
             icon: Symbols.comment_rounded,
             selectionMenu: swipeActionSelect(context),
             value: ac.profile.swipeActions[0],
@@ -129,7 +129,7 @@ class FeedActionsSettingsScreen extends StatelessWidget {
             },
           ),
           ListTileSelect(
-            title: 'Swipe Action 1',
+            title: '${l(context).settings_swipeAction} 1',
             icon: Symbols.comment_rounded,
             selectionMenu: swipeActionSelect(context),
             value: ac.profile.swipeActions[1],
@@ -145,7 +145,7 @@ class FeedActionsSettingsScreen extends StatelessWidget {
             },
           ),
           ListTileSelect(
-            title: 'Swipe Action 2',
+            title: '${l(context).settings_swipeAction} 2',
             icon: Symbols.comment_rounded,
             selectionMenu: swipeActionSelect(context),
             value: ac.profile.swipeActions[2],
@@ -161,7 +161,7 @@ class FeedActionsSettingsScreen extends StatelessWidget {
             },
           ),
           ListTileSelect(
-            title: 'Swipe Action 3',
+            title: '${l(context).settings_swipeAction} 3',
             icon: Symbols.comment_rounded,
             selectionMenu: swipeActionSelect(context),
             value: ac.profile.swipeActions[3],
@@ -180,7 +180,7 @@ class FeedActionsSettingsScreen extends StatelessWidget {
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('SwipeActionThreshold: '
+                Text('${l(context).settings_swipeThreshold} : '
                     '${ac.profile.swipeActionThreshold.toStringAsFixed(2)}'),
                 Slider(
                     value: ac.profile.swipeActionThreshold,

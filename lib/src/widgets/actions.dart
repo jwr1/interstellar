@@ -138,42 +138,42 @@ enum SwipeAction {
 }
 
 ActionItem swipeActionUpvote(BuildContext context) => ActionItem(
-  name: 'upvote',
+  name: l(context).action_upvote,
   icon: Symbols.arrow_upward_rounded,
   color: Colors.green,
 );
 ActionItem swipeActionDownvote(BuildContext context) => ActionItem(
-  name: 'downvote',
+  name: l(context).action_downvote,
   icon: Symbols.arrow_downward_rounded,
   color: Colors.red,
 );
 ActionItem swipeActionBoost(BuildContext context) => ActionItem(
-  name: 'boost',
+  name: l(context).action_boost,
   icon: Symbols.rocket_launch_rounded,
   color: Colors.purple,
 );
 ActionItem swipeActionBookmark(BuildContext context) => ActionItem(
-  name: 'bookmark',
+  name: l(context).action_bookmark,
   icon: Symbols.bookmark,
   color: Colors.yellow,
 );
 ActionItem swipeActionModeratePin(BuildContext context) => ActionItem(
-  name: 'moderate pin',
+  name: l(context).action_moderatePin,
   icon: Symbols.push_pin_rounded,
   color: Colors.blue,
 );
 ActionItem swipeActionModerateMarkNSFW(BuildContext context) => ActionItem(
-  name: 'moderate mark NSFW',
+  name: l(context).action_moderateMarkNSFW,
   icon: Symbols.stop_circle_rounded,
   color: Colors.pink,
 );
 ActionItem swipeActionModerateDelete(BuildContext context) => ActionItem(
-  name: 'moderate delete',
+  name: l(context).action_moderateDelete,
   icon: Symbols.delete_rounded,
   color: Colors.black,
 );
 ActionItem swipeActionModerateBan(BuildContext context) => ActionItem(
-  name: 'moderate ban',
+  name: l(context).action_moderateBan,
   icon: Symbols.block_rounded,
   color: Colors.orange,
 );
@@ -184,42 +184,42 @@ SelectionMenu<SwipeAction> swipeActionSelect(BuildContext context) =>
       [
         SelectionMenuItem(
           value: SwipeAction.upvote,
-          title: 'upvote',
+          title: l(context).action_upvote,
           icon: Symbols.arrow_upward_rounded,
         ),
         SelectionMenuItem(
           value: SwipeAction.downvote,
-          title: 'downvote',
+          title: l(context).action_downvote,
           icon: Symbols.arrow_downward_rounded,
         ),
         SelectionMenuItem(
           value: SwipeAction.boost,
-          title: 'boost',
+          title: l(context).action_boost,
           icon: Symbols.rocket_launch_rounded,
         ),
         SelectionMenuItem(
           value: SwipeAction.bookmark,
-          title: 'bookmark',
+          title: l(context).action_bookmark,
           icon: Symbols.bookmark,
         ),
         SelectionMenuItem(
           value: SwipeAction.moderatePin,
-          title: 'moderate pin',
+          title: l(context).action_moderatePin,
           icon: Symbols.push_pin_rounded,
         ),
         SelectionMenuItem(
           value: SwipeAction.moderateMarkNSFW,
-          title: 'moderate mark NSFW',
+          title: l(context).action_moderateMarkNSFW,
           icon: Symbols.stop_circle_rounded,
         ),
         SelectionMenuItem(
           value: SwipeAction.moderateDelete,
-          title: 'moderate delete',
+          title: l(context).action_moderateDelete,
           icon: Symbols.delete_rounded,
         ),
         SelectionMenuItem(
           value: SwipeAction.moderateBan,
-          title: 'moderate ban',
+          title: l(context).action_moderateBan,
           icon: Symbols.block_rounded,
         ),
       ],
