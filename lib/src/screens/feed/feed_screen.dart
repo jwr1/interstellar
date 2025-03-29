@@ -908,7 +908,22 @@ class _FeedScreenBodyState extends State<FeedScreenBody>
                         onTap: onPostTap,
                         child: PostItemCompact(
                           item,
+                          (newValue) {
+                            var newList = _pagingController.itemList;
+                            newList![index] = newValue;
+                            setState(() {
+                              _pagingController.itemList = newList;
+                            });
+                          },
+                          onReply: whenLoggedIn(context, (body) async {
+                              await context.read<AppController>().api.comments.create(
+                                  item.type,
+                                  item.id,
+                                  body,
+                              );
+                          }),
                           filterListWarnings: _filterListWarnings[item.id],
+                          userCanModerate: widget.userCanModerate,
                         ),
                       ),
                       const Divider(

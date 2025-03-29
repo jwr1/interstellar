@@ -1,4 +1,3 @@
-import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:interstellar/src/controller/controller.dart';
@@ -9,6 +8,7 @@ import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
 import 'package:interstellar/src/utils/share.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/content_item/swipe_item.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/image.dart';
 import 'package:interstellar/src/widgets/loading_button.dart';
@@ -24,7 +24,6 @@ import 'package:interstellar/src/widgets/wrapper.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
-import 'package:interstellar/src/widgets/actions.dart';
 import 'package:interstellar/src/widgets/content_item/content_item_link_panel.dart';
 
 class ContentItem extends StatefulWidget {
@@ -171,47 +170,9 @@ class ContentItem extends StatefulWidget {
 class _ContentItemState extends State<ContentItem> {
   TextEditingController? _replyTextController;
   TextEditingController? _editTextController;
-  Color _color = Colors.green;
-  double _dismissThreshold = 0;
-  DismissDirection _dismissDirection = DismissDirection.startToEnd;
-  int _currentAction = 0;
 
   bool _bookmarkMenuWasOpened = false;
   List<String>? _possibleBookmarkLists;
-
-  ActionItem getSwipeAction(SwipeAction action) {
-    return switch (action) {
-      SwipeAction.upvote => swipeActionUpvote(context).withProps(
-          ActionLocation.hide, widget.onUpVote?? (){}),
-      SwipeAction.downvote => swipeActionDownvote(context).withProps(
-          ActionLocation.hide, widget.onDownVote?? (){}),
-      SwipeAction.boost => swipeActionBoost(context).withProps(
-          ActionLocation.hide, widget.onBoost?? (){}),
-      SwipeAction.bookmark => swipeActionBookmark(context).withProps(
-          ActionLocation.hide, () {
-        if (widget.activeBookmarkLists != null &&
-            widget.onAddBookmark != null &&
-            widget.onRemoveBookmark != null) {
-          widget.activeBookmarkLists!.isEmpty
-              ? widget.onAddBookmark!()
-              : widget.onRemoveBookmark!();
-        }
-      }),
-      SwipeAction.reply => swipeActionReply(context).withProps(
-          ActionLocation.hide, widget.onReply != null
-          ? () =>
-            setState(() { _replyTextController = TextEditingController(); })
-          : (){}),
-      SwipeAction.moderatePin => swipeActionModeratePin(context).withProps(
-          ActionLocation.hide, widget.onModeratePin?? (){}),
-      SwipeAction.moderateMarkNSFW => swipeActionModerateMarkNSFW(context).withProps(
-          ActionLocation.hide, widget.onModerateMarkNSFW?? (){}),
-      SwipeAction.moderateDelete => swipeActionModerateDelete(context).withProps(
-          ActionLocation.hide, widget.onModerateDelete?? (){}),
-      SwipeAction.moderateBan => swipeActionModerateBan(context).withProps(
-          ActionLocation.hide, widget.onModerateBan?? (){}),
-    };
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -552,86 +513,30 @@ class _ContentItemState extends State<ContentItem> {
         ],
       );
 
-      double actionThreshold = context.watch<AppController>().profile.swipeActionThreshold;
-
-      List<ActionItem> actions = [
-        getSwipeAction(context.watch<AppController>().profile.swipeActionLeftShort),
-        getSwipeAction(context.watch<AppController>().profile.swipeActionLeftLong),
-        getSwipeAction(context.watch<AppController>().profile.swipeActionRightShort),
-        getSwipeAction(context.watch<AppController>().profile.swipeActionRightLong),
-      ];
-
       return Wrapper(
         shouldWrap: context.watch<AppController>().profile.enableSwipeActions,
-        parentBuilder: (child) => Listener(
-          onPointerUp: (event) {
-            if (_dismissDirection == DismissDirection.startToEnd) {
-              for (int i = 0; i < 2; i++) {
-                if (_dismissThreshold > actionThreshold && (_dismissThreshold < (actionThreshold * (i + 2)) || i == 1)) {
-                  actions[i].callback!();
-                  break;
-                }
-              }
-            } else {
-              for (int i = 0; i < 2; i++) {
-                if (_dismissThreshold > actionThreshold && (_dismissThreshold < (actionThreshold * (i + 2)) || i == 1)) {
-                  actions[i + 2].callback!();
-                  break;
-                }
-              }
+        parentBuilder: (child) => SwipeItem(
+          onUpVote: widget.onUpVote,
+          onDownVote: widget.onDownVote,
+          onBoost: widget.onBoost,
+          onBookmark: () async {
+            if (widget.activeBookmarkLists != null &&
+                widget.onAddBookmark != null &&
+                widget.onRemoveBookmark != null) {
+              widget.activeBookmarkLists!.isEmpty
+                  ? widget.onAddBookmark!()
+                  : widget.onRemoveBookmark!();
             }
           },
-          child: Dismissible(
-            key: ObjectKey(widget.title),
-            background: Container(
-              color: _color,
-              alignment: _dismissDirection == DismissDirection.startToEnd
-                  ? Alignment.centerLeft
-                  : Alignment.centerRight,
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: Icon(_dismissDirection == DismissDirection.startToEnd
-                    ? actions[_currentAction].icon
-                    : actions[_currentAction + 2].icon
-                ),
-              ),
-            ),
-            dismissThresholds: const {DismissDirection.startToEnd: 1, DismissDirection.endToStart: 1},
-            onUpdate: (DismissUpdateDetails details) {
-              setState(() {
-                _dismissThreshold = details.progress;
-                _dismissDirection = details.direction;
-                if (details.direction == DismissDirection.startToEnd) {
-                  for (int i = 0; i < 2; i++) {
-                    if (details.progress < actionThreshold) {
-                      _color = actions[i].color!.darken(30);
-                      break;
-                    }
-                    if (details.progress < (actionThreshold * (i + 2))) {
-                      _color = actions[i].color!;
-                      _currentAction = i;
-                      break;
-                    }
-                  }
-                } else {
-                  for (int i = 0; i < 2; i++) {
-                    if (details.progress < actionThreshold) {
-                      _color = actions[i + 2].color!.darken(30);
-                      break;
-                    }
-                    if (details.progress < (actionThreshold * (i + 2))) {
-                      _color = actions[i + 2].color!;
-                      _currentAction = i;
-                      break;
-                    }
-                  }
-                }
-
-              });
-            },
-            confirmDismiss: (direction) async => false,
-            child: child,
-          )
+          onReply: widget.onReply != null
+              ? () =>
+              setState(() { _replyTextController = TextEditingController(); })
+              : (){},
+          onModeratePin: widget.onModeratePin,
+          onModerateMarkNSFW: widget.onModerateMarkNSFW,
+          onModerateDelete: widget.onModerateDelete,
+          onModerateBan: widget.onModerateBan,
+          child: child,
         ),
         child: Column(
           children: <Widget>[
