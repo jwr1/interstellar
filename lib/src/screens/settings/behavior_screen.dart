@@ -152,6 +152,7 @@ class BehaviorSettingsScreen extends StatelessWidget {
             onChanged: (newValue) => ac.updateProfile(
                 ac.selectedProfileValue.copyWith(autoPlayVideos: newValue)),
           ),
+
         ],
       ),
     );

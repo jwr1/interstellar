@@ -22,6 +22,7 @@ class MarkdownEditor extends StatefulWidget {
   final bool? enabled;
   final String? label;
   final bool? draftDisableAutoLoad;
+  final bool autoFocus;
 
   const MarkdownEditor(
     this.controller, {
@@ -31,6 +32,7 @@ class MarkdownEditor extends StatefulWidget {
     this.onChanged,
     this.enabled,
     this.label,
+    this.autoFocus = false,
     super.key,
   });
 
@@ -244,6 +246,7 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
                                 },
                                 enabled: widget.enabled,
                                 focusNode: _focusNodeTextField,
+                                autofocus: widget.autoFocus,
                               ),
                             ),
                           ),

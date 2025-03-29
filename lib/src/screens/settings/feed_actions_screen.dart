@@ -5,6 +5,7 @@ import 'package:interstellar/src/widgets/actions.dart';
 import 'package:interstellar/src/widgets/list_tile_select.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
+import 'package:interstellar/src/widgets/list_tile_switch.dart';
 
 class FeedActionsSettingsScreen extends StatelessWidget {
   const FeedActionsSettingsScreen({super.key});
@@ -101,6 +102,76 @@ class FeedActionsSettingsScreen extends StatelessWidget {
               ac.selectedProfileValue
                   .cleanupActions(newValue.name, ac.profile)
                   .copyWith(feedActionSetView: newValue),
+            ),
+          ),
+          const Divider(),
+          ListTileSwitch(
+            leading: const Icon(Symbols.swipe),
+            title: Text(l(context).settings_enableSwipeActions),
+            value: ac.profile.enableSwipeActions,
+            onChanged: (newValue) => ac.updateProfile(
+                ac.selectedProfileValue.copyWith(enableSwipeActions: newValue)),
+          ),
+          ListTileSelect(
+            title: l(context).settings_swipeActionLeftShort,
+            icon: Symbols.comment_rounded,
+            selectionMenu: swipeActionSelect(context),
+            value: ac.profile.swipeActionLeftShort,
+            oldValue: ac.selectedProfileValue.swipeActionLeftShort,
+            onChange: (newValue) => ac.updateProfile(
+              ac.selectedProfileValue
+                  .copyWith(swipeActionLeftShort: newValue)
+            ),
+          ),
+          ListTileSelect(
+            title: l(context).settings_swipeActionLeftLong,
+            icon: Symbols.comment_rounded,
+            selectionMenu: swipeActionSelect(context),
+            value: ac.profile.swipeActionLeftLong,
+            oldValue: ac.selectedProfileValue.swipeActionLeftLong,
+            onChange: (newValue) => ac.updateProfile(
+              ac.selectedProfileValue
+                  .copyWith(swipeActionLeftLong: newValue)
+            ),
+          ),
+          ListTileSelect(
+            title: l(context).settings_swipeActionRightShort,
+            icon: Symbols.comment_rounded,
+            selectionMenu: swipeActionSelect(context),
+            value: ac.profile.swipeActionRightShort,
+            oldValue: ac.selectedProfileValue.swipeActionRightShort,
+            onChange: (newValue) => ac.updateProfile(
+              ac.selectedProfileValue
+                  .copyWith(swipeActionRightShort: newValue)
+            ),
+          ),
+          ListTileSelect(
+            title: l(context).settings_swipeActionRightLong,
+            icon: Symbols.comment_rounded,
+            selectionMenu: swipeActionSelect(context),
+            value: ac.profile.swipeActionRightLong,
+            oldValue: ac.selectedProfileValue.swipeActionRightLong,
+            onChange: (newValue) => ac.updateProfile(
+              ac.selectedProfileValue
+                  .copyWith(swipeActionRightLong: newValue)
+            ),
+          ),
+          ListTile(
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('${l(context).settings_swipeThreshold} : '
+                    '${ac.profile.swipeActionThreshold.toStringAsFixed(2)}'),
+                Slider(
+                    value: ac.profile.swipeActionThreshold,
+                    max: 1,
+                    min: 0,
+                    onChanged: (newValue) => ac.updateProfile(
+                      ac.selectedProfileValue
+                          .copyWith(swipeActionThreshold: newValue)
+                    )
+                )
+              ],
             ),
           ),
         ],
