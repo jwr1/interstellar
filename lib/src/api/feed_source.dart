@@ -1,5 +1,6 @@
 enum FeedSource {
   all,
+  local,
   subscribed,
   moderated,
   favorited,

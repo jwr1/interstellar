@@ -199,7 +199,7 @@ class _FeedScreenState extends State<FeedScreen>
         actions.firstWhere(
             (action) => action.name == feedActionSetFilter(context).name),
       if (context.watch<AppController>().profile.feedActionSetView ==
-          ActionLocationWithTabs.tabs &&
+              ActionLocationWithTabs.tabs &&
           context.watch<AppController>().serverSoftware == ServerSoftware.mbin)
         actions.firstWhere(
             (action) => action.name == feedActionSetView(context).name),
@@ -377,6 +377,14 @@ class _FeedScreenState extends State<FeedScreen>
                         details: widget.details,
                         userCanModerate: userCanModerate,
                       ),
+                      FeedScreenBody(
+                        key: _getFeedKey(4),
+                        source: FeedSource.local,
+                        sort: sort,
+                        view: _view,
+                        details: widget.details,
+                        userCanModerate: userCanModerate,
+                      ),
                     ],
                   String name when name == feedActionSetView(context).name => [
                       FeedScreenBody(
@@ -475,55 +483,57 @@ SelectionMenu<FeedSort> feedSortSelect(BuildContext context) {
         value: FeedSort.top,
         title: l(context).sort_top,
         icon: Symbols.trending_up_rounded,
-        subItems: isPiefed ? null : [
-          if (isLemmy)
-            SelectionMenuItem(
-                value: FeedSort.topHour,
-                title: 'Top 1 Hours'
-            ),
-          SelectionMenuItem(
-              value: FeedSort.topSixHour,
-              title: 'Top 6 Hours'
-          ),
-          SelectionMenuItem(
-              value: FeedSort.topTwelveHour,
-              title: 'Top 12 Hours'
-          ),
-          SelectionMenuItem(
-            value: FeedSort.topDay,
-            title: 'Top 1 Day'
-          ),
-          SelectionMenuItem(
-              value: FeedSort.topWeek,
-              title: 'Top 1 Week'
-          ),
-          SelectionMenuItem(
-              value: FeedSort.topMonth,
-              title: 'Top 1 Month'
-          ),
-          if (isLemmy) ...[
-            SelectionMenuItem(
-                value: FeedSort.topThreeMonths,
-                title: 'Top 3 Months'
-            ),
-            SelectionMenuItem(
-                value: FeedSort.topSixMonths,
-                title: 'Top 6 Months'
-            ),
-            SelectionMenuItem(
-                value: FeedSort.topNineMonths,
-                title: 'Top 9 Months'
-            ),
-          ],
-          SelectionMenuItem(
-              value: FeedSort.topYear,
-              title: 'Top 1 Year'
-          ),
-          SelectionMenuItem(
-              value: FeedSort.top,
-              title: 'Top All Time'
-          ),
-        ]
+        subItems: isPiefed
+            ? null
+            : [
+                if (isLemmy)
+                  SelectionMenuItem(
+                    value: FeedSort.topHour,
+                    title: 'Top 1 Hours',
+                  ),
+                SelectionMenuItem(
+                  value: FeedSort.topSixHour,
+                  title: 'Top 6 Hours',
+                ),
+                SelectionMenuItem(
+                  value: FeedSort.topTwelveHour,
+                  title: 'Top 12 Hours',
+                ),
+                SelectionMenuItem(
+                  value: FeedSort.topDay,
+                  title: 'Top 1 Day',
+                ),
+                SelectionMenuItem(
+                  value: FeedSort.topWeek,
+                  title: 'Top 1 Week',
+                ),
+                SelectionMenuItem(
+                  value: FeedSort.topMonth,
+                  title: 'Top 1 Month',
+                ),
+                if (isLemmy) ...[
+                  SelectionMenuItem(
+                    value: FeedSort.topThreeMonths,
+                    title: 'Top 3 Months',
+                  ),
+                  SelectionMenuItem(
+                    value: FeedSort.topSixMonths,
+                    title: 'Top 6 Months',
+                  ),
+                  SelectionMenuItem(
+                    value: FeedSort.topNineMonths,
+                    title: 'Top 9 Months',
+                  ),
+                ],
+                SelectionMenuItem(
+                  value: FeedSort.topYear,
+                  title: 'Top 1 Year',
+                ),
+                SelectionMenuItem(
+                  value: FeedSort.top,
+                  title: 'Top All Time',
+                ),
+              ],
       ),
       SelectionMenuItem(
         value: FeedSort.newest,
@@ -597,6 +607,11 @@ SelectionMenu<FeedSource> feedFilterSelect(BuildContext context) =>
           value: FeedSource.all,
           title: l(context).filter_all,
           icon: Symbols.newspaper_rounded,
+        ),
+        SelectionMenuItem(
+          value: FeedSource.local,
+          title: l(context).filter_local,
+          icon: Symbols.home_pin_rounded,
         ),
       ],
     );
@@ -916,11 +931,15 @@ class _FeedScreenBodyState extends State<FeedScreenBody>
                             });
                           },
                           onReply: whenLoggedIn(context, (body) async {
-                              await context.read<AppController>().api.comments.create(
+                            await context
+                                .read<AppController>()
+                                .api
+                                .comments
+                                .create(
                                   item.type,
                                   item.id,
                                   body,
-                              );
+                                );
                           }),
                           filterListWarnings: _filterListWarnings[item.id],
                           userCanModerate: widget.userCanModerate,
@@ -952,11 +971,15 @@ class _FeedScreenBodyState extends State<FeedScreenBody>
                         },
                         isPreview: true,
                         onReply: whenLoggedIn(context, (body) async {
-                            await context.read<AppController>().api.comments.create(
+                          await context
+                              .read<AppController>()
+                              .api
+                              .comments
+                              .create(
                                 item.type,
                                 item.id,
                                 body,
-                            );
+                              );
                         }),
                         filterListWarnings: _filterListWarnings[item.id],
                         userCanModerate: widget.userCanModerate,

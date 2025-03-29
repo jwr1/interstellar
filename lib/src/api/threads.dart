@@ -51,6 +51,7 @@ class APIThreads {
       case ServerSoftware.mbin:
         final path = switch (source) {
           FeedSource.all => '/entries',
+          FeedSource.local => '/entries',
           FeedSource.subscribed => '/entries/subscribed',
           FeedSource.moderated => '/entries/moderated',
           FeedSource.favorited => '/entries/favourited',
@@ -64,6 +65,7 @@ class APIThreads {
           'time': mbinGetSortTime(sort),
           'lang': langs?.join(','),
           'usePreferredLangs': (usePreferredLangs ?? false).toString(),
+          if (source == FeedSource.local) 'federation': 'local',
         };
 
         final response = await client.get(path, queryParams: query);
@@ -95,6 +97,7 @@ class APIThreads {
           'sort': lemmyFeedSortMap[sort],
         }..addAll(switch (source) {
             FeedSource.all => {'type_': 'All'},
+            FeedSource.local => {'type_': 'Local'},
             FeedSource.subscribed => {'type_': 'Subscribed'},
             FeedSource.moderated => {'type_': 'ModeratorView'},
             FeedSource.favorited => {'liked_only': 'true'},
@@ -134,6 +137,7 @@ class APIThreads {
           'sort': lemmyFeedSortMap[sort],
         }..addAll(switch (source) {
             FeedSource.all => {'type_': 'All'},
+            FeedSource.local => {'type_': 'Local'},
             FeedSource.subscribed => {'type_': 'Subscribed'},
             FeedSource.moderated => {'type_': 'ModeratorView'},
             FeedSource.favorited => {'liked_only': 'true'},

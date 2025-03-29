@@ -23,6 +23,7 @@ class MbinAPIMicroblogs {
   }) async {
     final path = switch (source) {
       FeedSource.all => '/posts',
+      FeedSource.local => '/posts',
       FeedSource.subscribed => '/posts/subscribed',
       FeedSource.moderated => '/posts/moderated',
       FeedSource.favorited => '/posts/favourited',
@@ -38,6 +39,7 @@ class MbinAPIMicroblogs {
       'time': mbinGetSortTime(sort),
       'lang': langs?.join(','),
       'usePreferredLangs': (usePreferredLangs ?? false).toString(),
+      if (source == FeedSource.local) 'federation': 'local',
     };
 
     final response = await client.get(path, queryParams: query);
