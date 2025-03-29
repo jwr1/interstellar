@@ -77,6 +77,7 @@ class _BanDialogState extends State<BanDialog> {
                   Navigator.of(context).pop();
                 },
           label: Text(l(context).banUserX(widget.user.name)),
+          uesHaptics: true,
         ),
       ],
     );

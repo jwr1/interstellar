@@ -157,6 +157,7 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
                         },
                         label: Text(l(context).send),
                         icon: const Icon(Symbols.send_rounded),
+                        uesHaptics: true,
                       ),
                     ],
                   )

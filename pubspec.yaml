@@ -50,6 +50,7 @@ dependencies:
   crypto: ^3.0.6
   file_picker: ^9.0.2
   any_link_preview: ^3.0.3
+  haptic_feedback: ^0.5.1+1
 
 dev_dependencies:
   flutter_lints: ^5.0.0

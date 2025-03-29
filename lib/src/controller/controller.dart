@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:haptic_feedback/haptic_feedback.dart';
 import 'package:http/http.dart' as http;
 import 'package:interstellar/src/api/api.dart';
 import 'package:interstellar/src/api/client.dart';
@@ -537,5 +538,9 @@ class AppController with ChangeNotifier {
         .record(FieldKey.escape(newName))
         .put(db, _filterLists[newName]!.toJson());
     await _filterListStore.record(FieldKey.escape(oldName)).delete(db);
+  }
+
+  Future<void> vibrate(HapticsType type) async {
+    if (profile.hapticFeedback) Haptics.vibrate(type);
   }
 }

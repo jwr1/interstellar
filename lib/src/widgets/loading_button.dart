@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:haptic_feedback/haptic_feedback.dart';
+import 'package:interstellar/src/controller/controller.dart';
+import 'package:provider/provider.dart';
 
 class _LoadingButtonIndicator extends StatelessWidget {
   const _LoadingButtonIndicator();
@@ -23,11 +26,15 @@ class LoadingFilledButton extends StatefulWidget {
   final Widget? icon;
   final ButtonStyle? style;
 
+  /// When true, vibrates `success` type on success, and `warning` type on error
+  final bool uesHaptics;
+
   const LoadingFilledButton({
     required this.onPressed,
     required this.label,
     this.icon,
     this.style,
+    this.uesHaptics = false,
     super.key,
   });
 
@@ -40,6 +47,8 @@ class _LoadingFilledButtonState extends State<LoadingFilledButton> {
 
   @override
   Widget build(BuildContext context) {
+    final ac = context.watch<AppController>();
+
     return FilledButton.icon(
       onPressed: _isLoading || widget.onPressed == null
           ? null
@@ -47,7 +56,9 @@ class _LoadingFilledButtonState extends State<LoadingFilledButton> {
               setState(() => _isLoading = true);
               try {
                 await widget.onPressed!();
+                if (widget.uesHaptics) ac.vibrate(HapticsType.success);
               } catch (e) {
+                if (widget.uesHaptics) ac.vibrate(HapticsType.warning);
                 rethrow;
               } finally {
                 if (mounted) setState(() => _isLoading = false);

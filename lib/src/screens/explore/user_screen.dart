@@ -369,6 +369,7 @@ class _UserScreenState extends State<UserScreen> {
                                         });
                                       },
                                       label: Text(l(context).send),
+                                      uesHaptics: true,
                                     )
                                   ],
                                 )

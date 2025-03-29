@@ -203,6 +203,7 @@ class _CreateScreenState extends State<CreateScreen> {
             onPressed: onPressed,
             icon: const Icon(Symbols.send_rounded),
             label: Text(l(context).submit),
+            uesHaptics: true,
           ),
         );
 

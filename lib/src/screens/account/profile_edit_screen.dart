@@ -235,6 +235,7 @@ class _ProfileEditScreen extends State<ProfileEditScreen> {
                   child: LoadingFilledButton(
                     onPressed: onSave,
                     label: Text(l(context).saveChanges),
+                    uesHaptics: true,
                   ),
                 ),
               ],

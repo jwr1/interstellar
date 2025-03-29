@@ -29,6 +29,7 @@ class ProfileRequired with _$ProfileRequired {
     required bool askBeforeUnsubscribing,
     required bool askBeforeDeleting,
     required bool autoPlayVideos,
+    required bool hapticFeedback,
     // Display settings
     required String appLanguage,
     required ThemeMode themeMode,
@@ -85,6 +86,8 @@ class ProfileRequired with _$ProfileRequired {
             profile?.askBeforeDeleting ?? defaultProfile.askBeforeDeleting,
         autoPlayVideos:
             profile?.autoPlayVideos ?? defaultProfile.autoPlayVideos,
+        hapticFeedback:
+            profile?.hapticFeedback ?? defaultProfile.hapticFeedback,
         appLanguage: profile?.appLanguage ?? defaultProfile.appLanguage,
         themeMode: profile?.themeMode ?? defaultProfile.themeMode,
         colorScheme: profile?.colorScheme ?? defaultProfile.colorScheme,
@@ -125,12 +128,18 @@ class ProfileRequired with _$ProfileRequired {
             profile?.feedActionSetSort ?? defaultProfile.feedActionSetSort,
         feedActionSetView:
             profile?.feedActionSetView ?? defaultProfile.feedActionSetView,
-        enableSwipeActions: profile?.enableSwipeActions ?? defaultProfile.enableSwipeActions,
-        swipeActionLeftShort: profile?.swipeActionLeftShort ?? defaultProfile.swipeActionLeftShort,
-        swipeActionLeftLong: profile?.swipeActionLeftLong ?? defaultProfile.swipeActionLeftLong,
-        swipeActionRightShort: profile?.swipeActionRightShort ?? defaultProfile.swipeActionRightShort,
-        swipeActionRightLong: profile?.swipeActionRightLong ?? defaultProfile.swipeActionRightLong,
-        swipeActionThreshold: profile?.swipeActionThreshold ?? defaultProfile.swipeActionThreshold,
+        enableSwipeActions:
+            profile?.enableSwipeActions ?? defaultProfile.enableSwipeActions,
+        swipeActionLeftShort: profile?.swipeActionLeftShort ??
+            defaultProfile.swipeActionLeftShort,
+        swipeActionLeftLong:
+            profile?.swipeActionLeftLong ?? defaultProfile.swipeActionLeftLong,
+        swipeActionRightShort: profile?.swipeActionRightShort ??
+            defaultProfile.swipeActionRightShort,
+        swipeActionRightLong: profile?.swipeActionRightLong ??
+            defaultProfile.swipeActionRightLong,
+        swipeActionThreshold: profile?.swipeActionThreshold ??
+            defaultProfile.swipeActionThreshold,
         filterLists: profile?.filterLists ?? defaultProfile.filterLists,
       );
 
@@ -143,6 +152,7 @@ class ProfileRequired with _$ProfileRequired {
     askBeforeUnsubscribing: false,
     askBeforeDeleting: true,
     autoPlayVideos: false,
+    hapticFeedback: true,
     appLanguage: '',
     themeMode: ThemeMode.system,
     colorScheme: FlexScheme.custom,
@@ -191,6 +201,7 @@ class ProfileOptional with _$ProfileOptional {
     required bool? askBeforeUnsubscribing,
     required bool? askBeforeDeleting,
     required bool? autoPlayVideos,
+    required bool? hapticFeedback,
     // Display settings
     required String? appLanguage,
     required ThemeMode? themeMode,
@@ -238,6 +249,7 @@ class ProfileOptional with _$ProfileOptional {
     askBeforeUnsubscribing: null,
     askBeforeDeleting: null,
     autoPlayVideos: null,
+    hapticFeedback: null,
     appLanguage: null,
     themeMode: null,
     colorScheme: null,
@@ -283,6 +295,7 @@ class ProfileOptional with _$ProfileOptional {
           other.askBeforeUnsubscribing ?? askBeforeUnsubscribing,
       askBeforeDeleting: other.askBeforeDeleting ?? askBeforeDeleting,
       autoPlayVideos: other.autoPlayVideos ?? autoPlayVideos,
+      hapticFeedback: other.hapticFeedback ?? hapticFeedback,
       appLanguage: other.appLanguage ?? appLanguage,
       themeMode: other.themeMode ?? themeMode,
       colorScheme: other.colorScheme ?? colorScheme,

@@ -22,9 +22,14 @@ class ActionItem {
     this.color,
   });
 
-  ActionItem withProps(ActionLocation location, void Function() callback) =>
+  ActionItem withProps(ActionLocation location, void Function()? callback) =>
       ActionItem(
-          name: name, icon: icon, callback: callback, location: location, color: color);
+        name: name,
+        icon: icon,
+        callback: callback,
+        location: location,
+        color: color,
+      );
 }
 
 ActionItem feedActionBackToTop(BuildContext context) => ActionItem(
@@ -139,50 +144,50 @@ enum SwipeAction {
 }
 
 ActionItem swipeActionUpvote(BuildContext context) => ActionItem(
-  name: l(context).action_upvote,
-  icon: Symbols.arrow_upward_rounded,
-  color: Colors.green,
-);
+      name: l(context).action_upvote,
+      icon: Symbols.arrow_upward_rounded,
+      color: Colors.green,
+    );
 ActionItem swipeActionDownvote(BuildContext context) => ActionItem(
-  name: l(context).action_downvote,
-  icon: Symbols.arrow_downward_rounded,
-  color: Colors.red,
-);
+      name: l(context).action_downvote,
+      icon: Symbols.arrow_downward_rounded,
+      color: Colors.red,
+    );
 ActionItem swipeActionBoost(BuildContext context) => ActionItem(
-  name: l(context).action_boost,
-  icon: Symbols.rocket_launch_rounded,
-  color: Colors.purple,
-);
+      name: l(context).action_boost,
+      icon: Symbols.rocket_launch_rounded,
+      color: Colors.purple,
+    );
 ActionItem swipeActionBookmark(BuildContext context) => ActionItem(
-  name: l(context).action_bookmark,
-  icon: Symbols.bookmark,
-  color: Colors.yellow,
-);
+      name: l(context).action_bookmark,
+      icon: Symbols.bookmark,
+      color: Colors.yellow,
+    );
 ActionItem swipeActionReply(BuildContext context) => ActionItem(
-  name: l(context).action_reply,
-  icon: Symbols.reply_rounded,
-  color: Colors.cyanAccent,
-);
+      name: l(context).action_reply,
+      icon: Symbols.reply_rounded,
+      color: Colors.cyanAccent,
+    );
 ActionItem swipeActionModeratePin(BuildContext context) => ActionItem(
-  name: l(context).action_moderatePin,
-  icon: Symbols.push_pin_rounded,
-  color: Colors.blue,
-);
+      name: l(context).action_moderatePin,
+      icon: Symbols.push_pin_rounded,
+      color: Colors.blue,
+    );
 ActionItem swipeActionModerateMarkNSFW(BuildContext context) => ActionItem(
-  name: l(context).action_moderateMarkNSFW,
-  icon: Symbols.stop_circle_rounded,
-  color: Colors.pink,
-);
+      name: l(context).action_moderateMarkNSFW,
+      icon: Symbols.stop_circle_rounded,
+      color: Colors.pink,
+    );
 ActionItem swipeActionModerateDelete(BuildContext context) => ActionItem(
-  name: l(context).action_moderateDelete,
-  icon: Symbols.delete_rounded,
-  color: Colors.black,
-);
+      name: l(context).action_moderateDelete,
+      icon: Symbols.delete_rounded,
+      color: Colors.black,
+    );
 ActionItem swipeActionModerateBan(BuildContext context) => ActionItem(
-  name: l(context).action_moderateBan,
-  icon: Symbols.block_rounded,
-  color: Colors.orange,
-);
+      name: l(context).action_moderateBan,
+      icon: Symbols.block_rounded,
+      color: Colors.orange,
+    );
 
 SelectionMenu<SwipeAction> swipeActionSelect(BuildContext context) =>
     SelectionMenu(
