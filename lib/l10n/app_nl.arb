@@ -659,5 +659,304 @@
   "create_microblog": "Microblog",
   "@create_microblog": {},
   "create_magazine": "Tijdschrift",
-  "@create_magazine": {}
+  "@create_magazine": {},
+  "action_fabMenu": "FAB menu",
+  "@action_fabMenu": {},
+  "filterList_new": "Nieuwe filterlijst",
+  "@filterList_new": {},
+  "filterList_matchMode": "Overeenkomstmodus",
+  "@filterList_matchMode": {},
+  "filterList_matchMode_regex": "Reguliere expressie",
+  "@filterList_matchMode_regex": {},
+  "settings_accountMigration_writingFromSource": "Schrijven naar bestemmingsaccount",
+  "@settings_accountMigration_writingFromSource": {},
+  "settings_accountMigration_complete": "Accountmigratie voltooid!",
+  "@settings_accountMigration_complete": {},
+  "settings_accountMigration_failedXItems": "{current}/{total} items mislukt",
+  "@settings_accountMigration_failedXItems": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "settings_accountReset_help": "Verwijder abonnementen, volgers en blocks van een account",
+  "@settings_accountReset_help": {},
+  "settings_accountReset_step2_resetMagazineBlocks": "Tijdschrift blocks resetten",
+  "@settings_accountReset_step2_resetMagazineBlocks": {},
+  "settings_accountReset": "Account resetten",
+  "@settings_accountReset": {},
+  "settings_accountReset_failedXItems": "{current}/{total} items mislukt",
+  "@settings_accountReset_failedXItems": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "action_tabs": "Tabbladen",
+  "@action_tabs": {},
+  "save": "Opslaan",
+  "@save": {},
+  "saveChanges": "Wijzigingen opslaan",
+  "@saveChanges": {},
+  "languages": "Talen",
+  "@languages": {},
+  "pointsX": "{num} Punten",
+  "@pointsX": {
+    "placeholders": {
+      "num": {
+        "type": "int"
+      }
+    }
+  },
+  "filterLists": "Filterlijsten",
+  "@filterLists": {},
+  "filterList_edit": "Filterlijst bewerken",
+  "@filterList_edit": {},
+  "filterList_delete": "Filterlijst verwijderen",
+  "@filterList_delete": {},
+  "filterList_matchMode_simple": "Eenvoudig",
+  "@filterList_matchMode_simple": {},
+  "filterList_matchMode_regex_help": "Zal inhoud vinden die wordt gevonden door de opgegeven reguliere expressie, die is afgeleid van de woordgroep.",
+  "@filterList_matchMode_regex_help": {},
+  "confirmUnfollow": "Je staat op het punt om te ontvolgen. Doorgaan?",
+  "@confirmUnfollow": {},
+  "altText": "Alt-tekst",
+  "@altText": {},
+  "settings_swipeActionRightShort": "Kort rechts",
+  "@settings_swipeActionRightShort": {},
+  "settings_swipeThreshold": "Veegactie drempelwaarde",
+  "@settings_swipeThreshold": {},
+  "action_createNew": "Nieuw maken ...",
+  "@action_createNew": {},
+  "action_setSort": "Sorteren instellen",
+  "@action_setSort": {},
+  "action_setView": "Weergave instellen",
+  "@action_setView": {},
+  "action_upvote": "Omhoog stemmen",
+  "@action_upvote": {},
+  "action_boost": "Boost",
+  "@action_boost": {},
+  "action_bookmark": "Bladwijzer",
+  "@action_bookmark": {},
+  "action_moderatePin": "Bericht vastpinnen",
+  "@action_moderatePin": {},
+  "action_moderateBan": "Ban",
+  "@action_moderateBan": {},
+  "filterList_activateFilter": "Filter activeren",
+  "@filterList_activateFilter": {},
+  "filterList_name": "Naam",
+  "@filterList_name": {},
+  "filterList_showWithContentWarning": "Weergeven met inhoudswaarschuwing",
+  "@filterList_showWithContentWarning": {},
+  "filterListWarningX": "Waarschuwing: dit bericht is gekoppeld aan de volgende filterlijsten: {lists}",
+  "@filterListWarningX": {
+    "placeholders": {
+      "lists": {
+        "type": "String"
+      }
+    }
+  },
+  "settings_accountReset_step1": "Selecteer account",
+  "@settings_accountReset_step1": {},
+  "settings_accountReset_step2_resetUserFollows": "Gebruiker volgers resetten",
+  "@settings_accountReset_step2_resetUserFollows": {},
+  "settings_accountReset_step2_resetUserBlocks": "Gebuiker blocks resetten",
+  "@settings_accountReset_step2_resetUserBlocks": {},
+  "settings_accountReset_removingItems": "Items verwijderen",
+  "@settings_accountReset_removingItems": {},
+  "settings_accountReset_failed": "Account reset mislukt vanwege een fout",
+  "@settings_accountReset_failed": {},
+  "notificationControlStatus_default": "Standaardmeldingen",
+  "@notificationControlStatus_default": {},
+  "notificationControlStatus_loud": "Luide meldingen",
+  "@notificationControlStatus_loud": {},
+  "bookmark_addToX": "Toevoegen aan {name}",
+  "@bookmark_addToX": {},
+  "bookmark_removeFromX": "Verwijderen van {name}",
+  "@bookmark_removeFromX": {},
+  "configShare": "Configuratie delen",
+  "@configShare": {},
+  "configShare_profile_info": "{count} instellingen aangepast",
+  "@configShare_profile_info": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "errorPage_firstPage_button": "Probeer het opnieuw",
+  "@errorPage_firstPage_button": {},
+  "filterList_matchMode_wholeWords": "Hele woorden",
+  "@filterList_matchMode_wholeWords": {},
+  "settings_swipeActionLeftLong": "Lang links",
+  "@settings_swipeActionLeftLong": {},
+  "settings_swipeActionLeftShort": "Kort links",
+  "@settings_swipeActionLeftShort": {},
+  "action_fabHold": "FAB vasthouden",
+  "@action_fabHold": {},
+  "settings_accountReset_step2": "Resetcategorieën in-/uitschakelen",
+  "@settings_accountReset_step2": {},
+  "settings_swipeActionRightLong": "Lang rechts",
+  "@settings_swipeActionRightLong": {},
+  "action_backToTop": "Terug naar boven",
+  "@action_backToTop": {},
+  "settings_appLanguage": "App-taal",
+  "@settings_appLanguage": {},
+  "commentsX": "{num} Reacties",
+  "@commentsX": {
+    "placeholders": {
+      "num": {
+        "type": "int"
+      }
+    }
+  },
+  "searchTheFediverse": "Zoek in de fediverse",
+  "@searchTheFediverse": {},
+  "systemLanguage": "Systeemtaal",
+  "@systemLanguage": {},
+  "filterList_addPhrase": "Woordgroep toevoegen",
+  "@filterList_addPhrase": {},
+  "filterList_caseSensitive_help": "Wanneer ingeschakeld, wordt alleen inhoud met dezelfde hoofdlettergebruik als de woordgroep gevonden.",
+  "@filterList_caseSensitive_help": {},
+  "filterList_caseSensitive": "Hoofdlettergevoelig",
+  "@filterList_caseSensitive": {},
+  "settings_accountMigration_completeXItems": "{current}/{total} items voltooid",
+  "@settings_accountMigration_completeXItems": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "settings_accountMigration_step2_migrateUserBlocks": "Migreer gebruiker blocks",
+  "@settings_accountMigration_step2_migrateUserBlocks": {},
+  "settings_accountMigration_readingFromSource": "Lezen van bronaccount",
+  "@settings_accountMigration_readingFromSource": {},
+  "settings_accountMigration_failed": "Accountmigratie mislukt vanwege een fout",
+  "@settings_accountMigration_failed": {},
+  "settings_accountMigration_foundXItems": "{count} items gevonden",
+  "@settings_accountMigration_foundXItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settings_accountReset_step3": "Bevestig gegevens reset",
+  "@settings_accountReset_step3": {},
+  "configShare_filterList_title": "Interstellaire filterlijst",
+  "@configShare_filterList_title": {},
+  "errorPage_newPage": "Er is iets fout gegaan. Tik om het opnieuw te proberen.",
+  "@errorPage_newPage": {},
+  "action_setFilter": "Filter instellen",
+  "@action_setFilter": {},
+  "settings_accountReset_complete": "Account reset voltooid!",
+  "@settings_accountReset_complete": {},
+  "filterList_matchMode_wholeWords_help": "Zal alleen overeenkomen als er een woordgrens is aan beide uiteinden van de gecontroleerde tekst, met andere woorden, de zin moet het hele woord zijn en mag niet in het midden van een woord staan. Bijvoorbeeld, het woordgroep \"app\" zal overeenkomen met \"app\", maar niet met \"apps\", \"application\", \"yapp\", etc.",
+  "@filterList_matchMode_wholeWords_help": {},
+  "filterList_import": "Filterlijst importeren",
+  "@filterList_import": {},
+  "notificationControlStatus_muted": "Gedempte meldingen",
+  "@notificationControlStatus_muted": {},
+  "settings_enableSwipeActions": "Schakel veegacties in",
+  "@settings_enableSwipeActions": {},
+  "action_moderateMarkNSFW": "Markeer NSFW",
+  "@action_moderateMarkNSFW": {},
+  "filterList_matchMode_simple_help": "Komt letterlijk overeen met elke plaats wat in de zin voorkomt. Bijvoorbeeld, het woordgroep \"app\" zal overeenkomen met \"app\", maar ook \"apps\", \"application\", \"yapp\", etc.",
+  "@filterList_matchMode_simple_help": {},
+  "bookmark": "Bladwijzer",
+  "@bookmark": {},
+  "action_expandFABMenu": "FAB Menu uitvouwen",
+  "@action_expandFABMenu": {},
+  "action_refresh": "Vernieuwen",
+  "@action_refresh": {},
+  "action_downvote": "Omlaag stemmen",
+  "@action_downvote": {},
+  "action_reply": "Antwoord",
+  "@action_reply": {},
+  "action_moderateDelete": "Mod Verwijderen",
+  "@action_moderateDelete": {},
+  "confirmUnsubscribe": "Je staat op het punt om je af te melden. Doorgaan?",
+  "@confirmUnsubscribe": {},
+  "filterList_phrases": "Zinnen",
+  "@filterList_phrases": {},
+  "configShare_created": "Aangemaakt op {date} met {version}",
+  "@configShare_created": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "errorPage_firstPage": "Er is iets misgegaan",
+  "@errorPage_firstPage": {},
+  "settings_accountReset_step2_resetMagazineSubscriptions": "Tijdschriftabonnementen resetten",
+  "@settings_accountReset_step2_resetMagazineSubscriptions": {},
+  "settings_accountReset_readingFromAccount": "Lezen van account",
+  "@settings_accountReset_readingFromAccount": {},
+  "configShare_profile_title": "Interstellair profiel",
+  "@configShare_profile_title": {},
+  "configShare_filterList_info": "Bevat {count} woordgroepen",
+  "@configShare_filterList_info": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settings_dataUtilities": "BETA: Gegevenshulpprogramma's",
+  "@settings_dataUtilities": {},
+  "settings_accountMigration": "Accountmigratie",
+  "@settings_accountMigration": {},
+  "settings_accountMigration_help": "Migreer abonnementen, volgers en blokkeringen tussen accounts",
+  "@settings_accountMigration_help": {},
+  "settings_accountMigration_step1": "Selecteer bron- en bestemmingsaccounts",
+  "@settings_accountMigration_step1": {},
+  "settings_accountMigration_step1_source": "Bronaccount",
+  "@settings_accountMigration_step1_source": {},
+  "settings_accountMigration_step1_destination": "Bestemmingsaccount",
+  "@settings_accountMigration_step1_destination": {},
+  "settings_accountMigration_step2": "Migratiecategorieën in-/uitschakelen",
+  "@settings_accountMigration_step2": {},
+  "settings_accountMigration_step2_migrateMagazineSubscriptions": "Tijdschriftabonnementen migreren",
+  "@settings_accountMigration_step2_migrateMagazineSubscriptions": {},
+  "settings_accountMigration_step2_migrateMagazineBlocks": "Magazijn blocks migreren",
+  "@settings_accountMigration_step2_migrateMagazineBlocks": {},
+  "settings_accountMigration_step2_migrateUserFollows": "Migreer gebruiker volgers",
+  "@settings_accountMigration_step2_migrateUserFollows": {},
+  "settings_accountMigration_step3": "Bevestig datamigratie",
+  "@settings_accountMigration_step3": {},
+  "settings_accountReset_foundXItems": "{count} items gevonden",
+  "@settings_accountReset_foundXItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settings_accountReset_completeXItems": "{current}/{total} items compleet",
+  "@settings_accountReset_completeXItems": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  }
 }
