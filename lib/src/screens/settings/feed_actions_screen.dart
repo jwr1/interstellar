@@ -113,68 +113,48 @@ class FeedActionsSettingsScreen extends StatelessWidget {
                 ac.selectedProfileValue.copyWith(enableSwipeActions: newValue)),
           ),
           ListTileSelect(
-            title: '${l(context).settings_swipeAction} 0',
+            title: l(context).settings_swipeActionLeftShort,
             icon: Symbols.comment_rounded,
             selectionMenu: swipeActionSelect(context),
-            value: ac.profile.swipeActions[0],
-            oldValue: ac.selectedProfileValue.swipeActions?[0],
-            onChange: (newValue) {
-              var newActions = List<SwipeAction>.from(
-                  ac.selectedProfileValue.swipeActions?? ac.profile.swipeActions);
-              newActions[0] = newValue;
-              ac.updateProfile(
-                ac.selectedProfileValue
-                    .copyWith(swipeActions: newActions),
-              );
-            },
+            value: ac.profile.swipeActionLeftShort,
+            oldValue: ac.selectedProfileValue.swipeActionLeftShort,
+            onChange: (newValue) => ac.updateProfile(
+              ac.selectedProfileValue
+                  .copyWith(swipeActionLeftShort: newValue)
+            ),
           ),
           ListTileSelect(
-            title: '${l(context).settings_swipeAction} 1',
+            title: l(context).settings_swipeActionLeftLong,
             icon: Symbols.comment_rounded,
             selectionMenu: swipeActionSelect(context),
-            value: ac.profile.swipeActions[1],
-            oldValue: ac.selectedProfileValue.swipeActions?[1],
-            onChange: (newValue) {
-              var newActions = List<SwipeAction>.from(
-                  ac.selectedProfileValue.swipeActions?? ac.profile.swipeActions);
-              newActions[1] = newValue;
-              ac.updateProfile(
-                ac.selectedProfileValue
-                    .copyWith(swipeActions: newActions),
-              );
-            },
+            value: ac.profile.swipeActionLeftLong,
+            oldValue: ac.selectedProfileValue.swipeActionLeftLong,
+            onChange: (newValue) => ac.updateProfile(
+              ac.selectedProfileValue
+                  .copyWith(swipeActionLeftLong: newValue)
+            ),
           ),
           ListTileSelect(
-            title: '${l(context).settings_swipeAction} 2',
+            title: l(context).settings_swipeActionRightShort,
             icon: Symbols.comment_rounded,
             selectionMenu: swipeActionSelect(context),
-            value: ac.profile.swipeActions[2],
-            oldValue: ac.selectedProfileValue.swipeActions?[2],
-            onChange: (newValue) {
-              var newActions = List<SwipeAction>.from(
-                  ac.selectedProfileValue.swipeActions?? ac.profile.swipeActions);
-              newActions[2] = newValue;
-              ac.updateProfile(
-                ac.selectedProfileValue
-                    .copyWith(swipeActions: newActions),
-              );
-            },
+            value: ac.profile.swipeActionRightShort,
+            oldValue: ac.selectedProfileValue.swipeActionRightShort,
+            onChange: (newValue) => ac.updateProfile(
+              ac.selectedProfileValue
+                  .copyWith(swipeActionRightShort: newValue)
+            ),
           ),
           ListTileSelect(
-            title: '${l(context).settings_swipeAction} 3',
+            title: l(context).settings_swipeActionRightLong,
             icon: Symbols.comment_rounded,
             selectionMenu: swipeActionSelect(context),
-            value: ac.profile.swipeActions[3],
-            oldValue: ac.selectedProfileValue.swipeActions?[3],
-            onChange: (newValue) {
-              var newActions = List<SwipeAction>.from(
-                  ac.selectedProfileValue.swipeActions?? ac.profile.swipeActions);
-              newActions[3] = newValue;
-              ac.updateProfile(
-                ac.selectedProfileValue
-                    .copyWith(swipeActions: newActions),
-              );
-            },
+            value: ac.profile.swipeActionRightLong,
+            oldValue: ac.selectedProfileValue.swipeActionRightLong,
+            onChange: (newValue) => ac.updateProfile(
+              ac.selectedProfileValue
+                  .copyWith(swipeActionRightLong: newValue)
+            ),
           ),
           ListTile(
             title: Column(

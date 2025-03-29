@@ -554,9 +554,12 @@ class _ContentItemState extends State<ContentItem> {
 
       double actionThreshold = context.watch<AppController>().profile.swipeActionThreshold;
 
-      List<ActionItem> actions = context.watch<AppController>().profile.swipeActions.map((swipeAction) {
-        return getSwipeAction(swipeAction);
-      }).toList();
+      List<ActionItem> actions = [
+        getSwipeAction(context.watch<AppController>().profile.swipeActionLeftShort),
+        getSwipeAction(context.watch<AppController>().profile.swipeActionLeftLong),
+        getSwipeAction(context.watch<AppController>().profile.swipeActionRightShort),
+        getSwipeAction(context.watch<AppController>().profile.swipeActionRightLong),
+      ];
 
       return Wrapper(
         shouldWrap: context.watch<AppController>().profile.enableSwipeActions,
@@ -934,6 +937,7 @@ class _ContentItemState extends State<ContentItem> {
                                   _replyTextController!,
                                   originInstance: null,
                                   draftController: replyDraftController,
+                                  autoFocus: true,
                                 ),
                                 const SizedBox(height: 10),
                                 Row(

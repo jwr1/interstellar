@@ -56,7 +56,10 @@ class ProfileRequired with _$ProfileRequired {
     required ActionLocationWithTabs feedActionSetView,
     // Swipe Actions
     required bool enableSwipeActions,
-    required List<SwipeAction> swipeActions,
+    required SwipeAction swipeActionLeftShort,
+    required SwipeAction swipeActionLeftLong,
+    required SwipeAction swipeActionRightShort,
+    required SwipeAction swipeActionRightLong,
     required double swipeActionThreshold,
     // Filter list activations
     required Map<String, bool> filterLists,
@@ -123,7 +126,10 @@ class ProfileRequired with _$ProfileRequired {
         feedActionSetView:
             profile?.feedActionSetView ?? defaultProfile.feedActionSetView,
         enableSwipeActions: profile?.enableSwipeActions ?? defaultProfile.enableSwipeActions,
-        swipeActions: profile?.swipeActions ?? defaultProfile.swipeActions,
+        swipeActionLeftShort: profile?.swipeActionLeftShort ?? defaultProfile.swipeActionLeftShort,
+        swipeActionLeftLong: profile?.swipeActionLeftLong ?? defaultProfile.swipeActionLeftLong,
+        swipeActionRightShort: profile?.swipeActionRightShort ?? defaultProfile.swipeActionRightShort,
+        swipeActionRightLong: profile?.swipeActionRightLong ?? defaultProfile.swipeActionRightLong,
         swipeActionThreshold: profile?.swipeActionThreshold ?? defaultProfile.swipeActionThreshold,
         filterLists: profile?.filterLists ?? defaultProfile.filterLists,
       );
@@ -160,12 +166,10 @@ class ProfileRequired with _$ProfileRequired {
     feedActionSetSort: ActionLocation.appBar,
     feedActionSetView: ActionLocationWithTabs.appBar,
     enableSwipeActions: false,
-    swipeActions: [
-      SwipeAction.upvote,
-      SwipeAction.boost,
-      SwipeAction.downvote,
-      SwipeAction.bookmark,
-    ],
+    swipeActionLeftShort: SwipeAction.upvote,
+    swipeActionLeftLong: SwipeAction.boost,
+    swipeActionRightShort: SwipeAction.bookmark,
+    swipeActionRightLong: SwipeAction.reply,
     swipeActionThreshold: 0.20,
     filterLists: {},
   );
@@ -213,7 +217,10 @@ class ProfileOptional with _$ProfileOptional {
     required ActionLocation? feedActionSetSort,
     required ActionLocationWithTabs? feedActionSetView,
     required bool? enableSwipeActions,
-    required List<SwipeAction>? swipeActions,
+    required SwipeAction? swipeActionLeftShort,
+    required SwipeAction? swipeActionLeftLong,
+    required SwipeAction? swipeActionRightShort,
+    required SwipeAction? swipeActionRightLong,
     required double? swipeActionThreshold,
     // Filter list activations
     required Map<String, bool>? filterLists,
@@ -254,7 +261,10 @@ class ProfileOptional with _$ProfileOptional {
     feedActionSetSort: null,
     feedActionSetView: null,
     enableSwipeActions: null,
-    swipeActions: null,
+    swipeActionLeftShort: null,
+    swipeActionLeftLong: null,
+    swipeActionRightShort: null,
+    swipeActionRightLong: null,
     swipeActionThreshold: null,
     filterLists: null,
   );
@@ -306,8 +316,16 @@ class ProfileOptional with _$ProfileOptional {
       feedActionSetSort: other.feedActionSetSort ?? this.feedActionSetSort,
       feedActionSetView: other.feedActionSetView ?? this.feedActionSetView,
       enableSwipeActions: other.enableSwipeActions ?? this.enableSwipeActions,
-      swipeActions: other.swipeActions ?? this.swipeActions,
-      swipeActionThreshold: other.swipeActionThreshold ?? this.swipeActionThreshold,
+      swipeActionLeftShort:
+          other.swipeActionLeftShort ?? this.swipeActionLeftShort,
+      swipeActionLeftLong:
+          other.swipeActionLeftLong ?? this.swipeActionLeftLong,
+      swipeActionRightShort:
+          other.swipeActionRightShort ?? this.swipeActionRightShort,
+      swipeActionRightLong:
+          other.swipeActionRightLong ?? this.swipeActionRightLong,
+      swipeActionThreshold:
+          other.swipeActionThreshold ?? this.swipeActionThreshold,
       filterLists: filterLists != null && other.filterLists != null
           ? {
               ...filterLists!,
