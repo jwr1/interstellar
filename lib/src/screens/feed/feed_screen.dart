@@ -825,7 +825,7 @@ class _FeedScreenBodyState extends State<FeedScreenBody>
             if ((post.title != null && filterList.hasMatch(post.title!)) ||
                 (post.body != null && filterList.hasMatch(post.body!))) {
               if (filterList.showWithWarning) {
-                if (!_filterListWarnings.containsKey(post.id)) {
+                if (!_filterListWarnings.containsKey((post.type, post.id))) {
                   _filterListWarnings[(post.type, post.id)] = {};
                 }
 
@@ -941,7 +941,7 @@ class _FeedScreenBodyState extends State<FeedScreenBody>
                                   body,
                                 );
                           }),
-                          filterListWarnings: _filterListWarnings[item.id],
+                          filterListWarnings: _filterListWarnings[(item.type, item.id)],
                           userCanModerate: widget.userCanModerate,
                         ),
                       ),
@@ -981,7 +981,7 @@ class _FeedScreenBodyState extends State<FeedScreenBody>
                                 body,
                               );
                         }),
-                        filterListWarnings: _filterListWarnings[item.id],
+                        filterListWarnings: _filterListWarnings[(item.type, item.id)],
                         userCanModerate: widget.userCanModerate,
                       ),
                     ),
