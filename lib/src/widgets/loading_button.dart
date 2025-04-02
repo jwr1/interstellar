@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:haptic_feedback/haptic_feedback.dart';
 import 'package:interstellar/src/controller/controller.dart';
 import 'package:provider/provider.dart';
 
@@ -56,9 +55,9 @@ class _LoadingFilledButtonState extends State<LoadingFilledButton> {
               setState(() => _isLoading = true);
               try {
                 await widget.onPressed!();
-                if (widget.uesHaptics) ac.vibrate(HapticsType.success);
+                if (widget.uesHaptics) ac.vibrate(HapticsType.selection);
               } catch (e) {
-                if (widget.uesHaptics) ac.vibrate(HapticsType.warning);
+                if (widget.uesHaptics) ac.vibrate(HapticsType.heavy);
                 rethrow;
               } finally {
                 if (mounted) setState(() => _isLoading = false);

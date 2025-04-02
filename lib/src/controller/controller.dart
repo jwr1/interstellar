@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:haptic_feedback/haptic_feedback.dart';
 import 'package:http/http.dart' as http;
 import 'package:interstellar/src/api/api.dart';
 import 'package:interstellar/src/api/client.dart';
@@ -18,6 +18,14 @@ import 'package:sembast/sembast_io.dart';
 import 'package:unifiedpush/constants.dart';
 import 'package:unifiedpush/unifiedpush.dart';
 import 'package:webpush_encryption/webpush_encryption.dart';
+
+enum HapticsType {
+  light,
+  medium,
+  heavy,
+  selection,
+  vibrate,
+}
 
 class AppController with ChangeNotifier {
   final _mainStore = StoreRef.main();
@@ -541,6 +549,24 @@ class AppController with ChangeNotifier {
   }
 
   Future<void> vibrate(HapticsType type) async {
-    if (profile.hapticFeedback) Haptics.vibrate(type);
+    if (!profile.hapticFeedback) return;
+
+    switch (type) {
+      case HapticsType.light:
+        HapticFeedback.lightImpact();
+        break;
+      case HapticsType.medium:
+        HapticFeedback.mediumImpact();
+        break;
+      case HapticsType.heavy:
+        HapticFeedback.heavyImpact();
+        break;
+      case HapticsType.selection:
+        HapticFeedback.selectionClick();
+        break;
+      case HapticsType.vibrate:
+        HapticFeedback.vibrate();
+        break;
+    }
   }
 }
