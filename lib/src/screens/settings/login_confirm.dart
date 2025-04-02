@@ -64,6 +64,7 @@ class _LoginConfirmScreenState extends State<LoginConfirmScreen> {
                   label: l(context).usernameOrEmail,
                   keyboardType: TextInputType.emailAddress,
                   onChanged: (_) => setState(() {}),
+                  autofillHints: [AutofillHints.username, AutofillHints.email],
                 ),
                 const SizedBox(height: 12),
                 TextEditor(
@@ -71,6 +72,7 @@ class _LoginConfirmScreenState extends State<LoginConfirmScreen> {
                   label: l(context).password,
                   keyboardType: TextInputType.visiblePassword,
                   onChanged: (_) => setState(() {}),
+                  autofillHints: [AutofillHints.password],
                 ),
                 if (widget.software == ServerSoftware.lemmy) ...[
                   const SizedBox(height: 12),
