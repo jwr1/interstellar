@@ -608,11 +608,13 @@ SelectionMenu<FeedSource> feedFilterSelect(BuildContext context) =>
           title: l(context).filter_all,
           icon: Symbols.newspaper_rounded,
         ),
-        SelectionMenuItem(
-          value: FeedSource.local,
-          title: l(context).filter_local,
-          icon: Symbols.home_pin_rounded,
-        ),
+        // TODO: Remove once federation filter is added to mbin api.
+        if (context.read<AppController>().serverSoftware != ServerSoftware.mbin)
+          SelectionMenuItem(
+            value: FeedSource.local,
+            title: l(context).filter_local,
+            icon: Symbols.home_pin_rounded,
+          ),
       ],
     );
 
