@@ -222,7 +222,14 @@ class APIUsers {
         return null;
 
       case ServerSoftware.piefed:
-        throw UnimplementedError();
+        const path = '/user/save_user_settings';
+
+        final response = await client.put(
+          path,
+          body: {'bio': about},
+        );
+
+        return null;
     }
   }
 
