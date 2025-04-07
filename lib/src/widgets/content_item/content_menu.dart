@@ -32,9 +32,8 @@ void showContentMenu(
               children: [
                 Padding(
                   padding: const EdgeInsets.only(top: 8, bottom: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
+                  child: LayoutBuilder(builder: (context, constraints) {
+                    final votingWidgets = [
                       if (widget.boosts != null)
                         Row(
                           children: [
@@ -73,19 +72,51 @@ void showContentMenu(
                             ),
                             Text(intFormat(widget.downVotes!)),
                           ]
-                        ),
-                      if ((ac.serverSoftware == ServerSoftware.mbin &&
-                          widget.contentTypeName != l(context).comment) ||
-                          ac.serverSoftware == ServerSoftware.piefed)
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                          child: NotificationControlSegment(
-                            widget.notificationControlStatus!,
-                            widget.onNotificationControlStatusChange!,
+                        )
+                    ];
+
+                    return constraints.maxWidth < 400
+                      ? Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: votingWidgets,
                           ),
-                        ),
-                    ],
-                  ),
+                          if (widget.notificationControlStatus != null &&
+                              widget.onNotificationControlStatusChange != null &&
+                              ((ac.serverSoftware == ServerSoftware.mbin &&
+                                  widget.contentTypeName != l(context).comment) ||
+                                  ac.serverSoftware == ServerSoftware.piefed))
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                NotificationControlSegment(
+                                  widget.notificationControlStatus!,
+                                  widget.onNotificationControlStatusChange!,
+                                ),
+                            ],
+                          )
+                        ],
+                      )
+                      : Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ...votingWidgets,
+                          if (widget.notificationControlStatus != null &&
+                              widget.onNotificationControlStatusChange != null &&
+                              ((ac.serverSoftware == ServerSoftware.mbin &&
+                                  widget.contentTypeName != l(context).comment) ||
+                                  ac.serverSoftware == ServerSoftware.piefed))
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                              child: NotificationControlSegment(
+                                widget.notificationControlStatus!,
+                                widget.onNotificationControlStatusChange!,
+                              ),
+                            )
+                        ],
+                      );
+                  }),
                 ),
                 ListTile(
                   title: Text(l(context).openInBrowser),
