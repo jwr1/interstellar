@@ -8,6 +8,7 @@ class TextEditor extends StatelessWidget {
   final void Function(String)? onChanged;
   final bool? enabled;
   final int? maxLength;
+  final List<String>? autofillHints;
 
   const TextEditor(
     this.controller, {
@@ -17,6 +18,7 @@ class TextEditor extends StatelessWidget {
     this.onChanged,
     this.enabled,
     this.maxLength,
+    this.autofillHints,
     super.key,
   });
 
@@ -33,6 +35,7 @@ class TextEditor extends StatelessWidget {
       onChanged: onChanged,
       enabled: enabled,
       maxLength: maxLength,
+      autofillHints: autofillHints,
     );
   }
 }

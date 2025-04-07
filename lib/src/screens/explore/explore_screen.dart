@@ -310,7 +310,7 @@ class _ExploreScreenState extends State<ExploreScreen>
                                             .read<AppController>()
                                             .serverSoftware ==
                                         ServerSoftware.mbin &&
-                                    type != ExploreType.all
+                                    type == ExploreType.all
                                 ? null
                                 : () async {
                                     final result = await exploreFilterSelection(

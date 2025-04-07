@@ -1,6 +1,5 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
-import 'package:haptic_feedback/haptic_feedback.dart';
 
 import 'package:interstellar/src/widgets/actions.dart';
 import 'package:provider/provider.dart';
