@@ -377,14 +377,16 @@ class _FeedScreenState extends State<FeedScreen>
                         details: widget.details,
                         userCanModerate: userCanModerate,
                       ),
-                      FeedScreenBody(
-                        key: _getFeedKey(4),
-                        source: FeedSource.local,
-                        sort: sort,
-                        view: _view,
-                        details: widget.details,
-                        userCanModerate: userCanModerate,
-                      ),
+                      // TODO: Remove once federation filter is added to mbin api.
+                      if (context.read<AppController>().serverSoftware != ServerSoftware.mbin)
+                        FeedScreenBody(
+                          key: _getFeedKey(4),
+                          source: FeedSource.local,
+                          sort: sort,
+                          view: _view,
+                          details: widget.details,
+                          userCanModerate: userCanModerate,
+                        ),
                     ],
                   String name when name == feedActionSetView(context).name => [
                       FeedScreenBody(
