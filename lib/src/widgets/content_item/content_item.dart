@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:interstellar/src/controller/controller.dart';
+import 'package:interstellar/src/controller/server.dart';
 import 'package:interstellar/src/models/image.dart';
 import 'package:interstellar/src/models/notification.dart';
-import 'package:interstellar/src/screens/explore/domain_screen.dart';
 import 'package:interstellar/src/screens/explore/magazine_screen.dart';
 import 'package:interstellar/src/screens/explore/user_screen.dart';
-import 'package:interstellar/src/utils/share.dart';
 import 'package:interstellar/src/utils/utils.dart';
+import 'package:interstellar/src/widgets/content_item/content_menu.dart';
 import 'package:interstellar/src/widgets/content_item/swipe_item.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/image.dart';
@@ -16,8 +15,6 @@ import 'package:interstellar/src/widgets/markdown/drafts_controller.dart';
 import 'package:interstellar/src/widgets/markdown/markdown.dart';
 import 'package:interstellar/src/widgets/markdown/markdown_editor.dart';
 import 'package:interstellar/src/widgets/notification_control_segment.dart';
-import 'package:interstellar/src/widgets/open_webpage.dart';
-import 'package:interstellar/src/widgets/report_content.dart';
 import 'package:interstellar/src/widgets/user_status_icons.dart';
 import 'package:interstellar/src/widgets/video.dart';
 import 'package:interstellar/src/widgets/wrapper.dart';
@@ -171,9 +168,6 @@ class _ContentItemState extends State<ContentItem> {
   TextEditingController? _replyTextController;
   TextEditingController? _editTextController;
 
-  bool _bookmarkMenuWasOpened = false;
-  List<String>? _possibleBookmarkLists;
-
   @override
   Widget build(BuildContext context) {
     final isVideo =
@@ -302,216 +296,17 @@ class _ContentItemState extends State<ContentItem> {
               ? TextOverflow.ellipsis
               : null;
 
-      final menuWidget = MenuAnchor(
-        builder:
-            (BuildContext context, MenuController controller, Widget? child) {
-          return IconButton(
-            icon: const Icon(Symbols.more_vert_rounded),
-            onPressed: () {
-              if (controller.isOpen) {
-                controller.close();
-              } else {
-                controller.open();
-              }
-            },
+      final menuWidget = IconButton(
+        icon: const Icon(Symbols.more_vert_rounded),
+        onPressed: () {
+          showContentMenu(
+              context,
+              widget,
+              onEdit: () => setState(() {
+                _editTextController = TextEditingController(text: widget.body);
+              })
           );
         },
-        menuChildren: [
-          if (widget.openLinkUri != null)
-            MenuItemButton(
-              onPressed: () => openWebpagePrimary(context, widget.openLinkUri!),
-              child: Text(l(context).openInBrowser),
-            ),
-          if (widget.openLinkUri != null)
-            MenuItemButton(
-              onPressed: () => shareUri(widget.openLinkUri!),
-              child: Text(l(context).share),
-            ),
-          if (widget.domain != null)
-            MenuItemButton(
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => DomainScreen(
-                    widget.domainIdOnClick!,
-                  ),
-                ),
-              ),
-              child: Text(l(context).moreFrom(widget.domain!)),
-            ),
-          if (widget.activeBookmarkLists != null &&
-              widget.loadPossibleBookmarkLists != null &&
-              widget.onAddBookmarkToList != null &&
-              widget.onRemoveBookmarkFromList != null)
-            SubmenuButton(
-              menuChildren: [
-                ...{
-                  ...widget.activeBookmarkLists!,
-                  if (_possibleBookmarkLists != null)
-                    ..._possibleBookmarkLists!,
-                }.map(
-                  (listName) => widget.activeBookmarkLists!.contains(listName)
-                      ? MenuItemButton(
-                          onPressed: () =>
-                              widget.onRemoveBookmarkFromList!(listName),
-                          leadingIcon: const Icon(
-                            Symbols.bookmark_rounded,
-                            fill: 1,
-                          ),
-                          child:
-                              Text(l(context).bookmark_removeFromX(listName)),
-                        )
-                      : MenuItemButton(
-                          onPressed: () =>
-                              widget.onAddBookmarkToList!(listName),
-                          leadingIcon: const Icon(
-                            Symbols.bookmark_rounded,
-                            fill: 0,
-                          ),
-                          child: Text(l(context).bookmark_addToX(listName)),
-                        ),
-                ),
-                if (_possibleBookmarkLists == null)
-                  const Padding(
-                    padding: EdgeInsets.all(8),
-                    child: SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(),
-                    ),
-                  ),
-              ],
-              onOpen: () async {
-                if (_bookmarkMenuWasOpened) return;
-                _bookmarkMenuWasOpened = true;
-
-                final possibleBookmarkLists =
-                    await widget.loadPossibleBookmarkLists!();
-                setState(() {
-                  _possibleBookmarkLists = possibleBookmarkLists;
-                });
-              },
-              child: Text(l(context).bookmark),
-            ),
-          if (widget.onReport != null)
-            MenuItemButton(
-              onPressed: () async {
-                final reportReason =
-                    await reportContent(context, widget.contentTypeName);
-
-                if (reportReason != null) {
-                  await widget.onReport!(reportReason);
-                }
-              },
-              child: Text(l(context).report),
-            ),
-          if (widget.onEdit != null)
-            MenuItemButton(
-              onPressed: () => setState(() {
-                _editTextController = TextEditingController(text: widget.body);
-              }),
-              child: Text(l(context).edit),
-            ),
-          if (widget.onDelete != null)
-            MenuItemButton(
-              onPressed: () {
-                // Don't show dialog if askBeforeDeleting is disabled
-                if (!context.read<AppController>().profile.askBeforeDeleting) {
-                  widget.onDelete!();
-                  return;
-                }
-
-                showDialog<bool>(
-                  context: context,
-                  builder: (BuildContext context) => AlertDialog(
-                    title: Text(l(context).deleteX(widget.contentTypeName)),
-                    actions: <Widget>[
-                      OutlinedButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: Text(l(context).cancel),
-                      ),
-                      LoadingFilledButton(
-                        onPressed: () async {
-                          await widget.onDelete!();
-
-                          if (!mounted) return;
-                          Navigator.pop(context);
-                        },
-                        label: Text(l(context).delete),
-                        uesHaptics: true,
-                      ),
-                    ],
-                    actionsOverflowAlignment: OverflowBarAlignment.center,
-                    actionsOverflowButtonSpacing: 8,
-                    actionsOverflowDirection: VerticalDirection.up,
-                  ),
-                );
-              },
-              child: Text(l(context).delete),
-            ),
-          if (widget.body != null)
-            MenuItemButton(
-              child: Text(l(context).viewSource),
-              onPressed: () => showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text(l(context).viewSource),
-                  content: Card.outlined(
-                    margin: EdgeInsets.zero,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: SelectableText(widget.body!),
-                    ),
-                  ),
-                  actions: [
-                    OutlinedButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: Text(l(context).close),
-                    ),
-                    LoadingTonalButton(
-                      onPressed: () async {
-                        await Clipboard.setData(
-                          ClipboardData(text: widget.body!),
-                        );
-
-                        if (!mounted) return;
-                        Navigator.pop(context);
-                      },
-                      label: Text(l(context).copy),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          if (widget.onModeratePin != null ||
-              widget.onModerateMarkNSFW != null ||
-              widget.onModerateDelete != null ||
-              widget.onModerateBan != null)
-            SubmenuButton(
-              menuChildren: [
-                if (widget.onModeratePin != null)
-                  MenuItemButton(
-                    onPressed: widget.onModeratePin,
-                    child: Text(l(context).pin),
-                  ),
-                if (widget.onModerateMarkNSFW != null)
-                  MenuItemButton(
-                    onPressed: widget.onModerateMarkNSFW,
-                    child: Text(l(context).notSafeForWork_mark),
-                  ),
-                if (widget.onModerateDelete != null)
-                  MenuItemButton(
-                    onPressed: widget.onModerateDelete,
-                    child: Text(l(context).delete),
-                  ),
-                if (widget.onModerateBan != null)
-                  MenuItemButton(
-                    onPressed: widget.onModerateBan,
-                    child: Text(l(context).banUser),
-                  ),
-              ],
-              child: Text(l(context).moderate),
-            ),
-        ],
       );
 
       return Wrapper(
@@ -831,7 +626,9 @@ class _ContentItemState extends State<ContentItem> {
                           ),
                           if (!widget.isPreview &&
                               widget.notificationControlStatus != null &&
-                              widget.onNotificationControlStatusChange != null)
+                              widget.onNotificationControlStatusChange != null &&
+                              context.read<AppController>().serverSoftware !=
+                                  ServerSoftware.piefed)
                             Padding(
                               padding: const EdgeInsets.only(top: 8),
                               child: Row(
