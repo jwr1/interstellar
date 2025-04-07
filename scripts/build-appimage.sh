@@ -14,6 +14,7 @@ URUNTIME_URL="https://github.com/VHSgunzo/uruntime/releases/latest/download/urun
 cp -r build/linux/*/release/bundle/. "$BUILD_DIR"/AppDir
 cp linux/appimage/interstellar.desktop "$BUILD_DIR"/AppDir
 cp assets/icons/logo.png "$BUILD_DIR"/AppDir/interstellar.png
+ln -s interstellar.png "$BUILD_DIR"/AppDir/.DirIcon
 
 # Add libraries
 wget "$LIB4BN_URL" -O "$BUILD_DIR"/lib4bin
@@ -42,7 +43,7 @@ mkdir -p dist
 "$BUILD_DIR"/uruntime --appimage-mkdwarfs -f \
 	--set-owner 0 --set-group 0 \
 	--no-history --no-create-timestamp \
-	--compression zstd:level=22 -S25 -B16 \
+	--compression zstd:level=22 -S26 -B32 \
 	--header "$BUILD_DIR"/uruntime \
 	-i "$BUILD_DIR"/AppDir -o dist/interstellar-linux-$ARCH.AppImage
 
