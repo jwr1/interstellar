@@ -7,6 +7,7 @@ import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/ban_dialog.dart';
 import 'package:interstellar/src/widgets/content_item/content_item.dart';
+import 'package:interstellar/src/widgets/content_item/content_menu.dart';
 import 'package:provider/provider.dart';
 
 class PostItem extends StatelessWidget {
@@ -18,8 +19,11 @@ class PostItem extends StatelessWidget {
     this.onReply,
     this.onEdit,
     this.onDelete,
+    this.onTap,
     this.filterListWarnings,
     this.userCanModerate = false,
+    this.isTopLevel = false,
+    this.isCompact = false,
   });
 
   final PostModel item;
@@ -27,9 +31,12 @@ class PostItem extends StatelessWidget {
   final Future<void> Function(String)? onReply;
   final Future<void> Function(String)? onEdit;
   final Future<void> Function()? onDelete;
+  final void Function()? onTap;
   final bool isPreview;
   final Set<String>? filterListWarnings;
   final bool userCanModerate;
+  final bool isTopLevel;
+  final bool isCompact;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +44,7 @@ class PostItem extends StatelessWidget {
 
     final canModerate = userCanModerate || (item.canAuthUserModerate ?? false);
 
-    return ContentItem(
+    final contentItem = ContentItem(
       originInstance: getNameHost(context, item.user.name),
       title: item.title,
       image: item.image,
@@ -206,6 +213,16 @@ class PostItem extends StatelessWidget {
 
               onUpdate(item.copyWith(notificationControlStatus: newStatus));
             },
+      isCompact: isCompact,
     );
+
+    return !isTopLevel
+        ? contentItem
+        : InkWell(
+          onTap: onTap,
+          onLongPress: () => showContentMenu(context, contentItem),
+          onSecondaryTap: () => showContentMenu(context, contentItem),
+          child: contentItem,
+        );
   }
 }

@@ -8,7 +8,6 @@ import 'package:interstellar/src/models/post.dart';
 import 'package:interstellar/src/screens/feed/create_screen.dart';
 import 'package:interstellar/src/screens/feed/nav_drawer.dart';
 import 'package:interstellar/src/screens/feed/post_item.dart';
-import 'package:interstellar/src/screens/feed/post_item_compact.dart';
 import 'package:interstellar/src/screens/feed/post_page.dart';
 import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/actions.dart';
@@ -377,14 +376,16 @@ class _FeedScreenState extends State<FeedScreen>
                         details: widget.details,
                         userCanModerate: userCanModerate,
                       ),
-                      FeedScreenBody(
-                        key: _getFeedKey(4),
-                        source: FeedSource.local,
-                        sort: sort,
-                        view: _view,
-                        details: widget.details,
-                        userCanModerate: userCanModerate,
-                      ),
+                      // TODO: Remove once federation filter is added to mbin api.
+                      if (context.read<AppController>().serverSoftware != ServerSoftware.mbin)
+                        FeedScreenBody(
+                          key: _getFeedKey(4),
+                          source: FeedSource.local,
+                          sort: sort,
+                          view: _view,
+                          details: widget.details,
+                          userCanModerate: userCanModerate,
+                        ),
                     ],
                   String name when name == feedActionSetView(context).name => [
                       FeedScreenBody(
@@ -921,31 +922,31 @@ class _FeedScreenBodyState extends State<FeedScreenBody>
                   return Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      InkWell(
+                      PostItem(
+                        item,
+                        (newValue) {
+                          var newList = _pagingController.itemList;
+                          newList![index] = newValue;
+                          setState(() {
+                            _pagingController.itemList = newList;
+                          });
+                        },
+                        onReply: whenLoggedIn(context, (body) async {
+                          await context
+                              .read<AppController>()
+                              .api
+                              .comments
+                              .create(
+                                item.type,
+                                item.id,
+                                body,
+                              );
+                        }),
                         onTap: onPostTap,
-                        child: PostItemCompact(
-                          item,
-                          (newValue) {
-                            var newList = _pagingController.itemList;
-                            newList![index] = newValue;
-                            setState(() {
-                              _pagingController.itemList = newList;
-                            });
-                          },
-                          onReply: whenLoggedIn(context, (body) async {
-                            await context
-                                .read<AppController>()
-                                .api
-                                .comments
-                                .create(
-                                  item.type,
-                                  item.id,
-                                  body,
-                                );
-                          }),
-                          filterListWarnings: _filterListWarnings[(item.type, item.id)],
-                          userCanModerate: widget.userCanModerate,
-                        ),
+                        filterListWarnings: _filterListWarnings[(item.type, item.id)],
+                        userCanModerate: widget.userCanModerate,
+                        isTopLevel: true,
+                        isCompact: true,
                       ),
                       const Divider(
                         height: 1,
@@ -960,33 +961,32 @@ class _FeedScreenBodyState extends State<FeedScreenBody>
                       vertical: 8,
                     ),
                     clipBehavior: Clip.antiAlias,
-                    child: InkWell(
+                    child: PostItem(
+                      item,
+                      (newValue) {
+                        var newList = _pagingController.itemList;
+                        newList![index] = newValue;
+                        setState(() {
+                          _pagingController.itemList = newList;
+                        });
+                      },
                       onTap: onPostTap,
-                      child: PostItem(
-                        item,
-                        (newValue) {
-                          var newList = _pagingController.itemList;
-                          newList![index] = newValue;
-                          setState(() {
-                            _pagingController.itemList = newList;
-                          });
-                        },
-                        isPreview: true,
-                        onReply: whenLoggedIn(context, (body) async {
-                          await context
-                              .read<AppController>()
-                              .api
-                              .comments
-                              .create(
-                                item.type,
-                                item.id,
-                                body,
-                              );
-                        }),
-                        filterListWarnings: _filterListWarnings[(item.type, item.id)],
-                        userCanModerate: widget.userCanModerate,
-                      ),
-                    ),
+                      isPreview: true,
+                      onReply: whenLoggedIn(context, (body) async {
+                        await context
+                            .read<AppController>()
+                            .api
+                            .comments
+                            .create(
+                              item.type,
+                              item.id,
+                              body,
+                            );
+                      }),
+                      filterListWarnings: _filterListWarnings[(item.type, item.id)],
+                      userCanModerate: widget.userCanModerate,
+                      isTopLevel: true,
+                    )
                   );
                 }
               },
