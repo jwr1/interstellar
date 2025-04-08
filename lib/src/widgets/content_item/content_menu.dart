@@ -38,7 +38,10 @@ void showContentMenu(
                         Row(
                           children: [
                             IconButton(
-                              onPressed: widget.onBoost,
+                              onPressed: () {
+                                widget.onBoost!();
+                                Navigator.pop(context);
+                              },
                               icon: const Icon(Symbols.rocket_launch_rounded),
                               color: widget.isBoosted
                                   ? Colors.purple.shade400
@@ -51,7 +54,10 @@ void showContentMenu(
                         Row(
                           children: [
                             IconButton(
-                              onPressed: widget.onUpVote,
+                              onPressed: () {
+                                widget.onUpVote!();
+                                Navigator.pop(context);
+                              },
                               icon: const Icon(Symbols.arrow_upward_rounded),
                               color: widget.isUpVoted
                                   ? Colors.green.shade400
@@ -64,7 +70,10 @@ void showContentMenu(
                         Row(
                           children: [
                             IconButton(
-                              onPressed: widget.onDownVote,
+                              onPressed: () {
+                                widget.onDownVote!();
+                                Navigator.pop(context);
+                              },
                               icon: const Icon(Symbols.arrow_downward_rounded),
                               color: widget.isDownVoted
                                   ? Colors.red.shade400
@@ -111,7 +120,10 @@ void showContentMenu(
                               padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                               child: NotificationControlSegment(
                                 widget.notificationControlStatus!,
-                                widget.onNotificationControlStatusChange!,
+                                (status) async {
+                                  widget.onNotificationControlStatusChange!(status);
+                                  Navigator.pop(context);
+                                },
                               ),
                             )
                         ],
@@ -306,6 +318,7 @@ void showBookmarksMenu(BuildContext context, ContentItem widget) async {
                       onTap: () {
                         widget.onRemoveBookmarkFromList!(listName);
                         Navigator.pop(context);
+                        Navigator.pop(context);
                       },
                     )
                     : ListTile(
@@ -316,6 +329,7 @@ void showBookmarksMenu(BuildContext context, ContentItem widget) async {
                       ),
                       onTap: () {
                         widget.onAddBookmarkToList!(listName);
+                        Navigator.pop(context);
                         Navigator.pop(context);
                       }
                     )
@@ -349,19 +363,35 @@ void showModerateMenu(BuildContext context, ContentItem widget) {
               children: [
                 ListTile(
                   title: Text(l(context).pin),
-                  onTap: widget.onModeratePin,
+                  onTap: () {
+                    widget.onModeratePin!();
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
                 ),
                 ListTile(
                   title: Text(l(context).notSafeForWork_mark),
-                  onTap: widget.onModerateMarkNSFW,
+                  onTap: () {
+                    widget.onModerateMarkNSFW!();
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
                 ),
                 ListTile(
                   title: Text(l(context).delete),
-                  onTap: widget.onModerateDelete,
+                  onTap: () {
+                    widget.onModerateDelete!();
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
                 ),
                 ListTile(
                   title: Text(l(context).banUser),
-                  onTap: widget.onModerateBan,
+                  onTap: () {
+                    widget.onModerateBan!();
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
                 ),
               ]
             )
