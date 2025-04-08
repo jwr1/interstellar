@@ -388,9 +388,9 @@ void showModerateMenu(BuildContext context, ContentItem widget) {
                 ListTile(
                   title: Text(l(context).banUser),
                   onTap: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
                     widget.onModerateBan!();
-                    Navigator.pop(context);
-                    Navigator.pop(context);
                   },
                 ),
               ]

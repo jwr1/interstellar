@@ -22,6 +22,7 @@ class PostItem extends StatelessWidget {
     this.onTap,
     this.filterListWarnings,
     this.userCanModerate = false,
+    this.isTopLevel = false,
     this.isCompact = false,
   });
 
@@ -34,6 +35,7 @@ class PostItem extends StatelessWidget {
   final bool isPreview;
   final Set<String>? filterListWarnings;
   final bool userCanModerate;
+  final bool isTopLevel;
   final bool isCompact;
 
   @override
@@ -214,10 +216,13 @@ class PostItem extends StatelessWidget {
       isCompact: isCompact,
     );
 
-    return InkWell(
-      onTap: onTap,
-      onLongPress: () => showContentMenu(context, contentItem),
-      child: contentItem,
-    );
+    return !isTopLevel
+        ? contentItem
+        : InkWell(
+          onTap: onTap,
+          onLongPress: () => showContentMenu(context, contentItem),
+          onSecondaryTap: () => showContentMenu(context, contentItem),
+          child: contentItem,
+        );
   }
 }

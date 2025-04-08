@@ -945,6 +945,7 @@ class _FeedScreenBodyState extends State<FeedScreenBody>
                         onTap: onPostTap,
                         filterListWarnings: _filterListWarnings[(item.type, item.id)],
                         userCanModerate: widget.userCanModerate,
+                        isTopLevel: true,
                         isCompact: true,
                       ),
                       const Divider(
@@ -984,6 +985,7 @@ class _FeedScreenBodyState extends State<FeedScreenBody>
                       }),
                       filterListWarnings: _filterListWarnings[(item.type, item.id)],
                       userCanModerate: widget.userCanModerate,
+                      isTopLevel: true,
                     )
                   );
                 }
