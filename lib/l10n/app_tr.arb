@@ -1,0 +1,588 @@
+{
+  "interstellar": "Interstellar",
+  "feed": "Akış",
+  "explore": "Keşfet",
+  "accounts": "Hesaplar",
+  "addAccount": "Hesap Ekle",
+  "removeAccount": "Hesabı Kaldır",
+  "instanceHost": "Sunucu Ana Bilgisayarı",
+  "recommendedInstances": "Önerilen Sunucular",
+  "usernameOrEmail": "Kullanıcı Adı veya E-posta",
+  "password": "Şifre",
+  "login": "Giriş Yap",
+  "totpToken": "TOTP Jetonu",
+  "cancel": "İptal",
+  "continue_": "Devam Et",
+  "remove": "Kaldır",
+  "guest": "Misafir",
+  "botAccount": "Bot Hesabı",
+  "newUser": "Yeni Kullanıcı",
+  "cakeDay": "Kutlama Günü",
+  "filter": "Filtrele",
+  "filter_all": "Tümü",
+  "filter_allResults": "Tüm sonuçlar",
+  "filter_subscribed": "Abonelikler",
+  "filter_moderated": "Yönetilenler",
+  "filter_favorited": "Favoriler",
+  "filter_blocked": "Engellenenler",
+  "filter_local": "Yerel",
+  "filter_followed": "Takip Edilenler",
+  "filter_followers": "Takipçiler",
+  "filter_new": "Yeni",
+  "filter_read": "Okundu",
+  "sort": "Sırala",
+  "sortComments": "Yorumları sırala",
+  "sort_active": "Aktif",
+  "sort_hot": "Popüler",
+  "sort_newest": "En Yeni",
+  "sort_oldest": "En Eski",
+  "sort_top": "En İyi",
+  "sort_commented": "Yorum Yapılan",
+  "sort_topDay": "Günün En İyisi",
+  "sort_topWeek": "Haftanın En İyisi",
+  "sort_topMonth": "Ayın En İyisi",
+  "sort_topYear": "Yılın En İyisi",
+  "sort_newComments": "Yeni Yorumlar",
+  "sort_topHour": "Saatin En İyisi",
+  "sort_topSixHour": "6 Saatin En İyisi",
+  "sort_topTwelveHour": "12 Saatin En İyisi",
+  "sort_topThreeMonths": "3 Ayın En İyisi",
+  "sort_topSixMonths": "6 Ayın En İyisi",
+  "sort_topNineMonths": "9 Ayın En İyisi",
+  "sort_controversial": "Tartışmalı",
+  "sort_scaled": "Ölçeklendirilmiş",
+  "feedView": "Akış Görünümü",
+  "threads": "Konular",
+  "microblog": "Mikroblog",
+  "timeline": "Zaman Çizelgesi",
+  "stars": "Yıldızlar",
+  "stars_empty": "Burası boş görünüyor; bir dergiyi veya kullanıcıyı yıldızla burada görünmesini sağlayın.",
+  "subscriptions": "Abonelikler",
+  "subscriptions_magazine": "Dergi Abonelikleri",
+  "subscriptions_magazine_all": "Tüm Dergi Abonelikleri",
+  "subscriptions_user": "Kullanıcı Takip Edilenler",
+  "subscriptions_user_all": "Tüm Kullanıcı Takip Edilenler",
+  "subscriptions_domain": "Alan Abonelikleri",
+  "subscriptions_domain_all": "Tüm Alan Abonelikleri",
+  "post": "Gönderi",
+  "postDeleted": "Gönderi Silindi",
+  "comment": "Yorum",
+  "comments": "Yorumlar",
+  "commentDeleted": "Yorum Silindi",
+  "commentBy": "{username} tarafından yorum",
+  "@commentBy": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+  "comment_openOriginalPost": "Orijinal Gönderiyi Aç",
+  "comment_openRoot": "Kökü Aç",
+  "comment_openParent": "Üst Yorumu Aç",
+  "openReplies": "{count} {count, plural, =1{yanıtı} other{yanıtı}} aç",
+  "@openReplies": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "search": "Ara",
+  "magazines": "Dergiler",
+  "people": "Kişiler",
+  "domains": "Alanlar",
+  "openInBrowser": "Tarayıcıda Aç",
+  "modsOf": "{magazine} Moderatörleri",
+  "@modsOf": {
+    "placeholders": {
+      "magazine": {
+        "type": "String"
+      }
+    }
+  },
+  "viewMods": "Moderatörleri Görüntüle",
+  "modPanel": "Moderatör Paneli",
+  "ownerPanel": "Sahip Paneli",
+  "copy": "Kopyala",
+  "copied": "Kopyalandı",
+  "share": "Paylaş",
+  "postingRestricted": "Gönderme moderatörlerle sınırlı",
+  "owner": "Sahip",
+  "account": "Hesap",
+  "account_switch": "Hesap değiştir",
+  "account_overview": "Genel Bakış",
+  "account_edit": "Hesap profilini düzenle",
+  "account_settings_about": "Hakkında",
+  "account_settings_settings": "Ayarlar",
+  "account_settings_showNSFW": "NSFW Göster",
+  "account_settings_blurNSFW": "NSFW'yi Bulanıklaştır",
+  "account_settings_showReadPosts": "Okunan gönderileri göster",
+  "account_settings_showSubscribedUsers": "Abonelik yapılan kullanıcıları göster",
+  "account_settings_showSubscribedMagazines": "Abonelik yapılan dergileri göster",
+  "account_settings_showSubscribedDomains": "Abonelik yapılan alanları göster",
+  "account_settings_showProfileSubscriptions": "Profil aboneliklerini herkese açık göster",
+  "account_settings_showProfileFollowings": "Profil takiplerini herkese açık göster",
+  "account_settings_notifyOnThread": "Abonelik yapılan dergilerde yeni konular hakkında bildir",
+  "account_settings_notifyOnMicroblog": "Abonelik yapılan dergilerde yeni mikrobloglar hakkında bildir",
+  "account_settings_notifyOnThreadReply": "Yazılan konulardaki yorumlar hakkında bildir",
+  "account_settings_notifyOnThreadCommentReply": "Konu yorum yanıtları hakkında bildir",
+  "account_settings_notifyOnMicroblogReply": "Yazılan mikrobloglardaki yorumlar hakkında bildir",
+  "account_settings_notifyOnMicroblogCommentReply": "Mikroblog yorum yanıtları hakkında bildir",
+  "notifications": "Bildirimler",
+  "notifications_readAll": "Tümünü okundu olarak işaretle",
+  "notifications_registerPush": "Anlık bildirimlere kaydol",
+  "notifications_unregisterPush": "Anlık bildirimlerden kaydı sil",
+  "messages": "Mesajlar",
+  "reply": "Yanıtla",
+  "send": "Gönder",
+  "notLoggedIn": "Giriş yapılmadı",
+  "settings": "Ayarlar",
+  "settings_behavior": "Davranış",
+  "settings_display": "Görüntü",
+  "settings_feedActions": "Akış Eylemleri",
+  "settings_feedDefaults": "Akış Varsayılanları",
+  "settings_notifications": "Bildirimler",
+  "settings_notificationsForX": "{account} için bildirimler",
+  "@settings_notificationsForX": {
+    "placeholders": {
+      "account": {
+        "type": "String"
+      }
+    }
+  },
+  "settings_about": "Hakkında",
+  "settings_defaultPostLanguage": "Varsayılan gönderi dili",
+  "settings_useAccountLanguageFilter": "Hesap dil filtresini kullan",
+  "settings_useAccountLanguageFilter_help": "Lütfen dikkat: dil filtreleri yalnızca \"Tümü\" ve keşfet akışlarına uygulanır",
+  "settings_customLanguageFilter": "Özel dil filtresi",
+  "settings_disableTabSwiping": "Sekme kaydırmayı devre dışı bırak",
+  "settings_askBeforeUnsubscribing": "Abonelikten çıkmadan önce sor",
+  "settings_askBeforeDeleting": "Silmeden önce sor",
+  "settings_autoPlayVideos": "Videoları otomatik oynat",
+  "settings_hapticFeedback": "Dokunsal geri bildirim",
+  "settings_themeMode": "Tema modu",
+  "settings_themeMode_system": "Sistem",
+  "settings_themeMode_light": "Açık",
+  "settings_themeMode_dark": "Koyu",
+  "settings_enableTrueBlack": "Gerçek siyahı etkinleştir",
+  "settings_enableTrueBlack_help": "AMOLED ekranlarda güç tasarrufu sağlayabilir",
+  "settings_compactMode": "Kompakt mod",
+  "settings_alwaysShowInstance": "Her zaman sunucuyu göster",
+  "settings_alwaysShowInstance_help": "Etkinleştirildiğinde, bir kullanıcının veya derginin sunucusu her zaman kullanıcı adından sonra görüntülenir",
+  "settings_coverMediaMarkedSensitive": "Hassas olarak işaretlenmiş medyayı gizle",
+  "settings_fullImageSizeThreads": "Konular için tam resim boyutu",
+  "settings_fullImageSizeMicroblogs": "Mikrobloglar için tam resim boyutu",
+  "settings_reduceAnimationMotion": "Animasyonlardaki hareketi azalt",
+  "settings_aboutInterstellar": "Interstellar Hakkında",
+  "settings_donate": "Bağış Yap",
+  "settings_contribute": "Katkıda Bulun",
+  "settings_translate": "Çevir",
+  "settings_reportIssue": "Sorun Bildir",
+  "settings_matrixSpace": "Matrix Alanı",
+  "settings_mbinMagazine": "Mbin Dergisi",
+  "settings_mbinConfigsMagazine": "Yapılandırma Paylaşım Dergisi",
+  "settings_colorScheme": "Renk Şeması",
+  "settings_colorScheme_dynamic": "Dinamik (Sistem)",
+  "settings_colorScheme_blue": "Mavi",
+  "settings_colorScheme_indigo": "Çivit Mavisi",
+  "settings_colorScheme_hippieBlue": "Hippi Mavisi",
+  "settings_colorScheme_aquaBlue": "Aqua Mavisi",
+  "settings_colorScheme_brandBlue": "Marka Mavisi",
+  "settings_colorScheme_deepBlue": "Derin Mavi",
+  "settings_colorScheme_sakura": "Sakura",
+  "settings_colorScheme_mandyRed": "Mandy Kırmızısı",
+  "settings_colorScheme_red": "Kırmızı",
+  "settings_colorScheme_redWine": "Şarap Kırmızısı",
+  "settings_colorScheme_purpleBrown": "Mor Kahverengi",
+  "settings_colorScheme_green": "Yeşil",
+  "settings_colorScheme_money": "Para",
+  "settings_colorScheme_jungle": "Orman",
+  "settings_colorScheme_greyLaw": "Gri Hukuk",
+  "settings_colorScheme_wasabi": "Wasabi",
+  "settings_colorScheme_gold": "Altın",
+  "settings_colorScheme_mango": "Mango",
+  "settings_colorScheme_amber": "Kehribar",
+  "settings_colorScheme_vesuviusBurn": "Vezüv Yanığı",
+  "settings_colorScheme_deepPurple": "Derin Mor",
+  "settings_colorScheme_ebonyClay": "Abanoz Kil",
+  "settings_colorScheme_barossa": "Barossa",
+  "settings_colorScheme_shark": "Köpekbalığı",
+  "settings_colorScheme_bigStone": "Büyük Taş",
+  "settings_colorScheme_damask": "Damasko",
+  "settings_colorScheme_bahamaBlue": "Bahama Mavisi",
+  "settings_colorScheme_mallardGreen": "Ördek Yeşili",
+  "settings_colorScheme_espresso": "Espresso",
+  "settings_colorScheme_outerSpace": "Dış Uzay",
+  "settings_colorScheme_blueWhale": "Mavi Balina",
+  "settings_colorScheme_sanJuanBlue": "San Juan Mavisi",
+  "settings_colorScheme_rosewood": "Gül Ağacı",
+  "settings_colorScheme_blumineBlue": "Blumine Mavisi",
+  "settings_colorScheme_flutterDash": "Flutter Dash",
+  "settings_feedDefaults_view": "Görünüm",
+  "settings_feedDefaults_filter": "Filtre",
+  "settings_feedDefaults_threadsSort": "Konu Sıralama",
+  "settings_feedDefaults_microblogSort": "Mikroblog Sıralama",
+  "settings_feedDefaults_exploreSort": "Keşfet Sıralama",
+  "settings_feedDefaults_commentSort": "Yorum Sıralama",
+  "settings_swipeActionLeftShort": "Kısa Sol Kaydırma",
+  "settings_swipeActionLeftLong": "Uzun Sol Kaydırma",
+  "settings_swipeActionRightShort": "Kısa Sağ Kaydırma",
+  "settings_swipeActionRightLong": "Uzun Sağ Kaydırma",
+  "settings_enableSwipeActions": "Kaydırma Eylemlerini Etkinleştir",
+  "settings_swipeThreshold": "Kaydırma Eylem Eşiği",
+  "profiles": "Profiller",
+  "profile_switch": "Profil değiştir",
+  "profile_main": "Ana profil",
+  "profile_new": "Yeni profil",
+  "profile_edit": "Profili düzenle",
+  "profile_import": "Profil içe aktar",
+  "profile_delete": "Profili sil",
+  "profile_name": "İsim",
+  "profile_setAsMain": "Ana profil olarak ayarla",
+  "profile_setAsMain_help": "Ana profil, diğer tüm profillerin temelini oluşturur. Burada yapılan değişiklikler, belirli bir ayar geçersiz kılınmadıkça tüm profillere uygulanır.",
+  "profile_autoSelect": "Uygulama başlangıcında otomatik seç",
+  "profile_autoSelectAccount": "Profil etkinleştirildiğinde hesabı otomatik seç",
+  "profile_autoSelectAccount_none": "Hiçbiri",
+  "profile_about_title": "Profiller hakkında",
+  "profile_about_body": "Profiller, ayar gruplarını kolayca kaydetmenize ve bunlar arasında geçiş yapmanıza olanak tanır. **Ana profil** varsayılan olarak kullanılır, diğer profiller ise gerektiğinde belirli ayarları geçersiz kılar.\n\n## Profilleri Değiştirme\n\nBir profili değiştirmek için ona geçin ve ayarları düzenleyin. Şu anda, geçersiz kılınmış bir ayarı varsayılana sıfırlamak için profili silip yeniden oluşturmanız gerekir.\n\n## Dahil Edilen Ayarlar\n\n- Davranış ayarları\n- Görüntü ayarları\n- Akış eylemleri\n- Akış varsayılanları\n- Filtre listesi etkinleştirme durumu\n\n## Ek Seçenekler\n\n- Hangi profilin ana profil olduğunu değiştirme\n- Başlangıçta belirli bir profili otomatik etkinleştirme\n- Belirli bir profil etkinleştirildiğinde otomatik olarak bir hesaba geçiş yapma\n  \n\nProfilleri kullanmıyorsanız, ana profilde kalın; uygulama her zamanki gibi çalışacaktır.",
+  "unsupportedSoftware": "{host} desteklenmeyen bir yazılım kullanıyor",
+  "@unsupportedSoftware": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "originalPoster_short": "OP",
+  "originalPoster_long": "Orijinal Gönderici",
+  "pin": "Sabitle",
+  "pinnedInMagazine": "Dergide Sabitlendi",
+  "notSafeForWork_short": "NSFW",
+  "notSafeForWork_long": "İş İçin Güvenli Değil",
+  "notSafeForWork_mark": "NSFW olarak işaretle",
+  "originalContent_short": "OC",
+  "originalContent_long": "Orijinal İçerik",
+  "createdAt": "{datetime} tarihinde oluşturuldu",
+  "@createdAt": {
+    "placeholders": {
+      "datetime": {
+        "type": "String"
+      }
+    }
+  },
+  "editedAt": "{datetime} tarihinde düzenlendi",
+  "@editedAt": {
+    "placeholders": {
+      "datetime": {
+        "type": "String"
+      }
+    }
+  },
+  "expand": "Genişlet",
+  "collapse": "Daralt",
+  "moreFrom": "{name} kullanıcısından daha fazla",
+  "@moreFrom": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "report": "Bildir",
+  "reportX": "{name} bildir",
+  "@reportX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "edit": "Düzenle",
+  "delete": "Sil",
+  "deleteX": "{name} sil",
+  "@deleteX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "viewSource": "Kaynağı Görüntüle",
+  "close": "Kapat",
+  "banUser": "Kullanıcıyı Yasakla",
+  "banUserX": "{user} kullanıcısını yasakla",
+  "@banUserX": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      }
+    }
+  },
+  "banUser_help": "{user} kullanıcısını {magazine} dergisinden yasaklamak üzeresiniz.",
+  "@banUser_help": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      },
+      "magazine": {
+        "type": "String"
+      }
+    }
+  },
+  "reason": "Sebep",
+  "moderate": "Yönet",
+  "submit": "Gönder",
+  "alternativeSources": "Alternatif Kaynaklar",
+  "markdownEditor_heading": "Başlık",
+  "markdownEditor_bold": "Kalın",
+  "markdownEditor_italic": "İtalik",
+  "markdownEditor_strikethrough": "Üstü Çizili",
+  "markdownEditor_inlineCode": "Satır İçi Kod",
+  "markdownEditor_codeBlock": "Kod Bloğu",
+  "markdownEditor_link": "Bağlantı",
+  "markdownEditor_image": "Resim",
+  "markdownEditor_subscript": "Alt Simge",
+  "markdownEditor_superscript": "Üst Simge",
+  "markdownEditor_quote": "Alıntı",
+  "markdownEditor_horizontalRule": "Yatay Çizgi",
+  "markdownEditor_bulletedList": "Madde İşaretli Liste",
+  "markdownEditor_numberedList": "Numaralı Liste",
+  "markdownEditor_spoiler": "Spoiler",
+  "markdownEditor_edit": "Düzenle",
+  "markdownEditor_preview": "Önizleme",
+  "markdownEditor_drafts": "Taslaklar",
+  "markdownEditor_drafts_manuallySave": "Manuel Kaydet",
+  "markdownEditor_drafts_discardAll": "Tümünü Sil",
+  "markdownEditor_drafts_apply": "Taslağı Uygula",
+  "markdownEditor_drafts_applyAndKeep": "Uygula ve Sakla",
+  "markdownEditor_drafts_applyAndDiscard": "Uygula ve Sil",
+  "markdownEditor_drafts_savedAutomatically": "Otomatik kaydedildi",
+  "markdownEditor_drafts_savedManually": "Manuel kaydedildi",
+  "uploadFromGallery": "Galeriden yükle",
+  "uploadFromCamera": "Kameradan yükle",
+  "openLink": "Bağlantıyı aç",
+  "webView": "Web Görünümü",
+  "browser": "Tarayıcı",
+  "continueInBrowser": "Tarayıcıda devam et",
+  "continueInBrowser_manual": "Tarayıcı başlatılmazsa, kopyalamak için tıklayın ve manuel olarak yapıştırın",
+  "redirectReceivedMessage": "Yönlendirme alındı. Bu sekmeyi şimdi kapatıp uygulamaya dönebilirsiniz.",
+  "create_text": "Metin",
+  "create_image": "Resim",
+  "create_link": "Bağlantı",
+  "create_link_invalid": "URL geçersiz",
+  "create_microblog": "Mikroblog",
+  "create_magazine": "Dergi",
+  "microblog_magazineHelperText": "Mikrobloglar için varsayılan olarak 'rastgele' dergiye ayarlanır, çünkü Mbin kategorize edilmemiş mikroblogları burada saklar.",
+  "selectMagazine": "Bir dergi seçin ...",
+  "title": "Başlık",
+  "body": "Gövde",
+  "link": "Bağlantı",
+  "tags": "Etiketler",
+  "tags_hint": "Boşluklarla ayırın",
+  "language": "Dil",
+  "magazine": "Dergi",
+  "action_setLocation": "Eylem Konumunu Ayarla",
+  "action_hide": "Gizle",
+  "action_appBar": "Uygulama Çubuğu",
+  "action_fabTap": "FAB Dokunma",
+  "action_fabHold": "FAB Basılı Tutma",
+  "action_fabMenu": "FAB Menüsü",
+  "action_tabs": "Sekmeler",
+  "action_backToTop": "Başa Dön",
+  "action_createNew": "Yeni oluştur ...",
+  "action_expandFABMenu": "FAB Menüsünü Genişlet",
+  "action_refresh": "Yenile",
+  "action_setFilter": "Filtre Ayarla",
+  "action_setSort": "Sıralama Ayarla",
+  "action_setView": "Görünüm Ayarla",
+  "action_upvote": "Olumlu Oy",
+  "action_downvote": "Olumsuz Oy",
+  "action_boost": "Destekle",
+  "action_bookmark": "Yer İşareti",
+  "action_reply": "Yanıtla",
+  "action_moderatePin": "Gönderiyi Sabitle",
+  "action_moderateMarkNSFW": "NSFW Olarak İşaretle",
+  "action_moderateDelete": "Moderatör Silme",
+  "action_moderateBan": "Yasakla",
+  "save": "Kaydet",
+  "saveChanges": "Değişiklikleri kaydet",
+  "searchTheFediverse": "Fediverse'de ara",
+  "languages": "Diller",
+  "systemLanguage": "Sistem dili",
+  "settings_appLanguage": "Uygulama dili",
+  "pointsX": "{num} Puan",
+  "@pointsX": {
+    "placeholders": {
+      "num": {
+        "type": "int"
+      }
+    }
+  },
+  "commentsX": "{num} Yorum",
+  "@commentsX": {
+    "placeholders": {
+      "num": {
+        "type": "int"
+      }
+    }
+  },
+  "filterLists": "Filtre listeleri",
+  "filterList_activateFilter": "Filtreyi Etkinleştir",
+  "filterList_new": "Yeni filtre listesi",
+  "filterList_edit": "Filtre listesini düzenle",
+  "filterList_import": "Filtre listesini içe aktar",
+  "filterList_delete": "Filtre listesini sil",
+  "filterList_name": "İsim",
+  "filterList_phrases": "İfadeler",
+  "filterList_addPhrase": "İfade ekle",
+  "filterList_showWithContentWarning": "İçerik uyarısıyla göster",
+  "filterList_matchMode": "Eşleşme modu",
+  "filterList_matchMode_simple": "Basit",
+  "filterList_matchMode_simple_help": "İfadeyi tam anlamıyla eşleştirir. Örneğin, \"app\" ifadesi \"app\", \"apps\", \"application\", \"yapp\" vb. ile eşleşir.",
+  "filterList_matchMode_wholeWords": "Tam kelimeler",
+  "filterList_matchMode_wholeWords_help": "Yalnızca kelimenin her iki ucunda kelime sınırı varsa eşleşir; yani ifade tam bir kelime olmalı ve bir kelimenin ortasında olamaz. Örneğin, \"app\" ifadesi \"app\" ile eşleşir, ancak \"apps\", \"application\", \"yapp\" ile eşleşmez.",
+  "filterList_matchMode_regex": "Düzenli ifade",
+  "filterList_matchMode_regex_help": "Belirtilen düzenli ifadeyle bulunan içeriği eşleştirir; bu ifade, ifadeden türetilir.",
+  "filterList_caseSensitive": "Büyük-küçük harf duyarlı",
+  "filterList_caseSensitive_help": "Etkinleştirildiğinde, yalnızca ifadeyle aynı büyük-küçük harf düzenine sahip içerikle eşleşir.",
+  "filterListWarningX": "Uyarı: Bu gönderi şu filtre listeleriyle eşleşti: {lists}",
+  "@filterListWarningX": {
+    "placeholders": {
+      "lists": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmUnsubscribe": "Abonelikten çıkmak üzeresiniz. Devam etmek istiyor musunuz?",
+  "confirmUnfollow": "Takibi bırakmak üzeresiniz. Devam etmek istiyor musunuz?",
+  "altText": "Alternatif metin",
+  "settings_dataUtilities": "BETA: Veri yardımcı araçları",
+  "settings_accountMigration": "Hesap geçişi",
+  "settings_accountMigration_help": "Abonelikleri, takipleri ve engellemeleri hesaplar arasında taşıyın",
+  "settings_accountMigration_step1": "Kaynak ve hedef hesapları seçin",
+  "settings_accountMigration_step1_source": "Kaynak hesap",
+  "settings_accountMigration_step1_destination": "Hedef hesap",
+  "settings_accountMigration_step2": "Geçiş kategorilerini etkinleştir/devre dışı bırak",
+  "settings_accountMigration_step2_migrateMagazineSubscriptions": "Dergi aboneliklerini taşı",
+  "settings_accountMigration_step2_migrateMagazineBlocks": "Dergi engellemelerini taşı",
+  "settings_accountMigration_step2_migrateUserFollows": "Kullanıcı takiplerini taşı",
+  "settings_accountMigration_step2_migrateUserBlocks": "Kullanıcı engellemelerini taşı",
+  "settings_accountMigration_step3": "Veri geçişini onayla",
+  "settings_accountMigration_readingFromSource": "Kaynak hesaptan okunuyor",
+  "settings_accountMigration_writingFromSource": "Hedef hesaba yazılıyor",
+  "settings_accountMigration_complete": "Hesap geçişi tamamlandı!",
+  "settings_accountMigration_failed": "Hesap geçişi bir hata nedeniyle başarısız oldu",
+  "settings_accountMigration_foundXItems": "{count} öğe bulundu",
+  "@settings_accountMigration_foundXItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settings_accountMigration_completeXItems": "{current}/{total} öğe tamamlandı",
+  "@settings_accountMigration_completeXItems": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "settings_accountMigration_failedXItems": "{current}/{total} öğe başarısız oldu",
+  "@settings_accountMigration_failedXItems": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "settings_accountReset": "Hesap sıfırlama",
+  "settings_accountReset_help": "Bir hesaptan abonelikleri, takipleri ve engellemeleri kaldırın",
+  "settings_accountReset_step1": "Hesap seçin",
+  "settings_accountReset_step2": "Sıfırlama kategorilerini etkinleştir/devre dışı bırak",
+  "settings_accountReset_step2_resetMagazineSubscriptions": "Dergi aboneliklerini sıfırla",
+  "settings_accountReset_step2_resetMagazineBlocks": "Dergi engellemelerini sıfırla",
+  "settings_accountReset_step2_resetUserFollows": "Kullanıcı takiplerini sıfırla",
+  "settings_accountReset_step2_resetUserBlocks": "Kullanıcı engellemelerini sıfırla",
+  "settings_accountReset_step3": "Veri sıfırlamasını onayla",
+  "settings_accountReset_readingFromAccount": "Hesaptan okunuyor",
+  "settings_accountReset_removingItems": "Öğeler kaldırılıyor",
+  "settings_accountReset_complete": "Hesap sıfırlama tamamlandı!",
+  "settings_accountReset_failed": "Hesap sıfırlama bir hata nedeniyle başarısız oldu",
+  "settings_accountReset_foundXItems": "{count} öğe bulundu",
+  "@settings_accountReset_foundXItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settings_accountReset_completeXItems": "{current}/{total} öğe tamamlandı",
+  "@settings_accountReset_completeXItems": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "settings_accountReset_failedXItems": "{current}/{total} öğe başarısız oldu",
+  "@settings_accountReset_failedXItems": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationControlStatus_default": "Varsayılan bildirimler",
+  "notificationControlStatus_muted": "Sessize alınmış bildirimler",
+  "notificationControlStatus_loud": "Yüksek sesli bildirimler",
+  "bookmark": "Yer İşareti",
+  "bookmark_addToX": "{name} listesine ekle",
+  "bookmark_removeFromX": "{name} listesinden çıkar",
+  "configShare": "Yapılandırmayı paylaş",
+  "configShare_profile_title": "Interstellar profil",
+  "configShare_profile_info": "{count} ayarı değiştirir",
+  "@configShare_profile_info": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "configShare_filterList_title": "Interstellar filtre listesi",
+  "configShare_filterList_info": "{count} ifade içerir",
+  "@configShare_filterList_info": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "configShare_created": "{date} tarihinde {version} ile oluşturuldu",
+  "@configShare_created": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "errorPage_firstPage": "Bir şeyler ters gitti",
+  "errorPage_firstPage_button": "Tekrar Dene",
+  "errorPage_newPage": "Bir şeyler ters gitti. Tekrar denemek için dokunun."
+}
