@@ -446,7 +446,7 @@
   "filterList_matchMode_regex_help": "Will match content that is found by the specified regular expression, which is derived from the phrase.",
   "filterList_caseSensitive": "Case sensitive",
   "filterList_caseSensitive_help": "When enabled, will only match content with the same casing as the phrase.",
-  "filterListWarningX": "Warning: this post was matched with the following filter lists: {lists}",
+  "filterListWarningX": "Filter list matches: {lists}",
   "@filterListWarningX": {
     "placeholders": {
       "lists": {
