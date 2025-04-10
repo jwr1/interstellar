@@ -16,6 +16,14 @@ enum FeedSort {
   oldest,
   top,
   commented,
+  // mbin specific
+  commentedThreeHour,
+  commentedSixHour,
+  commentedTwelveHour,
+  commentedDay,
+  commentedWeek,
+  commentedMonth,
+  commentedYear,
 
   //lemmy specific
   topDay,
@@ -24,6 +32,7 @@ enum FeedSort {
   topYear,
   newComments,
   topHour,
+  topThreeHour,
   topSixHour,
   topTwelveHour,
   topThreeMonths,

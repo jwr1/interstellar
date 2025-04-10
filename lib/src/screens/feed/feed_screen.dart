@@ -490,49 +490,54 @@ SelectionMenu<FeedSort> feedSortSelect(BuildContext context) {
                 if (isLemmy)
                   SelectionMenuItem(
                     value: FeedSort.topHour,
-                    title: 'Top 1 Hours',
+                    title: l(context).sort_top_1h,
+                  ),
+                if (!isLemmy && !isPiefed)
+                  SelectionMenuItem(
+                    value: FeedSort.topThreeHour,
+                    title: l(context).sort_top_3h,
                   ),
                 SelectionMenuItem(
                   value: FeedSort.topSixHour,
-                  title: 'Top 6 Hours',
+                  title: l(context).sort_top_6h,
                 ),
                 SelectionMenuItem(
                   value: FeedSort.topTwelveHour,
-                  title: 'Top 12 Hours',
+                  title: l(context).sort_top_12h,
                 ),
                 SelectionMenuItem(
                   value: FeedSort.topDay,
-                  title: 'Top 1 Day',
+                  title: l(context).sort_top_1d,
                 ),
                 SelectionMenuItem(
                   value: FeedSort.topWeek,
-                  title: 'Top 1 Week',
+                  title: l(context).sort_top_1w,
                 ),
                 SelectionMenuItem(
                   value: FeedSort.topMonth,
-                  title: 'Top 1 Month',
+                  title: l(context).sort_top_1m,
                 ),
                 if (isLemmy) ...[
                   SelectionMenuItem(
                     value: FeedSort.topThreeMonths,
-                    title: 'Top 3 Months',
+                    title: l(context).sort_top_3m,
                   ),
                   SelectionMenuItem(
                     value: FeedSort.topSixMonths,
-                    title: 'Top 6 Months',
+                    title: l(context).sort_top_6m,
                   ),
                   SelectionMenuItem(
                     value: FeedSort.topNineMonths,
-                    title: 'Top 9 Months',
+                    title: l(context).sort_top_9m,
                   ),
                 ],
                 SelectionMenuItem(
                   value: FeedSort.topYear,
-                  title: 'Top 1 Year',
+                  title: l(context).sort_top_1y,
                 ),
                 SelectionMenuItem(
                   value: FeedSort.top,
-                  title: 'Top All Time',
+                  title: l(context).sort_top_all,
                 ),
               ],
       ),
@@ -553,6 +558,42 @@ SelectionMenu<FeedSort> feedSortSelect(BuildContext context) {
           value: FeedSort.commented,
           title: l(context).sort_commented,
           icon: Symbols.chat_rounded,
+            subItems: isLemmy || isPiefed
+                ? null
+                : [
+                    SelectionMenuItem(
+                        value: FeedSort.commentedThreeHour,
+                        title: l(context).sort_commented_3h,
+                    ),
+                    SelectionMenuItem(
+                        value: FeedSort.commentedSixHour,
+                        title: l(context).sort_commented_6h,
+                    ),
+                    SelectionMenuItem(
+                        value: FeedSort.commentedTwelveHour,
+                        title: l(context).sort_commented_12h,
+                    ),
+                    SelectionMenuItem(
+                        value: FeedSort.commentedDay,
+                        title: l(context).sort_commented_1d,
+                    ),
+                    SelectionMenuItem(
+                        value: FeedSort.commentedWeek,
+                        title: l(context).sort_commented_1w,
+                    ),
+                    SelectionMenuItem(
+                        value: FeedSort.commentedMonth,
+                        title: l(context).sort_commented_1m,
+                    ),
+                    SelectionMenuItem(
+                        value: FeedSort.commentedYear,
+                        title: l(context).sort_commented_1y,
+                    ),
+                    SelectionMenuItem(
+                        value: FeedSort.commented,
+                        title: l(context).sort_commented_all,
+                    ),
+            ]
         ),
         SelectionMenuItem(
           value: FeedSort.oldest,
