@@ -80,9 +80,6 @@ class ContentItem extends StatefulWidget {
   final Future<void> Function()? onModerateDelete;
   final Future<void> Function()? onModerateBan;
 
-  final bool isCollapsed;
-  final void Function()? onCollapse;
-
   final String editDraftResourceId;
   final String replyDraftResourceId;
 
@@ -145,8 +142,6 @@ class ContentItem extends StatefulWidget {
     this.onModerateMarkNSFW,
     this.onModerateDelete,
     this.onModerateBan,
-    this.isCollapsed = false,
-    this.onCollapse,
     required this.editDraftResourceId,
     required this.replyDraftResourceId,
     this.filterListWarnings,
@@ -591,17 +586,6 @@ class _ContentItemState extends State<ContentItem> {
                                           TextEditingController();
                                     }),
                                   ),
-                                if (widget.onCollapse != null)
-                                  IconButton(
-                                      tooltip: widget.isCollapsed
-                                          ? l(context).expand
-                                          : l(context).collapse,
-                                      onPressed: widget.onCollapse,
-                                      icon: widget.isCollapsed
-                                          ? const Icon(
-                                              Symbols.expand_more_rounded)
-                                          : const Icon(
-                                              Symbols.expand_less_rounded)),
                               ];
 
                               return constrains.maxWidth < 300
