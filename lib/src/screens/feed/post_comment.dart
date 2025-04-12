@@ -11,6 +11,7 @@ import 'package:interstellar/src/utils/utils.dart';
 import 'package:interstellar/src/widgets/ban_dialog.dart';
 import 'package:interstellar/src/widgets/content_item/content_item.dart';
 import 'package:interstellar/src/widgets/content_item/content_menu.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 import 'package:interstellar/src/widgets/display_name.dart';
 import 'package:interstellar/src/widgets/user_status_icons.dart';
@@ -55,29 +56,46 @@ class _PostCommentState extends State<PostComment> {
     final canModerate =
         widget.userCanModerate || (widget.comment.canAuthUserModerate ?? false);
 
-    final Widget userWidget = Padding(
-      padding: const EdgeInsets.all(12),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Flexible(
-            child: DisplayName(
-              widget.comment.user.name,
-              icon: widget.comment.user.avatar,
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => UserScreen(
-                    widget.comment.user.id,
+    final Widget userWidget = Flexible(
+      child: Padding(
+        padding: const EdgeInsets.only(right: 10),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              child: DisplayName(
+                widget.comment.user.name,
+                icon: widget.comment.user.avatar,
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => UserScreen(
+                      widget.comment.user.id,
+                    ),
+                  ),
+                )
+              ),
+            ),
+            UserStatusIcons(
+              cakeDay: widget.comment.user.createdAt,
+              isBot: widget.comment.user.isBot,
+            ),
+            if (widget.opUserId == widget.comment.user.id)
+              Padding(
+                padding: const EdgeInsets.only(left: 5),
+                child: Tooltip(
+                  message: l(context).originalPoster_long,
+                  triggerMode: TooltipTriggerMode.tap,
+                  child: Text(
+                    l(context).originalPoster_short,
+                    style: const TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-          UserStatusIcons(
-            cakeDay: widget.comment.user.createdAt,
-            isBot: widget.comment.user.isBot,
-          ),
-        ],
+          ],
+        ),
       ),
     );
 
@@ -288,35 +306,58 @@ class _PostCommentState extends State<PostComment> {
                 },
     );
 
+    final menuWidget = IconButton(
+      icon: const Icon(Symbols.more_vert_rounded),
+      onPressed: () {
+        showContentMenu(
+            context,
+            contentItem,
+        );
+      },
+    );
+
     return Expandable(
       controller: _expandableController,
-      collapsed: InkWell(
-        onTap: widget.onClick ?? collapse,
-        onLongPress: () => showContentMenu(context, contentItem),
-        onSecondaryTap: () => showContentMenu(context, contentItem),
-        child: Card(
-          child: Row(
-            children: [
-              userWidget,
-              Padding(
-                padding:
-                const EdgeInsets.only(right: 10),
-                child: Tooltip(
-                  message: l(context).createdAt(
-                      dateTimeFormat(
-                          widget.comment.createdAt)) +
-                      (widget.comment.editedAt == null
-                          ? ''
-                          : '\n${l(context).editedAt(dateTimeFormat(widget.comment.editedAt!))}'),
-                  triggerMode: TooltipTriggerMode.tap,
-                  child: Text(
-                    dateDiffFormat(widget.comment.createdAt),
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w300),
+      collapsed: Card(
+        margin: const EdgeInsets.only(top: 8),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: widget.onClick ?? collapse,
+          onLongPress: () => showContentMenu(context, contentItem),
+          onSecondaryTap: () => showContentMenu(context, contentItem),
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(12, 0, 8, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      userWidget,
+                      Padding(
+                        padding:
+                        const EdgeInsets.only(right: 10),
+                        child: Tooltip(
+                          message: l(context).createdAt(
+                              dateTimeFormat(
+                                  widget.comment.createdAt)) +
+                              (widget.comment.editedAt == null
+                                  ? ''
+                                  : '\n${l(context).editedAt(dateTimeFormat(widget.comment.editedAt!))}'),
+                          triggerMode: TooltipTriggerMode.tap,
+                          child: Text(
+                            dateDiffFormat(widget.comment.createdAt),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w300),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-            ],
+                menuWidget
+              ],
+            )
           )
         )
       ),
