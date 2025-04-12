@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -eu
+set -eux
 
 export APPIMAGE_EXTRACT_AND_RUN=1
 export ARCH="$(uname -m)"
@@ -9,6 +9,7 @@ BUILD_DIR=$(mktemp -d)
 
 LIB4BN_URL="https://github.com/VHSgunzo/sharun/releases/latest/download/sharun-$ARCH-aio"
 URUNTIME_URL="https://github.com/VHSgunzo/uruntime/releases/latest/download/uruntime-appimage-dwarfs-$ARCH"
+UPINFO="gh-releases-zsync|$(echo "${GITHUB_REPOSITORY}" | tr '/' '|')|latest|*$ARCH.AppImage.zsync"
 
 # Prepare AppDir
 cp -r build/linux/*/release/bundle/. "$BUILD_DIR"/AppDir
@@ -29,7 +30,7 @@ ln -s ../../lib "$BUILD_DIR"/AppDir/shared/bin/lib
 echo '#!/bin/sh
 shift
 xdg-open "$@"
-' > "$BUILD_DIR"/AppDir/bin/gio-launch-desktop
+' >"$BUILD_DIR"/AppDir/bin/gio-launch-desktop
 chmod +x "$BUILD_DIR"/AppDir/bin/gio-launch-desktop
 
 # Prepare sharun
@@ -40,12 +41,17 @@ ln "$BUILD_DIR"/AppDir/sharun "$BUILD_DIR"/AppDir/AppRun
 wget "$URUNTIME_URL" -O "$BUILD_DIR"/uruntime
 chmod +x "$BUILD_DIR"/uruntime
 mkdir -p dist
+
+"$BUILD_DIR"/uruntime --appimage-addupdinfo "${UPINFO}"
+
 "$BUILD_DIR"/uruntime --appimage-mkdwarfs -f \
-	--set-owner 0 --set-group 0 \
-	--no-history --no-create-timestamp \
-	--compression zstd:level=22 -S26 -B32 \
-	--header "$BUILD_DIR"/uruntime \
-	-i "$BUILD_DIR"/AppDir -o dist/interstellar-linux-$ARCH.AppImage
+    --set-owner 0 --set-group 0 \
+    --no-history --no-create-timestamp \
+    --compression zstd:level=22 -S26 -B8 \
+    --header "$BUILD_DIR"/uruntime \
+    -i "$BUILD_DIR"/AppDir -o dist/interstellar-"$VERSION"-"$ARCH".AppImage
+
+zsyncmake dist/*.AppImage -u dist/*.AppImage -o "dist/interstellar-${VERSION}-${ARCH}.AppImage.zsync"
 
 # Cleanup
 rm -r "$BUILD_DIR"
