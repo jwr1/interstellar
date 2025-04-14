@@ -49,9 +49,9 @@ mkdir -p dist
     --no-history --no-create-timestamp \
     --compression zstd:level=22 -S26 -B8 \
     --header "$BUILD_DIR"/uruntime \
-    -i "$BUILD_DIR"/AppDir -o dist/interstellar-"$VERSION"-"$ARCH".AppImage
+    -i "$BUILD_DIR"/AppDir -o dist/interstellar-"$ARCH".AppImage
 
-zsyncmake dist/*.AppImage -u dist/*.AppImage -o "dist/interstellar-${VERSION}-${ARCH}.AppImage.zsync"
+zsyncmake dist/*.AppImage -u dist/*.AppImage -o "dist/interstellar-${ARCH}.AppImage.zsync"
 
 # Cleanup
 rm -r "$BUILD_DIR"

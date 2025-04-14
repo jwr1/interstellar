@@ -30,7 +30,7 @@ jobs:
           tag_name: v${{ inputs.version }}
           draft: true
 
-  build-android-windows:
+  create-build:
     needs: draft-release
     environment: production
     name: Create ${{ matrix.target }} build
@@ -38,6 +38,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        target: [android, linux-x86_64, linux-aarch64, windows-x86_64]
         include:
           - target: android
             target_os: android
@@ -45,12 +46,25 @@ jobs:
             build_flags: --split-per-abi
             build_path: build/app/outputs/flutter-apk
             runner: ubuntu-latest
+          - target: linux-x86_64
+            target_os: linux
+            target_arch: x86_64
+            build_target: linux
+            build_path: build/linux/x64/release/bundle
+            runner: ubuntu-24.04
+          - target: linux-aarch64
+            target_os: linux
+            target_arch: aarch64
+            build_target: linux
+            build_path: build/linux/arm64/release/bundle
+            runner: ubuntu-24.04-arm
           - target: windows-x86_64
             target_os: windows
             target_arch: x86_64
             build_target: windows
             build_path: build\windows\x64\runner\Release
             runner: windows-latest
+    container: ${{ matrix.target_os == 'linux' && 'ghcr.io/pkgforge-dev/archlinux:latest' || null }}
     steps:
       - name: Install android dependencies
         if: matrix.target_os == 'android'
@@ -59,6 +73,14 @@ jobs:
           java-version: "21"
           distribution: temurin
 
+      - name: Install linux dependencies
+        if: matrix.target_os == 'linux'
+        run: |
+          pacman -Syuq --needed --noconfirm --noprogressbar \
+            ninja gtk3 xz gcc mpv wget jq git which base-devel \
+            file zsync patchelf binutils strace mesa llvm \
+            xorg-server-xvfb cmake clang unzip
+
       - name: Install windows dependencies
         if: matrix.target_os == 'windows'
         uses: ilammy/setup-nasm@v1
@@ -66,13 +88,17 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          # Use master until Flutter action is fixed for arm (https://github.com/subosito/flutter-action/issues/345)
+          channel: ${{ matrix.target == 'linux-aarch64' && 'master' || 'stable' }}
           flutter-version: 3.29.0
 
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          persist-credentials: false
+
+      - name: git-config add safe directory
+        if: ${{ matrix.target_os == 'linux' }}
+        run: |
+          git config --global --add safe.directory $FLUTTER_ROOT
 
       - name: Set version
         run: |
@@ -118,91 +144,13 @@ jobs:
           mv $GITHUB_WORKSPACE/build/app/outputs/bundle/release/app-release.aab $GITHUB_WORKSPACE/dist/interstellar-android-googleplay.aab
         working-directory: ${{ matrix.build_path }}
 
-      - name: Compress build for windows
-        if: matrix.target_os == 'windows'
-        run: compress-archive -Path * -DestinationPath ${env:GITHUB_WORKSPACE}\dist\interstellar-${{ matrix.target }}.zip
-        working-directory: ${{ matrix.build_path }}
-
-      - name: Create setup exe for windows
-        if: matrix.target_os == 'windows'
-        uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
-        with:
-          path: scripts/build-windows-setup.iss
-          options: /O+
-        env:
-          INTERSTELLAR_VERSION: ${{ github.event.inputs.version }}
-          INTERSTELLAR_BUILD_PATH: ${{ github.workspace }}\${{ matrix.build_path }}
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: artifact-${{ matrix.target }}
-          retention-days: 7
-          path: dist/*
-
-  build-linux:
-    needs: draft-release
-    name: Create ${{ matrix.target }} build
-    runs-on: ${{ matrix.runner }}
-    environment: production
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - target: linux-x86_64
-            target_os: linux
-            target_arch: x86_64
-            build_target: linux
-            build_path: build/linux/x64/release/bundle
-            runner: ubuntu-24.04
-          - target: linux-aarch64
-            target_os: linux
-            target_arch: aarch64
-            build_target: linux
-            build_path: build/linux/arm64/release/bundle
-            runner: ubuntu-24.04-arm
-    container:
-      image: ghcr.io/pkgforge-dev/archlinux:latest
-    steps:
-      - name: Install linux dependencies
-        if: matrix.target_os == 'linux'
-        run: |
-          pacman -Syuq --needed --noconfirm --noprogressbar \
-            ninja gtk3 xz gcc mpv wget jq git which base-devel \
-            file zsync patchelf binutils strace mesa llvm \
-            xorg-server-xvfb cmake clang unzip
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          # Use master until Flutter action is fixed for arm (https://github.com/subosito/flutter-action/issues/345)
-          channel: ${{ matrix.target == 'linux-aarch64' && 'master' || 'stable' }}
-          flutter-version: 3.29.0
-
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-
-      - name: Set version
-        run: |
-          git config --global --add safe.directory $FLUTTER_ROOT
-          flutter pub global activate cider
-          cider version ${{ github.event.inputs.version }}+${{ github.event.inputs.build-number }}
-
-      - name: Build Flutter app
-        run: |
-          flutter pub run build_runner build
-          flutter build -v ${{ matrix.build_target }} ${{ matrix.build_flags }}
-
-      - name: Create dist directory
-        run: mkdir dist
-
       - name: Build tar.gz for linux
+        if: matrix.target_os == 'linux'
         run: tar -czf $GITHUB_WORKSPACE/dist/interstellar-${{ matrix.target }}.tar.gz *
         working-directory: ${{ matrix.build_path }}
 
       - name: Build AppImage for linux
+        if: matrix.target_os == 'linux'
         run: |
           GITHUB_BASE="https://github.com"
           LLVM_BASE="${GITHUB_BASE}/pkgforge-dev/llvm-libs-debloated/releases/download/continuous"
@@ -229,42 +177,21 @@ jobs:
           pacman -Scc --noconfirm
           rm -rf /tmp/*.pkg.tar.zst
           ./scripts/build-appimage.sh
+
+      - name: Compress build for windows
+        if: matrix.target_os == 'windows'
+        run: compress-archive -Path * -DestinationPath ${env:GITHUB_WORKSPACE}\dist\interstellar-${{ matrix.target }}.zip
+        working-directory: ${{ matrix.build_path }}
+
+      - name: Create setup exe for windows
+        if: matrix.target_os == 'windows'
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
+        with:
+          path: scripts/build-windows-setup.iss
+          options: /O+
         env:
-          VERSION: v${{ inputs.version }}
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: artifact-${{ matrix.target }}
-          retention-days: 7
-          path: dist/*
-
-  publish-release:
-    needs:
-      - draft-release
-      - build-android-windows
-      - build-linux
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: artifact-windows-x86_64
-          path: dist/
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: artifact-linux-x86_64
-          path: dist/
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: artifact-linux-aarch64
-          path: dist/
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: artifact-android
-          path: dist/
+          INTERSTELLAR_VERSION: ${{ github.event.inputs.version }}
+          INTERSTELLAR_BUILD_PATH: ${{ github.workspace }}\${{ matrix.build_path }}
 
       - name: Upload build to release draft
         uses: shogo82148/actions-upload-release-asset@v1
