@@ -39,7 +39,7 @@ class SwipeItem extends StatefulWidget {
 class _SwipeItemState extends State<SwipeItem> {
   Color _color = Colors.green;
   double _dismissThreshold = 0;
-  double _dismissProgress = 0;
+  DismissUpdateDetails? _oldDismissDetails;
   DismissDirection _dismissDirection = DismissDirection.startToEnd;
   int _currentAction = 0;
 
@@ -114,23 +114,23 @@ class _SwipeItemState extends State<SwipeItem> {
             DismissDirection.startToEnd: 1,
             DismissDirection.endToStart: 1
           },
-          onUpdate: (DismissUpdateDetails details) {
-            final double oldProgress = _dismissProgress;
-            _dismissThreshold = details.progress;
-            _dismissProgress = details.progress;
-            if (_dismissDirection != details.direction) {
+          onUpdate: (DismissUpdateDetails newDetails) {
+            final oldDetails = _oldDismissDetails;
+            _oldDismissDetails = newDetails;
+            _dismissThreshold = newDetails.progress;
+            if (_dismissDirection != newDetails.direction) {
               setState(() {
-                _dismissDirection = details.direction;
+                _dismissDirection = newDetails.direction;
               });
             }
 
             bool isRangeNewlyEntered(double startInclusive,
                     [double? endExclusive]) =>
-                (oldProgress < startInclusive &&
-                    details.progress >= startInclusive) ||
+                ((oldDetails?.progress ?? 0) < startInclusive &&
+                    newDetails.progress >= startInclusive) ||
                 (endExclusive != null &&
-                    oldProgress >= endExclusive &&
-                    details.progress < endExclusive);
+                    (oldDetails?.progress ?? 0) >= endExclusive &&
+                    newDetails.progress < endExclusive);
 
             if (isRangeNewlyEntered(actionThreshold) ||
                 isRangeNewlyEntered(actionThreshold * 2)) {
@@ -138,9 +138,12 @@ class _SwipeItemState extends State<SwipeItem> {
             }
 
             final actionSelectorValue =
-                details.direction == DismissDirection.endToStart ? 2 : 0;
+                newDetails.direction == DismissDirection.endToStart ? 2 : 0;
 
-            if (oldProgress == 0 || isRangeNewlyEntered(0, actionThreshold)) {
+            if (oldDetails == null ||
+                oldDetails.progress == 0 ||
+                oldDetails.direction != newDetails.direction ||
+                isRangeNewlyEntered(0, actionThreshold)) {
               setState(() {
                 _color = actions[0 + actionSelectorValue].color!.darken(30);
               });
