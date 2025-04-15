@@ -7,12 +7,12 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to create (e.g. 1.2.3)'
+        description: "Version to create (e.g. 1.2.3)"
         required: true
-        default: 'X.X.X'
+        default: "X.X.X"
         type: string
       build-number:
-        description: 'Build number to use (e.g. 65)'
+        description: "Build number to use (e.g. 65)"
         required: true
         type: number
 
@@ -64,19 +64,22 @@ jobs:
             build_target: windows
             build_path: build\windows\x64\runner\Release
             runner: windows-latest
+    container: ${{ matrix.target_os == 'linux' && 'ghcr.io/pkgforge-dev/archlinux:latest' || null }}
     steps:
       - name: Install android dependencies
         if: matrix.target_os == 'android'
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
+          java-version: "21"
           distribution: temurin
 
       - name: Install linux dependencies
         if: matrix.target_os == 'linux'
         run: |
-          sudo apt-get update
-          sudo apt-get install -y ninja-build libgtk-3-dev liblzma-dev libstdc++-12-dev libmpv-dev
+          pacman -Syuq --needed --noconfirm --noprogressbar \
+            ninja gtk3 xz gcc mpv wget jq git which base-devel \
+            file zsync patchelf binutils strace mesa llvm \
+            xorg-server-xvfb cmake clang unzip
 
       - name: Install windows dependencies
         if: matrix.target_os == 'windows'
@@ -91,6 +94,11 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: git-config add safe directory
+        if: ${{ matrix.target_os == 'linux' }}
+        run: |
+          git config --global --add safe.directory $FLUTTER_ROOT
 
       - name: Set version
         run: |
@@ -143,7 +151,32 @@ jobs:
 
       - name: Build AppImage for linux
         if: matrix.target_os == 'linux'
-        run: ./scripts/build-appimage.sh
+        run: |
+          GITHUB_BASE="https://github.com"
+          LLVM_BASE="${GITHUB_BASE}/pkgforge-dev/llvm-libs-debloated/releases/download/continuous"
+          case "$(uname -m)" in
+          "x86_64")
+              LLVM_URL="${LLVM_BASE}/llvm-libs-nano-x86_64.pkg.tar.zst"
+              LIBXML_URL="${LLVM_BASE}/libxml2-iculess-x86_64.pkg.tar.zst"
+              FFMPEG_URL="${LLVM_BASE}/ffmpeg-mini-x86_64.pkg.tar.zst"
+              ;;
+          "aarch64")
+              LLVM_URL="${LLVM_BASE}/llvm-libs-nano-aarch64.pkg.tar.xz"
+              LIBXML_URL="${LLVM_BASE}/libxml2-iculess-aarch64.pkg.tar.xz"
+              FFMPEG_URL="${LLVM_BASE}/ffmpeg-mini-aarch64.pkg.tar.xz"
+              ;;
+          *)
+              echo "Unsupported ARCH: '${ARCH}'"
+              exit 1
+              ;;
+          esac
+          wget "${LLVM_URL}" -O /tmp/llvm-libs.pkg.tar.zst
+          wget "${LIBXML_URL}" -O /tmp/libxml2.pkg.tar.zst
+          wget "${FFMPEG_URL}" -O /tmp/ffmpeg-mini.pkg.tar.zst
+          pacman -U --noconfirm /tmp/*.pkg.tar.zst
+          pacman -Scc --noconfirm
+          rm -rf /tmp/*.pkg.tar.zst
+          ./scripts/build-appimage.sh
 
       - name: Compress build for windows
         if: matrix.target_os == 'windows'
