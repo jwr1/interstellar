@@ -155,15 +155,24 @@ jobs:
       - name: Build AppImage for linux
         if: matrix.target_os == 'linux'
         run: |
-          LLVM_BASE="https://github.com/pkgforge-dev/llvm-libs-debloated/releases/download/continuous"
+          PKG_URL_PREFIX="https://github.com/pkgforge-dev/llvm-libs-debloated/releases/download/continuous"
 
-          LLVM_URL="${LLVM_BASE}/llvm-libs-nano-$(uname -m).pkg.tar.zst"
-          LIBXML_URL="${LLVM_BASE}/libxml2-iculess-$(uname -m).pkg.tar.zst"
-          FFMPEG_URL="${LLVM_BASE}/ffmpeg-mini-$(uname -m).pkg.tar.zst"
+          case "$(uname -m)" in
+          "x86_64")
+              PKG_URL_SUFFIX="x86_64.pkg.tar.zst"
+              ;;
+          "aarch64")
+              PKG_URL_SUFFIX="aarch64.pkg.tar.xz"
+              ;;
+          *)
+              echo "Unsupported ARCH: '${ARCH}'"
+              exit 1
+              ;;
+          esac
 
-          wget "${LLVM_URL}" -O /tmp/llvm-libs.pkg.tar.zst
-          wget "${LIBXML_URL}" -O /tmp/libxml2.pkg.tar.zst
-          wget "${FFMPEG_URL}" -O /tmp/ffmpeg-mini.pkg.tar.zst
+          wget "${PKG_URL_PREFIX}/llvm-libs-nano-${PKG_URL_SUFFIX}" -O /tmp/llvm-libs.pkg.tar.zst
+          wget "${PKG_URL_PREFIX}/libxml2-iculess-${PKG_URL_SUFFIX}" -O /tmp/libxml2.pkg.tar.zst
+          wget "${PKG_URL_PREFIX}/ffmpeg-mini-${PKG_URL_SUFFIX}" -O /tmp/ffmpeg-mini.pkg.tar.zst
 
           pacman -U --noconfirm /tmp/*.pkg.tar.zst
           pacman -Scc --noconfirm
