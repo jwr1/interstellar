@@ -7,12 +7,12 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Version to create (e.g. 1.2.3)"
+        description: 'Version to create (e.g. 1.2.3)'
         required: true
-        default: "X.X.X"
+        default: 'X.X.X'
         type: string
       build-number:
-        description: "Build number to use (e.g. 65)"
+        description: 'Build number to use (e.g. 65)'
         required: true
         type: number
 
@@ -35,6 +35,8 @@ jobs:
     environment: production
     name: Create ${{ matrix.target }} build
     runs-on: ${{ matrix.runner }}
+    container: ${{ matrix.runner_container }}
+
     strategy:
       fail-fast: false
       matrix:
@@ -52,25 +54,26 @@ jobs:
             build_target: linux
             build_path: build/linux/x64/release/bundle
             runner: ubuntu-24.04
+            runner_container: ghcr.io/pkgforge-dev/archlinux:latest
           - target: linux-aarch64
             target_os: linux
             target_arch: aarch64
             build_target: linux
             build_path: build/linux/arm64/release/bundle
             runner: ubuntu-24.04-arm
+            runner_container: ghcr.io/pkgforge-dev/archlinux:latest
           - target: windows-x86_64
             target_os: windows
             target_arch: x86_64
             build_target: windows
             build_path: build\windows\x64\runner\Release
             runner: windows-latest
-    container: ${{ matrix.target_os == 'linux' && 'ghcr.io/pkgforge-dev/archlinux:latest' || null }}
     steps:
       - name: Install android dependencies
         if: matrix.target_os == 'android'
         uses: actions/setup-java@v4
         with:
-          java-version: "21"
+          java-version: '21'
           distribution: temurin
 
       - name: Install linux dependencies
@@ -90,15 +93,15 @@ jobs:
         with:
           # Use master until Flutter action is fixed for arm (https://github.com/subosito/flutter-action/issues/345)
           channel: ${{ matrix.target == 'linux-aarch64' && 'master' || 'stable' }}
-          flutter-version: 3.29.0
+          flutter-version: 3.29.3
 
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Needed to fix "detected dubious ownership in repository" error caused by Linux containerization
       - name: git-config add safe directory
-        if: ${{ matrix.target_os == 'linux' }}
-        run: |
-          git config --global --add safe.directory $FLUTTER_ROOT
+        if: matrix.target_os == 'linux'
+        run: git config --global --add safe.directory $FLUTTER_ROOT
 
       - name: Set version
         run: |
@@ -152,27 +155,16 @@ jobs:
       - name: Build AppImage for linux
         if: matrix.target_os == 'linux'
         run: |
-          GITHUB_BASE="https://github.com"
-          LLVM_BASE="${GITHUB_BASE}/pkgforge-dev/llvm-libs-debloated/releases/download/continuous"
-          case "$(uname -m)" in
-          "x86_64")
-              LLVM_URL="${LLVM_BASE}/llvm-libs-nano-x86_64.pkg.tar.zst"
-              LIBXML_URL="${LLVM_BASE}/libxml2-iculess-x86_64.pkg.tar.zst"
-              FFMPEG_URL="${LLVM_BASE}/ffmpeg-mini-x86_64.pkg.tar.zst"
-              ;;
-          "aarch64")
-              LLVM_URL="${LLVM_BASE}/llvm-libs-nano-aarch64.pkg.tar.xz"
-              LIBXML_URL="${LLVM_BASE}/libxml2-iculess-aarch64.pkg.tar.xz"
-              FFMPEG_URL="${LLVM_BASE}/ffmpeg-mini-aarch64.pkg.tar.xz"
-              ;;
-          *)
-              echo "Unsupported ARCH: '${ARCH}'"
-              exit 1
-              ;;
-          esac
+          LLVM_BASE="https://github.com/pkgforge-dev/llvm-libs-debloated/releases/download/continuous"
+
+          LLVM_URL="${LLVM_BASE}/llvm-libs-nano-$(uname -m).pkg.tar.zst"
+          LIBXML_URL="${LLVM_BASE}/libxml2-iculess-$(uname -m).pkg.tar.zst"
+          FFMPEG_URL="${LLVM_BASE}/ffmpeg-mini-$(uname -m).pkg.tar.zst"
+
           wget "${LLVM_URL}" -O /tmp/llvm-libs.pkg.tar.zst
           wget "${LIBXML_URL}" -O /tmp/libxml2.pkg.tar.zst
           wget "${FFMPEG_URL}" -O /tmp/ffmpeg-mini.pkg.tar.zst
+
           pacman -U --noconfirm /tmp/*.pkg.tar.zst
           pacman -Scc --noconfirm
           rm -rf /tmp/*.pkg.tar.zst
