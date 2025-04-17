@@ -134,7 +134,7 @@ class ServerClient {
 
 extension BodyJson on http.Response {
   JsonMap get bodyJson {
-    // Force utf8 decoding due to Lemmy not providing correct content type headers (https://github.com/jwr1/interstellar/pull/50)
+    // Force utf8 decoding due to Lemmy not providing correct content type headers (https://github.com/interstellar-app/interstellar/pull/50)
     return jsonDecode(utf8.decode(bodyBytes)) as JsonMap;
   }
 }
