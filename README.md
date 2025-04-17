@@ -12,13 +12,13 @@ Interstellar supports Android, Linux, and Windows, with more to come.
 
 Available for Arch Linux via the AUR: [interstellar-bin](https://aur.archlinux.org/packages/interstellar-bin).
 
-See the [latest release](https://github.com/jwr1/interstellar/releases/latest) for more downloads (.APK, .AppImage, .exe, etc.).
+See the [latest release](https://github.com/interstellar-app/interstellar/releases/latest) for more downloads (.APK, .AppImage, .exe, etc.).
 
 ## Discussion
 
 You can ask questions, report bugs, make suggestions, etc., to any of the following:
 
-- [GitHub](https://github.com/jwr1/interstellar/issues)
+- [GitHub](https://github.com/interstellar-app/interstellar/issues)
 - [Mbin](https://kbin.earth/m/interstellar)
 - [Matrix](https://matrix.to/#/#interstellar-space:matrix.org)
 

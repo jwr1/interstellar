@@ -4,7 +4,7 @@
 #define AppName "Interstellar"
 #define AppVersion GetEnv('INTERSTELLAR_VERSION')
 #define AppPublisher "jwr1"
-#define AppURL "https://github.com/jwr1/interstellar"
+#define AppURL "https://github.com/interstellar-app/interstellar"
 #define AppExeName "interstellar.exe"
 
 #define AppSourceDir GetEnv('GITHUB_WORKSPACE')

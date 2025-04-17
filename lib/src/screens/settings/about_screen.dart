@@ -8,10 +8,11 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
 const _donateLink = 'https://github.com/sponsors/jwr1';
-const _contributeLink = 'https://github.com/jwr1/interstellar';
+const _contributeLink = 'https://github.com/interstellar-app/interstellar';
 const _translateLink =
     'https://hosted.weblate.org/projects/interstellar/interstellar/';
-const _reportIssueLink = 'https://github.com/jwr1/interstellar/issues';
+const _reportIssueLink =
+    'https://github.com/interstellar-app/interstellar/issues';
 const _matrixSpaceLink = 'https://matrix.to/#/#interstellar-space:matrix.org';
 const _mbinMagazineName = 'interstellar@kbin.earth';
 const _mbinMagazineLink = 'https://kbin.earth/m/interstellar';
